@@ -12,7 +12,7 @@ That's the gap Cup of Sugar tries to close. Stores and restaurants have too much
 
 ---
 
-# How it works
+## How it works
 
 1. Food banks list their inventory as CSV or plain text. Donors describe their excess food the same way, in whatever format is easiest.
 2. Supabase stores the data, and the Gemini API parses the messy inputs into a structured picture of what's needed and what's on offer.
@@ -21,7 +21,7 @@ That's the gap Cup of Sugar tries to close. Stores and restaurants have too much
 
 ---
 
-# Who it's for
+## Who it's for
 
 - **Food banks**, who need a reliable way to communicate specific inventory needs instead of one more form nobody fills out.
 - **Restaurants**, with excess food to move quickly and ethically.
@@ -29,7 +29,7 @@ That's the gap Cup of Sugar tries to close. Stores and restaurants have too much
 
 ---
 
-# Stack
+## Stack
 
 - Frontend: React / Vite
 - Backend: Python / Flask

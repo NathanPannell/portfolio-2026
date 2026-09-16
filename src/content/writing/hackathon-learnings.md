@@ -6,7 +6,7 @@ pubDate: '2025-10-05'
 
 ![University of Victoria's first NASA Space Apps Challenge](_assets/hackathon-all-participants.JPG)
 
-# I recently participated in [NASA's Space Apps Challenge](https://www.spaceappschallenge.org/) for 2025. It did not go as well as I had hoped.
+## I recently participated in [NASA's Space Apps Challenge](https://www.spaceappschallenge.org/) for 2025. It did not go as well as I had hoped.
 
 After escaping from data wrangling-hell with a handful of hours to submission, I was finally able to train some machine learning models and test our team's idea.
 When I saw the results, I reflected on everything that went wrong over the past 48 hours and how I didn't want that to happen again.
@@ -17,7 +17,7 @@ To prepare for future hackathons, this post will review the issues encountered a
 
 ---
 
-# Lesson 1: Be flexible during ideation
+## Lesson 1: Be flexible during ideation
 
 The biggest challenge we faced was due to committing to a direction too early. This can (and in our case did) lead to a dead end if your solution is fundamentally flawed.
 In my team's case, we were attempting to solve the [EarthData to Action](https://www.spaceappschallenge.org/2025/challenges/from-earthdata-to-action-cloud-computing-with-earth-observation-data-for-predicting-cleaner-safer-skies/) challenge which involved using real-time satellite data to model air pollution on the ground.
@@ -41,7 +41,7 @@ While it was unfortunate that my realization came so late into the process, ther
 
 ---
 
-# Lesson 2: Know your stack
+## Lesson 2: Know your stack
 
 This is more obvious, but it's worth mentioning that having a strong foundation in a tech stack can make a hackathon go much smoother.
 The process of going from a challenge to an idea to a fleshed-out solution can be a daunting amount of work on its own.
@@ -62,7 +62,7 @@ I will try to focus on a specific tool in my next hackathon and study it in adva
 
 ---
 
-# Lesson 3: Work with a diverse team
+## Lesson 3: Work with a diverse team
 
 During my previous hackathon ([CodeHack 2025](https://www.codehack.ca/)), team formation required one of each of the following roles:
 

@@ -14,7 +14,7 @@ This post is mostly about the agentic coding workflow behind it, and the tradeof
 
 ---
 
-# The Workflow: Issue → Claude Code → PR → Review → Merge
+## The Workflow: Issue → Claude Code → PR → Review → Merge
 
 Since this was solo, "team collaboration" meant me and Claude Code, coordinated entirely through GitHub Issues.
 
@@ -35,7 +35,7 @@ Issue #11 ("Flask can't handle concurrent requests") turned into issue #13 ("als
 
 ---
 
-# Decision Tradeoffs
+## Decision Tradeoffs
 
 A few of the tradeoffs that shaped this project:
 
@@ -59,7 +59,7 @@ Switching from `sentence-transformers` + PyTorch to `fastembed` (ONNX Runtime, q
 
 ---
 
-# Did It Actually Scale?
+## Did It Actually Scale?
 
 Short answer: after fixing the above, yes, but only up to the CPU ceiling.
 

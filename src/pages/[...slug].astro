@@ -47,6 +47,7 @@ const LegacyContent = props.kind === 'project' && props.legacyEntry
     title={props.entry.data.title}
     tagline={props.entry.data.tagline}
     summary={props.entry.data.summary}
+    contribution={props.entry.data.contribution}
     displayDate={props.entry.data.displayDate}
     status={props.entry.data.status}
     accent={props.entry.data.accent}
@@ -58,7 +59,7 @@ const LegacyContent = props.kind === 'project' && props.legacyEntry
     <Content />
     {LegacyContent && (
       <section class="project-build-notes" aria-labelledby="project-build-notes-title">
-        <h2 id="project-build-notes-title">Original build notes</h2>
+        <h2 id="project-build-notes-title">Build notes</h2>
         <LegacyContent />
       </section>
     )}

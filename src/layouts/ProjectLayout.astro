@@ -17,12 +17,15 @@ interface ProjectMedia {
   src: string;
   poster?: string | undefined;
   alt: string;
+  width?: number | undefined;
+  height?: number | undefined;
 }
 
 interface Props {
   title: string;
   tagline: string;
   summary: string;
+  contribution: string;
   displayDate: string;
   status: 'live' | 'in-progress' | 'prototype' | 'completed';
   accent: string;
@@ -36,6 +39,7 @@ const {
   title,
   tagline,
   summary,
+  contribution,
   displayDate,
   status,
   accent,
@@ -79,6 +83,10 @@ const detailMedia = media.filter(
               <dt>Status</dt>
               <dd>{statusLabels[status]}</dd>
             </div>
+            <div>
+              <dt>My part</dt>
+              <dd>{contribution}</dd>
+            </div>
           </dl>
         </div>
         <p class="project-intro__summary">{summary}</p>
@@ -97,10 +105,10 @@ const detailMedia = media.filter(
         {detailMedia.map((item) => (
           <figure class="project-media__item">
             {item.kind === 'image' && (
-              <img src={item.src} alt={item.alt} loading="eager" decoding="async" />
+              <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading="eager" decoding="async" />
             )}
             {item.kind === 'video' && (
-              <video controls preload="metadata" poster={item.poster} aria-label={item.alt}>
+              <video controls preload="metadata" poster={item.poster} width={item.width} height={item.height} aria-label={item.alt}>
                 <source src={item.src} type="video/mp4" />
                 <a href={item.src}>Watch the {title} demo</a>
               </video>
@@ -125,7 +133,7 @@ const detailMedia = media.filter(
 
     {collaborators.length > 0 && (
       <aside class="project-collaborators" aria-labelledby="project-collaborators-title">
-        <h2 id="project-collaborators-title">Built with</h2>
+        <h2 id="project-collaborators-title">I built this with</h2>
         <ul>
           {collaborators.map((collaborator) => (
             <li>
@@ -141,11 +149,15 @@ const detailMedia = media.filter(
     )}
 
     <footer class="project-footer">
-      <p>Want to build something like this?</p>
-      <div class="project-footer__actions">
-        <a href="mailto:contact@nathanpannell.com">Email me</a>
-        <a href="https://www.linkedin.com/in/nathanpannell">Connect on LinkedIn</a>
+      <div class="project-footer__copy">
+        <p>Building something ambitious?</p>
+        <span>Tell me what you’re working on.</span>
       </div>
+      <div class="project-footer__actions">
+        <a class="project-footer__email" href="mailto:contact@nathanpannell.com">Email Nathan</a>
+        <a class="project-footer__linkedin" href="https://www.linkedin.com/in/nathanpannell">Connect on LinkedIn</a>
+      </div>
+      <a class="project-footer__home" href="/">Nathan Pannell · Vancouver Island</a>
     </footer>
   </main>
 </SiteLayout>

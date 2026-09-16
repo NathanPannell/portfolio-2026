@@ -33,14 +33,26 @@ const { tone = 'dark', overlay = false } = Astro.props;
 
 <script>
   document.querySelectorAll<HTMLDetailsElement>('.site-header__menu').forEach((menu) => {
+    const trigger = menu.querySelector('summary');
+
+    const syncLabel = () => {
+      trigger?.setAttribute('aria-label', menu.open ? 'Close navigation' : 'Open navigation');
+    };
+
     menu.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => menu.removeAttribute('open'));
+      link.addEventListener('click', () => {
+        menu.removeAttribute('open');
+        syncLabel();
+      });
     });
+
+    menu.addEventListener('toggle', syncLabel);
 
     menu.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         menu.removeAttribute('open');
-        menu.querySelector('summary')?.focus();
+        syncLabel();
+        trigger?.focus();
       }
     });
   });

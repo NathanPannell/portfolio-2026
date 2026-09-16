@@ -8,7 +8,7 @@ I spent eight months at ICBC porting a production .NET API over to Java. Beyond 
 
 ---
 
-# Lesson 1: The best dashboards come from the people who built the product
+## Lesson 1: The best dashboards come from the people who built the product
 
 I built logging into every app I touched this term. Audit logs formatted for compliance ingestion, Log4j filters that captured traffic automatically, Splunk queries, Dynatrace monitors. Most of it felt like overhead while I was writing it.
 
@@ -20,7 +20,7 @@ Observability is only as good as your understanding of the system underneath, an
 
 ---
 
-# Lesson 2: Learn the codebase yourself, even when AI could do it for you
+## Lesson 2: Learn the codebase yourself, even when AI could do it for you
 
 A new codebase is slow at first. You don't know where anything lives, and handing every task to an AI assistant to navigate for you feels like the obvious move. It works for a while, especially for throw-away experiments.
 

@@ -27,6 +27,8 @@ const media = z.object({
   src: z.string(),
   poster: z.string().optional(),
   alt: z.string(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
 });
 
 const writing = defineCollection({
@@ -45,6 +47,8 @@ const projects = defineCollection({
     title: z.string(),
     tagline: z.string(),
     summary: z.string(),
+    contribution: z.string(),
+    cardProof: z.string(),
     order: z.number().int().positive(),
     displayDate: z.string(),
     projectDate: z.coerce.date().optional(),

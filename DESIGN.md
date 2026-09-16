@@ -186,10 +186,10 @@ Each card is a real link to a project page and has four tactile states:
 
 - **Rest:** Slight project-specific rotation and soft print shadow.
 - **Hover or keyboard focus:** Straightens, lifts 0.8rem, scales to 1.025, reveals a thin project-color edge, and increases elevation.
-- **Fine-pointer movement:** Tilts by at most 7 degrees vertically and 9 degrees horizontally, with glare following the pointer. Updates run through `requestAnimationFrame`.
+- **Fine-pointer movement:** Tilts by at most 7 degrees vertically and 9 degrees horizontally, with glare following the pointer. A shared spring loop updates all visible cards and stops when the deck settles.
 - **Active:** Compresses to 0.99 scale for a quiet press response.
 
-Pointer tracking runs only when the device reports both hover and a fine pointer. Touch users receive a stable, directly tappable card without cursor-following tilt. On mobile, all tilt variables are forced to zero while the original print rotation and alternating alignment preserve personality.
+The deck responds to scroll as one physical collection. The card nearest the viewport center settles forward, catches light, and becomes the visually active print without stealing focus or hijacking scroll. Fine pointers add a wider inspection tilt; touch and pen input add a smaller contact tilt while preserving native vertical panning and whole-card taps. On low-power or data-saving devices, the same active hierarchy remains with reduced depth and glare.
 
 ### Parkdex Gallery
 

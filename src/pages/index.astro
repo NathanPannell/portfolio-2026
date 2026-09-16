@@ -81,10 +81,10 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
           I started Parkdex because I wanted to visit all 117 provincial parks on Vancouver Island and needed a way to keep track of them.
         </p>
         <p>
-          It has grown into the index I use to decide where to go next: roughly 200 parks and islands, one map, a wishlist, completion tracking, and badges for getting out there.
+          I built the current web app around profiles, park search, wishlists, visit tracking, completion, and badges across roughly 200 parks and islands.
         </p>
         <p>
-          The next chapter is an Android app with GPS-validated visits, arrival notifications, and a Polaroid captured when you reach a park.
+          Next up: an Android app that verifies visits by GPS, pings you when you arrive, and lets you take a Polaroid on site.
         </p>
         <div class="button-row">
           <a class="button button--primary" href="https://parkdex.app">Explore Parkdex</a>
@@ -112,31 +112,33 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
     <section id="projects" class="projects section-shell" aria-labelledby="projects-title">
       <div class="section-heading">
         <h2 id="projects-title">Built with good people and a deadline.</h2>
-        <p>Five projects, from the one I keep returning to, to the ones built in six chaotic hours.</p>
+        <p>Five things I’ve shipped, from an island-wide park tracker to six-hour hackathon builds.</p>
       </div>
 
       <div class="project-deck">
         {projects.map((project) => {
           const visual = projectVisuals[project.id];
           return (
-            <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
-              <span class="project-polaroid__image">
-                {visual?.src ? (
-                  <img src={visual.src} alt={visual.alt} loading="lazy" />
-                ) : (
-                  <span class="commons-diagram" aria-label={visual?.alt ?? `${project.data.title} project visual`} role="img">
-                    <span class="commons-diagram__prompt">Your next conversation</span>
-                    <span class="commons-diagram__agent">Events</span>
-                    <span class="commons-diagram__agent">People</span>
-                    <span class="commons-diagram__agent">Groups</span>
-                    <span class="commons-diagram__agent">Places</span>
-                    <span class="commons-diagram__agent">Ideas</span>
-                  </span>
-                )}
-              </span>
-              <span class="project-polaroid__caption">
-                <strong>{project.data.title}</strong>
-                <span>{project.data.displayDate}</span>
+            <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
+              <span class="project-polaroid__surface">
+                <span class="project-polaroid__image">
+                  {visual?.src ? (
+                    <img src={visual.src} alt={visual.alt} loading="lazy" />
+                  ) : (
+                    <span class="commons-diagram" aria-label={visual?.alt ?? `${project.data.title} project visual`} role="img">
+                      <span class="commons-diagram__prompt">Your next conversation</span>
+                      <span class="commons-diagram__agent">Events</span>
+                      <span class="commons-diagram__agent">People</span>
+                      <span class="commons-diagram__agent">Groups</span>
+                      <span class="commons-diagram__agent">Places</span>
+                      <span class="commons-diagram__agent">Ideas</span>
+                    </span>
+                  )}
+                </span>
+                <span class="project-polaroid__caption">
+                  <strong>{project.data.title}</strong>
+                  <span>{project.data.cardProof}</span>
+                </span>
               </span>
             </a>
           );
@@ -167,55 +169,24 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
 
     <section id="contact" class="contact-close section-shell" aria-labelledby="contact-title">
       <div>
-        <h2 id="contact-title">Need someone who can own the backend and help ship the whole product?</h2>
-        <p>B.Sc. Computer Science. Building from Vancouver Island.</p>
+        <h2 id="contact-title">Building something ambitious in Victoria or remotely across Canada?</h2>
+        <p>I’m strongest on the backend and comfortable shipping the whole product with AI.</p>
       </div>
       <div class="contact-close__actions">
-        <a class="contact-close__email" href="mailto:contact@nathanpannell.com">Email me</a>
+        <a class="contact-close__email" href="mailto:contact@nathanpannell.com">Email Nathan</a>
         <a class="contact-close__linkedin" href="https://www.linkedin.com/in/nathanpannell">Connect on LinkedIn</a>
       </div>
-      <nav class="contact-close__socials" aria-label="Social profiles">
-        <a href="https://www.github.com/nathanpannell">GitHub</a>
-        <a href="https://www.x.com/nwpannell">X</a>
-      </nav>
+      <div class="contact-close__footer">
+        <p class="contact-close__colophon">© {new Date().getFullYear()} Nathan Pannell. Made on Vancouver Island.</p>
+        <nav class="contact-close__socials" aria-label="Social profiles">
+          <a href="https://www.github.com/nathanpannell">GitHub</a>
+          <a href="https://www.x.com/nwpannell">X</a>
+        </nav>
+      </div>
     </section>
   </main>
 
   <script>
-  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  if (finePointer.matches && !reducedMotion.matches) {
-    document.querySelectorAll<HTMLElement>('.project-polaroid').forEach((card) => {
-      let animationFrame = 0;
-
-      const resetCard = () => {
-        cancelAnimationFrame(animationFrame);
-        card.removeAttribute('data-tilting');
-        card.style.setProperty('--tilt-x', '0deg');
-        card.style.setProperty('--tilt-y', '0deg');
-        card.style.setProperty('--glare-x', '50%');
-        card.style.setProperty('--glare-y', '50%');
-      };
-
-      card.addEventListener('pointermove', (event) => {
-        cancelAnimationFrame(animationFrame);
-        animationFrame = requestAnimationFrame(() => {
-          const bounds = card.getBoundingClientRect();
-          const x = (event.clientX - bounds.left) / bounds.width;
-          const y = (event.clientY - bounds.top) / bounds.height;
-
-          card.setAttribute('data-tilting', '');
-          card.style.setProperty('--tilt-x', `${((0.5 - y) * 7).toFixed(2)}deg`);
-          card.style.setProperty('--tilt-y', `${((x - 0.5) * 9).toFixed(2)}deg`);
-          card.style.setProperty('--glare-x', `${(x * 100).toFixed(1)}%`);
-          card.style.setProperty('--glare-y', `${(y * 100).toFixed(1)}%`);
-        });
-      });
-
-      card.addEventListener('pointerleave', resetCard);
-      card.addEventListener('blur', resetCard, true);
-    });
-  }
+    import '../scripts/project-polaroids';
   </script>
 </SiteLayout>
