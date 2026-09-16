@@ -1,0 +1,49 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteLayout from './SiteLayout.astro';
+
+interface Props {
+  title: string;
+  pubDate: Date;
+  description?: string | undefined;
+  category?: string | undefined;
+  image?: string | undefined;
+}
+
+const { title, pubDate, description, category, image } = Astro.props;
+const formattedDate = new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+}).format(pubDate);
+---
+
+<SiteLayout
+  title={`${title} | Nathan Pannell`}
+  description={description ?? `An essay by Nathan Pannell: ${title}`}
+  image={image ?? '/media/social/og-home.jpg'}
+  pageClass="article-page"
+>
+  <SiteHeader />
+  <main id="main-content" class="article-main">
+    <article class="article">
+      <header class="article__header">
+        <a class="article__back" href="/writing/">Writing</a>
+        <h1>{title}</h1>
+        <div class="article__meta">
+          <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+          {category && <span>{category}</span>}
+        </div>
+        {description && <p class="article__description">{description}</p>}
+      </header>
+      <div class="article__body prose">
+        <slot />
+      </div>
+    </article>
+    <footer class="article-footer">
+      <a href="/writing/">More writing</a>
+      <a href="mailto:contact@nathanpannell.com">Reply by email</a>
+    </footer>
+  </main>
+</SiteLayout>

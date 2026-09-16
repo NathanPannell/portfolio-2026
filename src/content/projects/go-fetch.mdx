@@ -1,0 +1,24 @@
+---
+title: Go Fetch
+tagline: Semantic search for your own PDF library.
+summary: A distributed REST API for ingesting PDFs and searching them with natural language, built to explore how a multi-service system behaves under load.
+order: 4
+displayDate: April 20, 2026
+projectDate: 2026-04-20
+status: completed
+cover: /media/projects/go-fetch-architecture.jpg
+accent: '#e7c85d'
+links:
+  - label: View source
+    href: https://github.com/NathanPannell/go-fetch
+media:
+  - kind: image
+    src: /media/projects/go-fetch-architecture.jpg
+    alt: Go Fetch distributed system architecture
+---
+
+Go Fetch is a semantic-search REST API with signup, login, PDF upload, and natural-language search across a personal document library.
+
+The system splits the work across Flask, Celery, Redis, MongoDB, MinIO, and a dedicated embedding service. I built it to find the practical limits of a distributed search system, not just to make a demo work for one person on a laptop.
+
+There is no frontend. The interesting part is the architecture, the load behaviour, and the agentic workflow I used to move from an issue to a reviewed pull request.

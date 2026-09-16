@@ -1,0 +1,143 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { getPublishedWriting } from '../lib/content';
+
+const essays = await getPublishedWriting();
+const formatYear = (date: Date) => date.getFullYear().toString();
+---
+
+<SiteLayout
+  title="Writing | Nathan Pannell"
+  description="Notes on building software, learning in public, and finding useful work."
+  pageClass="writing-page"
+>
+  <main id="main-content" class="writing-main">
+    <section class="writing-selector" aria-labelledby="writing-title">
+      <SiteHeader tone="light" />
+      <div class="writing-selector__intro">
+        <h1 id="writing-title">Writing</h1>
+        <p>Notes from projects, school, and the work of getting better.</p>
+      </div>
+      <ol class="writing-selector__list">
+        {essays.map((essay, index) => (
+          <li class:list={['writing-selector__item', { 'writing-selector__item--active': index === 0 }]}>
+            <a href={`/${essay.id}/`}>
+              <span class="writing-selector__title">{essay.data.title}</span>
+              <time datetime={essay.data.pubDate.toISOString()}>{formatYear(essay.data.pubDate)}</time>
+            </a>
+          </li>
+        ))}
+      </ol>
+      <a class="writing-selector__contact" href="mailto:contact@nathanpannell.com">Write to Nathan</a>
+    </section>
+  </main>
+</SiteLayout>
+
+<style>
+  .writing-selector {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.25rem, 3vw, 3rem);
+    background: #111414;
+    color: #f1f0e8;
+  }
+
+  .writing-selector__intro {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-block: auto clamp(2.5rem, 7vh, 5rem);
+  }
+
+  .writing-selector__intro h1,
+  .writing-selector__intro p {
+    margin: 0;
+  }
+
+  .writing-selector__intro h1 {
+    font-family: var(--display);
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  .writing-selector__intro p {
+    max-width: 27rem;
+    color: #b9bdb8;
+    text-align: right;
+  }
+
+  .writing-selector__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid #424744;
+  }
+
+  .writing-selector__item {
+    border-bottom: 1px solid #424744;
+  }
+
+  .writing-selector__item a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 2rem;
+    padding-block: clamp(1rem, 2.2vh, 1.7rem);
+    color: #8e938f;
+    text-decoration: none;
+    transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .writing-selector__item--active a,
+  .writing-selector__item a:is(:hover, :focus-visible) {
+    color: #f1f0e8;
+  }
+
+  .writing-selector__list:has(a:is(:hover, :focus-visible)) .writing-selector__item--active a:not(:hover, :focus-visible) {
+    color: #8e938f;
+  }
+
+  .writing-selector__item a:is(:hover, :focus-visible) {
+    transform: translateX(0.45rem);
+  }
+
+  .writing-selector__title {
+    max-width: 24ch;
+    font-family: var(--display);
+    font-size: clamp(1.75rem, 4.4vw, 4.65rem);
+    font-weight: 650;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .writing-selector time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .writing-selector__contact {
+    align-self: flex-end;
+    margin-top: clamp(2rem, 6vh, 4rem);
+    color: #f1f0e8;
+  }
+
+  @media (max-width: 720px) {
+    .writing-selector__intro {
+      display: block;
+      margin-top: clamp(5rem, 14vh, 8rem);
+    }
+
+    .writing-selector__intro p {
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .writing-selector__item a {
+      gap: 1rem;
+    }
+  }
+</style>

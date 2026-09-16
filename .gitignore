@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.codex/
+.impeccable/
+assets/
+ASSETS.md
+.DS_Store
+*.log

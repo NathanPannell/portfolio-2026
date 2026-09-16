@@ -1,0 +1,47 @@
+---
+interface Props {
+  tone?: 'light' | 'dark';
+  overlay?: boolean;
+}
+
+const { tone = 'dark', overlay = false } = Astro.props;
+---
+
+<header class:list={['site-header', `site-header--${tone}`, { 'site-header--overlay': overlay }]}> 
+  <a class="site-header__name" href="/" aria-label="Nathan Pannell, home">Nathan Pannell</a>
+  <nav class="site-header__nav" aria-label="Primary navigation">
+    <a href="/#parkdex">Parkdex</a>
+    <a href="/#projects">Projects</a>
+    <a href="/writing/">Writing</a>
+    <a class="site-header__contact" href="mailto:contact@nathanpannell.com">Email me</a>
+  </nav>
+  <details class="site-header__menu">
+    <summary aria-label="Open navigation">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </summary>
+    <nav class="site-header__menu-panel" aria-label="Mobile navigation">
+      <a href="/#parkdex">Parkdex</a>
+      <a href="/#projects">Projects</a>
+      <a href="/writing/">Writing</a>
+      <a href="mailto:contact@nathanpannell.com">Email me</a>
+      <a href="https://www.linkedin.com/in/nathanpannell">LinkedIn</a>
+    </nav>
+  </details>
+</header>
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('.site-header__menu').forEach((menu) => {
+    menu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => menu.removeAttribute('open'));
+    });
+
+    menu.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        menu.removeAttribute('open');
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  });
+</script>

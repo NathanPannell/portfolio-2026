@@ -1,0 +1,23 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="Page not found | Nathan Pannell"
+  description="That page could not be found."
+  pageClass="not-found-page"
+>
+  <SiteHeader />
+  <main id="main-content" class="not-found-main">
+    <section class="not-found" aria-labelledby="not-found-title">
+      <p class="not-found__code">404</p>
+      <h1 id="not-found-title">Nothing here yet.</h1>
+      <p>The trail may have moved, or the page may never have existed.</p>
+      <nav class="not-found__actions" aria-label="Useful destinations">
+        <a href="/">Back home</a>
+        <a href="/writing/">Read the writing</a>
+      </nav>
+    </section>
+  </main>
+</SiteLayout>

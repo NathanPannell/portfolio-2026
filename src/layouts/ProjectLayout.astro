@@ -1,0 +1,151 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteLayout from './SiteLayout.astro';
+
+interface ProjectLink {
+  label: string;
+  href: string;
+}
+
+interface Collaborator {
+  name: string;
+  href?: string | undefined;
+}
+
+interface ProjectMedia {
+  kind: 'image' | 'video' | 'youtube';
+  src: string;
+  poster?: string | undefined;
+  alt: string;
+}
+
+interface Props {
+  title: string;
+  tagline: string;
+  summary: string;
+  displayDate: string;
+  status: 'live' | 'in-progress' | 'prototype' | 'completed';
+  accent: string;
+  cover: string;
+  links: ProjectLink[];
+  collaborators?: Collaborator[] | undefined;
+  media?: ProjectMedia[] | undefined;
+}
+
+const {
+  title,
+  tagline,
+  summary,
+  displayDate,
+  status,
+  accent,
+  cover,
+  links,
+  collaborators = [],
+  media = [],
+} = Astro.props;
+
+const statusLabels = {
+  live: 'Live',
+  'in-progress': 'In progress',
+  prototype: 'Prototype',
+  completed: 'Completed',
+};
+
+const detailMedia = media.filter(
+  (item) => !(item.kind === 'image' && item.src === cover && !cover.includes('go-fetch-architecture')),
+);
+---
+
+<SiteLayout title={`${title} | Nathan Pannell`} description={summary} image={cover} pageClass="project-page">
+  <SiteHeader tone="light" overlay />
+  <main id="main-content" class="project-main" style={`--project-accent: ${accent}`}>
+    <header class="project-intro">
+      <img class="project-intro__cover" src={cover} alt="" aria-hidden="true" fetchpriority="high" />
+      <div class="project-intro__veil" aria-hidden="true"></div>
+      <a class="project-intro__back" href="/#projects">All projects</a>
+      <div class="project-intro__content">
+        <div class="project-intro__heading">
+          <div class="project-intro__copy">
+            <h1>{title}</h1>
+            <p class="project-intro__tagline">{tagline}</p>
+          </div>
+          <dl class="project-meta">
+            <div>
+              <dt>Date</dt>
+              <dd>{displayDate}</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>{statusLabels[status]}</dd>
+            </div>
+          </dl>
+        </div>
+        <p class="project-intro__summary">{summary}</p>
+        <nav class="project-actions" aria-label={`${title} links`}>
+          {links.map((link, index) => (
+            <a class:list={['project-actions__link', { 'project-actions__link--primary': index === 0 }]} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    {detailMedia.length > 0 && (
+      <section class="project-media" aria-label={`${title} media`}>
+        {detailMedia.map((item) => (
+          <figure class="project-media__item">
+            {item.kind === 'image' && (
+              <img src={item.src} alt={item.alt} loading="eager" decoding="async" />
+            )}
+            {item.kind === 'video' && (
+              <video controls preload="metadata" poster={item.poster} aria-label={item.alt}>
+                <source src={item.src} type="video/mp4" />
+                <a href={item.src}>Watch the {title} demo</a>
+              </video>
+            )}
+            {item.kind === 'youtube' && (
+              <iframe
+                src={item.src}
+                title={item.alt}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            )}
+          </figure>
+        ))}
+      </section>
+    )}
+
+    <article class="project-body prose">
+      <slot />
+    </article>
+
+    {collaborators.length > 0 && (
+      <aside class="project-collaborators" aria-labelledby="project-collaborators-title">
+        <h2 id="project-collaborators-title">Built with</h2>
+        <ul>
+          {collaborators.map((collaborator) => (
+            <li>
+              {collaborator.href ? (
+                <a href={collaborator.href}>{collaborator.name}</a>
+              ) : (
+                collaborator.name
+              )}
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+
+    <footer class="project-footer">
+      <p>Want to build something like this?</p>
+      <div class="project-footer__actions">
+        <a href="mailto:contact@nathanpannell.com">Email me</a>
+        <a href="https://www.linkedin.com/in/nathanpannell">Connect on LinkedIn</a>
+      </div>
+    </footer>
+  </main>
+</SiteLayout>

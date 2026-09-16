@@ -1,0 +1,76 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import ProjectLayout from '../layouts/ProjectLayout.astro';
+import { getFlatRoutePosts, getProjects } from '../lib/content';
+
+type ArticleEntry = CollectionEntry<'writing'> | CollectionEntry<'legacy'>;
+type ProjectEntry = CollectionEntry<'projects'>;
+
+type Props =
+  | { kind: 'article'; entry: ArticleEntry }
+  | { kind: 'project'; entry: ProjectEntry; legacyEntry?: CollectionEntry<'legacy'> };
+
+export async function getStaticPaths() {
+  const [articles, projects] = await Promise.all([getFlatRoutePosts(), getProjects()]);
+
+  const projectIds = new Set(projects.map((entry) => entry.id));
+
+  return [
+    ...articles.filter((entry) => !projectIds.has(entry.id)).map((entry) => ({
+      params: { slug: entry.id },
+      props: { kind: 'article' as const, entry },
+    })),
+    ...projects.map((entry) => ({
+      params: { slug: entry.id },
+      props: {
+        kind: 'project' as const,
+        entry,
+        legacyEntry: articles.find(
+          (article): article is CollectionEntry<'legacy'> =>
+            article.collection === 'legacy' && article.id === entry.id,
+        ),
+      },
+    })),
+  ];
+}
+
+const props = Astro.props as Props;
+const { Content } = await render(props.entry);
+const LegacyContent = props.kind === 'project' && props.legacyEntry
+  ? (await render(props.legacyEntry)).Content
+  : undefined;
+---
+
+{props.kind === 'project' ? (
+  <ProjectLayout
+    title={props.entry.data.title}
+    tagline={props.entry.data.tagline}
+    summary={props.entry.data.summary}
+    displayDate={props.entry.data.displayDate}
+    status={props.entry.data.status}
+    accent={props.entry.data.accent}
+    cover={props.entry.data.cover}
+    links={props.entry.data.links}
+    collaborators={props.entry.data.collaborators}
+    media={props.entry.data.media}
+  >
+    <Content />
+    {LegacyContent && (
+      <section class="project-build-notes" aria-labelledby="project-build-notes-title">
+        <h2 id="project-build-notes-title">Original build notes</h2>
+        <LegacyContent />
+      </section>
+    )}
+  </ProjectLayout>
+) : (
+  <ArticleLayout
+    title={props.entry.data.title}
+    pubDate={props.entry.data.pubDate}
+    description={props.entry.data.description}
+    category={props.entry.data.category}
+    image={props.entry.data.image}
+  >
+    <Content />
+  </ArticleLayout>
+)}
