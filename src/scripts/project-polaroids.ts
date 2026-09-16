@@ -171,7 +171,7 @@ const startProjectPolaroids = () => {
   };
 
   const ensureFrame = () => {
-    if (frame || !deckVisible) return;
+    if (reducedMotion.matches || frame || !deckVisible) return;
     cards.forEach((card) => card.surface.setAttribute('data-animating', ''));
     previousTime = performance.now();
     frame = requestAnimationFrame(animate);
@@ -209,7 +209,7 @@ const startProjectPolaroids = () => {
     card.element.addEventListener(
       'pointerenter',
       (event) => {
-        if (!finePointer.matches || event.pointerType === 'touch') return;
+        if (reducedMotion.matches || !finePointer.matches || event.pointerType === 'touch') return;
         card.pointerInside = true;
         card.rect = card.element.getBoundingClientRect();
         card.element.setAttribute('data-inspecting', '');
@@ -221,6 +221,7 @@ const startProjectPolaroids = () => {
     card.element.addEventListener(
       'pointermove',
       (event) => {
+        if (reducedMotion.matches) return;
         if (card.touching) updatePointer(card, event, true);
         else if (card.pointerInside && finePointer.matches) updatePointer(card, event);
       },
@@ -239,7 +240,7 @@ const startProjectPolaroids = () => {
     card.element.addEventListener(
       'pointerdown',
       (event) => {
-        if (event.pointerType === 'mouse') return;
+        if (reducedMotion.matches || event.pointerType === 'mouse') return;
         card.touching = true;
         card.rect = card.element.getBoundingClientRect();
         card.element.setAttribute('data-inspecting', '');
@@ -262,6 +263,7 @@ const startProjectPolaroids = () => {
     card.element.addEventListener(
       'focusin',
       () => {
+        if (reducedMotion.matches) return;
         focusedCard = card;
         activeCard = card;
         cards.forEach((item) => item.element.toggleAttribute('data-active', item === card));
@@ -329,8 +331,12 @@ const startProjectPolaroids = () => {
     }
   }, { signal });
 
-  const stopMotion = () => {
-    if (!reducedMotion.matches) return;
+  const syncMotionPreference = () => {
+    if (!reducedMotion.matches) {
+      scrollDirty = true;
+      ensureFrame();
+      return;
+    }
     cancelAnimationFrame(frame);
     frame = 0;
     cards.forEach((card) => {
@@ -341,7 +347,7 @@ const startProjectPolaroids = () => {
     });
   };
 
-  reducedMotion.addEventListener('change', stopMotion, { signal });
+  reducedMotion.addEventListener('change', syncMotionPreference, { signal });
   window.addEventListener('pageshow', () => {
     scrollDirty = true;
     ensureFrame();
