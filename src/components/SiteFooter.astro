@@ -1,0 +1,25 @@
+---
+interface Props {
+  moreWriting?: boolean;
+}
+
+const { moreWriting = false } = Astro.props;
+---
+
+<footer id="contact" class="site-footer">
+  <div class="site-footer__lead">
+    <p>Let’s build together.</p>
+    <div class="site-footer__actions">
+      {moreWriting && <a class="site-footer__secondary" href="/writing/">More writing</a>}
+      <a class="site-footer__email" href="mailto:contact@nathanpannell.com">Email Me</a>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <p>© {new Date().getFullYear()} Nathan Pannell. Made on Vancouver Island.</p>
+    <nav aria-label="Social profiles">
+      <a href="https://www.github.com/nathanpannell">GitHub</a>
+      <a href="https://www.x.com/nwpannell">X</a>
+      <a href="https://www.linkedin.com/in/nathanpannell">LinkedIn</a>
+    </nav>
+  </div>
+</footer>

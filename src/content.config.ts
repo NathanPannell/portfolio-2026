@@ -47,8 +47,6 @@ const projects = defineCollection({
     title: z.string(),
     tagline: z.string(),
     summary: z.string(),
-    contribution: z.string(),
-    cardProof: z.string(),
     order: z.number().int().positive(),
     displayDate: z.string(),
     projectDate: z.coerce.date().optional(),

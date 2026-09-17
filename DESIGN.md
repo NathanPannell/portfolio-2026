@@ -142,9 +142,9 @@ The homepage follows an experience sequence: photograph, Parkdex story, project 
 
 The desktop hero is at least one small viewport tall and never shorter than 52rem. The photograph occupies the upper 70 percent, while the lower paper ground catches three overlapping preview prints. The headline sits in open water or sky rather than covering Nathan. The Parkdex section uses an asymmetric story-and-gallery grid. The project collection uses a twelve-column deck with deliberately uneven spans, rotations, and vertical offsets. The writing preview pairs a sticky introduction with spacious essay rows.
 
-At 980px and below, story, heading, writing, and contact grids become single-column. Sticky writing-preview copy returns to normal flow. At 720px and below, the hero becomes one uninterrupted 100svh photograph: paper ground and preview prints disappear, the title moves to the bottom, and navigation collapses into a 48px hamburger with the complete route set. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
+At 980px and below, story, heading, and writing grids become single-column. Sticky writing-preview copy returns to normal flow. At 720px and below, the hero becomes one uninterrupted 100svh photograph: paper ground and preview prints disappear, the title moves to the bottom, and navigation reduces to the name and Email Me. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
 
-Project pages open with one continuous cover-backed hero containing the site navigation, project title, metadata, summary, and actions. A dark veil keeps text legible without hiding the project artifact. The hero flows directly into a wide media stage and then a narrow reading column. Every image, video, and embedded player must fit inside `calc(100svh - 2rem)`. Preserve the media's aspect ratio, use contain rather than crop for page-level demos, and never let a project visual become taller than the visible screen. On small screens, project media runs edge to edge while narrative text keeps the homepage's 1.15rem horizontal gutter.
+Project pages open with one continuous Vancouver Island photo-backed hero containing the site navigation, project title, metadata, summary, and actions. Project screenshots stay out of the title background and appear as evidence in the media stage below. A dark veil keeps text legible. Every image, video, and embedded player must fit inside `calc(100svh - 2rem)`. Preserve the media's aspect ratio, use contain rather than crop for page-level demos, and never let a project visual become taller than the visible screen. On small screens, project media runs edge to edge while narrative text keeps the homepage's 1.15rem horizontal gutter.
 
 **The Artifact Before Grid Rule.** Layout should feel composed, not templated. Use asymmetry, overlap, and varied scale only when they help an artifact lead the eye.
 
@@ -168,13 +168,13 @@ Use circles only for functional details already present in an artifact or projec
 
 ### Navigation
 
-The desktop header is minimal: Nathan Pannell, Parkdex, Projects, Writing, and Email me. It may overlay the hero or sit on a paper surface. Overlay text uses enough shadow or local image contrast to remain legible. Email me is the only filled navigation item. On mobile, the full route set moves into a native disclosure menu with Parkdex, Projects, Writing, Email me, and LinkedIn. The menu has a 48px target, closes on Escape, and returns focus to its trigger.
+The desktop header is minimal: Nathan Pannell, Parkdex, Projects, Writing, and Email Me. It may overlay the hero or sit on a paper surface. Overlay text uses enough shadow or local image contrast to remain legible. Email Me is the only filled navigation item. On mobile, keep only Nathan Pannell and Email Me. The shared footer carries the social routes.
 
 ### Buttons and Text Links
 
 Primary buttons are ink-filled pills with white text and a minimum 3.25rem height. The header Contact button is lime. Hover uses a small upward translation and soft shadow, never a dramatic bounce. Text links use a compact northeast arrow whose motion reinforces direction. All actions retain a visible lime focus outline.
 
-The closing contact section uses two commitment levels instead of a separate contact page: Email me is the high-intent primary action, while Connect on LinkedIn is the lower-friction alternative. Keep both visible without another navigation step or form.
+The shared footer is intentionally concise: “Let’s build together.”, Email Me, the Vancouver Island colophon, and one horizontal line for GitHub, X, and LinkedIn. Article pages may add More writing beside the email action.
 
 ### Hero Preview Prints
 
@@ -186,10 +186,10 @@ Each card is a real link to a project page and has four tactile states:
 
 - **Rest:** Slight project-specific rotation and soft print shadow.
 - **Hover or keyboard focus:** Straightens, lifts 0.8rem, scales to 1.025, reveals a thin project-color edge, and increases elevation.
-- **Fine-pointer movement:** Tilts by at most 7 degrees vertically and 9 degrees horizontally, with glare following the pointer. A shared spring loop updates all visible cards and stops when the deck settles.
+- **Fine-pointer movement:** Tilts by at most 7 degrees vertically and 9 degrees horizontally, with glare following the pointer.
 - **Active:** Compresses to 0.99 scale for a quiet press response.
 
-The deck responds to scroll as one physical collection. The card nearest the viewport center settles forward, catches light, and becomes the visually active print without stealing focus or hijacking scroll. Fine pointers add a wider inspection tilt; touch and pen input add a smaller contact tilt while preserving native vertical panning and whole-card taps. On low-power or data-saving devices, the same active hierarchy remains with reduced depth and glare.
+The deck responds to scroll as one physical collection. Exactly one card nearest the viewport center straightens, lifts, reveals its project-color edge, and catches a moving gloss without stealing focus or hijacking scroll. The card link itself remains the paper, shadow, and transform surface. Fine pointers add direct inspection tilt; touch scrolling relies on the centered state and preserves native vertical panning and whole-card taps.
 
 ### Parkdex Gallery
 
@@ -198,6 +198,8 @@ Use one wide map screenshot with two narrower mobile screenshots layered over it
 ### Writing Selector
 
 The dedicated Writing page is a full-screen near-black room with normal document scrolling. Essay titles are large and muted by default; the current or hovered title brightens and shifts slightly right. Dividers provide rhythm. Keep the year secondary and do not add thumbnails, filter chips, horizontal scrolling, or scroll hijacking.
+
+On the homepage, the writing preview remains a flat editorial list. The row nearest the viewport center receives a dark photographic wash drawn from its essay while its title and metadata brighten. Hover and keyboard focus use the same treatment.
 
 ### Project and Article Media
 

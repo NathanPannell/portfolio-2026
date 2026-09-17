@@ -1,5 +1,6 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import SiteLayout from './SiteLayout.astro';
 
 interface ProjectLink {
@@ -25,7 +26,6 @@ interface Props {
   title: string;
   tagline: string;
   summary: string;
-  contribution: string;
   displayDate: string;
   status: 'live' | 'in-progress' | 'prototype' | 'completed';
   accent: string;
@@ -39,7 +39,6 @@ const {
   title,
   tagline,
   summary,
-  contribution,
   displayDate,
   status,
   accent,
@@ -56,16 +55,15 @@ const statusLabels = {
   completed: 'Completed',
 };
 
-const detailMedia = media.filter(
-  (item) => !(item.kind === 'image' && item.src === cover && !cover.includes('go-fetch-architecture')),
-);
+const detailMedia = media;
+const projectHero = '/media/hero/nathan-on-boat-wide.webp';
 ---
 
 <SiteLayout title={`${title} | Nathan Pannell`} description={summary} image={cover} pageClass="project-page">
   <SiteHeader tone="light" overlay />
   <main id="main-content" class="project-main" style={`--project-accent: ${accent}`}>
     <header class="project-intro">
-      <img class="project-intro__cover" src={cover} alt="" aria-hidden="true" fetchpriority="high" />
+      <img class="project-intro__cover" src={projectHero} alt="" aria-hidden="true" fetchpriority="high" />
       <div class="project-intro__veil" aria-hidden="true"></div>
       <a class="project-intro__back" href="/#projects">All projects</a>
       <div class="project-intro__content">
@@ -82,10 +80,6 @@ const detailMedia = media.filter(
             <div>
               <dt>Status</dt>
               <dd>{statusLabels[status]}</dd>
-            </div>
-            <div>
-              <dt>My part</dt>
-              <dd>{contribution}</dd>
             </div>
           </dl>
         </div>
@@ -148,16 +142,6 @@ const detailMedia = media.filter(
       </aside>
     )}
 
-    <footer class="project-footer">
-      <div class="project-footer__copy">
-        <p>Hiring a full-stack builder?</p>
-        <span>Tell me what you’re working on.</span>
-      </div>
-      <div class="project-footer__actions">
-        <a class="project-footer__email" href="mailto:contact@nathanpannell.com">Email Nathan</a>
-        <a class="project-footer__linkedin" href="https://www.linkedin.com/in/nathanpannell">Connect on LinkedIn</a>
-      </div>
-      <a class="project-footer__home" href="/">Nathan Pannell · Vancouver Island</a>
-    </footer>
+    <SiteFooter />
   </main>
 </SiteLayout>

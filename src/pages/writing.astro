@@ -1,5 +1,6 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getPublishedWriting } from '../lib/content';
 
@@ -29,8 +30,8 @@ const formatYear = (date: Date) => date.getFullYear().toString();
           </li>
         ))}
       </ol>
-      <a class="writing-selector__contact" href="mailto:contact@nathanpannell.com">Write to Nathan</a>
     </section>
+    <SiteFooter />
   </main>
 </SiteLayout>
 
@@ -117,12 +118,6 @@ const formatYear = (date: Date) => date.getFullYear().toString();
 
   .writing-selector time {
     font-variant-numeric: tabular-nums;
-  }
-
-  .writing-selector__contact {
-    align-self: flex-end;
-    margin-top: clamp(2rem, 6vh, 4rem);
-    color: #f1f0e8;
   }
 
   @media (max-width: 720px) {

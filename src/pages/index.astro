@@ -1,7 +1,10 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import { getProjects, getPublishedWriting } from '../lib/content';
+import graduationImage from '../content/writing/_assets/grad.jpg';
+import hackathonImage from '../content/writing/_assets/hackathon-code-hack.jpg';
 
 const [projects, writing] = await Promise.all([getProjects(), getPublishedWriting()]);
 
@@ -33,6 +36,12 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
   year: 'numeric',
   timeZone: 'UTC',
 });
+
+const essayVisuals: Record<string, string> = {
+  graduation: graduationImage.src,
+  'icbc-coop': '/media/plates/writing-print.webp',
+  'hackathon-learnings': hackathonImage.src,
+};
 ---
 
 <SiteLayout>
@@ -78,7 +87,7 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
       <div class="parkdex-story__copy">
         <h2 id="parkdex-title">The island needed a Pokédex.</h2>
         <p class="parkdex-story__lede">
-          I started Parkdex because I wanted to visit all 117 provincial parks on Vancouver Island and needed a way to keep track of them.
+          Parkdex started with one goal: visit all 117 provincial parks on Vancouver Island.
         </p>
         <p>
           I built the current web app around profiles, park search, wishlists, visit tracking, completion, and badges across roughly 200 parks and islands.
@@ -105,7 +114,7 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
         <figure class="parkdex-shot parkdex-shot--progress">
           <img src="/media/parkdex/island-progress.webp" alt="Vancouver Island completion progress in Parkdex" loading="lazy" width="720" height="1280" />
         </figure>
-        <figcaption>Parkdex interface, 2026. Map data © OpenStreetMap contributors.</figcaption>
+        <figcaption>Parkdex, 2026 · Map © OpenStreetMap contributors.</figcaption>
       </div>
     </section>
 
@@ -120,25 +129,23 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
           const visual = projectVisuals[project.id];
           return (
             <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
-              <span class="project-polaroid__surface">
-                <span class="project-polaroid__image">
-                  {visual?.src ? (
-                    <img src={visual.src} alt={visual.alt} loading="lazy" />
-                  ) : (
-                    <span class="commons-diagram" aria-label={visual?.alt ?? `${project.data.title} project visual`} role="img">
-                      <span class="commons-diagram__prompt">Your next conversation</span>
-                      <span class="commons-diagram__agent">Events</span>
-                      <span class="commons-diagram__agent">People</span>
-                      <span class="commons-diagram__agent">Groups</span>
-                      <span class="commons-diagram__agent">Places</span>
-                      <span class="commons-diagram__agent">Ideas</span>
-                    </span>
-                  )}
-                </span>
-                <span class="project-polaroid__caption">
-                  <strong>{project.data.title}</strong>
-                  <span>{project.data.cardProof}</span>
-                </span>
+              <span class="project-polaroid__image">
+                {visual?.src ? (
+                  <img src={visual.src} alt={visual.alt} loading="lazy" />
+                ) : (
+                  <span class="commons-diagram" aria-label={visual?.alt ?? `${project.data.title} project visual`} role="img">
+                    <span class="commons-diagram__prompt">Your next conversation</span>
+                    <span class="commons-diagram__agent">Events</span>
+                    <span class="commons-diagram__agent">People</span>
+                    <span class="commons-diagram__agent">Groups</span>
+                    <span class="commons-diagram__agent">Places</span>
+                    <span class="commons-diagram__agent">Ideas</span>
+                  </span>
+                )}
+              </span>
+              <span class="project-polaroid__caption">
+                <strong>{project.data.title}</strong>
+                <span>{project.data.displayDate}</span>
               </span>
             </a>
           );
@@ -155,35 +162,22 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
         </a>
       </div>
       <ol class="essay-list">
-        {writing.slice(0, 3).map((essay) => (
-          <li>
+        {writing.slice(0, 3).map((essay) => {
+          const visual = essayVisuals[essay.id] ?? '/media/plates/writing-print.webp';
+          return (
+          <li data-essay-item style={`--essay-image: url(${visual})`}>
             <a href={`/${essay.id}/`}>
               <span class="essay-list__title">{essay.data.title}</span>
               <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
             </a>
           </li>
-        ))}
+          );
+        })}
       </ol>
     </section>
 
-    <section id="contact" class="contact-close section-shell" aria-labelledby="contact-title">
-      <div>
-        <h2 id="contact-title">Need someone who can own the backend and ship the whole product?</h2>
-        <p>B.Sc. Computer Science, building from Vancouver Island. Comfortable across the stack and with AI.</p>
-      </div>
-      <div class="contact-close__actions">
-        <a class="contact-close__email" href="mailto:contact@nathanpannell.com">Email Nathan</a>
-        <a class="contact-close__linkedin" href="https://www.linkedin.com/in/nathanpannell">Connect on LinkedIn</a>
-      </div>
-      <div class="contact-close__footer">
-        <p class="contact-close__colophon">© {new Date().getFullYear()} Nathan Pannell. Made on Vancouver Island.</p>
-        <nav class="contact-close__socials" aria-label="Social profiles">
-          <a href="https://www.github.com/nathanpannell">GitHub</a>
-          <a href="https://www.x.com/nwpannell">X</a>
-        </nav>
-      </div>
-    </section>
+    <SiteFooter />
   </main>
 
   <script>

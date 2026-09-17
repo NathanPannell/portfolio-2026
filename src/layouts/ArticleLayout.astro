@@ -1,5 +1,6 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import SiteLayout from './SiteLayout.astro';
 
 interface Props {
@@ -41,9 +42,6 @@ const formattedDate = new Intl.DateTimeFormat('en-CA', {
         <slot />
       </div>
     </article>
-    <footer class="article-footer">
-      <a href="/writing/">More writing</a>
-      <a href="mailto:contact@nathanpannell.com">Reply by email</a>
-    </footer>
+    <SiteFooter moreWriting />
   </main>
 </SiteLayout>
