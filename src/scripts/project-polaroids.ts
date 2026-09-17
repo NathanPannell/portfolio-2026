@@ -127,10 +127,12 @@ const startScrollHighlights = () => {
   window.addEventListener('scroll', schedule, { signal, passive: true });
   window.addEventListener('resize', schedule, { signal, passive: true });
   window.addEventListener('pageshow', schedule, { signal });
-  window.addEventListener('pagehide', () => {
-    controller.abort();
+  window.addEventListener('pagehide', (event) => {
     window.cancelAnimationFrame(frame);
-  }, { signal, once: true });
+    frame = 0;
+
+    if (!event.persisted) controller.abort();
+  }, { signal });
 
   update();
 };

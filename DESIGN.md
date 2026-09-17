@@ -189,7 +189,7 @@ Each card is a real link to a project page and has four tactile states:
 - **Fine-pointer movement:** Tilts by at most 7 degrees vertically and 9 degrees horizontally, with glare following the pointer.
 - **Active:** Compresses to 0.99 scale for a quiet press response.
 
-The deck responds to scroll as one physical collection. Exactly one card nearest the viewport center keeps its resting rotation, lifts, sharpens its edge, and catches a moving gloss without stealing focus or hijacking scroll. The card link itself remains the paper, shadow, and transform surface. Fine pointers add direct inspection tilt. Touch scrolling relies only on the centered state, never sticky hover, and preserves native vertical panning and whole-card taps. Pointer-activated links clear restored focus when visitors return through browser history, while live keyboard focus remains visible.
+The deck responds to scroll as one physical collection. Exactly one card nearest the viewport center keeps its resting rotation, lifts, sharpens its edge, and catches a moving gloss without stealing focus or hijacking scroll. The card link itself remains the paper, shadow, and transform surface. Fine pointers add direct inspection tilt. Touch scrolling relies only on the centered state, never sticky hover, and preserves native vertical panning and whole-card taps. Pointer-activated links clear restored focus when visitors return through browser history, while live keyboard focus remains visible. Back-forward cache restores must resume the center-selection controller so a previously active card can never freeze in place.
 
 ### Parkdex Gallery
 
