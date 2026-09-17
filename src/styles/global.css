@@ -1058,7 +1058,7 @@ a {
   position: absolute;
   margin: 0;
   isolation: isolate;
-  filter: drop-shadow(0 1.9rem 2.6rem rgba(5, 18, 18, 0.27)) drop-shadow(0 0.45rem 0.72rem rgba(5, 18, 18, 0.25));
+  filter: drop-shadow(0 1.8rem 2.4rem rgba(5, 18, 18, 0.22)) drop-shadow(0 0.35rem 0.58rem rgba(5, 18, 18, 0.2));
 }
 
 .parkdex-device__screen {
@@ -1077,7 +1077,7 @@ a {
   position: absolute;
   z-index: 2;
   inset: 0;
-  background: linear-gradient(118deg, rgba(255, 255, 255, 0.1), transparent 27%, transparent 72%, rgba(255, 255, 255, 0.045));
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.07), transparent 27%, transparent 76%, rgba(255, 255, 255, 0.025));
   pointer-events: none;
 }
 
@@ -1090,20 +1090,20 @@ a {
 
 .parkdex-device--laptop {
   padding: clamp(0.58rem, 1vw, 0.9rem) clamp(0.58rem, 1vw, 0.9rem) clamp(0.78rem, 1.25vw, 1.12rem);
-  border: 2px solid #26312f;
+  border: 2px solid #1c2724;
   border-radius: clamp(0.75rem, 1.4vw, 1.15rem) clamp(0.75rem, 1.4vw, 1.15rem) 0.38rem 0.38rem;
   background:
-    linear-gradient(105deg, #35413e 0 2%, #929a95 4%, #e4e5df 13%, #c2c7c2 74%, #69736f 94%, #2a3532 100%),
-    #6f7874;
+    linear-gradient(112deg, rgba(255, 255, 255, 0.12), transparent 30%, transparent 74%, rgba(7, 16, 14, 0.16)),
+    #3d4845;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.48),
-    inset 0 -0.24rem 0.34rem rgba(19, 29, 27, 0.34),
-    0 0.18rem 0.28rem rgba(16, 27, 27, 0.2);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 -0.2rem 0.28rem rgba(7, 16, 14, 0.28),
+    0 0.16rem 0.24rem rgba(16, 27, 27, 0.18);
 }
 
 .parkdex-device--laptop .parkdex-device__screen {
   aspect-ratio: 16 / 9;
-  border: clamp(0.22rem, 0.42vw, 0.36rem) solid #141e1c;
+  border: clamp(0.22rem, 0.42vw, 0.36rem) solid #101917;
   border-radius: clamp(0.32rem, 0.6vw, 0.52rem);
 }
 
@@ -1129,8 +1129,8 @@ a {
   height: clamp(0.9rem, 1.65vw, 1.34rem);
   clip-path: polygon(4% 0, 96% 0, 100% 52%, 97.5% 100%, 2.5% 100%, 0 52%);
   background:
-    linear-gradient(180deg, #26312f 0 13%, #929a96 15% 25%, #e2e4e0 27% 58%, #89928d 61% 78%, #333e3b 80% 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 0.58rem 0.85rem rgba(10, 24, 22, 0.3);
+    linear-gradient(180deg, #17211f 0 18%, #505b57 20% 68%, #313c38 70% 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0.5rem 0.76rem rgba(10, 24, 22, 0.24);
 }
 
 .parkdex-device__base::before {
@@ -1141,8 +1141,8 @@ a {
   left: 8%;
   height: 18%;
   border-radius: 0 0 999px 999px;
-  background: #17211f;
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+  background: #101917;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .parkdex-device__base::after {
@@ -1153,8 +1153,8 @@ a {
   width: 16%;
   height: 34%;
   border-radius: 0 0 0.35rem 0.35rem;
-  background: #65706c;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58), 0 1px 0 rgba(20, 31, 29, 0.32);
+  background: #3b4642;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 1px 0 rgba(20, 31, 29, 0.28);
 }
 
 .parkdex-device--map {
@@ -1168,20 +1168,20 @@ a {
 
 .parkdex-device--phone {
   padding: clamp(0.55rem, 1vw, 0.78rem) clamp(0.42rem, 0.78vw, 0.62rem) clamp(0.62rem, 1.12vw, 0.88rem);
-  border: 2px solid #202b29;
+  border: 2px solid #18221f;
   border-radius: clamp(1rem, 2.4vw, 2.15rem);
   background:
-    linear-gradient(102deg, #1b2523 0 3%, #737c78 5%, #d9ddd8 13%, #f1f1eb 48%, #b2b8b3 84%, #525d59 95%, #192321 100%),
-    #737c78;
+    linear-gradient(108deg, rgba(255, 255, 255, 0.12), transparent 20%, transparent 74%, rgba(7, 16, 14, 0.18)),
+    #37423f;
   box-shadow:
-    inset 0 0 0 clamp(0.1rem, 0.18vw, 0.15rem) rgba(23, 33, 31, 0.86),
-    inset 0.22rem 0 0.32rem rgba(255, 255, 255, 0.56),
-    inset -0.2rem 0 0.32rem rgba(19, 29, 27, 0.32),
-    0 0.18rem 0.28rem rgba(16, 27, 27, 0.2);
+    inset 0 0 0 clamp(0.1rem, 0.18vw, 0.15rem) rgba(14, 23, 20, 0.9),
+    inset 0.18rem 0 0.24rem rgba(255, 255, 255, 0.06),
+    inset -0.18rem 0 0.24rem rgba(7, 16, 14, 0.2),
+    0 0.16rem 0.24rem rgba(16, 27, 27, 0.18);
 }
 
 .parkdex-device--phone .parkdex-device__screen {
-  border: clamp(0.18rem, 0.34vw, 0.28rem) solid #111a18;
+  border: clamp(0.18rem, 0.34vw, 0.28rem) solid #0d1614;
   border-radius: clamp(0.76rem, 1.85vw, 1.62rem);
 }
 
@@ -1192,7 +1192,7 @@ a {
   position: absolute;
   z-index: 4;
   display: block;
-  background: #14201d;
+  background: #0a1311;
 }
 
 .parkdex-device--phone .parkdex-device__speaker {
@@ -1220,15 +1220,15 @@ a {
   width: 30%;
   height: clamp(0.1rem, 0.18vw, 0.16rem);
   border-radius: 999px;
-  background: #17211f;
+  background: rgba(236, 239, 233, 0.68);
   transform: translateX(-50%);
 }
 
 .parkdex-device--phone .parkdex-device__button {
   width: clamp(0.15rem, 0.24vw, 0.2rem);
   border-radius: 999px;
-  background: linear-gradient(180deg, #58625e, #1e2926 22% 78%, #6f7975);
-  box-shadow: inset 1px 0 rgba(255, 255, 255, 0.28), inset -1px 0 rgba(7, 16, 14, 0.48), 0 1px 2px rgba(7, 16, 14, 0.28);
+  background: #1a2522;
+  box-shadow: inset 1px 0 rgba(255, 255, 255, 0.1), inset -1px 0 rgba(7, 16, 14, 0.4), 0 1px 2px rgba(7, 16, 14, 0.24);
 }
 
 .parkdex-device__button--power {
