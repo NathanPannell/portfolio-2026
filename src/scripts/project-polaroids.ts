@@ -86,6 +86,15 @@ const startScrollHighlights = () => {
   };
 
   cards.forEach((card) => {
+    card.addEventListener('pointerup', (event) => {
+      if (event.pointerType === 'mouse') return;
+
+      window.requestAnimationFrame(() => {
+        if (document.activeElement === card) card.blur();
+        schedule();
+      });
+    }, { signal, passive: true });
+
     if (!finePointer.matches || reducedMotion.matches) return;
 
     let pointerFrame = 0;
