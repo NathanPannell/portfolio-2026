@@ -193,7 +193,7 @@ The deck responds to scroll as one physical collection. Exactly one card nearest
 
 ### Parkdex Gallery
 
-Use one wide map screenshot with two narrower mobile screenshots layered over it. The frames use print white, visible border thickness, small rotations, and real product imagery. This is a product story, not a carousel.
+Use one wide map screenshot inside a recognizable aluminum laptop and two narrower mobile screenshots inside slim light-metal phones. Each device needs a real screen inset, hardware edge, camera or speaker detail, layered contact shadow, and device-appropriate silhouette. Keep the three devices lightly rotated and layered like objects set down for review. This is a product story, not a carousel.
 
 ### Writing Selector
 

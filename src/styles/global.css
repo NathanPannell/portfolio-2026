@@ -1054,47 +1054,195 @@ a {
   min-height: 48rem;
 }
 
-.parkdex-shot {
+.parkdex-device {
   position: absolute;
-  overflow: hidden;
   margin: 0;
-  border: 0.7rem solid #fbfaf4;
-  border-radius: 1.35rem;
-  background: #dfe8d2;
-  box-shadow: 0 1.8rem 4.5rem rgba(15, 37, 40, 0.2), 0 0.35rem 1.15rem rgba(15, 37, 40, 0.14);
+  isolation: isolate;
+  filter: drop-shadow(0 1.7rem 2.2rem rgba(15, 37, 40, 0.17)) drop-shadow(0 0.35rem 0.5rem rgba(15, 37, 40, 0.13));
 }
 
-.parkdex-shot img {
+.parkdex-device__screen {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a1111;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.42), inset 0 0.25rem 0.55rem rgba(0, 0, 0, 0.2);
+}
+
+.parkdex-device__screen::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.1), transparent 27%, transparent 72%, rgba(255, 255, 255, 0.045));
+  pointer-events: none;
+}
+
+.parkdex-device img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.parkdex-shot--map {
+.parkdex-device--laptop {
+  padding: clamp(0.42rem, 0.8vw, 0.72rem) clamp(0.42rem, 0.8vw, 0.72rem) clamp(0.62rem, 1vw, 0.9rem);
+  border: 1px solid rgba(50, 60, 57, 0.24);
+  border-radius: clamp(0.75rem, 1.4vw, 1.15rem) clamp(0.75rem, 1.4vw, 1.15rem) 0.38rem 0.38rem;
+  background:
+    linear-gradient(105deg, rgba(255, 255, 255, 0.92), transparent 19%, transparent 75%, rgba(68, 78, 74, 0.16)),
+    #d9ddd8;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.82),
+    inset 0 -0.18rem 0.3rem rgba(47, 57, 53, 0.15);
+}
+
+.parkdex-device--laptop .parkdex-device__screen {
+  aspect-ratio: 16 / 9;
+  border-radius: clamp(0.32rem, 0.6vw, 0.52rem);
+}
+
+.parkdex-device--laptop .parkdex-device__camera {
+  position: absolute;
+  z-index: 3;
+  top: clamp(0.14rem, 0.25vw, 0.24rem);
+  left: 50%;
+  width: clamp(0.14rem, 0.22vw, 0.2rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #4a5653;
+  box-shadow: inset 0 0 0 1px #1d2725, 0 0 0 1px rgba(255, 255, 255, 0.38);
+  transform: translateX(-50%);
+}
+
+.parkdex-device__base {
+  position: absolute;
+  z-index: -1;
+  right: -4.5%;
+  bottom: clamp(-0.72rem, -1vw, -0.5rem);
+  left: -4.5%;
+  height: clamp(0.62rem, 1.25vw, 1rem);
+  clip-path: polygon(4% 0, 96% 0, 100% 52%, 97.5% 100%, 2.5% 100%, 0 52%);
+  background:
+    linear-gradient(180deg, #f6f7f4 0 18%, #cdd2ce 20% 62%, #aab1ac 64% 78%, #e8ebe8 80% 100%);
+  box-shadow: inset 0 1px 0 white, 0 0.45rem 0.7rem rgba(29, 40, 37, 0.16);
+}
+
+.parkdex-device__base::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 42%;
+  width: 16%;
+  height: 34%;
+  border-radius: 0 0 0.35rem 0.35rem;
+  background: #aeb5b0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.parkdex-device--map {
   z-index: 1;
   top: 7%;
   right: 6%;
   left: 0;
-  aspect-ratio: 1.68;
+  aspect-ratio: 1.72;
   transform: rotate(1.6deg);
 }
 
-.parkdex-shot--detail {
+.parkdex-device--phone {
+  padding: clamp(0.34rem, 0.7vw, 0.56rem) clamp(0.28rem, 0.55vw, 0.44rem) clamp(0.42rem, 0.85vw, 0.68rem);
+  border: 1px solid rgba(49, 59, 55, 0.24);
+  border-radius: clamp(1rem, 2.4vw, 2.15rem);
+  background:
+    linear-gradient(112deg, rgba(255, 255, 255, 0.98), rgba(223, 226, 220, 0.95) 46%, rgba(250, 250, 245, 0.98) 72%, rgba(177, 184, 178, 0.86)),
+    #eceee9;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.88),
+    inset 0.16rem 0 0.28rem rgba(255, 255, 255, 0.7),
+    inset -0.13rem 0 0.24rem rgba(43, 54, 50, 0.12);
+}
+
+.parkdex-device--phone .parkdex-device__screen {
+  border: 1px solid rgba(18, 27, 25, 0.62);
+  border-radius: clamp(0.76rem, 1.85vw, 1.62rem);
+}
+
+.parkdex-device--phone .parkdex-device__speaker,
+.parkdex-device--phone .parkdex-device__camera,
+.parkdex-device--phone .parkdex-device__gesture,
+.parkdex-device--phone .parkdex-device__button {
+  position: absolute;
+  z-index: 4;
+  display: block;
+  background: #737d79;
+}
+
+.parkdex-device--phone .parkdex-device__speaker {
+  top: clamp(0.12rem, 0.29vw, 0.22rem);
+  left: 50%;
+  width: 21%;
+  height: clamp(0.08rem, 0.13vw, 0.12rem);
+  border-radius: 999px;
+  transform: translateX(-50%);
+}
+
+.parkdex-device--phone .parkdex-device__camera {
+  top: clamp(0.1rem, 0.25vw, 0.2rem);
+  left: 36%;
+  width: clamp(0.12rem, 0.24vw, 0.2rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #34413e;
+  box-shadow: inset 0 0 0 1px #101a18, 0 0 0 1px rgba(255, 255, 255, 0.38);
+}
+
+.parkdex-device--phone .parkdex-device__gesture {
+  bottom: clamp(0.13rem, 0.27vw, 0.22rem);
+  left: 50%;
+  width: 26%;
+  height: clamp(0.08rem, 0.15vw, 0.13rem);
+  border-radius: 999px;
+  background: #5f6966;
+  transform: translateX(-50%);
+}
+
+.parkdex-device--phone .parkdex-device__button {
+  width: clamp(0.1rem, 0.18vw, 0.16rem);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #cfd3cf, #929a95 22% 78%, #dfe2de);
+  box-shadow: inset 1px 0 rgba(255, 255, 255, 0.48), inset -1px 0 rgba(41, 50, 47, 0.22);
+}
+
+.parkdex-device__button--power {
+  top: 25%;
+  right: clamp(-0.14rem, -0.18vw, -0.1rem);
+  height: 18%;
+}
+
+.parkdex-device__button--volume {
+  top: 22%;
+  left: clamp(-0.14rem, -0.18vw, -0.1rem);
+  height: 27%;
+}
+
+.parkdex-device--detail {
   z-index: 3;
   right: 1%;
   bottom: 5%;
   width: 32%;
-  aspect-ratio: 0.57;
+  aspect-ratio: 0.53;
   transform: rotate(4deg);
 }
 
-.parkdex-shot--progress {
+.parkdex-device--progress {
   z-index: 2;
   bottom: 0;
   left: 9%;
   width: 28%;
-  aspect-ratio: 0.58;
+  aspect-ratio: 0.53;
   transform: rotate(-4.5deg);
 }
 
@@ -1586,6 +1734,23 @@ a {
     min-height: 42rem;
   }
 
+  .parkdex-device--detail {
+    bottom: 3rem;
+  }
+
+  .parkdex-device--progress {
+    bottom: 2.5rem;
+  }
+
+  .parkdex-story__gallery figcaption {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    text-align: center;
+    white-space: nowrap;
+  }
+
   .section-heading,
   .writing-preview {
     grid-template-columns: 1fr;
@@ -1652,34 +1817,23 @@ a {
     min-height: 34rem;
   }
 
-  .parkdex-shot {
-    border-width: 0.45rem;
-    border-radius: 0.95rem;
-  }
-
-  .parkdex-shot--map {
+  .parkdex-device--map {
     right: 0;
   }
 
-  .parkdex-shot--detail {
+  .parkdex-device--detail {
     bottom: 3.15rem;
     width: 39%;
   }
 
-  .parkdex-shot--progress {
+  .parkdex-device--progress {
     bottom: 2.85rem;
     left: 4%;
     width: 35%;
   }
 
   .parkdex-story__gallery figcaption {
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 5;
     font-size: clamp(0.58rem, 2.5vw, 0.72rem);
-    text-align: center;
-    white-space: nowrap;
   }
 
   .section-heading {

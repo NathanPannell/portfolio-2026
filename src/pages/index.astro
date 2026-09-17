@@ -105,14 +105,32 @@ const essayVisuals: Record<string, string> = {
       </div>
 
       <div class="parkdex-story__gallery" aria-label="Parkdex interface previews">
-        <figure class="parkdex-shot parkdex-shot--map">
-          <img src="/media/parkdex/map-overview.webp" alt="Parkdex map overview showing Vancouver Island" loading="lazy" width="1600" height="875" />
+        <figure class="parkdex-device parkdex-device--laptop parkdex-device--map">
+          <span class="parkdex-device__screen">
+            <img src="/media/parkdex/map-overview.webp" alt="Parkdex map overview showing Vancouver Island" loading="lazy" width="1600" height="875" />
+          </span>
+          <span class="parkdex-device__camera" aria-hidden="true"></span>
+          <span class="parkdex-device__base" aria-hidden="true"></span>
         </figure>
-        <figure class="parkdex-shot parkdex-shot--detail">
-          <img src="/media/parkdex/park-detail.webp" alt="A park detail view in Parkdex" loading="lazy" width="720" height="1280" />
+        <figure class="parkdex-device parkdex-device--phone parkdex-device--detail">
+          <span class="parkdex-device__screen">
+            <img src="/media/parkdex/park-detail.webp" alt="A park detail view in Parkdex" loading="lazy" width="720" height="1280" />
+          </span>
+          <span class="parkdex-device__speaker" aria-hidden="true"></span>
+          <span class="parkdex-device__camera" aria-hidden="true"></span>
+          <span class="parkdex-device__gesture" aria-hidden="true"></span>
+          <span class="parkdex-device__button parkdex-device__button--power" aria-hidden="true"></span>
+          <span class="parkdex-device__button parkdex-device__button--volume" aria-hidden="true"></span>
         </figure>
-        <figure class="parkdex-shot parkdex-shot--progress">
-          <img src="/media/parkdex/island-progress.webp" alt="Vancouver Island completion progress in Parkdex" loading="lazy" width="720" height="1280" />
+        <figure class="parkdex-device parkdex-device--phone parkdex-device--progress">
+          <span class="parkdex-device__screen">
+            <img src="/media/parkdex/island-progress.webp" alt="Vancouver Island completion progress in Parkdex" loading="lazy" width="720" height="1280" />
+          </span>
+          <span class="parkdex-device__speaker" aria-hidden="true"></span>
+          <span class="parkdex-device__camera" aria-hidden="true"></span>
+          <span class="parkdex-device__gesture" aria-hidden="true"></span>
+          <span class="parkdex-device__button parkdex-device__button--power" aria-hidden="true"></span>
+          <span class="parkdex-device__button parkdex-device__button--volume" aria-hidden="true"></span>
         </figure>
         <figcaption>Parkdex, 2026 · Map © OpenStreetMap contributors.</figcaption>
       </div>
