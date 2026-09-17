@@ -14,7 +14,7 @@ We built it over a weekend hackathon. A few things came out of it that I keep co
 
 ---
 
-# What it does today
+## What it does today
 
 - Follow-up messages timed dynamically rather than on a fixed schedule
 - End-of-day summaries of how the day actually shook out
@@ -22,7 +22,7 @@ We built it over a weekend hackathon. A few things came out of it that I keep co
 
 ---
 
-# Lesson 1: Borrow a platform that already reaches everyone
+## Lesson 1: Borrow a platform that already reaches everyone
 
 Building a productivity app usually means building the app, the notification system, and a client for every device someone might use. Echo skips all of that by living inside Discord. Discord already runs on phone, desktop, and web, already handles push notifications, and already gives you a chat interface people know how to use. The bot only has to be smart; the delivery comes for free.
 
@@ -32,7 +32,7 @@ Wrapping intelligence around an existing messaging platform buys you multiplatfo
 
 ---
 
-# Lesson 2: Proactivity is how a productivity tool survives low motivation
+## Lesson 2: Proactivity is how a productivity tool survives low motivation
 
 Productivity tools churn hard because they mostly work when you're already motivated, and a motivated user is the one who needs the least help. The person who actually needs a journaling habit is the one in a slump, and the slump is exactly when the app gets deleted.
 
@@ -40,7 +40,7 @@ Echo's answer is to not wait. Because it reaches out on its own schedule, it kee
 
 ---
 
-# Lesson 3: Hackathons reward what the judges can see
+## Lesson 3: Hackathons reward what the judges can see
 
 Echo was clever where it counted, and a chat bot is a hard thing to show off on a projector. Flashy visuals do a lot of the persuading in a hackathon room, and a slick dashboard lands faster in a two-minute demo than a smart conversation does. It's a useful constraint to design around: if the interesting work lives underneath the surface, build a visible layer that puts it on display so the judges feel what you feel about it. Next time I'll spend some of the weekend making the substance easy to see.
 
@@ -54,7 +54,7 @@ It started as a weekend build, but the problem it goes after stays interesting t
 
 ---
 
-# Addendum: OpenClaw
+## Addendum: OpenClaw
 
 A month or so after this, an open-source project called OpenClaw (originally ClawdBot) started to take off, and it leans on the exact idea behind Lesson 1. It's a personal AI agent that uses the messaging apps you already have as its interface, WhatsApp, Telegram, Discord, and dozens more, so it inherits reach and proactive push instead of shipping its own app. It went from a weekend project to one of the most-starred repos on GitHub in a few months.
 

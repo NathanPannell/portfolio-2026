@@ -8,29 +8,6 @@ import hackathonImage from '../content/writing/_assets/hackathon-code-hack.jpg';
 
 const [projects, writing] = await Promise.all([getProjects(), getPublishedWriting()]);
 
-const projectVisuals: Record<string, { src?: string; alt: string }> = {
-  parkdex: {
-    src: '/media/parkdex/map-overview.webp',
-    alt: 'Map of parks across Vancouver Island in Parkdex',
-  },
-  doxxme: {
-    src: '/media/projects/doxxme-home.webp',
-    alt: 'Doxxme landing page with a dark globe and yellow product accents',
-  },
-  commons: {
-    src: '/media/projects/commons-demo.webp',
-    alt: 'Commons interface for finding people, events, and communities',
-  },
-  'go-fetch': {
-    src: '/media/projects/go-fetch-architecture.jpg',
-    alt: 'Go Fetch service architecture diagram',
-  },
-  'cup-of-sugar': {
-    src: '/media/projects/cup-of-sugar-poster.webp',
-    alt: 'Cup of Sugar food donation matching interface',
-  },
-};
-
 const essayDates = new Intl.DateTimeFormat('en-CA', {
   month: 'short',
   year: 'numeric',
@@ -57,10 +34,13 @@ const essayVisuals: Record<string, string> = {
       />
       <div class="hero__shade" aria-hidden="true"></div>
       <SiteHeader tone="dark" overlay />
-      <h1 id="hero-title" class="hero__title">
-        <span>I build products <br />that make life</span>{' '}
-        <em>more fun.</em>
-      </h1>
+      <div class="hero__copy">
+        <h1 id="hero-title" class="hero__title">
+          <span>I build products <br />that make life</span>{' '}
+          <em>more fun.</em>
+        </h1>
+        <p>Full-stack developer. Currently building Parkdex, a completionist map for Vancouver Island parks.</p>
+      </div>
       <div class="hero__prints" aria-label="A preview of Nathan's work">
         <a class="hero-print hero-print--parkdex" href="/parkdex/" aria-label="Explore Parkdex">
           <span class="hero-print__window">
@@ -85,20 +65,17 @@ const essayVisuals: Record<string, string> = {
 
     <section id="parkdex" class="parkdex-story section-shell" aria-labelledby="parkdex-title">
       <div class="parkdex-story__copy">
-        <h2 id="parkdex-title">The island needed a Pokédex.</h2>
+        <h2 id="parkdex-title">Vancouver Island needed a Pokédex.</h2>
         <p class="parkdex-story__lede">
-          Parkdex started with one goal: visit all 117 provincial parks on Vancouver Island.
+          I made Parkdex to help me visit all 117 provincial parks on Vancouver Island.
         </p>
         <p>
-          I built the current web app around profiles, park search, wishlists, visit tracking, completion, and badges across roughly 200 parks and islands.
-        </p>
-        <p>
-          Next up: an Android app that verifies visits by GPS, pings you when you arrive, and lets you take a Polaroid on site.
+          The web app maps roughly 200 parks and islands. You can find places, save a wishlist, track visits, and see how much of the island you have explored.
         </p>
         <div class="button-row">
           <a class="button button--primary" href="https://parkdex.app">Explore Parkdex</a>
           <a class="text-link" href="/parkdex/">
-            Read the project story
+            How I built it
             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5M7 5h8v8" /></svg>
           </a>
         </div>
@@ -139,27 +116,15 @@ const essayVisuals: Record<string, string> = {
     <section id="projects" class="projects section-shell" aria-labelledby="projects-title">
       <div class="section-heading">
         <h2 id="projects-title">Built with good people and a deadline.</h2>
-        <p>Five things I’ve shipped, from an island-wide park tracker to six-hour hackathon builds.</p>
+        <p>From an island-wide park tracker to six-hour hackathon builds.</p>
       </div>
 
       <div class="project-deck">
         {projects.map((project) => {
-          const visual = projectVisuals[project.id];
           return (
             <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
               <span class="project-polaroid__image">
-                {visual?.src ? (
-                  <img src={visual.src} alt={visual.alt} loading="lazy" />
-                ) : (
-                  <span class="commons-diagram" aria-label={visual?.alt ?? `${project.data.title} project visual`} role="img">
-                    <span class="commons-diagram__prompt">Your next conversation</span>
-                    <span class="commons-diagram__agent">Events</span>
-                    <span class="commons-diagram__agent">People</span>
-                    <span class="commons-diagram__agent">Groups</span>
-                    <span class="commons-diagram__agent">Places</span>
-                    <span class="commons-diagram__agent">Ideas</span>
-                  </span>
-                )}
+                <img src={project.data.cover} alt={project.data.coverAlt} loading="lazy" />
               </span>
               <span class="project-polaroid__caption">
                 <strong>{project.data.title}</strong>
@@ -173,9 +138,9 @@ const essayVisuals: Record<string, string> = {
 
     <section class="writing-preview section-shell" aria-labelledby="writing-title">
       <div class="writing-preview__intro">
-        <h2 id="writing-title">Notes from building and learning.</h2>
+        <h2 id="writing-title">Projects, mistakes, and what stuck.</h2>
         <a class="text-link" href="/writing/">
-          Enter the writing room
+          Read all writing
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5M7 5h8v8" /></svg>
         </a>
       </div>

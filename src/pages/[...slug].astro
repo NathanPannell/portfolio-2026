@@ -44,23 +44,28 @@ const LegacyContent = props.kind === 'project' && props.legacyEntry
 
 {props.kind === 'project' ? (
   <ProjectLayout
+    slug={props.entry.id}
     title={props.entry.data.title}
     tagline={props.entry.data.tagline}
     summary={props.entry.data.summary}
+    projectType={props.entry.data.projectType}
     displayDate={props.entry.data.displayDate}
-    status={props.entry.data.status}
     accent={props.entry.data.accent}
     cover={props.entry.data.cover}
+    coverAlt={props.entry.data.coverAlt}
+    highlights={props.entry.data.highlights}
     links={props.entry.data.links}
     collaborators={props.entry.data.collaborators}
     media={props.entry.data.media}
   >
     <Content />
     {LegacyContent && (
-      <section class="project-build-notes" aria-labelledby="project-build-notes-title">
-        <h2 id="project-build-notes-title">Build notes</h2>
-        <LegacyContent />
-      </section>
+      <details class="project-archive">
+        <summary>Read the original build notes</summary>
+        <div class="project-archive__body">
+          <LegacyContent />
+        </div>
+      </details>
     )}
   </ProjectLayout>
 ) : (
@@ -68,7 +73,6 @@ const LegacyContent = props.kind === 'project' && props.legacyEntry
     title={props.entry.data.title}
     pubDate={props.entry.data.pubDate}
     description={props.entry.data.description}
-    category={props.entry.data.category}
     image={props.entry.data.image}
   >
     <Content />

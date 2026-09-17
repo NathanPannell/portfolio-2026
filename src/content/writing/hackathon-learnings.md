@@ -1,7 +1,8 @@
 ---
-title: 'Hackathon Learnings'
+title: 'What a Failed Hackathon Taught Me'
 category: 'Writing'
 pubDate: '2025-10-05'
+description: 'Three lessons from a project that went wrong: research earlier, know your stack, and invite more perspectives.'
 ---
 
 ![University of Victoria's first NASA Space Apps Challenge](_assets/hackathon-all-participants.JPG)

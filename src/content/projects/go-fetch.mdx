@@ -1,26 +1,32 @@
 ---
 title: Go Fetch
-tagline: Semantic search for your own PDF library.
-summary: A distributed REST API for natural-language search across PDFs, built to see how a multi-service system behaves under load.
+tagline: Natural-language search for your own PDF library.
+summary: A solo, backend-only search system that cut median search latency from 1,500ms to about 57ms in the documented load test.
 order: 4
 displayDate: April 20, 2026
-projectDate: 2026-04-20
-status: completed
+projectType: Solo systems project
 cover: /media/projects/go-fetch-architecture.jpg
+coverAlt: Architecture diagram for the Go Fetch distributed search system
 accent: '#e7c85d'
+highlights:
+  - value: '1,500 to ~57ms'
+    label: median search latency
+  - value: '0.09 to 26.1 req/s'
+    label: throughput under load, with zero failures after fixes
+  - value: '16 to 1'
+    label: live model copies, freeing about 1.4GB of memory
 links:
   - label: View code
     href: https://github.com/NathanPannell/go-fetch
-media:
-  - kind: image
-    src: /media/projects/go-fetch-architecture.jpg
-    alt: Go Fetch distributed system architecture
-    width: 376
-    height: 441
+media: []
 ---
 
-Go Fetch is a semantic-search REST API with signup, login, PDF upload, and natural-language search across a personal document library.
+Go Fetch is a REST API with signup, login, PDF upload, and natural-language search across a personal document library. There is no frontend. The project is about the system underneath.
 
-The system splits the work across Flask, Celery, Redis, MongoDB, MinIO, and a dedicated embedding service. I built it to find the practical limits of a distributed search system, not just to make a demo work for one person on a laptop.
+## What I built
 
-There is no frontend. The interesting part is the architecture, the load behaviour, and the agentic workflow I used to move from an issue to a reviewed pull request.
+I split the work across Flask, Celery, Redis, MongoDB, MinIO, and a dedicated embedding service, then used load tests and profiling to find the real bottlenecks.
+
+## Result
+
+Median search latency fell from 1,500ms to about 57ms at the ten-user baseline. Throughput rose from 0.09 to 26.1 requests per second, and the failure rate fell from double digits to zero. Moving embeddings into one sidecar also reduced 16 model copies to one and freed about 1.4GB of memory.

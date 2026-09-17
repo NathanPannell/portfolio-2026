@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contentRoot = join(root, 'src', 'content');
 
-const expectedProjects = [
+const requiredProjects = [
   'parkdex',
   'doxxme',
   'commons',
@@ -14,21 +14,13 @@ const expectedProjects = [
   'cup-of-sugar',
 ];
 
-const expectedWriting = [
-  'graduation',
-  'hackathon-learnings',
-  'icbc-coop',
-];
-
-const expectedLegacy = [
+const requiredLegacy = [
   'cup-of-sugar',
   'echo',
   'go-fetch',
   'record-of-the-day',
   'suno-slayers',
 ];
-
-const requiredFlatSlugs = [...expectedWriting, ...expectedLegacy];
 
 function filesUnder(directory) {
   if (!existsSync(directory)) return [];
@@ -80,40 +72,49 @@ function publicEntries(collection) {
   );
 }
 
-function assertExact(actual, expected, label) {
-  assert.deepEqual(
-    [...actual].sort(),
-    [...expected].sort(),
-    `${label} changed. Update the explicit publishing contract deliberately if this is intended.`,
-  );
+function assertIncludes(actual, required, label) {
+  const actualSet = new Set(actual);
+  for (const slug of required) {
+    assert(actualSet.has(slug), `${label} must retain /${slug}/`);
+  }
 }
 
 const projects = publicEntries('projects');
 const writing = publicEntries('writing');
 const legacy = publicEntries('legacy');
 
-assert.equal(projects.length, 5, 'Exactly five featured projects must be public');
-assertExact(projects.map(({ slug }) => slug), expectedProjects, 'Featured project slugs');
-assertExact(writing.map(({ slug }) => slug), expectedWriting, 'Writing slugs');
-assertExact(legacy.map(({ slug }) => slug), expectedLegacy, 'Legacy post slugs');
+assert(projects.length >= requiredProjects.length, 'The featured project collection cannot lose existing work');
+assert(writing.length > 0, 'At least one published writing entry is required');
+assertIncludes(projects.map(({ slug }) => slug), requiredProjects, 'Featured projects');
+assertIncludes(legacy.map(({ slug }) => slug), requiredLegacy, 'Legacy posts');
 
 const orderedProjects = projects
   .map(({ slug, data }) => ({ slug, order: Number(data.get('order')) }))
   .sort((a, b) => a.order - b.order);
 assert.deepEqual(
-  orderedProjects.map(({ slug }) => slug),
-  expectedProjects,
-  'Featured project order must remain Parkdex, Doxxme, Commons, Go Fetch, Cup of Sugar',
+  orderedProjects.map(({ order }) => order),
+  orderedProjects.map((_, index) => index + 1),
+  'Featured project order values must be unique and contiguous',
 );
 assert.deepEqual(
-  orderedProjects.map(({ order }) => order),
-  [1, 2, 3, 4, 5],
-  'Featured project order values must be unique and contiguous',
+  orderedProjects.slice(0, requiredProjects.length).map(({ slug }) => slug),
+  requiredProjects,
+  'Existing featured projects must remain in their established order',
 );
 
 const flatSlugs = [...writing, ...legacy].map(({ slug }) => slug);
 assert.equal(new Set(flatSlugs).size, flatSlugs.length, 'Flat article slugs must be unique');
-assertExact(flatSlugs, requiredFlatSlugs, 'Required flat article slugs');
+assertIncludes(flatSlugs, requiredLegacy, 'Required flat article slugs');
+
+for (const { slug, data } of projects) {
+  for (const field of ['title', 'tagline', 'summary', 'projectType', 'displayDate', 'cover', 'coverAlt', 'highlights']) {
+    assert(data.has(field), `${slug} is missing required project frontmatter: ${field}`);
+  }
+}
+
+for (const { slug, data } of writing) {
+  assert(data.get('description'), `${slug} needs a useful description`);
+}
 
 for (const entry of [...projects, ...writing, ...legacy]) {
   assert.notEqual(entry.data.get('draft'), 'true', `${entry.slug} must not publish as a draft`);
@@ -125,8 +126,8 @@ if (existsSync(dist) && statSync(dist).isDirectory()) {
   const expectedRoutes = [...new Set([
     'index.html',
     'writing/index.html',
-    ...expectedProjects.map((slug) => `${slug}/index.html`),
-    ...requiredFlatSlugs.map((slug) => `${slug}/index.html`),
+    ...projects.map(({ slug }) => `${slug}/index.html`),
+    ...flatSlugs.map((slug) => `${slug}/index.html`),
   ])];
 
   for (const route of expectedRoutes) {

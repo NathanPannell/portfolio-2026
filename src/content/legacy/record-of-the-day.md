@@ -10,15 +10,13 @@ While Spotify and other music streaming platforms are constantly improving their
 
 This was my realization when I came across [Tom Moon's 1,000 Recordings to Hear Before You Die](https://en.wikipedia.org/wiki/1,000_Recordings_to_Hear_Before_You_Die). It's an eclectic collection of albums across every genre and time period that I became obsessed with.
 
-::spotify{url="https://open.spotify.com/playlist/42nArFgYJDbc0f6VzHfCdZ"}
-
-Check out the playlist on Spotify! 👆
+[Listen to the changing playlist on Spotify](https://open.spotify.com/playlist/42nArFgYJDbc0f6VzHfCdZ).
 
 To learn a new language (F#) and explore this new music catalogue, I decide to create a script that mutates a Spotify playlist daily with the next record. This way I could 'pin' the playlist once, and there would be a new album waiting for me each day.
 
 ---
 
-# How it works
+## How it works
 
 1. Selects the next album from Tom Moon's list [(album index)](https://open.spotify.com/playlist/4KQDdglJ7HGcqNozbJTlM3)
 2. Fetches the album's tracks and metadata from the Spotify Web API

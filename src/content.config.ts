@@ -27,8 +27,14 @@ const media = z.object({
   src: z.string(),
   poster: z.string().optional(),
   alt: z.string(),
+  caption: z.string().optional(),
   width: z.number().int().positive().optional(),
   height: z.number().int().positive().optional(),
+});
+
+const highlight = z.object({
+  value: z.string(),
+  label: z.string(),
 });
 
 const writing = defineCollection({
@@ -47,12 +53,13 @@ const projects = defineCollection({
     title: z.string(),
     tagline: z.string(),
     summary: z.string(),
+    projectType: z.string(),
     order: z.number().int().positive(),
     displayDate: z.string(),
-    projectDate: z.coerce.date().optional(),
-    status: z.enum(['live', 'in-progress', 'prototype', 'completed']),
     cover: z.string(),
+    coverAlt: z.string(),
     accent: z.string(),
+    highlights: z.array(highlight).min(2).max(3),
     collaborators: z.array(collaborator).default([]),
     links: z.array(link).min(1),
     media: z.array(media).default([]),

@@ -1,7 +1,8 @@
 ---
-title: 'ICBC Co-op Takeaways After 8 Months'
+title: 'Two Lessons From Owning a Production API at ICBC'
 category: 'Writing'
 pubDate: '2025-12-12'
+description: 'What I learned from porting, shipping, instrumenting, and maintaining a production API.'
 ---
 
 I spent eight months at ICBC porting a production .NET API over to Java. Beyond the port, I owned the thing end to end: deployed it to production, maintained it, and instrumented it. Two lessons came out of that ownership, and they both scale down to a two-person startup as cleanly as they scaled up to a large org.

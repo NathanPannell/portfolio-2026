@@ -1,16 +1,17 @@
 ---
-title: 'Reflections On Growth, As A UVic Graduate'
+title: 'What Graduation Made Me Notice About Growth'
 category: 'Writing'
 pubDate: '2026-06-20'
+description: 'A degree marks the moment you notice years of quiet change.'
 ---
 
-![](./_assets/grad.jpg)
+![Nathan Pannell holding his degree with family after graduating from the University of Victoria](./_assets/grad.jpg)
 
 Last month I graduated from the University of Victoria, and getting that degree didn't change anything about me, but it helped me realize how growth works.
 
 Growth is slow and continuous. It happens a little at a time, on ordinary days you don't even notice. But looking backwards, your brain doesn't see the slow climb. It marks the progress in steps: your first semester, your first job, your degree. The milestones are just the places where you stop and notice how far you've come.
 
-![](./_assets/degree.jpg)
+![Nathan Pannell’s Bachelor of Science degree from the University of Victoria](./_assets/degree.jpg)
 
 I was the same person the day I moved into residence as the day before. But that first weekend, without my friends, family, or dog, something grew that nobody clapped for.
 
@@ -20,6 +21,6 @@ I was the same person the day I convocated as the day before. But that piece of 
 
 It reminds me of the end of Kung Fu Panda. Po finally opens the Dragon Warrior Scroll, the thing that's supposed to hold the secret to unlimited power, and it's completely blank. All he sees is his own reflection.
 
-![](./_assets/po.jpg)
+![Po seeing his reflection in the Dragon Warrior Scroll in Kung Fu Panda](./_assets/po.jpg)
 
 The paper doesn't give you the power; it was already inside you. The degree just helped me see it.

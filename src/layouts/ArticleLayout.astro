@@ -7,11 +7,10 @@ interface Props {
   title: string;
   pubDate: Date;
   description?: string | undefined;
-  category?: string | undefined;
   image?: string | undefined;
 }
 
-const { title, pubDate, description, category, image } = Astro.props;
+const { title, pubDate, description, image } = Astro.props;
 const formattedDate = new Intl.DateTimeFormat('en-CA', {
   year: 'numeric',
   month: 'long',
@@ -22,7 +21,7 @@ const formattedDate = new Intl.DateTimeFormat('en-CA', {
 
 <SiteLayout
   title={`${title} | Nathan Pannell`}
-  description={description ?? `An essay by Nathan Pannell: ${title}`}
+  description={description ?? `Nathan Pannell on ${title}.`}
   image={image ?? '/media/hero/nathan-on-boat-wide.webp'}
   pageClass="article-page"
 >
@@ -34,7 +33,6 @@ const formattedDate = new Intl.DateTimeFormat('en-CA', {
         <h1>{title}</h1>
         <div class="article__meta">
           <time datetime={pubDate.toISOString()}>{formattedDate}</time>
-          {category && <span>{category}</span>}
         </div>
         {description && <p class="article__description">{description}</p>}
       </header>

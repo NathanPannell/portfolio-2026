@@ -1,13 +1,18 @@
 ---
 title: Cup of Sugar
 tagline: Help good food reach the people who need it.
-summary: A UVicHacks prototype that matches excess food from stores and restaurants with the changing needs of local food banks.
+summary: A UVicHacks prototype that turns messy inventory text into food-bank donation matches.
 order: 5
 displayDate: January 31, 2026
-projectDate: 2026-01-31
-status: prototype
+projectType: Hackathon prototype
 cover: /media/projects/cup-of-sugar-poster.webp
+coverAlt: Cup of Sugar interface for matching surplus food with food-bank needs
 accent: '#f09c67'
+highlights:
+  - value: 'CSV or text'
+    label: accepted inventory inputs
+  - value: '3 people'
+    label: UVicHacks team
 collaborators:
   - name: Jett Schreiber
     href: https://www.linkedin.com/in/jett-schreiber-b66212236/
@@ -22,10 +27,17 @@ media:
   - kind: youtube
     src: https://www.youtube.com/embed/bc9goVMAmgs
     alt: Cup of Sugar UVicHacks demo
+    caption: The UVicHacks demo follows surplus food from an unstructured inventory to a suggested match.
 ---
+
+## The problem
 
 Stores and restaurants often have usable food to give away while food banks have specific, changing needs. Cup of Sugar tries to close that gap without asking every organization to maintain another perfect form.
 
+## What we built
+
 Food banks and donors can describe inventory as CSV or plain text. Supabase stores the records, and Gemini turns the messy inputs into structured needs and offers that can be matched.
+
+## The team
 
 I built the prototype with Jett Schreiber and Mohan Selvarajan at UVicHacks. The interface is rough, but the premise still has heart: make it easier for surplus food to reach the right place before it becomes waste.

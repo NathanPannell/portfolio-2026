@@ -12,7 +12,7 @@ We trained on the [SONICS dataset](https://github.com/awsaf49/sonics): tens of t
 
 ---
 
-# Finding 1: Different models fail in different places, and that's the whole point of ensembles
+## Finding 1: Different models fail in different places, and that's the whole point of ensembles
 
 The headline result of the project was not that fusing models pushed accuracy higher. It was _why_ it pushed higher. Each of our three detectors had a distinct blind spot, and a properly built ensemble let the others cover for it. The gain came from complementary failure modes.
 
@@ -28,7 +28,7 @@ I learned that an ensemble is not automatically more robust than its parts. It a
 
 ---
 
-# Finding 2: Your detector has an expiration date
+## Finding 2: Your detector has an expiration date
 
 I built the lyrics classifier, and was surprised how simple it was. Plain [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) word counts into a logistic regression beat a fine-tuned [sentence-embedding](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) model. AI-generated lyrics carry an obvious statistical fingerprint that shallow patterns already catch.
 
@@ -38,7 +38,7 @@ That's the structural problem with any AI-detection product. You are detecting o
 
 ---
 
-# Finding 3: Difficulty depended on data more than architecture
+## Finding 3: Difficulty depended on data more than architecture
 
 One pattern showed up across every model we trained, including the CNN and transformer my teammates built. The detectors generalized almost perfectly to a Suno version they had never seen in training, as long as a similar version was well represented. They collapsed on the generator with the fewest training examples, regardless of how the model was built.
 

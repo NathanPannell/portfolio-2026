@@ -1,12 +1,20 @@
 ---
 title: Commons
 tagline: Find people worth meeting nearby.
-summary: A hackathon prototype that helps early-career professionals find nearby events and people worth meeting.
+summary: A five-agent discovery prototype we shipped in six hours. It placed in the top two at the Claude Hackathon.
 order: 3
 displayDate: April 2026
-status: prototype
+projectType: Six-hour hackathon
 cover: /media/projects/commons-demo.webp
+coverAlt: Commons interface for finding nearby people, events, and communities
 accent: '#6fa8ff'
+highlights:
+  - value: '5 agents'
+    label: parallel search workflows
+  - value: '6 hours'
+    label: to ship the full-stack prototype
+  - value: 'Top 2'
+    label: Claude Hackathon finish
 collaborators:
   - name: Arya Punjabi
     href: https://www.linkedin.com/in/arya-punjabi/
@@ -16,13 +24,18 @@ links:
   - label: View code
     href: https://github.com/NathanPannell/commons
 media:
-  - kind: image
-    src: /media/projects/commons-demo.webp
-    alt: Commons prototype interface for discovering a professional network
+  - kind: youtube
+    src: https://www.youtube.com/embed/zDh8jt1IRP4
+    alt: Commons Claude Hackathon demo
+    caption: The six-hour prototype presented at the Claude Hackathon.
 ---
 
-Arya Punjabi and I built Commons for the Claude Hackathon. It is for people early in their careers who do not already have a strong professional network.
+Commons helps people early in their careers find nearby events, community leaders, and people worth meeting when they do not already have a strong professional network.
 
-The prototype used five parallel web-search agents to find relevant local events, community leaders, and other leads for a user to follow up with. I built the agentic workflows, and we shipped the containerized full-stack app in six hours.
+## What I owned
 
-Commons placed in the top two. It was also my first serious attempt at coordinating multiple search agents, including the less glamorous part: running into API rate limits and learning where structured data still beats an open-ended agent.
+I built the workflows for five parallel web-search agents. Arya Punjabi and I packaged them into a containerized full-stack app and shipped the prototype in six hours.
+
+## Result
+
+Commons placed in the top two. It also showed me where open-ended agents stop helping: API rate limits became a constraint quickly, and structured data still won for parts of the search.
