@@ -1058,7 +1058,7 @@ a {
   position: absolute;
   margin: 0;
   isolation: isolate;
-  filter: drop-shadow(0 1.7rem 2.2rem rgba(15, 37, 40, 0.17)) drop-shadow(0 0.35rem 0.5rem rgba(15, 37, 40, 0.13));
+  filter: drop-shadow(0 1.9rem 2.6rem rgba(5, 18, 18, 0.27)) drop-shadow(0 0.45rem 0.72rem rgba(5, 18, 18, 0.25));
 }
 
 .parkdex-device__screen {
@@ -1069,7 +1069,7 @@ a {
   height: 100%;
   overflow: hidden;
   background: #0a1111;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.42), inset 0 0.25rem 0.55rem rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.72), inset 0 0.25rem 0.55rem rgba(0, 0, 0, 0.28);
 }
 
 .parkdex-device__screen::after {
@@ -1089,46 +1089,60 @@ a {
 }
 
 .parkdex-device--laptop {
-  padding: clamp(0.42rem, 0.8vw, 0.72rem) clamp(0.42rem, 0.8vw, 0.72rem) clamp(0.62rem, 1vw, 0.9rem);
-  border: 1px solid rgba(50, 60, 57, 0.24);
+  padding: clamp(0.58rem, 1vw, 0.9rem) clamp(0.58rem, 1vw, 0.9rem) clamp(0.78rem, 1.25vw, 1.12rem);
+  border: 2px solid #26312f;
   border-radius: clamp(0.75rem, 1.4vw, 1.15rem) clamp(0.75rem, 1.4vw, 1.15rem) 0.38rem 0.38rem;
   background:
-    linear-gradient(105deg, rgba(255, 255, 255, 0.92), transparent 19%, transparent 75%, rgba(68, 78, 74, 0.16)),
-    #d9ddd8;
+    linear-gradient(105deg, #35413e 0 2%, #929a95 4%, #e4e5df 13%, #c2c7c2 74%, #69736f 94%, #2a3532 100%),
+    #6f7874;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.82),
-    inset 0 -0.18rem 0.3rem rgba(47, 57, 53, 0.15);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.48),
+    inset 0 -0.24rem 0.34rem rgba(19, 29, 27, 0.34),
+    0 0.18rem 0.28rem rgba(16, 27, 27, 0.2);
 }
 
 .parkdex-device--laptop .parkdex-device__screen {
   aspect-ratio: 16 / 9;
+  border: clamp(0.22rem, 0.42vw, 0.36rem) solid #141e1c;
   border-radius: clamp(0.32rem, 0.6vw, 0.52rem);
 }
 
 .parkdex-device--laptop .parkdex-device__camera {
   position: absolute;
   z-index: 3;
-  top: clamp(0.14rem, 0.25vw, 0.24rem);
+  top: clamp(0.19rem, 0.32vw, 0.3rem);
   left: 50%;
-  width: clamp(0.14rem, 0.22vw, 0.2rem);
+  width: clamp(0.17rem, 0.27vw, 0.24rem);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #4a5653;
-  box-shadow: inset 0 0 0 1px #1d2725, 0 0 0 1px rgba(255, 255, 255, 0.38);
+  background: #07110f;
+  box-shadow: inset 0 0 0 1px #000807, 0 0 0 1px rgba(255, 255, 255, 0.46), 0 0 0.18rem rgba(7, 17, 15, 0.7);
   transform: translateX(-50%);
 }
 
 .parkdex-device__base {
   position: absolute;
-  z-index: -1;
-  right: -4.5%;
-  bottom: clamp(-0.72rem, -1vw, -0.5rem);
-  left: -4.5%;
-  height: clamp(0.62rem, 1.25vw, 1rem);
+  z-index: 0;
+  right: -5.5%;
+  bottom: clamp(-1.02rem, -1.45vw, -0.76rem);
+  left: -5.5%;
+  height: clamp(0.9rem, 1.65vw, 1.34rem);
   clip-path: polygon(4% 0, 96% 0, 100% 52%, 97.5% 100%, 2.5% 100%, 0 52%);
   background:
-    linear-gradient(180deg, #f6f7f4 0 18%, #cdd2ce 20% 62%, #aab1ac 64% 78%, #e8ebe8 80% 100%);
-  box-shadow: inset 0 1px 0 white, 0 0.45rem 0.7rem rgba(29, 40, 37, 0.16);
+    linear-gradient(180deg, #26312f 0 13%, #929a96 15% 25%, #e2e4e0 27% 58%, #89928d 61% 78%, #333e3b 80% 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 0.58rem 0.85rem rgba(10, 24, 22, 0.3);
+}
+
+.parkdex-device__base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 8%;
+  left: 8%;
+  height: 18%;
+  border-radius: 0 0 999px 999px;
+  background: #17211f;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .parkdex-device__base::after {
@@ -1139,8 +1153,8 @@ a {
   width: 16%;
   height: 34%;
   border-radius: 0 0 0.35rem 0.35rem;
-  background: #aeb5b0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  background: #65706c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58), 0 1px 0 rgba(20, 31, 29, 0.32);
 }
 
 .parkdex-device--map {
@@ -1153,20 +1167,21 @@ a {
 }
 
 .parkdex-device--phone {
-  padding: clamp(0.34rem, 0.7vw, 0.56rem) clamp(0.28rem, 0.55vw, 0.44rem) clamp(0.42rem, 0.85vw, 0.68rem);
-  border: 1px solid rgba(49, 59, 55, 0.24);
+  padding: clamp(0.55rem, 1vw, 0.78rem) clamp(0.42rem, 0.78vw, 0.62rem) clamp(0.62rem, 1.12vw, 0.88rem);
+  border: 2px solid #202b29;
   border-radius: clamp(1rem, 2.4vw, 2.15rem);
   background:
-    linear-gradient(112deg, rgba(255, 255, 255, 0.98), rgba(223, 226, 220, 0.95) 46%, rgba(250, 250, 245, 0.98) 72%, rgba(177, 184, 178, 0.86)),
-    #eceee9;
+    linear-gradient(102deg, #1b2523 0 3%, #737c78 5%, #d9ddd8 13%, #f1f1eb 48%, #b2b8b3 84%, #525d59 95%, #192321 100%),
+    #737c78;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.88),
-    inset 0.16rem 0 0.28rem rgba(255, 255, 255, 0.7),
-    inset -0.13rem 0 0.24rem rgba(43, 54, 50, 0.12);
+    inset 0 0 0 clamp(0.1rem, 0.18vw, 0.15rem) rgba(23, 33, 31, 0.86),
+    inset 0.22rem 0 0.32rem rgba(255, 255, 255, 0.56),
+    inset -0.2rem 0 0.32rem rgba(19, 29, 27, 0.32),
+    0 0.18rem 0.28rem rgba(16, 27, 27, 0.2);
 }
 
 .parkdex-device--phone .parkdex-device__screen {
-  border: 1px solid rgba(18, 27, 25, 0.62);
+  border: clamp(0.18rem, 0.34vw, 0.28rem) solid #111a18;
   border-radius: clamp(0.76rem, 1.85vw, 1.62rem);
 }
 
@@ -1177,54 +1192,54 @@ a {
   position: absolute;
   z-index: 4;
   display: block;
-  background: #737d79;
+  background: #14201d;
 }
 
 .parkdex-device--phone .parkdex-device__speaker {
-  top: clamp(0.12rem, 0.29vw, 0.22rem);
+  top: clamp(0.19rem, 0.36vw, 0.29rem);
   left: 50%;
-  width: 21%;
-  height: clamp(0.08rem, 0.13vw, 0.12rem);
+  width: 24%;
+  height: clamp(0.1rem, 0.17vw, 0.15rem);
   border-radius: 999px;
   transform: translateX(-50%);
 }
 
 .parkdex-device--phone .parkdex-device__camera {
-  top: clamp(0.1rem, 0.25vw, 0.2rem);
-  left: 36%;
-  width: clamp(0.12rem, 0.24vw, 0.2rem);
+  top: clamp(0.17rem, 0.33vw, 0.27rem);
+  left: 34%;
+  width: clamp(0.15rem, 0.28vw, 0.23rem);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #34413e;
-  box-shadow: inset 0 0 0 1px #101a18, 0 0 0 1px rgba(255, 255, 255, 0.38);
+  background: #07110f;
+  box-shadow: inset 0 0 0 1px #000807, 0 0 0 1px rgba(255, 255, 255, 0.42), 0 0 0.16rem rgba(7, 17, 15, 0.68);
 }
 
 .parkdex-device--phone .parkdex-device__gesture {
-  bottom: clamp(0.13rem, 0.27vw, 0.22rem);
+  bottom: clamp(0.2rem, 0.38vw, 0.3rem);
   left: 50%;
-  width: 26%;
-  height: clamp(0.08rem, 0.15vw, 0.13rem);
+  width: 30%;
+  height: clamp(0.1rem, 0.18vw, 0.16rem);
   border-radius: 999px;
-  background: #5f6966;
+  background: #17211f;
   transform: translateX(-50%);
 }
 
 .parkdex-device--phone .parkdex-device__button {
-  width: clamp(0.1rem, 0.18vw, 0.16rem);
+  width: clamp(0.15rem, 0.24vw, 0.2rem);
   border-radius: 999px;
-  background: linear-gradient(180deg, #cfd3cf, #929a95 22% 78%, #dfe2de);
-  box-shadow: inset 1px 0 rgba(255, 255, 255, 0.48), inset -1px 0 rgba(41, 50, 47, 0.22);
+  background: linear-gradient(180deg, #58625e, #1e2926 22% 78%, #6f7975);
+  box-shadow: inset 1px 0 rgba(255, 255, 255, 0.28), inset -1px 0 rgba(7, 16, 14, 0.48), 0 1px 2px rgba(7, 16, 14, 0.28);
 }
 
 .parkdex-device__button--power {
   top: 25%;
-  right: clamp(-0.14rem, -0.18vw, -0.1rem);
+  right: clamp(-0.2rem, -0.28vw, -0.16rem);
   height: 18%;
 }
 
 .parkdex-device__button--volume {
   top: 22%;
-  left: clamp(-0.14rem, -0.18vw, -0.1rem);
+  left: clamp(-0.2rem, -0.28vw, -0.16rem);
   height: 27%;
 }
 
@@ -1818,7 +1833,13 @@ a {
   }
 
   .parkdex-device--map {
-    right: 0;
+    right: 3%;
+    left: 3%;
+  }
+
+  .parkdex-device__base {
+    right: -3%;
+    left: -3%;
   }
 
   .parkdex-device--detail {
