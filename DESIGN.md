@@ -152,7 +152,7 @@ Project pages open with one continuous Vancouver Island photo-backed hero contai
 
 Depth is physical rather than glassy. Instant-film prints keep neutral, warm-white coated stock in every state, with a visible laminated edge, a darker contact shadow, and a broader ambient falloff. Project colors must never replace the white film border. Flat editorial sections use dividers and tonal shifts instead of card shadows. There are no translucent dashboard panels, glass effects, or floating gradient blobs.
 
-The project deck increases elevation in response to viewport-centered selection, fine-pointer hover, or keyboard focus. The same neutral print lifts, straightens, scales slightly, exposes more of its paper edge, and picks up a soft moving lamination glare. Parkdex screenshots are framed and slightly rotated to suggest photographs laid out for review.
+The project deck increases elevation in response to viewport-centered selection, fine-pointer hover, or keyboard focus. The same neutral print keeps its resting angle, lifts, scales slightly, exposes more of its paper edge, and picks up a soft moving lamination glare. Parkdex screenshots are framed and slightly rotated to suggest photographs laid out for review.
 
 **The Flat Until Touched Rule.** Editorial surfaces stay flat. Stronger shadows belong to photographic artifacts and interactive elevation states.
 
@@ -185,11 +185,11 @@ Three oversized instant-film objects rise into the desktop fold. Their entrance 
 Each card is a real link to a project page and has four tactile states:
 
 - **Rest:** Slight project-specific rotation and soft print shadow.
-- **Hover or keyboard focus:** Straightens, lifts 0.8rem, scales to 1.025, sharpens its neutral laminated edge, and increases elevation.
+- **Hover or keyboard focus:** Keeps its resting rotation, lifts 0.8rem, scales to 1.025, sharpens its neutral laminated edge, and increases elevation.
 - **Fine-pointer movement:** Tilts by at most 7 degrees vertically and 9 degrees horizontally, with glare following the pointer.
 - **Active:** Compresses to 0.99 scale for a quiet press response.
 
-The deck responds to scroll as one physical collection. Exactly one card nearest the viewport center straightens, lifts, sharpens its edge, and catches a moving gloss without stealing focus or hijacking scroll. The card link itself remains the paper, shadow, and transform surface. Fine pointers add direct inspection tilt. Touch scrolling relies only on the centered state, never sticky hover, and preserves native vertical panning and whole-card taps.
+The deck responds to scroll as one physical collection. Exactly one card nearest the viewport center keeps its resting rotation, lifts, sharpens its edge, and catches a moving gloss without stealing focus or hijacking scroll. The card link itself remains the paper, shadow, and transform surface. Fine pointers add direct inspection tilt. Touch scrolling relies only on the centered state, never sticky hover, and preserves native vertical panning and whole-card taps. Pointer-activated links clear restored focus when visitors return through browser history, while live keyboard focus remains visible.
 
 ### Parkdex Gallery
 

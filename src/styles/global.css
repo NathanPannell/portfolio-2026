@@ -1219,7 +1219,6 @@ a {
 }
 
 .project-polaroid[data-active] {
-  --rotation: 0deg;
   --lift: -0.9rem;
   --card-scale: 1.026;
   --glare-opacity: 0.68;
@@ -1240,7 +1239,6 @@ a {
 }
 
 .project-polaroid:focus-visible {
-  --rotation: 0deg;
   --lift: -0.8rem;
   --card-scale: 1.025;
   --glare-opacity: 0.68;
@@ -1262,7 +1260,6 @@ a {
 
 @media (hover: hover) and (pointer: fine) {
   .project-polaroid:hover {
-    --rotation: 0deg;
     --lift: -0.8rem;
     --card-scale: 1.025;
     --glare-opacity: 0.68;
@@ -1532,25 +1529,48 @@ a {
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.essay-list li:is([data-active], :has(a:hover), :has(a:focus-visible))::before {
+.essay-list li:is([data-active], :has(a:focus-visible))::before {
   opacity: 1;
   transform: scale(1);
 }
 
-.essay-list li:is([data-active], :has(a:hover), :has(a:focus-visible)) a {
+.essay-list li:is([data-active], :has(a:focus-visible)) a {
   color: white;
 }
 
-.essay-list li:is([data-active], :has(a:hover), :has(a:focus-visible)) time {
+.essay-list li:is([data-active], :has(a:focus-visible)) time {
   color: rgba(255, 255, 255, 0.76);
 }
 
-.essay-list li:is([data-active], :has(a:hover), :has(a:focus-visible)) .essay-list__title {
+.essay-list li:is([data-active], :has(a:focus-visible)) .essay-list__title {
   transform: translateX(0.25rem);
 }
 
-.essay-list li:is([data-active], :has(a:hover), :has(a:focus-visible)) svg {
+.essay-list li:is([data-active], :has(a:focus-visible)) svg {
   transform: translateX(0.35rem);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .essay-list li:has(a:hover)::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .essay-list li:has(a:hover) a {
+    color: white;
+  }
+
+  .essay-list li:has(a:hover) time {
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  .essay-list li:has(a:hover) .essay-list__title {
+    transform: translateX(0.25rem);
+  }
+
+  .essay-list li:has(a:hover) svg {
+    transform: translateX(0.35rem);
+  }
 }
 
 @media (max-width: 980px) {

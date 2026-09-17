@@ -94,16 +94,27 @@ const formatYear = (date: Date) => date.getFullYear().toString();
   }
 
   .writing-selector__item--active a,
-  .writing-selector__item a:is(:hover, :focus-visible) {
+  .writing-selector__item a:focus-visible {
     color: #f1f0e8;
   }
 
-  .writing-selector__list:has(a:is(:hover, :focus-visible)) .writing-selector__item--active a:not(:hover, :focus-visible) {
+  .writing-selector__list:has(a:focus-visible) .writing-selector__item--active a:not(:focus-visible) {
     color: #8e938f;
   }
 
-  .writing-selector__item a:is(:hover, :focus-visible) {
+  .writing-selector__item a:focus-visible {
     transform: translateX(0.45rem);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .writing-selector__item a:hover {
+      color: #f1f0e8;
+      transform: translateX(0.45rem);
+    }
+
+    .writing-selector__list:has(a:hover) .writing-selector__item--active a:not(:hover) {
+      color: #8e938f;
+    }
   }
 
   .writing-selector__title {
