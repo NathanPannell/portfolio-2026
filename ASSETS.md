@@ -7,7 +7,7 @@ All shipping raster assets under `public/media` carry an `impeccable:prompt` rec
 | Output | Dimensions | Source and treatment |
 | --- | ---: | --- |
 | `public/media/hero/nathan-on-boat-original.webp` | 1406 x 1405 | User-owned photograph, copied unchanged from `.impeccable/references/nathan-on-a-boat.webp`, originally from the private Chiri repository. |
-| `public/media/hero/nathan-on-boat-wide.png` | 1896 x 830 | Approved wide hero plate copied from `assets/plates/hero-photo.png`. Its embedded prompt records the identity reference and production instructions. |
+| `assets/plates/hero-photo.png` | 1896 x 830 | Archived approved wide hero plate. Kept outside `public/` so the source master is not copied into the deployed site. Its embedded prompt records the identity reference and production instructions. |
 | `public/media/hero/nathan-on-boat-wide.webp` | 1896 x 830 | Production WebP derivative of the approved wide hero plate. Used by the site and social metadata. |
 | `public/media/hero/nathan-on-boat-wide-dark-v2.webp` | 1896 x 830 | ImageGen lighting edit of the approved wide plate. Only the left desktop text region is darkened with a feathered photographic exposure falloff; subject identity, composition, geometry, and the right side are preserved. Used by the desktop homepage hero. |
 
@@ -35,15 +35,15 @@ These are user-supplied product screenshots. WebP conversion only resizes and en
 
 ## Approved composition plates
 
-The following files are direct copies of the approved Impeccable build plates and retain their embedded prompts:
+The following files are the approved Impeccable source plates and retain their embedded prompts. They live outside `public/` so only production derivatives ship:
 
-- `public/media/plates/hero-photo.png` (1896 x 830)
-- `public/media/plates/parkdex-print.png` (1586 x 992)
-- `public/media/plates/writing-print.png` (1586 x 992)
-- `public/media/plates/island-print.png` (1586 x 992)
-- `public/media/plates/paper-ground.png` (1536 x 1024)
+- `assets/plates/hero-photo.png` (1896 x 830)
+- `assets/plates/parkdex-print.png` (1586 x 992)
+- `assets/plates/writing-print.png` (1586 x 992)
+- `assets/plates/island-print.png` (1586 x 992)
+- `assets/plates/paper-ground.png` (1536 x 1024)
 
-The site loads production WebP derivatives of `writing-print`, `island-print`, and `paper-ground`. Their adjacent JSON sidecars preserve source and encoding provenance. The original PNG plates remain as review artifacts.
+The site loads production WebP derivatives of `writing-print` and `paper-ground`. The current homepage field note uses `vancouver-island-lake-2026.webp` instead of the older `island-print` derivative. Adjacent JSON sidecars preserve source and encoding provenance. The original PNG plates remain available as review artifacts under `assets/plates`.
 
 ## Homepage field-note photographs
 

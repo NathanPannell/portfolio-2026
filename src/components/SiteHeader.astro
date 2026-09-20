@@ -8,11 +8,16 @@ const { tone = 'dark', overlay = false } = Astro.props;
 ---
 
 <header class:list={['site-header', `site-header--${tone}`, { 'site-header--overlay': overlay }]}> 
-  <a class="site-header__name" href="/" aria-label="Nathan Pannell, home">Nathan Pannell</a>
+  <div class="site-header__identity">
+    <a class="site-header__name" href="/" aria-label="Nathan Pannell, home">Nathan Pannell</a>
+    <span class="site-header__descriptor">Full-stack developer · Parkdex · Vancouver Island</span>
+  </div>
   <nav class="site-header__nav" aria-label="Primary navigation">
-    <a href="/#parkdex">Parkdex</a>
-    <a href="/#projects">Projects</a>
-    <a href="/writing/">Writing</a>
+    <ul class="site-header__links">
+      <li><a href="/#parkdex">Parkdex</a></li>
+      <li><a href="/#projects">Projects</a></li>
+      <li><a href="/writing/">Writing</a></li>
+    </ul>
     <a class="site-header__contact" href="mailto:contact@nathanpannell.com">
       <span>Email me</span>
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" /></svg>

@@ -93,6 +93,8 @@ The system is light, candid, tactile, and technically precise. Deep green-black 
 
 The palette comes from coastal water, fogged paper, forest shade, and Parkdex. Most screens stay neutral so photography, screenshots, and project-specific accents remain credible.
 
+`tokens.css` is the implementation source of truth for colour, typography, motion, spacing, rules, and radii. Component and page styles must consume named variables from that file instead of declaring local colour literals.
+
 ### Primary
 
 - **Parkdex Lime:** Reserved for the primary contact action, text selection, focus outlines, and rare moments of confirmation. Its scarcity gives it force.
@@ -152,7 +154,7 @@ Project pages open on paper with a two-column composition: short story, actions,
 
 Depth is physical rather than glassy. Instant-film prints keep neutral, warm-white coated stock in every state, with a visible laminated edge, a darker contact shadow, and a broader ambient falloff. Project colors must never replace the white film border. Flat editorial sections use dividers and tonal shifts instead of card shadows. There are no translucent dashboard panels, glass effects, or floating gradient blobs.
 
-The project deck increases elevation only in response to fine-pointer hover or keyboard focus. The same neutral print keeps its paper surface, lifts, and rotates by less than one additional degree. There is no moving glare, sheen, or scroll-selected state. Parkdex screenshots are framed and slightly rotated to suggest photographs laid out for review.
+The project deck increases elevation in response to fine-pointer hover or keyboard focus. On mobile, the single card nearest the viewport center receives the same restrained emphasis while it is inside the deck. The neutral print keeps its paper surface, lifts, and rotates by less than one additional degree; there is no moving glare or sheen. Parkdex screenshots are framed and slightly rotated to suggest photographs laid out for review.
 
 **The Flat Until Touched Rule.** Editorial surfaces stay flat. Stronger shadows belong to photographic artifacts and interactive elevation states.
 
@@ -168,7 +170,7 @@ Use circles only for functional details already present in an artifact or projec
 
 ### Navigation
 
-The desktop header is minimal: Nathan Pannell, Parkdex, Projects, Writing, and Email me. It may overlay the hero or sit on a paper surface. Overlay text uses enough shadow or local image contrast to remain legible. Email me uses a lime underline and a drawn arrow instead of another filled pill. On mobile, keep only Nathan Pannell and Email me. The shared footer carries the social routes.
+The desktop header is a restrained field-index masthead. Nathan Pannell and the concrete identity line occupy the first row; Parkdex, Projects, Writing, and Email me form a ruled navigation row beneath. It may overlay the hero or sit on a paper surface. Overlay text uses enough shadow or local image contrast to remain legible. Email me uses a lime underline and a drawn arrow instead of another filled pill. On mobile, collapse back to only Nathan Pannell and Email me. The shared footer carries the social routes.
 
 ### Buttons and Text Links
 
@@ -189,7 +191,11 @@ Each card is a real link to a project page and has four tactile states:
 - **Fine-pointer movement:** No cursor-following tilt or glare. The physical response is a single stable hover state.
 - **Active:** Settles to a shallower 0.2rem lift for a quiet press response.
 
-The deck stays still while the visitor scrolls. The card link itself remains the paper, shadow, and transform surface. Fine pointers receive one hover lift and small rotation, while touch scrolling has no synthetic active state and preserves native vertical panning and whole-card taps. Pointer-activated links clear restored focus when visitors return through browser history, while live keyboard focus remains visible.
+On desktop, the deck stays still while the visitor scrolls. On mobile, the card nearest the viewport centre receives the established lifted focus state so the vertical deck keeps a clear reading position; only one card may be active, and the state clears outside the project section. The card link itself remains the paper, shadow, and transform surface. Fine pointers receive one hover lift and small rotation, while touch scrolling preserves native vertical panning and whole-card taps. Pointer-activated links clear restored focus when visitors return through browser history, while live keyboard focus remains visible. Back-forward cache restores must resume the mobile focus calculation without duplicating listeners.
+
+### Lost Trail Page
+
+The 404 route is a useful field note rather than a centred utility message. Pair one tactile 404 marker with a short “Lost the trail.” explanation and three direct destinations: Home, Parkdex, and Writing. Preserve the same paper, ink, coral punctuation, and typographic rules as the rest of the site.
 
 ### Parkdex Gallery
 
