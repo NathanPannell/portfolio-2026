@@ -46,7 +46,7 @@ const essayVisuals: Record<string, string> = {
           <span>I build upbeat apps <br />that get people</span>{' '}
           <em>into the real world.</em>
         </h1>
-        <p class="hero__subcopy">Developer in Victoria, BC, turning Vancouver Island into one giant completionist map.</p>
+        <p class="hero__subcopy">I’m in Victoria, building Parkdex.</p>
       </div>
       <div class="hero__prints" aria-label="A preview of Nathan's work">
         <a class="hero-print hero-print--parkdex" href="/parkdex/" aria-label="Explore Parkdex">
@@ -131,9 +131,11 @@ const essayVisuals: Record<string, string> = {
                 <img src={project.data.cover} alt={project.data.coverAlt} loading="lazy" />
               </span>
               <span class="project-polaroid__caption">
-                <strong>{project.data.title}</strong>
+                <span class="project-polaroid__heading">
+                  <strong>{project.data.title}</strong>
+                  <span class="project-polaroid__meta">{project.data.displayDate}</span>
+                </span>
                 <span class="project-polaroid__story">{project.data.cardCaption}</span>
-                <span class="project-polaroid__meta">{project.data.displayDate}</span>
               </span>
             </a>
           );

@@ -67,7 +67,7 @@ components:
     backgroundColor: "{colors.print-white}"
     textColor: "{colors.ink}"
     rounded: "0"
-    padding: "clamp(0.65rem, 1.1vw, 1.05rem) clamp(0.65rem, 1.1vw, 1.05rem) clamp(3rem, 4.6vw, 4.6rem)"
+    padding: "clamp(0.65rem, 1.1vw, 1.05rem) clamp(0.65rem, 1.1vw, 1.05rem) clamp(5.6rem, 6.6vw, 6.6rem)"
 ---
 
 # Design System: Nathan Pannell Portfolio
@@ -144,7 +144,7 @@ The homepage follows an experience sequence: photograph, Parkdex story, project 
 
 The desktop hero fills one viewport. The photograph occupies the upper 70 percent, while the lower paper ground catches three overlapping preview prints. The headline and one concrete identity line sit in open water or sky rather than covering Nathan. The Parkdex section uses an asymmetric story-and-gallery grid. The project collection uses a twelve-column deck with deliberately uneven spans, rotations, and vertical offsets. The writing preview pairs a sticky introduction with compact essay rows.
 
-At 980px and below, story, heading, and writing grids become single-column. Sticky writing copy returns to normal flow. At 720px and below, the photo is raised by roughly one-fifth of the viewport so the title and first field-note print arrive sooner. Building apps and Vancouver Island overlap across the paper transition and lead directly into Parkdex; the first print begins just above the fold. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
+At 980px and below, story, heading, and writing grids become single-column. Sticky writing copy returns to normal flow. At 720px and below, the photo is raised by roughly one-tenth of the viewport so enough open sky remains around the masthead while the title and first field-note print still arrive early. Building apps overlaps the upper part of the Vancouver Island photo across the paper transition and leads directly into Parkdex; its full caption stays unobstructed. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
 
 Project pages open on paper with a two-column composition: short story, actions, stable metadata, and proof points beside one project-specific artifact. This first artifact carries the project identity; a generic nature photograph never substitutes for the work. Additional screenshots and demos move to the dark media stage below. Every image, video, and embedded player must fit inside `calc(100svh - 2rem)`. Preserve the media's aspect ratio, use contain rather than crop for page-level demos, and never let a project visual become taller than the visible screen. On small screens, project media runs edge to edge while narrative text keeps the homepage's 1.15rem horizontal gutter.
 
@@ -163,6 +163,8 @@ The project deck increases elevation in response to fine-pointer hover or keyboa
 The core silhouette is the square-cornered instant-film print: a bright paper border, a fixed image window, and a deeper caption area. Small rotations make each print distinct without imitating a messy scrapbook. Screenshot frames and project-page media use gently rounded corners, while actions use fully rounded pills.
 
 Use circles only for functional details already present in an artifact or project identity. Avoid a page full of rounded rectangles. Containers should be shaped by content, spacing, tonal fields, or dividers before receiving a border radius.
+
+Project-print captions use a compact two-level label: the handwritten title and date share the first line, with one concise factual story below. The shorter caption well keeps the work image dominant without sacrificing context.
 
 **The Two Shape Families Rule.** Use square paper objects for projects and pills for actions. Rounded panels are reserved for media framing, not generic content cards.
 
