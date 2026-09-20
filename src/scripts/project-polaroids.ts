@@ -1,8 +1,10 @@
 const startCardInteractions = () => {
   const deck = document.querySelector<HTMLElement>('.project-deck');
   const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-polaroid]'));
+  const essayList = document.querySelector<HTMLElement>('.essay-list');
+  const essays = Array.from(document.querySelectorAll<HTMLElement>('[data-essay-item]'));
 
-  if (cards.length === 0) return;
+  if (cards.length === 0 && essays.length === 0) return;
 
   const mobileLayout = window.matchMedia('(max-width: 720px)');
   const controller = new AbortController();
@@ -14,8 +16,6 @@ const startCardInteractions = () => {
   };
 
   const updateActiveCard = () => {
-    frame = 0;
-
     if (!mobileLayout.matches || !deck) {
       clearActiveCard();
       return;
@@ -47,8 +47,47 @@ const startCardInteractions = () => {
     cards.forEach((card) => card.toggleAttribute('data-active', card === nearest));
   };
 
+  const clearActiveEssay = () => {
+    essays.forEach((essay) => essay.removeAttribute('data-active'));
+  };
+
+  const updateActiveEssay = () => {
+    if (!mobileLayout.matches || !essayList) {
+      clearActiveEssay();
+      return;
+    }
+
+    const listRect = essayList.getBoundingClientRect();
+    if (listRect.bottom <= 0 || listRect.top >= window.innerHeight) {
+      clearActiveEssay();
+      return;
+    }
+
+    const viewportY = window.innerHeight / 2;
+    let nearest: HTMLElement | undefined;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+
+    essays.forEach((essay) => {
+      const rect = essay.getBoundingClientRect();
+      const distance = Math.abs(rect.top + rect.height / 2 - viewportY);
+
+      if (distance < nearestDistance) {
+        nearest = essay;
+        nearestDistance = distance;
+      }
+    });
+
+    essays.forEach((essay) => essay.toggleAttribute('data-active', essay === nearest));
+  };
+
+  const update = () => {
+    frame = 0;
+    updateActiveCard();
+    updateActiveEssay();
+  };
+
   const schedule = () => {
-    if (!frame) frame = window.requestAnimationFrame(updateActiveCard);
+    if (!frame) frame = window.requestAnimationFrame(update);
   };
 
   cards.forEach((card) => {
@@ -72,7 +111,7 @@ const startCardInteractions = () => {
     if (!event.persisted) controller.abort();
   }, { signal });
 
-  updateActiveCard();
+  update();
 };
 
 startCardInteractions();

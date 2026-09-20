@@ -2051,6 +2051,27 @@ a {
     grid-row: 1 / span 2;
   }
 
+  .essay-list li[data-active]::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .essay-list li[data-active] a {
+    color: var(--print-white);
+  }
+
+  .essay-list li[data-active] time {
+    color: var(--writing-meta-hover);
+  }
+
+  .essay-list li[data-active] .essay-list__title {
+    transform: translateX(0.25rem);
+  }
+
+  .essay-list li[data-active] svg {
+    transform: translateX(0.35rem);
+  }
+
   .site-footer {
     gap: 2.25rem;
     padding: 3rem 1.15rem 1.25rem;
@@ -2088,6 +2109,12 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .essay-list li[data-active]::before,
+  .essay-list li[data-active] .essay-list__title,
+  .essay-list li[data-active] svg {
+    transform: none;
+  }
+
   .not-found__actions a span:last-child,
   .not-found__actions a:is(:hover, :focus-visible, :active) span:last-child {
     transition: none;

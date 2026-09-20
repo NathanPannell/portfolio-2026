@@ -138,7 +138,7 @@ const essayVisuals: Record<string, string> = {
         {writing.slice(0, 3).map((essay) => {
           const visual = essayVisuals[essay.id] ?? '/media/plates/writing-print.webp';
           return (
-          <li style={`--essay-image: url(${visual})`}>
+          <li data-essay-item style={`--essay-image: url(${visual})`}>
             <a href={`/${essay.id}/`}>
               <span class="essay-list__title">{essay.data.title}</span>
               <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>

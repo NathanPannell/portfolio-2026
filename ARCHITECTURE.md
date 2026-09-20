@@ -37,7 +37,7 @@ Cloudflare Pages
 | `src/components/SiteHeader.astro` | Desktop navigation and mobile name plus email treatment. |
 | `src/components/SiteFooter.astro` | Shared concise contact and social footer. |
 | `src/styles/global.css` | Tokens, all shared layouts, device mockups, Polaroids, responsive behavior, and reduced motion. |
-| `src/scripts/project-polaroids.ts` | Clears touch-created card focus without creating scroll-selected states; preserves BFCache-safe listener cleanup. |
+| `src/scripts/project-polaroids.ts` | Applies mobile-only viewport-centred focus to project cards and homepage writing rows; preserves BFCache-safe listener cleanup. |
 | `src/scripts/navigation-focus.ts` | Clears pointer-created link focus after browser Back while retaining keyboard focus behavior. |
 | `tests/content-contract.mjs` | Publishing invariants, required legacy routes, project ordering, drafts, and generated-route checks. |
 | `public/_headers` | Cloudflare security and caching headers. |
@@ -66,13 +66,14 @@ Writing and standalone legacy entries use `ArticleLayout`. Only Writing appears 
 
 ## Interaction lifecycle
 
-`project-polaroids.ts` only guards against touch-created sticky focus on project cards.
+`project-polaroids.ts` schedules one animation-frame update for the homepage project deck and writing preview. At 720px and below, it assigns `data-active` to the card and writing row nearest the viewport centre while each section is visible. It clears those states outside their sections and above the mobile breakpoint.
 
 - Project-card lift and slight rotation are CSS hover states gated behind `(hover: hover) and (pointer: fine)`.
 - Keyboard focus receives the same physical elevation without depending on pointer position.
 - Touch pointer-up clears link focus before navigation can leave a sticky return state.
 - `pagehide` keeps listeners alive when the page enters the back-forward cache and aborts them only for a real unload.
-- Scrolling never assigns a synthetic active state to a card or writing row.
+- Desktop scrolling never assigns a synthetic active state to a card or writing row.
+- Mobile scrolling assigns one active card and one active writing row only while their containing sections are visible.
 
 `navigation-focus.ts` records only pointer-initiated navigation. On a BFCache or back-forward restore, it blurs a restored anchor if the user originally followed it with a pointer. Keyboard focus is not cleared.
 

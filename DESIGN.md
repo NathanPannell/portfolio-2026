@@ -205,7 +205,7 @@ Use one wide map screenshot inside a simplified matte laptop frame and two narro
 
 The dedicated Writing page is a full-screen near-black room with normal document scrolling. Essay titles are large and muted by default; the current or hovered title brightens and shifts slightly right. Dividers provide rhythm. Keep the year secondary and do not add thumbnails, filter chips, horizontal scrolling, or scroll hijacking.
 
-On the homepage, the writing preview remains a flat editorial list. Fine-pointer hover and keyboard focus reveal a dark photographic wash drawn from the essay while its title and metadata brighten. Scrolling alone never selects a row.
+On the homepage, the writing preview remains a flat editorial list. Fine-pointer hover and keyboard focus reveal a dark photographic wash drawn from the essay while its title and metadata brighten. On mobile only, the row nearest the viewport centre receives that same state while the writing list is visible; desktop scrolling never selects a row.
 
 ### Project and Article Media
 
