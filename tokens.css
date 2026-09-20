@@ -88,6 +88,8 @@
   --footer-accent-wash: rgba(184, 245, 61, 0.08);
   --hero-shadow-soft: rgba(2, 13, 17, 0.22);
   --hero-shadow-strong: rgba(2, 13, 17, 0.35);
+  --hero-header-wash-strong: rgba(248, 248, 244, 0.86);
+  --hero-header-wash-soft: rgba(248, 248, 244, 0.46);
   --header-shadow: rgba(0, 0, 0, 0.35);
   --screen-shadow: rgba(0, 0, 0, 0.72);
   --device-shadow: rgba(5, 18, 18, 0.2);
@@ -106,6 +108,7 @@
   /* Typography */
   --display: 'Strichpunkt Sans Variable', 'Bricolage Grotesque Variable', sans-serif;
   --human: 'Ysabeau Variable', 'Trebuchet MS', sans-serif;
+  --handwritten: 'Caveat Variable', 'Segoe Print', cursive;
 
   /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

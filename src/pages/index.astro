@@ -41,27 +41,34 @@ const essayVisuals: Record<string, string> = {
           <span>I build products <br />that make life</span>{' '}
           <em>more fun.</em>
         </h1>
-        <p>Full-stack developer. Currently building Parkdex, a completionist map for Vancouver Island parks.</p>
       </div>
       <div class="hero__prints" aria-label="A preview of Nathan's work">
-        <a class="hero-print hero-print--parkdex" href="/parkdex/" aria-label="Explore Parkdex">
+        <a class="hero-print hero-print--parkdex" data-hero-print href="/parkdex/" aria-label="Explore Parkdex">
           <span class="hero-print__window">
             <img src="/media/parkdex/map-overview.webp" alt="Parkdex map of parks across Vancouver Island" width="1600" height="875" loading="lazy" fetchpriority="low" />
           </span>
           <span class="hero-print__label">Parkdex</span>
         </a>
-        <a class="hero-print hero-print--building" href="#projects" aria-label="See the apps Nathan is building">
+        <a class="hero-print hero-print--building" data-hero-print href="#projects" aria-label="See the apps Nathan is building">
           <span class="hero-print__window">
             <img src="/media/plates/writing-laptop-2026.webp" alt="A laptop open to code during a workshop" width="1600" height="1200" loading="lazy" fetchpriority="low" />
           </span>
           <span class="hero-print__label">Building apps</span>
         </a>
-        <span class="hero-print hero-print--island" aria-hidden="true">
+        <a class="hero-print hero-print--island" data-hero-print href="#parkdex" aria-label="Read how Vancouver Island inspired Parkdex">
           <span class="hero-print__window">
-            <img src="/media/plates/vancouver-island-lake-2026.webp" alt="" width="1600" height="2134" loading="lazy" fetchpriority="low" />
+            <img src="/media/plates/vancouver-island-lake-2026.webp" alt="Nathan sitting beside a clear mountain lake on Vancouver Island" width="1600" height="1200" loading="lazy" fetchpriority="low" />
           </span>
           <span class="hero-print__label">Vancouver Island</span>
-        </span>
+        </a>
+        <button class="hero-prints__toggle" type="button" data-hero-print-toggle aria-label="Pause rotating photos" aria-pressed="false">
+          <svg class="hero-prints__pause" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M7 5v10M13 5v10" />
+          </svg>
+          <svg class="hero-prints__play" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="m7 5 8 5-8 5Z" />
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -154,6 +161,7 @@ const essayVisuals: Record<string, string> = {
   </main>
 
   <script>
+    import '../scripts/hero-prints';
     import '../scripts/project-polaroids';
   </script>
 </SiteLayout>

@@ -50,7 +50,7 @@ The site loads production WebP derivatives of `writing-print` and `paper-ground`
 | Output | Dimensions | Source and treatment |
 | --- | ---: | --- |
 | `public/media/plates/writing-laptop-2026.webp` | 1600 x 1200 | User-owned `C:\Users\n8tew\Downloads\20260721_193957.jpg`, supplied for the Building apps print. Auto-oriented, resized, and encoded without crop, retouching, or generative processing. |
-| `public/media/plates/vancouver-island-lake-2026.webp` | 1600 x 2134 | User-owned `C:\Users\n8tew\Downloads\20260617_121251.jpg`, supplied for the Vancouver Island print. Auto-oriented, resized, and encoded without crop, retouching, or generative processing. |
+| `public/media/plates/vancouver-island-lake-2026.webp` | 1600 x 1200 | User-owned `C:\Users\n8tew\Downloads\20260617_121253.jpg`, supplied for the Vancouver Island print. Auto-oriented, resized, and encoded without crop, retouching, or generative processing. |
 
 ## External media
 
