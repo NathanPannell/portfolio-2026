@@ -9,6 +9,7 @@ All shipping raster assets under `public/media` carry an `impeccable:prompt` rec
 | `public/media/hero/nathan-on-boat-original.webp` | 1406 x 1405 | User-owned photograph, copied unchanged from `.impeccable/references/nathan-on-a-boat.webp`, originally from the private Chiri repository. |
 | `public/media/hero/nathan-on-boat-wide.png` | 1896 x 830 | Approved wide hero plate copied from `assets/plates/hero-photo.png`. Its embedded prompt records the identity reference and production instructions. |
 | `public/media/hero/nathan-on-boat-wide.webp` | 1896 x 830 | Production WebP derivative of the approved wide hero plate. Used by the site and social metadata. |
+| `public/media/hero/nathan-on-boat-wide-dark-v2.webp` | 1896 x 830 | ImageGen lighting edit of the approved wide plate. Only the left desktop text region is darkened with a feathered photographic exposure falloff; subject identity, composition, geometry, and the right side are preserved. Used by the desktop homepage hero. |
 
 ## Parkdex
 
@@ -43,6 +44,13 @@ The following files are direct copies of the approved Impeccable build plates an
 - `public/media/plates/paper-ground.png` (1536 x 1024)
 
 The site loads production WebP derivatives of `writing-print`, `island-print`, and `paper-ground`. Their adjacent JSON sidecars preserve source and encoding provenance. The original PNG plates remain as review artifacts.
+
+## Homepage field-note photographs
+
+| Output | Dimensions | Source and treatment |
+| --- | ---: | --- |
+| `public/media/plates/writing-laptop-2026.webp` | 1600 x 1200 | User-owned `C:\Users\n8tew\Downloads\20260721_193957.jpg`, supplied for the Building apps print. Auto-oriented, resized, and encoded without crop, retouching, or generative processing. |
+| `public/media/plates/vancouver-island-lake-2026.webp` | 1600 x 2134 | User-owned `C:\Users\n8tew\Downloads\20260617_121251.jpg`, supplied for the Vancouver Island print. Auto-oriented, resized, and encoded without crop, retouching, or generative processing. |
 
 ## External media
 

@@ -24,15 +24,17 @@ const essayVisuals: Record<string, string> = {
 <SiteLayout>
   <main id="main-content">
     <section class="hero" aria-labelledby="hero-title">
-      <img
-        class="hero__photo"
-        src="/media/hero/nathan-on-boat-wide.webp"
-        alt="Nathan Pannell smiling on a sailboat off Vancouver Island"
-        width="1896"
-        height="830"
-        fetchpriority="high"
-      />
-      <div class="hero__shade" aria-hidden="true"></div>
+      <picture class="hero__media">
+        <source media="(min-width: 721px)" srcset="/media/hero/nathan-on-boat-wide-dark-v2.webp" />
+        <img
+          class="hero__photo"
+          src="/media/hero/nathan-on-boat-wide.webp"
+          alt="Nathan Pannell smiling on a sailboat off Vancouver Island"
+          width="1896"
+          height="830"
+          fetchpriority="high"
+        />
+      </picture>
       <SiteHeader tone="dark" overlay />
       <div class="hero__copy">
         <h1 id="hero-title" class="hero__title">
@@ -48,15 +50,15 @@ const essayVisuals: Record<string, string> = {
           </span>
           <span class="hero-print__label">Parkdex</span>
         </a>
-        <a class="hero-print hero-print--writing" href="/writing/" aria-label="Read Nathan's writing">
+        <a class="hero-print hero-print--building" href="#projects" aria-label="See the apps Nathan is building">
           <span class="hero-print__window">
-            <img src="/media/plates/writing-print.webp" alt="A laptop open to a draft beside an island sunset" width="1586" height="992" loading="lazy" fetchpriority="low" />
+            <img src="/media/plates/writing-laptop-2026.webp" alt="A laptop open to code during a workshop" width="1600" height="1200" loading="lazy" fetchpriority="low" />
           </span>
-          <span class="hero-print__label">Writing</span>
+          <span class="hero-print__label">Building apps</span>
         </a>
         <span class="hero-print hero-print--island" aria-hidden="true">
           <span class="hero-print__window">
-            <img src="/media/plates/island-print.webp" alt="" width="1586" height="992" loading="lazy" fetchpriority="low" />
+            <img src="/media/plates/vancouver-island-lake-2026.webp" alt="" width="1600" height="2134" loading="lazy" fetchpriority="low" />
           </span>
           <span class="hero-print__label">Vancouver Island</span>
         </span>
@@ -82,34 +84,22 @@ const essayVisuals: Record<string, string> = {
       </div>
 
       <div class="parkdex-story__gallery" aria-label="Parkdex interface previews">
-        <figure class="parkdex-device parkdex-device--laptop parkdex-device--map">
-          <span class="parkdex-device__screen">
+        <div class="parkdex-frame parkdex-frame--laptop parkdex-frame--map">
+          <div class="parkdex-frame__screen">
             <img src="/media/parkdex/map-overview.webp" alt="Parkdex map overview showing Vancouver Island" loading="lazy" width="1600" height="875" />
-          </span>
-          <span class="parkdex-device__camera" aria-hidden="true"></span>
-          <span class="parkdex-device__base" aria-hidden="true"></span>
-        </figure>
-        <figure class="parkdex-device parkdex-device--phone parkdex-device--detail">
-          <span class="parkdex-device__screen">
+          </div>
+        </div>
+        <div class="parkdex-frame parkdex-frame--phone parkdex-frame--detail">
+          <div class="parkdex-frame__screen">
             <img src="/media/parkdex/park-detail.webp" alt="A park detail view in Parkdex" loading="lazy" width="720" height="1280" />
-          </span>
-          <span class="parkdex-device__speaker" aria-hidden="true"></span>
-          <span class="parkdex-device__camera" aria-hidden="true"></span>
-          <span class="parkdex-device__gesture" aria-hidden="true"></span>
-          <span class="parkdex-device__button parkdex-device__button--power" aria-hidden="true"></span>
-          <span class="parkdex-device__button parkdex-device__button--volume" aria-hidden="true"></span>
-        </figure>
-        <figure class="parkdex-device parkdex-device--phone parkdex-device--progress">
-          <span class="parkdex-device__screen">
+          </div>
+        </div>
+        <div class="parkdex-frame parkdex-frame--phone parkdex-frame--progress">
+          <div class="parkdex-frame__screen">
             <img src="/media/parkdex/island-progress.webp" alt="Vancouver Island completion progress in Parkdex" loading="lazy" width="720" height="1280" />
-          </span>
-          <span class="parkdex-device__speaker" aria-hidden="true"></span>
-          <span class="parkdex-device__camera" aria-hidden="true"></span>
-          <span class="parkdex-device__gesture" aria-hidden="true"></span>
-          <span class="parkdex-device__button parkdex-device__button--power" aria-hidden="true"></span>
-          <span class="parkdex-device__button parkdex-device__button--volume" aria-hidden="true"></span>
-        </figure>
-        <figcaption>Parkdex, 2026 · Map © OpenStreetMap contributors.</figcaption>
+          </div>
+        </div>
+        <p class="parkdex-story__caption">Parkdex, 2026 · Map © OpenStreetMap contributors.</p>
       </div>
     </section>
 
@@ -148,7 +138,7 @@ const essayVisuals: Record<string, string> = {
         {writing.slice(0, 3).map((essay) => {
           const visual = essayVisuals[essay.id] ?? '/media/plates/writing-print.webp';
           return (
-          <li data-essay-item style={`--essay-image: url(${visual})`}>
+          <li style={`--essay-image: url(${visual})`}>
             <a href={`/${essay.id}/`}>
               <span class="essay-list__title">{essay.data.title}</span>
               <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>

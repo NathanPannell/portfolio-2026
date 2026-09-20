@@ -142,7 +142,7 @@ The homepage follows an experience sequence: photograph, Parkdex story, project 
 
 The desktop hero fills one viewport. The photograph occupies the upper 70 percent, while the lower paper ground catches three overlapping preview prints. The headline and one concrete identity line sit in open water or sky rather than covering Nathan. The Parkdex section uses an asymmetric story-and-gallery grid. The project collection uses a twelve-column deck with deliberately uneven spans, rotations, and vertical offsets. The writing preview pairs a sticky introduction with compact essay rows.
 
-At 980px and below, story, heading, and writing grids become single-column. Sticky writing-preview copy returns to normal flow. At 720px and below, the hero becomes one uninterrupted 100svh photograph: paper ground and preview prints disappear, the title moves to the bottom, and navigation reduces to the name and Email me. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
+At 980px and below, story, heading, and writing grids become single-column. Sticky writing-preview copy returns to normal flow. At 720px and below, the first viewport remains one uninterrupted 100svh photograph, the title moves to the bottom, and navigation reduces to the name and Email me. Immediately after that first view, two smaller field-note prints carry the Building apps and Vancouver Island photography into the mobile story. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
 
 Project pages open on paper with a two-column composition: short story, actions, stable metadata, and proof points beside one project-specific artifact. This first artifact carries the project identity; a generic nature photograph never substitutes for the work. Additional screenshots and demos move to the dark media stage below. Every image, video, and embedded player must fit inside `calc(100svh - 2rem)`. Preserve the media's aspect ratio, use contain rather than crop for page-level demos, and never let a project visual become taller than the visible screen. On small screens, project media runs edge to edge while narrative text keeps the homepage's 1.15rem horizontal gutter.
 
@@ -152,7 +152,7 @@ Project pages open on paper with a two-column composition: short story, actions,
 
 Depth is physical rather than glassy. Instant-film prints keep neutral, warm-white coated stock in every state, with a visible laminated edge, a darker contact shadow, and a broader ambient falloff. Project colors must never replace the white film border. Flat editorial sections use dividers and tonal shifts instead of card shadows. There are no translucent dashboard panels, glass effects, or floating gradient blobs.
 
-The project deck increases elevation in response to viewport-centered selection, fine-pointer hover, or keyboard focus. The same neutral print keeps its resting angle, lifts, scales slightly, exposes more of its paper edge, and picks up a soft moving lamination glare. Parkdex screenshots are framed and slightly rotated to suggest photographs laid out for review.
+The project deck increases elevation only in response to fine-pointer hover or keyboard focus. The same neutral print keeps its paper surface, lifts, and rotates by less than one additional degree. There is no moving glare, sheen, or scroll-selected state. Parkdex screenshots are framed and slightly rotated to suggest photographs laid out for review.
 
 **The Flat Until Touched Rule.** Editorial surfaces stay flat. Stronger shadows belong to photographic artifacts and interactive elevation states.
 
@@ -178,28 +178,28 @@ The shared footer is intentionally concise: “Have something interesting to bui
 
 ### Hero Preview Prints
 
-Three oversized instant-film objects rise into the desktop fold. Their entrance settles upward over 820ms with staggered delays and the system's spring-like easing. Hover or focus raises the selected print, brings it to the front, and reduces its rotation. These prints are absent on mobile so the photograph remains a single clear first view.
+Three content-sized instant-film objects rise into the desktop fold. Their image windows preserve each source photograph's intrinsic aspect ratio, so labels and image content remain visible even on short desktop viewports. Their entrance settles upward over 820ms with staggered delays and the system's spring-like easing. Fine-pointer hover or focus raises the selected print and brings it to the front. On mobile, the first viewport remains a clear photograph and a smaller two-print field note follows it in normal reading order.
 
 ### Project Polaroids
 
 Each card is a real link to a project page and has four tactile states:
 
 - **Rest:** Slight project-specific rotation and soft print shadow.
-- **Hover or keyboard focus:** Keeps its resting rotation, lifts 0.8rem, scales to 1.025, sharpens its neutral laminated edge, and increases elevation.
-- **Fine-pointer movement:** Tilts by at most 7 degrees vertically and 9 degrees horizontally, with glare following the pointer.
-- **Active:** Compresses to 0.99 scale for a quiet press response.
+- **Hover or keyboard focus:** Lifts 0.8rem and rotates by less than one additional degree while the paper surface and shadow remain stable.
+- **Fine-pointer movement:** No cursor-following tilt or glare. The physical response is a single stable hover state.
+- **Active:** Settles to a shallower 0.2rem lift for a quiet press response.
 
-The deck responds to scroll as one physical collection. Exactly one card nearest the viewport center keeps its resting rotation, lifts, sharpens its edge, and catches a moving gloss without stealing focus or hijacking scroll. The card link itself remains the paper, shadow, and transform surface. Fine pointers add direct inspection tilt. Touch scrolling relies only on the centered state, never sticky hover, and preserves native vertical panning and whole-card taps. Pointer-activated links clear restored focus when visitors return through browser history, while live keyboard focus remains visible. Back-forward cache restores must resume the center-selection controller so a previously active card can never freeze in place.
+The deck stays still while the visitor scrolls. The card link itself remains the paper, shadow, and transform surface. Fine pointers receive one hover lift and small rotation, while touch scrolling has no synthetic active state and preserves native vertical panning and whole-card taps. Pointer-activated links clear restored focus when visitors return through browser history, while live keyboard focus remains visible.
 
 ### Parkdex Gallery
 
-Use one wide map screenshot inside a recognizable matte-graphite laptop and two narrower mobile screenshots inside slim, generic Android-style phones. Each device needs a real screen inset, hardware edge, camera or speaker detail, layered contact shadow, and device-appropriate silhouette. Hardware silhouettes use dark graphite bezels and thicker rails so they stay legible against Fog Paper at mobile sizes. Use one restrained light-facing edge rather than chrome, polished-metal gradients, or branded device mimicry; thickness comes from the silhouette, recessed screen, and shadow. Keep the three devices lightly rotated and layered like objects set down for review. This is a product story, not a carousel.
+Use one wide map screenshot inside a simplified matte laptop frame and two narrower screenshots inside slim neutral phone frames. The frames are content-sized divs: screenshot width determines frame width, intrinsic image height determines frame height, and every source pixel remains visible. Use one dark rail, one recessed screen edge, and a contact shadow rather than decorative hardware, chrome, or screen sheen. Keep the three frames lightly rotated and layered like objects set down for review. This is a product story, not a carousel.
 
 ### Writing Selector
 
 The dedicated Writing page is a full-screen near-black room with normal document scrolling. Essay titles are large and muted by default; the current or hovered title brightens and shifts slightly right. Dividers provide rhythm. Keep the year secondary and do not add thumbnails, filter chips, horizontal scrolling, or scroll hijacking.
 
-On the homepage, the writing preview remains a flat editorial list. The row nearest the viewport center receives a dark photographic wash drawn from its essay while its title and metadata brighten. Hover and keyboard focus use the same treatment.
+On the homepage, the writing preview remains a flat editorial list. Fine-pointer hover and keyboard focus reveal a dark photographic wash drawn from the essay while its title and metadata brighten. Scrolling alone never selects a row.
 
 ### Project and Article Media
 
@@ -209,7 +209,7 @@ Project media sits on a near-black stage and uses contain sizing. Images, videos
 
 The standard interaction curve is `cubic-bezier(0.16, 1, 0.3, 1)`, usually over 180ms to 320ms. Motion should explain touch, focus, stacking, or direction. It should not run as ambient decoration.
 
-When reduced motion is requested, smooth scrolling is disabled, animations and transitions collapse to effectively instant, and project cards do not lift, scale, tilt, or glare. No important information may depend on motion, hover, or pointer position.
+When reduced motion is requested, smooth scrolling is disabled, animations and transitions collapse to effectively instant, and project cards do not lift, scale, or rotate. No important information may depend on motion, hover, or pointer position.
 
 ## Do's and Don'ts
 

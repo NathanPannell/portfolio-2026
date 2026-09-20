@@ -2,6 +2,13 @@
 @import '@fontsource-variable/strichpunkt-sans';
 @import '@fontsource-variable/ysabeau';
 
+/*
+ * Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V5
+ * Genre: playful field journal · tone: candid and tactile · anchor: deep sea green
+ * Hallmark · macrostructure: Island field deck · hero prints → product field note → project table → writing ledger
+ * Audit: contrast pass · nav overlay · footer invitation · slop pass · mobile pass
+ */
+
 :root {
   color-scheme: light;
   --ink: #101b1b;
@@ -29,12 +36,14 @@
 }
 
 html {
+  overflow-x: clip;
   scroll-behavior: smooth;
   scrollbar-color: var(--sea) var(--paper);
   scrollbar-width: thin;
 }
 
 body {
+  overflow-x: clip;
   margin: 0;
   min-width: 320px;
   background: var(--paper);
@@ -109,6 +118,12 @@ a {
   text-decoration: none;
 }
 
+@media (min-width: 721px) {
+  .hero .site-header__name {
+    color: var(--print-white);
+  }
+}
+
 .site-header__nav {
   display: flex;
   align-items: center;
@@ -156,17 +171,24 @@ a {
 .hero {
   position: relative;
   min-height: 100svh;
-  overflow: hidden;
+  overflow: clip;
   background: #315c68;
   isolation: isolate;
 }
 
-.hero__photo {
+.hero__media {
   position: absolute;
   z-index: 0;
   inset: 0 0 auto;
+  display: block;
   width: 100%;
   height: 70%;
+}
+
+.hero__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center 46%;
 }
@@ -181,13 +203,6 @@ a {
   background-size: 45rem auto;
 }
 
-.hero__shade {
-  position: absolute;
-  z-index: 2;
-  inset: 12% 48% 30% 0;
-  background: linear-gradient(90deg, rgba(6, 22, 29, 0.4), rgba(6, 22, 29, 0.05));
-}
-
 .hero__copy {
   position: absolute;
   z-index: 5;
@@ -196,9 +211,9 @@ a {
   width: min(57rem, 58vw);
 }
 
-@media (min-width: 721px) and (max-height: 760px) {
+@media (min-width: 721px) and (max-height: 820px) {
   .hero__copy {
-    top: 17%;
+    top: 13%;
   }
 
   .hero__title {
@@ -251,16 +266,14 @@ a {
 .hero__prints {
   position: absolute;
   z-index: 8;
-  inset: 62.5% 0 0;
+  inset: 55% 0 0;
   pointer-events: none;
 }
 
 .hero-print {
   position: absolute;
   display: block;
-  width: 36%;
-  aspect-ratio: 1.42;
-  padding: clamp(0.75rem, 1.4vw, 1.4rem) clamp(0.75rem, 1.4vw, 1.4rem) clamp(2.2rem, 4vw, 4rem);
+  padding: clamp(0.65rem, 1.05vw, 1rem) clamp(0.65rem, 1.05vw, 1rem) clamp(1rem, 1.7vw, 1.65rem);
   background: #f8f8f4 url('/media/plates/paper-ground.webp') center / 45rem auto;
   box-shadow: var(--shadow-print);
   color: var(--ink);
@@ -274,7 +287,6 @@ a {
 .hero-print__window {
   display: block;
   width: 100%;
-  height: 100%;
   overflow: hidden;
   background: var(--paper-deep);
 }
@@ -282,16 +294,13 @@ a {
 .hero-print img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 
 .hero-print__label {
-  position: absolute;
-  right: 1.5rem;
-  bottom: 0.65rem;
-  left: 1.5rem;
+  display: block;
   overflow: hidden;
+  margin: clamp(0.7rem, 1vw, 1rem) 0 0;
   font-family: var(--display);
   font-size: clamp(0.85rem, 1.1vw, 1.15rem);
   font-weight: 680;
@@ -302,47 +311,72 @@ a {
 
 .hero-print--parkdex {
   z-index: 3;
-  left: 7%;
-  top: 3%;
+  left: 6%;
+  top: 8%;
+  width: min(36vw, 52vh);
   --print-rotation: -5deg;
   animation-delay: 100ms;
 }
 
-.hero-print--writing {
+.hero-print--building {
   z-index: 2;
-  left: 33%;
-  top: 5%;
-  width: 34%;
+  left: 35%;
+  top: 7%;
+  width: min(31vw, 44vh);
   --print-rotation: 1.5deg;
   animation-delay: 190ms;
 }
 
-.hero-print--writing img {
-  object-position: 54% 78%;
-  transform: scale(2.08);
-  transform-origin: 67% 77%;
-}
-
 .hero-print--island {
   z-index: 1;
-  right: 3.5%;
-  top: 4%;
-  width: 34%;
+  right: 5%;
+  top: -4%;
+  width: min(22vw, 30vh);
   --print-rotation: 6deg;
   animation-delay: 280ms;
 }
 
-.hero-print--island img {
-  object-position: 66% 72%;
-  transform: scale(2.04);
-  transform-origin: 67% 74%;
+@media (min-width: 1600px) {
+  .hero__prints {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-inline: clamp(2rem, 5vw, 7rem);
+  }
+
+  .hero-print {
+    position: relative;
+    inset: auto;
+    flex: 0 0 auto;
+  }
+
+  .hero-print--parkdex {
+    width: min(38vw, 50rem, 54vh);
+    margin-top: 3.25rem;
+    margin-right: -3.25rem;
+  }
+
+  .hero-print--building {
+    width: min(33vw, 39rem, 42vh);
+    margin-top: 4rem;
+    margin-right: -2.25rem;
+  }
+
+  .hero-print--island {
+    width: min(18vw, 24rem, 28vh);
+  }
 }
 
-.hero-print:is(a):hover,
 .hero-print:is(a):focus-visible {
   z-index: 10;
-  transform: translateY(-1rem) rotate(-0.8deg) scale(1.025);
-  box-shadow: 0 2rem 4rem rgba(10, 28, 32, 0.32), 0 0.4rem 1rem rgba(10, 28, 32, 0.18);
+  transform: translateY(-1rem) rotate(-0.8deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-print:is(a):hover {
+    z-index: 10;
+    transform: translateY(-1rem) rotate(-0.8deg);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -350,7 +384,7 @@ a {
     animation-name: print-settle;
     animation-duration: 820ms;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    animation-fill-mode: both;
+    animation-fill-mode: backwards;
   }
 }
 
@@ -398,30 +432,66 @@ a {
   }
 
   .hero {
-    min-height: 100svh;
+    min-height: calc(100svh + 31rem);
+    background: var(--paper);
+  }
+
+  .hero__media {
+    height: 100svh;
   }
 
   .hero__photo {
-    height: 100%;
     object-position: 64% center;
   }
 
-  .hero::after,
+  .hero::after {
+    inset: 100svh 0 0;
+  }
+
   .hero__prints {
+    inset: 100svh 0 0;
+    height: 31rem;
+    background: var(--paper);
+  }
+
+  .hero-print--parkdex {
     display: none;
   }
 
-  .hero__shade {
-    inset: 0;
-    background: linear-gradient(180deg, rgba(5, 17, 23, 0.08) 35%, rgba(5, 17, 23, 0.72) 100%);
+  .hero-print--building,
+  .hero-print--island {
+    display: block;
+    padding: 0.65rem 0.65rem 1rem;
+  }
+
+  .hero-print--building {
+    z-index: 2;
+    top: 2.8rem;
+    left: 4%;
+    width: 68%;
+    --print-rotation: -3.5deg;
+  }
+
+  .hero-print--island {
+    z-index: 3;
+    top: 8.25rem;
+    right: 6%;
+    width: 54%;
+    --print-rotation: 5deg;
+  }
+
+  .hero-print__label {
+    margin-top: 0.65rem;
+    font-size: 0.92rem;
   }
 
   .hero__copy {
-    top: auto;
+    top: calc(100svh - clamp(2rem, 8svh, 5.5rem));
     right: 1rem;
-    bottom: clamp(2rem, 8svh, 5.5rem);
+    bottom: auto;
     left: 1rem;
     width: auto;
+    transform: translateY(-100%);
   }
 
   .hero__title {
@@ -1242,224 +1312,101 @@ a {
 }
 
 .parkdex-story__gallery {
-  position: relative;
-  align-self: center;
-  min-height: clamp(36rem, 46vw, 44rem);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: auto auto;
+  gap: 1.8rem 0;
+  align-items: end;
+  min-height: 0;
+  padding: clamp(1rem, 2vw, 2rem) 0 0;
 }
 
-.parkdex-device {
-  position: absolute;
-  margin: 0;
+.parkdex-frame {
+  position: relative;
+  grid-row: 1;
+  min-width: 0;
   isolation: isolate;
-  filter: drop-shadow(0 1.8rem 2.4rem rgba(5, 18, 18, 0.22)) drop-shadow(0 0.35rem 0.58rem rgba(5, 18, 18, 0.2));
+  filter: drop-shadow(0 1.35rem 2rem rgba(5, 18, 18, 0.2)) drop-shadow(0 0.25rem 0.45rem rgba(5, 18, 18, 0.2));
 }
 
-.parkdex-device__screen {
-  position: relative;
-  z-index: 1;
+.parkdex-frame__screen {
   display: block;
   width: 100%;
-  height: 100%;
   overflow: hidden;
   background: #0a1111;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.72), inset 0 0.25rem 0.55rem rgba(0, 0, 0, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.72);
 }
 
-.parkdex-device__screen::after {
-  content: '';
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  background: linear-gradient(118deg, rgba(255, 255, 255, 0.07), transparent 27%, transparent 76%, rgba(255, 255, 255, 0.025));
-  pointer-events: none;
-}
-
-.parkdex-device img {
+.parkdex-frame img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
 }
 
-.parkdex-device--laptop {
-  padding: clamp(0.58rem, 1vw, 0.9rem) clamp(0.58rem, 1vw, 0.9rem) clamp(0.78rem, 1.25vw, 1.12rem);
+.parkdex-frame--laptop {
+  padding: clamp(0.5rem, 0.85vw, 0.78rem) clamp(0.5rem, 0.85vw, 0.78rem) clamp(0.65rem, 1vw, 0.92rem);
   border: 2px solid #1c2724;
-  border-radius: clamp(0.75rem, 1.4vw, 1.15rem) clamp(0.75rem, 1.4vw, 1.15rem) 0.38rem 0.38rem;
-  background:
-    linear-gradient(112deg, rgba(255, 255, 255, 0.12), transparent 30%, transparent 74%, rgba(7, 16, 14, 0.16)),
-    #3d4845;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-    inset 0 -0.2rem 0.28rem rgba(7, 16, 14, 0.28),
-    0 0.16rem 0.24rem rgba(16, 27, 27, 0.18);
+  border-radius: clamp(0.7rem, 1.2vw, 1rem) clamp(0.7rem, 1.2vw, 1rem) 0.32rem 0.32rem;
+  background: #35413e;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0.16rem 0.24rem rgba(16, 27, 27, 0.18);
 }
 
-.parkdex-device--laptop .parkdex-device__screen {
-  aspect-ratio: 16 / 9;
+.parkdex-frame--laptop .parkdex-frame__screen {
   border: clamp(0.22rem, 0.42vw, 0.36rem) solid #101917;
   border-radius: clamp(0.32rem, 0.6vw, 0.52rem);
 }
 
-.parkdex-device--laptop .parkdex-device__camera {
-  position: absolute;
-  z-index: 3;
-  top: clamp(0.19rem, 0.32vw, 0.3rem);
-  left: 50%;
-  width: clamp(0.17rem, 0.27vw, 0.24rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #07110f;
-  box-shadow: inset 0 0 0 1px #000807, 0 0 0 1px rgba(255, 255, 255, 0.46), 0 0 0.18rem rgba(7, 17, 15, 0.7);
-  transform: translateX(-50%);
-}
-
-.parkdex-device__base {
-  position: absolute;
-  z-index: 0;
-  right: -5.5%;
-  bottom: clamp(-1.02rem, -1.45vw, -0.76rem);
-  left: -5.5%;
-  height: clamp(0.9rem, 1.65vw, 1.34rem);
-  clip-path: polygon(4% 0, 96% 0, 100% 52%, 97.5% 100%, 2.5% 100%, 0 52%);
-  background:
-    linear-gradient(180deg, #17211f 0 18%, #505b57 20% 68%, #313c38 70% 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0.5rem 0.76rem rgba(10, 24, 22, 0.24);
-}
-
-.parkdex-device__base::before {
+.parkdex-frame--laptop::after {
   content: '';
   position: absolute;
-  top: 0;
-  right: 8%;
-  left: 8%;
-  height: 18%;
-  border-radius: 0 0 999px 999px;
-  background: #101917;
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  z-index: -1;
+  right: -4%;
+  bottom: -0.72rem;
+  left: -4%;
+  height: clamp(0.72rem, 1.2vw, 1rem);
+  border-radius: 0.12rem 0.12rem 0.48rem 0.48rem;
+  background: #2c3835;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.14), 0 0.35rem 0.6rem rgba(10, 24, 22, 0.2);
 }
 
-.parkdex-device__base::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 42%;
-  width: 16%;
-  height: 34%;
-  border-radius: 0 0 0.35rem 0.35rem;
-  background: #3b4642;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 1px 0 rgba(20, 31, 29, 0.28);
-}
-
-.parkdex-device--map {
+.parkdex-frame--map {
   z-index: 1;
-  top: 7%;
-  right: 6%;
-  left: 0;
-  aspect-ratio: 1.72;
-  transform: rotate(1.6deg);
+  grid-column: 1 / 12;
+  align-self: start;
+  transform: rotate(1.2deg);
 }
 
-.parkdex-device--phone {
-  padding: clamp(0.55rem, 1vw, 0.78rem) clamp(0.42rem, 0.78vw, 0.62rem) clamp(0.62rem, 1.12vw, 0.88rem);
+.parkdex-frame--phone {
+  padding: clamp(0.38rem, 0.65vw, 0.55rem);
   border: 2px solid #18221f;
-  border-radius: clamp(1rem, 2.4vw, 2.15rem);
-  background:
-    linear-gradient(108deg, rgba(255, 255, 255, 0.12), transparent 20%, transparent 74%, rgba(7, 16, 14, 0.18)),
-    #37423f;
-  box-shadow:
-    inset 0 0 0 clamp(0.1rem, 0.18vw, 0.15rem) rgba(14, 23, 20, 0.9),
-    inset 0.18rem 0 0.24rem rgba(255, 255, 255, 0.06),
-    inset -0.18rem 0 0.24rem rgba(7, 16, 14, 0.2),
-    0 0.16rem 0.24rem rgba(16, 27, 27, 0.18);
+  border-radius: clamp(0.85rem, 1.8vw, 1.55rem);
+  background: #303c39;
+  box-shadow: inset 0 0 0 clamp(0.08rem, 0.13vw, 0.12rem) #101917, 0 0.14rem 0.22rem rgba(16, 27, 27, 0.18);
 }
 
-.parkdex-device--phone .parkdex-device__screen {
-  border: clamp(0.18rem, 0.34vw, 0.28rem) solid #0d1614;
-  border-radius: clamp(0.76rem, 1.85vw, 1.62rem);
+.parkdex-frame--phone .parkdex-frame__screen {
+  border: clamp(0.14rem, 0.25vw, 0.22rem) solid #0d1614;
+  border-radius: clamp(0.62rem, 1.45vw, 1.25rem);
 }
 
-.parkdex-device--phone .parkdex-device__speaker,
-.parkdex-device--phone .parkdex-device__camera,
-.parkdex-device--phone .parkdex-device__gesture,
-.parkdex-device--phone .parkdex-device__button {
-  position: absolute;
-  z-index: 4;
-  display: block;
-  background: #0a1311;
-}
-
-.parkdex-device--phone .parkdex-device__speaker {
-  top: clamp(0.19rem, 0.36vw, 0.29rem);
-  left: 50%;
-  width: 24%;
-  height: clamp(0.1rem, 0.17vw, 0.15rem);
-  border-radius: 999px;
-  transform: translateX(-50%);
-}
-
-.parkdex-device--phone .parkdex-device__camera {
-  top: clamp(0.17rem, 0.33vw, 0.27rem);
-  left: 34%;
-  width: clamp(0.15rem, 0.28vw, 0.23rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #07110f;
-  box-shadow: inset 0 0 0 1px #000807, 0 0 0 1px rgba(255, 255, 255, 0.42), 0 0 0.16rem rgba(7, 17, 15, 0.68);
-}
-
-.parkdex-device--phone .parkdex-device__gesture {
-  bottom: clamp(0.2rem, 0.38vw, 0.3rem);
-  left: 50%;
-  width: 30%;
-  height: clamp(0.1rem, 0.18vw, 0.16rem);
-  border-radius: 999px;
-  background: rgba(236, 239, 233, 0.68);
-  transform: translateX(-50%);
-}
-
-.parkdex-device--phone .parkdex-device__button {
-  width: clamp(0.15rem, 0.24vw, 0.2rem);
-  border-radius: 999px;
-  background: #1a2522;
-  box-shadow: inset 1px 0 rgba(255, 255, 255, 0.1), inset -1px 0 rgba(7, 16, 14, 0.4), 0 1px 2px rgba(7, 16, 14, 0.24);
-}
-
-.parkdex-device__button--power {
-  top: 25%;
-  right: clamp(-0.2rem, -0.28vw, -0.16rem);
-  height: 18%;
-}
-
-.parkdex-device__button--volume {
-  top: 22%;
-  left: clamp(-0.2rem, -0.28vw, -0.16rem);
-  height: 27%;
-}
-
-.parkdex-device--detail {
+.parkdex-frame--detail {
   z-index: 3;
-  right: 1%;
-  bottom: 5%;
-  width: 32%;
-  aspect-ratio: 0.53;
-  transform: rotate(4deg);
+  grid-column: 9 / 13;
+  transform: translateY(7%) rotate(3.5deg);
 }
 
-.parkdex-device--progress {
+.parkdex-frame--progress {
   z-index: 2;
-  bottom: 0;
-  left: 9%;
-  width: 28%;
-  aspect-ratio: 0.53;
-  transform: rotate(-4.5deg);
+  grid-column: 2 / 5;
+  transform: translateY(10%) rotate(-4deg);
 }
 
-.parkdex-story__gallery figcaption {
-  position: absolute;
+.parkdex-story__caption {
   z-index: 5;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  grid-row: 2;
+  grid-column: 1 / -1;
+  margin: 0;
   color: #4b625c;
   font-size: 0.83rem;
   line-height: 1.25;
@@ -1492,7 +1439,7 @@ a {
 
 .project-deck {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: clamp(1rem, 2vw, 2rem);
   align-items: start;
   max-width: 94rem;
@@ -1501,15 +1448,9 @@ a {
 }
 
 .project-polaroid {
-  --rotation: var(--base-rotation, 0deg);
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
+  --hover-rotation: 0deg;
+  --rotation: calc(var(--base-rotation, 0deg) + var(--hover-rotation));
   --lift: 0rem;
-  --card-scale: 1;
-  --glare-x: 50%;
-  --glare-y: 50%;
-  --glare-opacity: 0.08;
-  --sheen-position: 50%;
   position: relative;
   display: block;
   min-width: 0;
@@ -1518,12 +1459,9 @@ a {
   border: 1px solid rgba(65, 72, 68, 0.2);
   border-radius: 0.2rem;
   background-color: #fbfaf4;
-  background-image:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.44), transparent 28%, transparent 74%, rgba(193, 198, 188, 0.1)),
-    url('/media/plates/paper-ground.webp');
+  background-image: url('/media/plates/paper-ground.webp');
   background-position: center;
-  background-size: 100% 100%, 18rem auto;
-  background-blend-mode: normal, multiply;
+  background-size: 18rem auto;
   color: var(--ink);
   box-shadow:
     0 0.08rem 0.12rem rgba(28, 40, 37, 0.2),
@@ -1532,118 +1470,32 @@ a {
     inset 0 0 0 1px rgba(255, 255, 255, 0.74);
   text-decoration: none;
   touch-action: pan-y;
-  transform: perspective(70rem) translateY(var(--lift)) rotateZ(var(--rotation)) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(var(--card-scale));
+  transform: translateY(var(--lift)) rotate(var(--rotation));
   transform-origin: 50% 75%;
-  transform-style: preserve-3d;
-  transition:
-    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 180ms ease-out;
-}
-
-.project-polaroid::before {
-  content: '';
-  position: absolute;
-  z-index: 3;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94), transparent 0.18rem),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.7), transparent 0.14rem, transparent calc(100% - 0.14rem), rgba(54, 66, 61, 0.08)),
-    linear-gradient(0deg, rgba(54, 66, 61, 0.14), transparent 0.18rem);
-  box-shadow:
-    inset 0.06rem 0 0 rgba(255, 255, 255, 0.8),
-    inset -0.06rem 0 0 rgba(48, 58, 54, 0.08),
-    inset 0 -0.08rem 0 rgba(48, 58, 54, 0.1);
-  pointer-events: none;
-  transition: box-shadow 240ms ease-out;
-}
-
-.project-polaroid::after {
-  content: '';
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  background:
-    radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08) 15%, rgba(255, 255, 255, 0) 34%),
-    linear-gradient(112deg, transparent 25%, rgba(255, 255, 255, 0.1) 35%, rgba(255, 255, 255, 0.82) 46%, rgba(184, 211, 205, 0.24) 51%, rgba(255, 255, 255, 0.14) 56%, transparent 68%);
-  background-position: center, var(--sheen-position) center;
-  background-size: 100% 100%, 230% 100%;
-  border-radius: inherit;
-  opacity: var(--glare-opacity);
-  pointer-events: none;
-  transition: opacity 180ms ease-out, background-position 80ms linear;
-}
-
-.project-polaroid[data-tilting] {
-  will-change: transform;
-}
-
-.project-polaroid[data-active] {
-  --lift: -0.9rem;
-  --card-scale: 1.026;
-  --glare-opacity: 0.68;
-  z-index: 9;
-  border-color: rgba(43, 52, 49, 0.27);
-  box-shadow:
-    0 0.1rem 0.14rem rgba(24, 34, 32, 0.26),
-    0 0.7rem 1.1rem rgba(28, 48, 45, 0.18),
-    0 2.4rem 4.8rem rgba(28, 48, 45, 0.25),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.88);
-}
-
-.project-polaroid[data-active]::before {
-  box-shadow:
-    inset 0.08rem 0 0 rgba(255, 255, 255, 0.94),
-    inset -0.1rem 0 0 rgba(48, 58, 54, 0.12),
-    inset 0 -0.14rem 0 rgba(48, 58, 54, 0.16);
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .project-polaroid:focus-visible {
   --lift: -0.8rem;
-  --card-scale: 1.025;
-  --glare-opacity: 0.68;
+  --hover-rotation: 0.7deg;
   z-index: 10;
-  border-color: rgba(43, 52, 49, 0.27);
-  box-shadow:
-    0 0.1rem 0.14rem rgba(24, 34, 32, 0.26),
-    0 0.7rem 1.1rem rgba(28, 48, 45, 0.18),
-    0 2.4rem 4.8rem rgba(28, 48, 45, 0.25),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.88);
-}
-
-.project-polaroid:focus-visible::before {
-  box-shadow:
-    inset 0.08rem 0 0 rgba(255, 255, 255, 0.94),
-    inset -0.1rem 0 0 rgba(48, 58, 54, 0.12),
-    inset 0 -0.14rem 0 rgba(48, 58, 54, 0.16);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .project-polaroid:hover {
     --lift: -0.8rem;
-    --card-scale: 1.025;
-    --glare-opacity: 0.68;
+    --hover-rotation: 0.7deg;
     z-index: 10;
-    border-color: rgba(43, 52, 49, 0.27);
-    box-shadow:
-      0 0.1rem 0.14rem rgba(24, 34, 32, 0.26),
-      0 0.7rem 1.1rem rgba(28, 48, 45, 0.18),
-      0 2.4rem 4.8rem rgba(28, 48, 45, 0.25),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.88);
   }
 
-  .project-polaroid:hover::before {
-    box-shadow:
-      inset 0.08rem 0 0 rgba(255, 255, 255, 0.94),
-      inset -0.1rem 0 0 rgba(48, 58, 54, 0.12),
-      inset 0 -0.14rem 0 rgba(48, 58, 54, 0.16);
+  .project-polaroid:nth-child(even):hover {
+    --hover-rotation: -0.7deg;
   }
+
 }
 
 .project-polaroid:active {
   --lift: -0.2rem;
-  --card-scale: 0.99;
 }
 
 .project-polaroid__image {
@@ -1655,33 +1507,11 @@ a {
   box-shadow: inset 0 0 0 1px rgba(16, 27, 27, 0.12), inset 0 -1rem 2rem rgba(16, 27, 27, 0.05);
 }
 
-.project-polaroid__image::after {
-  content: '';
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  box-shadow: inset 0 0 0 1px rgba(16, 27, 27, 0.08), inset 0 1.1rem 2rem rgba(255, 255, 255, 0.06);
-  pointer-events: none;
-}
-
 .project-polaroid__image > img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: filter 260ms ease-out;
-}
-
-.project-polaroid[data-active] .project-polaroid__image > img,
-.project-polaroid:focus-visible .project-polaroid__image > img {
-  filter: saturate(1.055) contrast(1.018);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .project-polaroid:hover .project-polaroid__image > img {
-    filter: saturate(1.055) contrast(1.018);
-  }
 }
 
 .project-polaroid--doxxme .project-polaroid__image > img,
@@ -1891,24 +1721,24 @@ a {
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.essay-list li:is([data-active], :has(a:focus-visible))::before {
+.essay-list li:has(a:focus-visible)::before {
   opacity: 1;
   transform: scale(1);
 }
 
-.essay-list li:is([data-active], :has(a:focus-visible)) a {
+.essay-list li:has(a:focus-visible) a {
   color: white;
 }
 
-.essay-list li:is([data-active], :has(a:focus-visible)) time {
+.essay-list li:has(a:focus-visible) time {
   color: rgba(255, 255, 255, 0.76);
 }
 
-.essay-list li:is([data-active], :has(a:focus-visible)) .essay-list__title {
+.essay-list li:has(a:focus-visible) .essay-list__title {
   transform: translateX(0.25rem);
 }
 
-.essay-list li:is([data-active], :has(a:focus-visible)) svg {
+.essay-list li:has(a:focus-visible) svg {
   transform: translateX(0.35rem);
 }
 
@@ -1958,24 +1788,7 @@ a {
   }
 
   .parkdex-story__gallery {
-    min-height: 36rem;
-  }
-
-  .parkdex-device--detail {
-    bottom: 3rem;
-  }
-
-  .parkdex-device--progress {
-    bottom: 2.5rem;
-  }
-
-  .parkdex-story__gallery figcaption {
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 5;
-    text-align: center;
-    white-space: nowrap;
+    min-height: 0;
   }
 
   .section-heading,
@@ -2041,31 +1854,25 @@ a {
   }
 
   .parkdex-story__gallery {
-    min-height: clamp(26rem, 116vw, 31rem);
+    gap: 1.35rem 0;
+    min-height: 0;
   }
 
-  .parkdex-device--map {
-    right: 3%;
-    left: 3%;
+  .parkdex-frame--map {
+    grid-column: 1 / -1;
   }
 
-  .parkdex-device__base {
-    right: -3%;
-    left: -3%;
+  .parkdex-frame--detail {
+    grid-column: 9 / 13;
+    transform: translateY(8%) rotate(3deg);
   }
 
-  .parkdex-device--detail {
-    bottom: 3.15rem;
-    width: 39%;
+  .parkdex-frame--progress {
+    grid-column: 1 / 5;
+    transform: translateY(10%) rotate(-3.5deg);
   }
 
-  .parkdex-device--progress {
-    bottom: 2.85rem;
-    left: 4%;
-    width: 35%;
-  }
-
-  .parkdex-story__gallery figcaption {
+  .parkdex-story__caption {
     font-size: clamp(0.58rem, 2.5vw, 0.72rem);
   }
 
@@ -2086,17 +1893,6 @@ a {
     margin: 0 !important;
     border-radius: 0.16rem;
     padding-bottom: 4.8rem;
-  }
-
-  .project-polaroid[data-active] {
-    --lift: -0.75rem;
-    --card-scale: 1.022;
-    --glare-opacity: 0.74;
-    box-shadow:
-      0 0.1rem 0.14rem rgba(24, 34, 32, 0.28),
-      0 0.65rem 1rem rgba(28, 48, 45, 0.18),
-      0 2rem 3.2rem rgba(28, 48, 45, 0.24),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.9);
   }
 
   .project-polaroid:nth-child(even) {
@@ -2162,17 +1958,18 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-polaroid,
-  .project-polaroid[data-active],
-  .project-polaroid:is(:hover, :focus-visible, :active) {
-    --rotation: var(--base-rotation, 0deg);
-    --tilt-x: 0deg;
-    --tilt-y: 0deg;
-    --lift: 0rem;
-    --card-scale: 1;
+  .hero-print,
+  .hero-print:is(a):hover,
+  .hero-print:is(a):focus-visible {
+    animation: none;
+    transition: none;
+    transform: rotate(var(--print-rotation, 0deg));
   }
 
-  .project-polaroid::after {
-    opacity: 0;
+  .project-polaroid,
+  .project-polaroid:is(:hover, :focus-visible, :active) {
+    --rotation: var(--base-rotation, 0deg);
+    --lift: 0rem;
+    transition: none;
   }
 }

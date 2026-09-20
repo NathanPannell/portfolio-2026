@@ -37,7 +37,7 @@ Cloudflare Pages
 | `src/components/SiteHeader.astro` | Desktop navigation and mobile name plus email treatment. |
 | `src/components/SiteFooter.astro` | Shared concise contact and social footer. |
 | `src/styles/global.css` | Tokens, all shared layouts, device mockups, Polaroids, responsive behavior, and reduced motion. |
-| `src/scripts/project-polaroids.ts` | Viewport-centered cards and writing rows, pointer tilt, gloss, and BFCache-safe lifecycle. |
+| `src/scripts/project-polaroids.ts` | Clears touch-created card focus without creating scroll-selected states; preserves BFCache-safe listener cleanup. |
 | `src/scripts/navigation-focus.ts` | Clears pointer-created link focus after browser Back while retaining keyboard focus behavior. |
 | `tests/content-contract.mjs` | Publishing invariants, required legacy routes, project ordering, drafts, and generated-route checks. |
 | `public/_headers` | Cloudflare security and caching headers. |
@@ -49,7 +49,7 @@ Cloudflare Pages
 1. Full-viewport boat-photo hero
 2. Parkdex story and matte device composition
 3. Tactile project Polaroid collection
-4. Featured writing list with viewport-centered image wash
+4. Featured writing list with pointer-hover and keyboard-focus image washes
 5. Shared concise contact footer
 
 Projects and writing are loaded through `src/lib/content.ts`. Do not restore parallel data objects for titles, covers, or alt text in the page component.
@@ -66,18 +66,17 @@ Writing and standalone legacy entries use `ArticleLayout`. Only Writing appears 
 
 ## Interaction lifecycle
 
-`project-polaroids.ts` manages both project cards and homepage writing rows in one animation-frame scheduler.
+`project-polaroids.ts` only guards against touch-created sticky focus on project cards.
 
-- Scroll and resize schedule one update.
-- Exactly one visible project card or essay row nearest the viewport center receives `data-active`.
-- Fine pointers may set CSS tilt and glare variables.
+- Project-card lift and slight rotation are CSS hover states gated behind `(hover: hover) and (pointer: fine)`.
+- Keyboard focus receives the same physical elevation without depending on pointer position.
 - Touch pointer-up clears link focus before navigation can leave a sticky return state.
-- `pagehide` cancels a frame but keeps listeners alive when the page enters the back-forward cache.
-- `pageshow` schedules a fresh center calculation.
+- `pagehide` keeps listeners alive when the page enters the back-forward cache and aborts them only for a real unload.
+- Scrolling never assigns a synthetic active state to a card or writing row.
 
 `navigation-focus.ts` records only pointer-initiated navigation. On a BFCache or back-forward restore, it blurs a restored anchor if the user originally followed it with a pointer. Keyboard focus is not cleared.
 
-Do not replace these scripts with sticky CSS hover behavior on touch devices.
+Do not add hover behavior outside fine-pointer feature queries or restore viewport-centred selection.
 
 ## Styling strategy
 
