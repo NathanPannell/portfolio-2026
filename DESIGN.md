@@ -142,7 +142,7 @@ The homepage follows an experience sequence: photograph, Parkdex story, project 
 
 The desktop hero fills one viewport. The photograph occupies the upper 70 percent, while the lower paper ground catches three overlapping preview prints. The headline and one concrete identity line sit in open water or sky rather than covering Nathan. The Parkdex section uses an asymmetric story-and-gallery grid. The project collection uses a twelve-column deck with deliberately uneven spans, rotations, and vertical offsets. The writing preview pairs a sticky introduction with compact essay rows.
 
-At 980px and below, story, heading, and writing grids become single-column. Sticky writing-preview copy returns to normal flow. At 720px and below, the hero becomes one uninterrupted 100svh photograph: paper ground and preview prints disappear, the title moves to the bottom, and navigation reduces to the name and Email Me. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
+At 980px and below, story, heading, and writing grids become single-column. Sticky writing-preview copy returns to normal flow. At 720px and below, the hero becomes one uninterrupted 100svh photograph: paper ground and preview prints disappear, the title moves to the bottom, and navigation reduces to the name and Email me. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
 
 Project pages open on paper with a two-column composition: short story, actions, stable metadata, and proof points beside one project-specific artifact. This first artifact carries the project identity; a generic nature photograph never substitutes for the work. Additional screenshots and demos move to the dark media stage below. Every image, video, and embedded player must fit inside `calc(100svh - 2rem)`. Preserve the media's aspect ratio, use contain rather than crop for page-level demos, and never let a project visual become taller than the visible screen. On small screens, project media runs edge to edge while narrative text keeps the homepage's 1.15rem horizontal gutter.
 
@@ -168,13 +168,13 @@ Use circles only for functional details already present in an artifact or projec
 
 ### Navigation
 
-The desktop header is minimal: Nathan Pannell, Parkdex, Projects, Writing, and Email Me. It may overlay the hero or sit on a paper surface. Overlay text uses enough shadow or local image contrast to remain legible. Email Me uses a lime underline and a drawn arrow instead of another filled pill. On mobile, keep only Nathan Pannell and Email Me. The shared footer carries the social routes.
+The desktop header is minimal: Nathan Pannell, Parkdex, Projects, Writing, and Email me. It may overlay the hero or sit on a paper surface. Overlay text uses enough shadow or local image contrast to remain legible. Email me uses a lime underline and a drawn arrow instead of another filled pill. On mobile, keep only Nathan Pannell and Email me. The shared footer carries the social routes.
 
 ### Buttons and Text Links
 
 Primary buttons are ink-filled pills with white text and a minimum 3.25rem height. Header and footer contact links stay typographic, with a short lime underline so the page has one obvious filled action at a time. Hover uses a small upward translation and soft shadow, never a dramatic bounce. Text links use a compact directional arrow whose motion reinforces direction. All actions retain a visible lime focus outline.
 
-The shared footer is intentionally concise: “Let’s build together.”, Email Me, the Vancouver Island colophon, and one horizontal line for GitHub, X, and LinkedIn. Article pages may add More writing beside the email action.
+The shared footer is intentionally concise: “Have something interesting to build?”, Email me, the Vancouver Island colophon, and one horizontal line for GitHub, X, and LinkedIn. Article pages may add More writing beside the email action.
 
 ### Hero Preview Prints
 

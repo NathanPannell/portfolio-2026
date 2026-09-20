@@ -1,6 +1,28 @@
 # Nathan Pannell portfolio
 
-Static Astro portfolio for [nathanpannell.com](https://www.nathanpannell.com), designed for Cloudflare Pages.
+Static Astro portfolio intended for [nathanpannell.com](https://www.nathanpannell.com), deployed through Cloudflare Pages. The latest reviewed build lives on the staging hostname; the custom domain still serves the older Vercel site until an explicit cutover.
+
+## Start here
+
+New contributors and new Codex chats should read [CONTEXT.md](./CONTEXT.md) first.
+
+| Document | Purpose |
+| --- | --- |
+| [CONTEXT.md](./CONTEXT.md) | Current branch state, settled decisions, preserved behavior, and unfinished work. |
+| [PRODUCT.md](./PRODUCT.md) | Audience, positioning, scope, facts, and product principles. |
+| [DESIGN.md](./DESIGN.md) | Visual system, responsive behavior, components, and motion. |
+| [CONTENT.md](./CONTENT.md) | Content collections, frontmatter, copy rules, drafts, and routing. |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Code map, data flow, routes, scripts, CSS, SEO, and security. |
+| [OPERATIONS.md](./OPERATIONS.md) | Local commands, validation, Cloudflare deployment, and production promotion. |
+| [ASSETS.md](./ASSETS.md) | Media provenance and replacement notes. |
+
+Current environments:
+
+- Staging: <https://portfolio-2026-staging.pages.dev>
+- Cloudflare `main`: <https://portfolio-2026-ady.pages.dev>
+- Intended custom domain: <https://www.nathanpannell.com> (cutover pending)
+
+`portfolio-2026.pages.dev` is unrelated to this repository.
 
 ## Local development
 
@@ -11,25 +33,10 @@ npm install
 npm run dev
 ```
 
-Before delivery:
+Before delivery, run the release gate:
 
 ```sh
-npm run check
 npm run build
-npm run test:content
 ```
 
-## Cloudflare Pages
-
-Create or connect the Pages project with these settings:
-
-- Production branch: `main`
-- Build command: `npm run build`
-- Output directory: `dist`
-- Node version: `22`
-
-The site is fully static and does not need the Cloudflare Astro adapter or Pages Functions.
-
-Enable Web Analytics in the Pages project under **Metrics**. Cloudflare will inject its beacon during deployment. Do not add a second manual beacon to the source, and do not add `Cache-Control: no-transform` to HTML because that prevents injection. After deployment, verify one `cdn-cgi/rum` request on the production URL.
-
-The custom domain and canonical site origin are `https://www.nathanpannell.com`.
+The build includes the content contract, Astro diagnostics, and static generation. See [OPERATIONS.md](./OPERATIONS.md) for deployment details and branch safety.

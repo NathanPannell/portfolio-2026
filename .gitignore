@@ -5,6 +5,5 @@ dist/
 .codex/
 .impeccable/
 assets/
-ASSETS.md
 .DS_Store
 *.log

@@ -34,13 +34,13 @@ Nathan builds with the initiative and end-to-end ownership of a startup founder,
 
 Visitors may arrive from LinkedIn, GitHub, X, a shared project, or a job application. They need to move quickly between a concise introduction, Parkdex, selected past work, writing, and direct contact routes.
 
-The current site at <https://nathanpannell.com/> is the source for the existing article and project-writing backlog that will be ported into the new portfolio.
+The selected article and project-writing backlog has been migrated from the earlier site and private `NathanPannell/chiri-blog` repository. The new portfolio is deployed to Cloudflare Pages, but the custom domain still serves the older Vercel site until an explicit cutover. The most recent redesign may remain on staging until Nathan explicitly promotes it.
 
 ## Capabilities and Constraints
 
 - Build the site with Astro and deploy it on Cloudflare Pages.
 - Make Parkdex the primary current project while retaining selected past projects as supporting evidence.
-- Port the existing blog posts and project writing from the current website.
+- Preserve the migrated blog posts and project writing while keeping future additions easy to author in Markdown or MDX.
 - Provide direct calls to action for email, LinkedIn, GitHub, X, and other confirmed social profiles where appropriate.
 - Keep public claims grounded in real projects, experience, posts, and source material. Do not invent customers, testimonials, metrics, or outcomes.
 - The confirmed information architecture, project selection, and migration decisions are recorded below.
@@ -57,10 +57,10 @@ The current site at <https://nathanpannell.com/> is the source for the existing 
 - Cup of Sugar is a January 31, 2026 UVic Hacks project credited to Nathan, Jett Schreiber, and Mohan Selvarajan.
 - The homepage previews the three published non-project Writing entries. The dedicated Writing page uses a fullscreen dark selector with normal scrolling and no scroll hijacking.
 - Published project posts remain accessible at their direct URLs but do not appear in the Writing index. Underscore-prefixed drafts never receive public routes.
-- The content source is the private `NathanPannell/chiri-blog` repository. Preserve published article content, dates, and flat URLs while keeping the copy easy to revise in Markdown or MDX.
+- The original migration source was the private `NathanPannell/chiri-blog` repository. The portfolio repository is now authoritative for migrated content. Preserve published article dates and flat URLs.
 - The portfolio intentionally omits a résumé, work-history section, RSS, Atom, and dark-mode toggle. Education may be stated simply as “B.Sc. Computer Science.”
 - `contact@nathanpannell.com` is the primary contact action. LinkedIn, GitHub, and X are secondary contact routes.
-- The finished site will replace `nathanpannell.com`, deploy to Cloudflare Pages, and use Cloudflare Web Analytics.
+- The site deploys to Cloudflare Pages. The intended canonical domain is `nathanpannell.com`, and Cloudflare Web Analytics is planned. Staging changes, production promotion, domain cutover, and analytics verification remain separate explicit operations.
 
 ## Brand Commitments
 
@@ -74,14 +74,16 @@ The current site at <https://nathanpannell.com/> is the source for the existing 
 ## Evidence on Hand
 
 - Live Parkdex product: <https://parkdex.app/>
-- Current portfolio and writing archive: <https://nathanpannell.com/>
+- Current older portfolio on the intended domain: <https://nathanpannell.com/>
+- Cloudflare production project: <https://portfolio-2026-ady.pages.dev/>
+- Latest redesign staging site: <https://portfolio-2026-staging.pages.dev/>
 - LinkedIn profile and recent Parkdex/product-building posts: <https://www.linkedin.com/in/nathanpannell/>
 - GitHub profile and public repositories: <https://github.com/NathanPannell>
 - X profile: <https://x.com/nwpannell>
 - Public contact email on the current portfolio: <mailto:contact@nathanpannell.com>
 - Parkdex is publicly described as a Pokédex or completionist map for Vancouver Island parks, with places, groups, badges, and trip-planning integrations demonstrated in Nathan's recent posts.
 - Nathan's public professional evidence includes shipping a driver-licensing service across more than 100 ICBC offices, observability work across connected services, hackathon projects, and a published undergraduate wildfire-simulation project.
-- The current portfolio contains personal writing and project write-ups that can be migrated. Future work should treat those source pages as authoritative rather than recreating their content from memory.
+- The repository now contains the selected personal writing and project write-ups. Future work should treat the repository content and linked primary sources as authoritative rather than recreating facts from memory.
 - No testimonials or client endorsements were identified. Future work must not fabricate them.
 
 ## Product Principles
