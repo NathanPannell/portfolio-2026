@@ -11,15 +11,10 @@ const { tone = 'dark', overlay = false } = Astro.props;
   <div class="site-header__identity">
     <a class="site-header__name" href="/" aria-label="Nathan Pannell, home">Nathan Pannell</a>
   </div>
-  <nav class="site-header__nav" aria-label="Primary navigation">
-    <ul class="site-header__links">
-      <li><a href="/#parkdex">Parkdex</a></li>
-      <li><a href="/#projects">Projects</a></li>
-      <li><a href="/writing/">Writing</a></li>
-    </ul>
+  <div class="site-header__nav">
     <a class="site-header__contact" href="mailto:contact@nathanpannell.com">
       <span>Email me</span>
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" /></svg>
     </a>
-  </nav>
+  </div>
 </header>

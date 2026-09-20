@@ -107,7 +107,7 @@ assert.equal(new Set(flatSlugs).size, flatSlugs.length, 'Flat article slugs must
 assertIncludes(flatSlugs, requiredLegacy, 'Required flat article slugs');
 
 for (const { slug, data } of projects) {
-  for (const field of ['title', 'tagline', 'summary', 'projectType', 'displayDate', 'cover', 'coverAlt', 'highlights']) {
+  for (const field of ['title', 'tagline', 'cardCaption', 'summary', 'projectType', 'displayDate', 'cover', 'coverAlt', 'highlights']) {
     assert(data.has(field), `${slug} is missing required project frontmatter: ${field}`);
   }
 }
@@ -125,7 +125,6 @@ const dist = join(root, 'dist');
 if (existsSync(dist) && statSync(dist).isDirectory()) {
   const expectedRoutes = [...new Set([
     'index.html',
-    'writing/index.html',
     ...projects.map(({ slug }) => `${slug}/index.html`),
     ...flatSlugs.map((slug) => `${slug}/index.html`),
   ])];

@@ -78,7 +78,7 @@ components:
 
 The portfolio feels like a day outside followed by a table covered in things Nathan has made. A real Vancouver Island photograph establishes place and personality before the interface shifts into fog-white paper, layered screenshots, and instant-film project prints. The work is the proof. The site should never collapse into a résumé-first card grid or a polished corporate personal brand.
 
-The system is light, candid, tactile, and technically precise. Deep green-black ink and cool paper carry most surfaces. Parkdex lime marks action and focus, while coral is a rare point of warmth. The separate Writing page becomes a near-black reading room, but this is a deliberate scene change rather than a second theme or a dark-mode system.
+The system is light, candid, tactile, and technically precise. Deep green-black ink and cool paper carry most surfaces. Parkdex lime marks action and focus, while coral is a rare point of warmth. Writing stays inside the homepage paper world rather than splitting into a separate destination.
 
 **Key Characteristics:**
 
@@ -86,7 +86,7 @@ The system is light, candid, tactile, and technically precise. Deep green-black 
 - Large, tightly set display type that speaks in short, direct sentences.
 - Physical project artifacts with paper texture, rotation, overlap, depth, and restrained motion.
 - Editorial content with generous space and readable line lengths.
-- One dark Writing room, not a site-wide dark mode.
+- One continuous homepage story from photograph to field notes.
 - Minimal supporting copy. The projects and essays carry the story.
 
 ## Colors
@@ -111,13 +111,13 @@ The palette comes from coastal water, fogged paper, forest shade, and Parkdex. M
 - **Deep Paper:** A slightly denser neutral for image wells and secondary surfaces.
 - **Print White:** The brighter stock used by Polaroids and screenshot frames.
 - **Project Field:** A quiet green ground that separates the project deck from editorial sections.
-- **Writing Room:** The dedicated dark surface for the Writing selector.
-- **Writing Muted:** Inactive essay titles in the Writing selector.
+- **Writing Wash:** The dark photographic hover and focus state behind homepage essay rows.
+- **Writing Muted:** Secondary dates and metadata in the Writing list.
 - **Hairline:** Dividers and quiet structure on light surfaces.
 
 **The Rare Accent Rule.** Lime and coral are signals, not atmosphere. Never distribute either color evenly across a page.
 
-**The One Dark Room Rule.** Dark surfaces belong to the Writing selector and closing contact areas. Do not add a dark-mode toggle or alternate theme.
+**The One Light Story Rule.** The homepage stays in one paper-and-photograph world. Dark surfaces are reserved for project media stages and the closing contact area, not a second theme.
 
 ## Typography
 
@@ -144,7 +144,7 @@ The homepage follows an experience sequence: photograph, Parkdex story, project 
 
 The desktop hero fills one viewport. The photograph occupies the upper 70 percent, while the lower paper ground catches three overlapping preview prints. The headline and one concrete identity line sit in open water or sky rather than covering Nathan. The Parkdex section uses an asymmetric story-and-gallery grid. The project collection uses a twelve-column deck with deliberately uneven spans, rotations, and vertical offsets. The writing preview pairs a sticky introduction with compact essay rows.
 
-At 980px and below, story, heading, and writing grids become single-column. Sticky writing-preview copy returns to normal flow. At 720px and below, the first viewport remains one uninterrupted 100svh photograph, the title moves to the bottom, and navigation reduces to the name and Email me. Three compact field-note prints overlap in the open sky to the left of Nathan's head; one print comes to the front every five seconds unless reduced motion is requested. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
+At 980px and below, story, heading, and writing grids become single-column. Sticky writing copy returns to normal flow. At 720px and below, the photo is raised by roughly one-fifth of the viewport so the title and first field-note print arrive sooner. Building apps and Vancouver Island overlap across the paper transition and lead directly into Parkdex; the first print begins just above the fold. The project deck becomes a vertical stack with cards up to 95 percent width; alternating cards align to the opposite edge to preserve the tabletop rhythm.
 
 Project pages open on paper with a two-column composition: short story, actions, stable metadata, and proof points beside one project-specific artifact. This first artifact carries the project identity; a generic nature photograph never substitutes for the work. Additional screenshots and demos move to the dark media stage below. Every image, video, and embedded player must fit inside `calc(100svh - 2rem)`. Preserve the media's aspect ratio, use contain rather than crop for page-level demos, and never let a project visual become taller than the visible screen. On small screens, project media runs edge to edge while narrative text keeps the homepage's 1.15rem horizontal gutter.
 
@@ -170,17 +170,17 @@ Use circles only for functional details already present in an artifact or projec
 
 ### Navigation
 
-The desktop header is a restrained field-index masthead. Nathan Pannell occupies the first row; Parkdex, Projects, Writing, and Email me form a ruled navigation row beneath. It may overlay the hero or sit on a paper surface. Over the homepage's light sky, the masthead uses dark ink for direct contrast. Email me is the only dark filled action in the masthead and keeps a lime lower edge with the drawn arrow. On mobile, collapse back to only Nathan Pannell and Email me. The shared footer carries the social routes.
+The header is a restrained one-line masthead: Nathan Pannell on the left and Email me on the right. There are no section navigation links. Over the homepage's light sky, the masthead uses dark ink for direct contrast. Email me remains a simple dark-ink link with a lime underline and drawn arrow. The shared footer carries the social routes.
 
 ### Buttons and Text Links
 
-Primary buttons are ink-filled pills with white text and a minimum 3.25rem height. The header Email me action is an ink-filled pill with a lime lower edge; footer contact links stay typographic. Hover uses a small upward translation and soft shadow, never a dramatic bounce. Text links use a compact directional arrow whose motion reinforces direction. All actions retain a visible lime focus outline.
+Primary buttons are ink-filled pills with white text and a minimum 3.25rem height. The header Email me action and in-page list expanders stay typographic with a lime underline. Text links use a compact directional arrow whose motion reinforces direction. All actions retain a visible lime focus outline.
 
-The shared footer is intentionally concise: “Have something interesting to build?”, Email me, the Vancouver Island colophon, and one horizontal line for GitHub, X, and LinkedIn. Article pages may add More writing beside the email action.
+The shared footer is intentionally concise: “Working on something that should exist?”, “Tell me about it”, the Vancouver Island colophon, and one horizontal line for GitHub, X, and LinkedIn. Article pages may add More writing beside the email action.
 
 ### Hero Preview Prints
 
-Three content-sized instant-film objects rise into the desktop fold as one overlapping group. Their image windows preserve each source photograph's intrinsic aspect ratio, so labels and image content remain visible even on short desktop viewports. Their handwritten labels are centered and generous enough to read as physical captions. Their entrance settles upward over 820ms with staggered delays and the system's spring-like easing. Fine-pointer hover or focus raises any selected print and brings it to the front. On mobile, all three prints form a compact rotating stack in the open sky; the next print comes forward every five seconds, pauses for focus or pointer inspection, includes a persistent pause/resume control, and remains still under reduced motion.
+Three content-sized instant-film objects rise into the desktop fold as one overlapping group. Their image windows preserve each source photograph's intrinsic aspect ratio, so labels and image content remain visible even on short desktop viewports. Their centered captions combine a handwritten title with one brief factual story line. Their entrance settles upward over 820ms with staggered delays and the system's spring-like easing. Fine-pointer hover or focus raises any selected print and brings it to the front. On mobile, Parkdex leaves the preview group while Building apps and Vancouver Island overlap on the paper transition as a fixed, readable bridge into the Parkdex feature.
 
 ### Project Polaroids
 
@@ -201,11 +201,9 @@ The 404 route is a useful field note rather than a centred utility message. Pair
 
 Use one wide map screenshot inside a simplified matte laptop frame and two narrower screenshots inside slim neutral phone frames. The frames are content-sized divs: screenshot width determines frame width, intrinsic image height determines frame height, and every source pixel remains visible. Use one dark rail, one recessed screen edge, and a contact shadow rather than decorative hardware, chrome, or screen sheen. Keep the three frames lightly rotated and layered like objects set down for review. This is a product story, not a carousel.
 
-### Writing Selector
+### Writing List
 
-The dedicated Writing page is a full-screen near-black room with normal document scrolling. Essay titles are large and muted by default; the current or hovered title brightens and shifts slightly right. Dividers provide rhythm. Keep the year secondary and do not add thumbnails, filter chips, horizontal scrolling, or scroll hijacking.
-
-On the homepage, the writing preview remains a flat editorial list. Fine-pointer hover and keyboard focus reveal a dark photographic wash drawn from the essay while its title and metadata brighten. On mobile only, the row nearest the viewport centre receives that same state while the writing list is visible; desktop scrolling never selects a row.
+Writing lives on the homepage as a flat editorial list. The three newest entries show first; All writing expands the remaining published flat articles in place. Fine-pointer hover and keyboard focus reveal a dark photographic wash drawn from the essay while its title and metadata brighten. On mobile only, the row nearest the viewport centre receives that same state while the writing list is visible; desktop scrolling never selects a row.
 
 ### Project and Article Media
 
@@ -233,7 +231,7 @@ When reduced motion is requested, smooth scrolling is disabled, animations and t
 
 - **Don't** turn the homepage into a résumé, timeline, skills matrix, or uniform SaaS card grid.
 - **Don't** add micro-subtitles, decorative eyebrows, redundant category labels, or explanatory text under every heading.
-- **Don't** invent a dark mode. Preserve the single light world and the purposeful dark Writing room.
+- **Don't** invent a dark mode or a separate Writing scene. Preserve the single homepage story.
 - **Don't** use generic stock nature imagery, wellness branding, hippie cues, or faux-adventure copy.
 - **Don't** add glassmorphism, floating gradient blobs, excessive rounding, or animation without an interaction purpose.
 - **Don't** crop page-level demo media merely to fill a container, or allow portrait media to exceed the viewport.

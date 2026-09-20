@@ -33,6 +33,11 @@ const startCardInteractions = () => {
     let nearestDistance = Number.POSITIVE_INFINITY;
 
     cards.forEach((card) => {
+      if (card.hidden || card.getClientRects().length === 0) {
+        card.removeAttribute('data-active');
+        return;
+      }
+
       const rect = card.getBoundingClientRect();
       const deltaX = (rect.left + rect.width / 2 - viewportX) * 0.16;
       const deltaY = rect.top + rect.height / 2 - viewportY;
@@ -68,6 +73,11 @@ const startCardInteractions = () => {
     let nearestDistance = Number.POSITIVE_INFINITY;
 
     essays.forEach((essay) => {
+      if (essay.hidden || essay.getClientRects().length === 0) {
+        essay.removeAttribute('data-active');
+        return;
+      }
+
       const rect = essay.getBoundingClientRect();
       const distance = Math.abs(rect.top + rect.height / 2 - viewportY);
 
@@ -103,6 +113,7 @@ const startCardInteractions = () => {
 
   window.addEventListener('scroll', schedule, { signal, passive: true });
   window.addEventListener('resize', schedule, { signal, passive: true });
+  window.addEventListener('portfolio:content-revealed', schedule, { signal });
   window.addEventListener('pageshow', schedule, { signal });
   window.addEventListener('pagehide', (event) => {
     window.cancelAnimationFrame(frame);

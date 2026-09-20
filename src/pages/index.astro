@@ -2,11 +2,16 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import { getProjects, getPublishedWriting } from '../lib/content';
+import { getLegacyPosts, getProjects, getPublishedWriting } from '../lib/content';
 import graduationImage from '../content/writing/_assets/grad.jpg';
 import hackathonImage from '../content/writing/_assets/hackathon-code-hack.jpg';
 
-const [projects, writing] = await Promise.all([getProjects(), getPublishedWriting()]);
+const [projects, currentWriting, legacyWriting] = await Promise.all([
+  getProjects(),
+  getPublishedWriting(),
+  getLegacyPosts(),
+]);
+const writing = [...currentWriting, ...legacyWriting];
 
 const essayDates = new Intl.DateTimeFormat('en-CA', {
   month: 'short',
@@ -38,37 +43,39 @@ const essayVisuals: Record<string, string> = {
       <SiteHeader tone="dark" overlay />
       <div class="hero__copy">
         <h1 id="hero-title" class="hero__title">
-          <span>I build products <br />that make life</span>{' '}
-          <em>more fun.</em>
+          <span>I build upbeat apps <br />that get people</span>{' '}
+          <em>into the real world.</em>
         </h1>
+        <p class="hero__subcopy">Developer in Victoria, BC, turning Vancouver Island into one giant completionist map.</p>
       </div>
       <div class="hero__prints" aria-label="A preview of Nathan's work">
-        <a class="hero-print hero-print--parkdex" data-hero-print href="/parkdex/" aria-label="Explore Parkdex">
+        <a class="hero-print hero-print--parkdex" href="/parkdex/" aria-label="Explore Parkdex">
           <span class="hero-print__window">
             <img src="/media/parkdex/map-overview.webp" alt="Parkdex map of parks across Vancouver Island" width="1600" height="875" loading="lazy" fetchpriority="low" />
           </span>
-          <span class="hero-print__label">Parkdex</span>
+          <span class="hero-print__caption">
+            <strong>Parkdex</strong>
+            <span>A Pokédex for Vancouver Island parks.</span>
+          </span>
         </a>
-        <a class="hero-print hero-print--building" data-hero-print href="#projects" aria-label="See the apps Nathan is building">
+        <a class="hero-print hero-print--building" href="#projects" aria-label="See what Nathan is building">
           <span class="hero-print__window">
             <img src="/media/plates/writing-laptop-2026.webp" alt="A laptop open to code during a workshop" width="1600" height="1200" loading="lazy" fetchpriority="low" />
           </span>
-          <span class="hero-print__label">Building apps</span>
+          <span class="hero-print__caption">
+            <strong>Building apps</strong>
+            <span>Hackathons, products, and production software.</span>
+          </span>
         </a>
-        <a class="hero-print hero-print--island" data-hero-print href="#parkdex" aria-label="Read how Vancouver Island inspired Parkdex">
+        <a class="hero-print hero-print--island" href="#parkdex" aria-label="Read how Vancouver Island inspired Parkdex">
           <span class="hero-print__window">
             <img src="/media/plates/vancouver-island-lake-2026.webp" alt="Nathan sitting beside a clear mountain lake on Vancouver Island" width="1600" height="1200" loading="lazy" fetchpriority="low" />
           </span>
-          <span class="hero-print__label">Vancouver Island</span>
+          <span class="hero-print__caption">
+            <strong>Vancouver Island</strong>
+            <span>The place that inspired Parkdex.</span>
+          </span>
         </a>
-        <button class="hero-prints__toggle" type="button" data-hero-print-toggle aria-label="Pause rotating photos" aria-pressed="false">
-          <svg class="hero-prints__pause" viewBox="0 0 20 20" aria-hidden="true">
-            <path d="M7 5v10M13 5v10" />
-          </svg>
-          <svg class="hero-prints__play" viewBox="0 0 20 20" aria-hidden="true">
-            <path d="m7 5 8 5-8 5Z" />
-          </svg>
-        </button>
       </div>
     </section>
 
@@ -82,9 +89,9 @@ const essayVisuals: Record<string, string> = {
           The web app maps roughly 200 parks and islands. You can find places, save a wishlist, track visits, and see how much of the island you have explored.
         </p>
         <div class="button-row">
-          <a class="button button--primary" href="https://parkdex.app">Explore Parkdex</a>
+          <a class="button button--primary" href="https://parkdex.app">Explore the map</a>
           <a class="text-link" href="/parkdex/">
-            How I built it
+            Read the build story
             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5M7 5h8v8" /></svg>
           </a>
         </div>
@@ -116,52 +123,64 @@ const essayVisuals: Record<string, string> = {
         <p>From an island-wide park tracker to six-hour hackathon builds.</p>
       </div>
 
-      <div class="project-deck">
+      <div id="project-deck" class="project-deck" data-reveal-list data-collapsed-count="3">
         {projects.map((project) => {
           return (
-            <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
+            <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid data-reveal-item href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
               <span class="project-polaroid__image">
                 <img src={project.data.cover} alt={project.data.coverAlt} loading="lazy" />
               </span>
               <span class="project-polaroid__caption">
                 <strong>{project.data.title}</strong>
-                <span>{project.data.displayDate}</span>
+                <span class="project-polaroid__story">{project.data.cardCaption}</span>
+                <span class="project-polaroid__meta">{project.data.displayDate}</span>
               </span>
             </a>
           );
         })}
       </div>
+      {projects.length > 3 && (
+        <button class="section-reveal" type="button" data-reveal-toggle aria-controls="project-deck" aria-expanded="false">
+          <span data-reveal-label>All projects</span>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
+        </button>
+      )}
     </section>
 
-    <section class="writing-preview section-shell" aria-labelledby="writing-title">
+    <section id="writing" class="writing-preview section-shell" aria-labelledby="writing-title">
       <div class="writing-preview__intro">
         <h2 id="writing-title">Projects, mistakes, and what stuck.</h2>
-        <a class="text-link" href="/writing/">
-          Read all writing
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5M7 5h8v8" /></svg>
-        </a>
+        <p>Notes from building, breaking, and taking the long way around.</p>
       </div>
-      <ol class="essay-list">
-        {writing.slice(0, 3).map((essay) => {
-          const visual = essayVisuals[essay.id] ?? '/media/plates/writing-print.webp';
-          return (
-          <li data-essay-item style={`--essay-image: url(${visual})`}>
-            <a href={`/${essay.id}/`}>
-              <span class="essay-list__title">{essay.data.title}</span>
-              <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
-            </a>
-          </li>
-          );
-        })}
-      </ol>
+      <div class="writing-preview__list">
+        <ol id="essay-list" class="essay-list" data-reveal-list data-collapsed-count="3">
+          {writing.map((essay) => {
+            const visual = essayVisuals[essay.id] ?? essay.data.image ?? '/media/plates/writing-print.webp';
+            return (
+            <li data-essay-item data-reveal-item style={`--essay-image: url(${visual})`}>
+              <a href={`/${essay.id}/`}>
+                <span class="essay-list__title">{essay.data.title}</span>
+                <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+              </a>
+            </li>
+            );
+          })}
+        </ol>
+        {writing.length > 3 && (
+          <button class="section-reveal" type="button" data-reveal-toggle aria-controls="essay-list" aria-expanded="false">
+            <span data-reveal-label>All writing</span>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
+          </button>
+        )}
+      </div>
     </section>
 
     <SiteFooter />
   </main>
 
   <script>
-    import '../scripts/hero-prints';
+    import '../scripts/section-reveal';
     import '../scripts/project-polaroids';
   </script>
 </SiteLayout>

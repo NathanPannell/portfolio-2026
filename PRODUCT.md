@@ -47,7 +47,7 @@ The selected article and project-writing backlog has been migrated from the earl
 
 ## Confirmed Portfolio Scope
 
-- Homepage sequence: fullscreen photo hero, Parkdex story, project Polaroids, featured Writing preview, email-first contact.
+- Homepage sequence: cropped photo hero, two-print mobile story bridge, Parkdex story, project Polaroids, expandable Writing list, email-first contact.
 - Project order: Parkdex, Doxxme, Commons, Go Fetch, Cup of Sugar.
 - Every project Polaroid links to a dedicated project page containing the relevant live product, repository, screenshots, demo, story, and team credits.
 - Parkdex balances the product with Nathan's reason for building it. Its primary action is “Explore Parkdex”; an Android waitlist will become a separate action when available.
@@ -55,8 +55,8 @@ The selected article and project-writing backlog has been migrated from the earl
 - Commons is an April 2026 Claude Hackathon project credited to Nathan and Arya Punjabi. It placed in the top two.
 - Go Fetch is a solo scalable semantic-search system with no frontend. Display its latest repository commit date, April 20, 2026.
 - Cup of Sugar is a January 31, 2026 UVic Hacks project credited to Nathan, Jett Schreiber, and Mohan Selvarajan.
-- The homepage previews the three published non-project Writing entries. The dedicated Writing page uses a fullscreen dark selector with normal scrolling and no scroll hijacking.
-- Published project posts remain accessible at their direct URLs but do not appear in the Writing index. Underscore-prefixed drafts never receive public routes.
+- The homepage is the Writing index. It shows the three newest flat articles first and expands the full published writing and legacy list in place.
+- Published project posts remain accessible at their direct URLs and can appear in the expanded homepage Writing list. Underscore-prefixed drafts never receive public routes.
 - The original migration source was the private `NathanPannell/chiri-blog` repository. The portfolio repository is now authoritative for migrated content. Preserve published article dates and flat URLs.
 - The portfolio intentionally omits a résumé, work-history section, RSS, Atom, and dark-mode toggle. Education may be stated simply as “B.Sc. Computer Science.”
 - `contact@nathanpannell.com` is the primary contact action. LinkedIn, GitHub, and X are secondary contact routes.

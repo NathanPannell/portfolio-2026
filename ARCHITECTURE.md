@@ -11,7 +11,7 @@ Astro content collections
         ↓
 src/lib/content.ts
         ↓
-homepage, Writing, and flat-route generation
+homepage and flat-route generation
         ↓
 shared layouts and components
         ↓
@@ -28,16 +28,16 @@ Cloudflare Pages
 | `src/content.config.ts` | Project, writing, legacy, collaborator, highlight, link, and media schemas. |
 | `src/lib/content.ts` | Publication filtering and collection sorting. |
 | `src/pages/index.astro` | Homepage sequence and data-driven project and writing previews. |
-| `src/pages/writing.astro` | Dedicated dark Writing selector. |
 | `src/pages/[...slug].astro` | Shared flat route generator for projects, writing, and legacy posts. |
 | `src/pages/404.astro` | Static recovery page. |
 | `src/layouts/SiteLayout.astro` | Document shell, metadata, fonts, global styles, and shared scripts. |
 | `src/layouts/ProjectLayout.astro` | Project artifact, actions, evidence, media, narrative, collaborators, and footer. |
 | `src/layouts/ArticleLayout.astro` | Long-form article header, body, and footer actions. |
-| `src/components/SiteHeader.astro` | Desktop navigation and mobile name plus email treatment. |
+| `src/components/SiteHeader.astro` | Shared name plus email masthead. |
 | `src/components/SiteFooter.astro` | Shared concise contact and social footer. |
 | `src/styles/global.css` | Tokens, all shared layouts, device mockups, Polaroids, responsive behavior, and reduced motion. |
 | `src/scripts/project-polaroids.ts` | Applies mobile-only viewport-centred focus to project cards and homepage writing rows; preserves BFCache-safe listener cleanup. |
+| `src/scripts/section-reveal.ts` | Expands and collapses the homepage project and Writing lists without removing their no-JavaScript fallback. |
 | `src/scripts/navigation-focus.ts` | Clears pointer-created link focus after browser Back while retaining keyboard focus behavior. |
 | `tests/content-contract.mjs` | Publishing invariants, required legacy routes, project ordering, drafts, and generated-route checks. |
 | `public/_headers` | Cloudflare security and caching headers. |
@@ -49,7 +49,7 @@ Cloudflare Pages
 1. Full-viewport boat-photo hero
 2. Parkdex story and matte device composition
 3. Tactile project Polaroid collection
-4. Featured writing list with pointer-hover and keyboard-focus image washes
+4. Expandable writing list with pointer-hover and keyboard-focus image washes
 5. Shared concise contact footer
 
 Projects and writing are loaded through `src/lib/content.ts`. Do not restore parallel data objects for titles, covers, or alt text in the page component.
@@ -62,7 +62,7 @@ The opening artifact comes from project frontmatter. The `media` array becomes t
 
 ### Writing and legacy routes
 
-Writing and standalone legacy entries use `ArticleLayout`. Only Writing appears in the Writing selector. Both retain flat root-level URLs.
+Writing and standalone legacy entries use `ArticleLayout`, retain flat root-level URLs, and appear together in the expandable homepage Writing list.
 
 ## Interaction lifecycle
 
@@ -81,12 +81,12 @@ Do not add hover behavior outside fine-pointer feature queries or restore viewpo
 
 ## Styling strategy
 
-The site intentionally uses one global stylesheet because its visual system is shared and composition-heavy. Page-local styles are used only where a surface is genuinely self-contained, such as the Writing selector.
+The site intentionally uses one global stylesheet because its visual system is shared and composition-heavy.
 
 The primary breakpoints are:
 
 - `980px`: complex grids become one or two columns.
-- `720px`: phone composition, simplified navigation, full-photo hero, stacked project cards, and edge-to-edge project media.
+- `720px`: phone composition, one-line masthead, raised and cropped photo hero, two-print story bridge, stacked project cards, and edge-to-edge project media.
 
 Important responsive checks are still required around 320px, 390px, tablet widths, standard desktop, and wide desktop. CSS breakpoints are not a substitute for rendered testing.
 

@@ -52,6 +52,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     tagline: z.string(),
+    cardCaption: z.string(),
     summary: z.string(),
     projectType: z.string(),
     order: z.number().int().positive(),

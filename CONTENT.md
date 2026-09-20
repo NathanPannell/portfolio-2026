@@ -62,7 +62,7 @@ If a project has a legacy entry with the same slug, the current project page win
 
 Location: `src/content/writing/*.{md,mdx}`
 
-Writing is for non-project essays shown on `/writing/`. Entries sort newest first.
+Writing is for current non-project essays shown in the homepage Writing section. Entries sort newest first.
 
 ```yaml
 ---
@@ -81,14 +81,14 @@ Rules:
 - Titles should state the actual insight, not use a generic category label.
 - Descriptions should be concrete and short.
 - Place entry-owned images in a sibling `_assets` directory and write accurate alt text.
-- The homepage currently previews the three newest published writing entries.
-- Do not put project pages into the Writing index.
+- The homepage initially shows the three newest flat articles and expands the full writing and legacy list in place.
+- Project detail pages remain separate from the Writing list; older project posts may appear as flat articles in the expanded list.
 
 ### Legacy
 
 Location: `src/content/legacy/*.{md,mdx}`
 
-Legacy content preserves older direct URLs and longer project notes without cluttering the Writing index.
+Legacy content preserves older direct URLs and longer project notes. Those entries may appear after the first three items in the expanded homepage Writing list.
 
 ```yaml
 ---
@@ -99,7 +99,7 @@ draft: false
 ---
 ```
 
-Do not move a legacy article into Writing merely to make it visible. Promote it only when Nathan wants it presented as current non-project writing.
+Do not move a legacy article into Writing merely to change its collection. The homepage can surface both collections without rewriting their history.
 
 ## Drafts and private files
 
