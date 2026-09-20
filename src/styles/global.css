@@ -65,6 +65,23 @@ a {
   text-underline-offset: 0.2em;
 }
 
+:where(h1, h2, h3) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-style: normal;
+}
+
+:where(
+  .site-header a,
+  .site-footer a,
+  .project-actions__link,
+  .button,
+  .text-link,
+  .not-found__actions a
+) {
+  white-space: nowrap;
+}
+
 :focus-visible {
   outline: 0.2rem solid var(--lime);
   outline-offset: 0.25rem;
@@ -398,12 +415,6 @@ a {
     opacity: 1;
     filter: blur(0);
     transform: translateY(0) rotate(var(--print-rotation, 0deg)) scale(1);
-  }
-}
-
-@media (max-width: 880px) {
-  .site-header__nav a:not(.site-header__contact) {
-    display: none;
   }
 }
 

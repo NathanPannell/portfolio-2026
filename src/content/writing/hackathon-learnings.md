@@ -46,7 +46,7 @@ While it was unfortunate that my realization came so late into the process, ther
 
 This is more obvious, but it's worth mentioning that having a strong foundation in a tech stack can make a hackathon go much smoother.
 The process of going from a challenge to an idea to a fleshed-out solution can be a daunting amount of work on its own.
-If you spend most of your time following tutorials on how to work with UseEffect, it's going to be hard to end up with a project that you're proud of...
+If you spend most of your time following tutorials on how to work with UseEffect, it's going to be hard to end up with a project that you're proud of…
 
 In a rush to get a working site, my team ended up using a React frontend built by Claude.
 The team's lack of frontend experience ended up being a major blocker as we were unable to easily revise the AI-generated mockup ourselves.
@@ -59,7 +59,7 @@ Solution: Learn a simple tool in depth
 While hackathons are great places to learn new skills, it's helpful to determine what you want to get out of it.
 If you want to practice your machine learning skills with Pytorch, it's helpful to avoid also learning React and Flask at the same time.
 
-I will try to focus on a specific tool in my next hackathon and study it in advance to make the most of the problem-solving aspect of the hackathon, not just the battling with a new framework...
+I will try to focus on a specific tool in my next hackathon and study it in advance to make the most of the problem-solving aspect of the hackathon, not just the battling with a new framework…
 
 ---
 

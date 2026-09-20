@@ -1,0 +1,19 @@
+{
+  "scannedAt": "2026-09-19",
+  "designSystem": "DESIGN.md",
+  "fontStack": {
+    "display": "Strichpunkt Sans Variable with Bricolage Grotesque Variable fallback",
+    "body": "Ysabeau Variable with Trebuchet MS fallback"
+  },
+  "palette": "CSS custom properties derived from the locked coastal field-deck palette",
+  "motion": "CSS-only interaction feedback; no motion library",
+  "spacing": "Fluid clamp-based section spacing with a 4px-derived rhythm",
+  "framework": "Astro 7.3.2",
+  "preserve": [
+    "DESIGN.md as the locked system",
+    "existing font pairing",
+    "coastal paper, ink, lime, coral, and sea palette",
+    "photographic hero and tactile print metaphor",
+    "restrained CSS-only motion"
+  ]
+}

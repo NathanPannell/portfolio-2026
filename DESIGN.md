@@ -11,7 +11,7 @@ colors:
   sea: "#1c5361"
   project-field: "#dce6d3"
   writing-room: "#111414"
-  writing-muted: "#8e938f"
+  writing-muted: "#a8ada9"
   line: "rgba(16, 27, 27, 0.2)"
 typography:
   display:
