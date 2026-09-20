@@ -22,9 +22,9 @@ npm run preview
 | Branch | Purpose | Cloudflare destination |
 | --- | --- | --- |
 | `staging` | Active review and iteration | <https://portfolio-2026-staging.pages.dev> |
-| `main` | Cloudflare production | <https://portfolio-2026-ady.pages.dev> |
+| `main` | Cloudflare production | <https://www.nathanpannell.com> |
 
-The intended canonical URL is `https://www.nathanpannell.com`, but the custom-domain cutover is not complete. `www.nathanpannell.com` currently redirects to the older Vercel site at `nathanpannell.com`. Treat the Cloudflare production hostname above as the deployed `main` environment until the domain binding and DNS are changed and verified.
+The canonical production URL is `https://www.nathanpannell.com`. It is bound to the Cloudflare Pages project through a `www` CNAME to `portfolio-2026-ady.pages.dev`. The apex domain remains on Vercel DNS and returns a permanent redirect to the canonical `www` URL. Keep the Pages hostname as a diagnostic origin, not the public production URL.
 
 Do not use `https://portfolio-2026.pages.dev`. It is an unrelated site and is not connected to this repository.
 
@@ -44,7 +44,7 @@ When production promotion is explicitly authorized:
 2. Confirm `staging` is the exact reviewed commit.
 3. Update `main` from that reviewed state without rewriting history.
 4. Push `main`.
-5. Verify `portfolio-2026-ady.pages.dev` and important routes after Cloudflare finishes.
+5. Verify `https://www.nathanpannell.com`, the apex redirect, and important routes after Cloudflare finishes.
 6. Confirm that staging and production point to the expected commits.
 7. Change or verify the custom domain only when Nathan has explicitly included the domain cutover in the request.
 
