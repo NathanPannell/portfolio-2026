@@ -1,0 +1,105 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/parkdex/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/doxxme/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/commons/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/go-fetch/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/cup-of-sugar/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/icbc-coop/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/suno-slayers/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/hackathon-learnings/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/graduation/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/echo/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/record-of-the-day/",
+    "status": 200,
+    "robots": "noindex",
+    "cache": "public, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/404",
+    "status": 200,
+    "metaNoindex": true,
+    "canonical": false
+  },
+  {
+    "path": "/not-a-real-portfolio-route/",
+    "status": 404,
+    "metaNoindex": true,
+    "canonical": false
+  },
+  {
+    "path": "/media/writing/icbc-coop.webp",
+    "status": 200,
+    "cache": "public, max-age=86400, must-revalidate"
+  },
+  {
+    "path": "/_astro/SiteLayout.ZIR4jTFG.css",
+    "status": 200,
+    "cache": "public, max-age=31536000, immutable"
+  },
+  {
+    "host": "https://portfolio-2026-staging.pages.dev",
+    "robots": "noindex"
+  },
+  {
+    "host": "https://www.nathanpannell.com",
+    "robots": null,
+    "note": "Production remains previous approved commit; no new production implementation deployed."
+  }
+]

@@ -111,3 +111,13 @@ Additive projects and essays should not require editing a hard-coded list, excep
 - The static build may print Rollup advisory messages about Astro's internal `use astro:head-inject` directive for MDX. At the current toolchain version, these do not fail the build or affect generated routes.
 - If a deployed route appears stale, verify the branch and commit first, then wait for Cloudflare's Git build before attempting a manual deployment.
 - If the browser Back state appears stuck, inspect both `project-polaroids.ts` and `navigation-focus.ts` and test BFCache behavior rather than adding more CSS focus overrides.
+
+## Technical SEO behavior
+
+The built HTML uses production canonicals on every intended content route. All six standalone essays have specific descriptions, image alt text, social previews, and BlogPosting structured data with an explicit author. The homepage identifies Nathan and the website with Person and WebSite structured data. The 404 output has noindex and omits canonical and og:url.
+
+Cloudflare `_headers` excludes both Pages diagnostic hosts, deployment preview hosts, and the staging custom domain from indexing with host-scoped X-Robots-Tag rules. The production www host remains indexable. Robots.txt continues allowing crawlers so they can read those noindex responses. These production-origin changes take effect when the reviewed branch is promoted to main.
+
+Hashed `/_astro/` assets cache for one year with immutable. Stable `/media/` URLs cache for one day and revalidate; do not mark them immutable. HTML keeps Cloudflare Pages' default revalidation behavior. Avoid a global Cache-Control rule that would combine with asset-specific rules.
+
+`npm run build` includes the generated-output SEO contract in `tests/seo-contract.mjs`. Verify actual host headers after deployment because local Astro preview does not apply Cloudflare `_headers`. Search Console ownership, sitemap submission, indexing outcomes, and field Core Web Vitals are separate account-level checks and are not claimed by these source tests.

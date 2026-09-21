@@ -41,7 +41,7 @@ The Doxxme and Go Fetch WebP derivatives are the current homepage cards. Their p
 
 | Output | Use | Source and treatment |
 | --- | --- | --- |
-| `public/media/plates/writing-print.webp` | ICBC essay row and fallback writing cover | Mechanically encoded WebP derivative of `assets/plates/writing-print.png`; no compositional edits. |
+| `public/media/plates/writing-print.webp` | Retained fallback writing cover; current essays use dedicated covers | Mechanically encoded WebP derivative of `assets/plates/writing-print.png`; no compositional edits. |
 | `public/media/plates/paper-ground.webp` | Project print texture and paper fields | Mechanically encoded WebP derivative of `assets/plates/paper-ground.png`; no compositional edits. |
 | `src/content/writing/_assets` and `src/content/legacy/_assets` | Hackathon essay row and archived article media | User-owned or supplied article images stored beside their entry. Alt text remains in the article body. |
 
