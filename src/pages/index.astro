@@ -5,13 +5,27 @@ import SiteFooter from '../components/SiteFooter.astro';
 import { getLegacyPosts, getProjects, getPublishedWriting } from '../lib/content';
 import graduationImage from '../content/writing/_assets/grad.jpg';
 import hackathonImage from '../content/writing/_assets/hackathon-code-hack.jpg';
+import sunoImage from '../content/legacy/_assets/routing_histogram.png';
 
 const [projects, currentWriting, legacyWriting] = await Promise.all([
   getProjects(),
   getPublishedWriting(),
   getLegacyPosts(),
 ]);
-const writing = [...currentWriting, ...legacyWriting];
+const projectIds = new Set(projects.map((project) => project.id));
+const featuredProjects = projects
+  .filter((project) => project.data.homeOrder !== undefined)
+  .sort((a, b) => (a.data.homeOrder ?? Number.POSITIVE_INFINITY) - (b.data.homeOrder ?? Number.POSITIVE_INFINITY));
+const archivedProjects = projects
+  .filter((project) => project.data.homeOrder === undefined)
+  .sort((a, b) => a.data.order - b.data.order);
+const writingEntries = [...currentWriting, ...legacyWriting]
+  .filter((entry) => !projectIds.has(entry.id))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const featuredWriting = writingEntries
+  .filter((entry) => entry.data.homeOrder !== undefined)
+  .sort((a, b) => (a.data.homeOrder ?? Number.POSITIVE_INFINITY) - (b.data.homeOrder ?? Number.POSITIVE_INFINITY));
+const archivedWriting = writingEntries.filter((entry) => entry.data.homeOrder === undefined);
 
 const essayDates = new Intl.DateTimeFormat('en-CA', {
   month: 'short',
@@ -23,23 +37,24 @@ const essayVisuals: Record<string, string> = {
   graduation: graduationImage.src,
   'icbc-coop': '/media/plates/writing-print.webp',
   'hackathon-learnings': hackathonImage.src,
+  'suno-slayers': sunoImage.src,
 };
+
+const essayVisual = (essay: (typeof writingEntries)[number]) =>
+  essayVisuals[essay.id] ?? essay.data.image ?? '/media/plates/writing-print.webp';
 ---
 
 <SiteLayout>
   <main id="main-content">
     <section class="hero" aria-labelledby="hero-title">
-      <picture class="hero__media">
-        <source media="(min-width: 721px)" srcset="/media/hero/nathan-on-boat-wide-dark-v2.webp" />
-        <img
-          class="hero__photo"
-          src="/media/hero/nathan-on-boat-wide.webp"
-          alt="Nathan Pannell smiling on a sailboat off Vancouver Island"
-          width="1896"
-          height="830"
-          fetchpriority="high"
-        />
-      </picture>
+      <img
+        class="hero__photo"
+        src="/media/hero/nathan-on-boat-wide.webp"
+        alt="Nathan Pannell smiling on a sailboat off Vancouver Island"
+        width="1896"
+        height="830"
+        fetchpriority="high"
+      />
       <SiteHeader tone="dark" overlay />
       <div class="hero__copy">
         <h1 id="hero-title" class="hero__title">
@@ -47,35 +62,6 @@ const essayVisuals: Record<string, string> = {
           <em>into the real world.</em>
         </h1>
         <p class="hero__subcopy">I’m in Victoria, building Parkdex.</p>
-      </div>
-      <div class="hero__prints" aria-label="A preview of Nathan's work">
-        <a class="hero-print hero-print--parkdex" href="/parkdex/" aria-label="Explore Parkdex">
-          <span class="hero-print__window">
-            <img src="/media/parkdex/map-overview.webp" alt="Parkdex map of parks across Vancouver Island" width="1600" height="875" loading="lazy" fetchpriority="low" />
-          </span>
-          <span class="hero-print__caption">
-            <strong>Parkdex</strong>
-            <span>A Pokédex for Vancouver Island parks.</span>
-          </span>
-        </a>
-        <a class="hero-print hero-print--building" href="#projects" aria-label="See what Nathan is building">
-          <span class="hero-print__window">
-            <img src="/media/plates/writing-laptop-2026.webp" alt="A laptop open to code during a workshop" width="1600" height="1200" loading="lazy" fetchpriority="low" />
-          </span>
-          <span class="hero-print__caption">
-            <strong>Building apps</strong>
-            <span>Hackathons, products, and production software.</span>
-          </span>
-        </a>
-        <a class="hero-print hero-print--island" href="#parkdex" aria-label="Read how Vancouver Island inspired Parkdex">
-          <span class="hero-print__window">
-            <img src="/media/plates/vancouver-island-lake-2026.webp" alt="Nathan sitting beside a clear mountain lake on Vancouver Island" width="1600" height="1200" loading="lazy" fetchpriority="low" />
-          </span>
-          <span class="hero-print__caption">
-            <strong>Vancouver Island</strong>
-            <span>The place that inspired Parkdex.</span>
-          </span>
-        </a>
       </div>
     </section>
 
@@ -119,16 +105,18 @@ const essayVisuals: Record<string, string> = {
 
     <section id="projects" class="projects section-shell" aria-labelledby="projects-title">
       <div class="section-heading">
-        <h2 id="projects-title">Built with good people and a deadline.</h2>
-        <p>From an island-wide park tracker to six-hour hackathon builds.</p>
+        <h2 id="projects-title">A few things I’ve built.</h2>
+        <p>From an island-wide park tracker to a six-hour hackathon build.</p>
       </div>
 
-      <div id="project-deck" class="project-deck" data-reveal-list data-collapsed-count="3">
-        {projects.map((project) => {
+      <div id="project-deck" class="project-deck">
+        {featuredProjects.map((project) => {
+          const cardImage = project.data.cardImage ?? project.data.cover;
+          const cardImageAlt = project.data.cardImageAlt ?? project.data.coverAlt;
           return (
-            <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid data-reveal-item href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
+            <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
               <span class="project-polaroid__image">
-                <img src={project.data.cover} alt={project.data.coverAlt} loading="lazy" />
+                <img src={cardImage} alt={cardImageAlt} loading="lazy" width="1000" height="750" />
               </span>
               <span class="project-polaroid__caption">
                 <span class="project-polaroid__heading">
@@ -141,11 +129,25 @@ const essayVisuals: Record<string, string> = {
           );
         })}
       </div>
-      {projects.length > 3 && (
-        <button class="section-reveal" type="button" data-reveal-toggle aria-controls="project-deck" aria-expanded="false">
-          <span data-reveal-label>All projects</span>
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
-        </button>
+      {archivedProjects.length > 0 && (
+        <details class="project-deck-archive">
+          <summary class="section-reveal">
+            <span>More projects</span>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
+          </summary>
+          <div class="project-deck-archive__list">
+            {archivedProjects.map((project) => (
+              <a class="project-deck-archive__item" href={`/${project.id}/`}>
+                <span>
+                  <strong>{project.data.title}</strong>
+                  <span>{project.data.cardCaption}</span>
+                </span>
+                <time>{project.data.displayDate}</time>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+              </a>
+            ))}
+          </div>
+        </details>
       )}
     </section>
 
@@ -155,11 +157,11 @@ const essayVisuals: Record<string, string> = {
         <p>Notes from building, breaking, and taking the long way around.</p>
       </div>
       <div class="writing-preview__list">
-        <ol id="essay-list" class="essay-list" data-reveal-list data-collapsed-count="3">
-          {writing.map((essay) => {
-            const visual = essayVisuals[essay.id] ?? essay.data.image ?? '/media/plates/writing-print.webp';
+        <ol id="essay-list" class="essay-list">
+          {featuredWriting.map((essay) => {
+            const visual = essayVisual(essay);
             return (
-            <li data-essay-item data-reveal-item style={`--essay-image: url(${visual})`}>
+            <li data-essay-item style={`--essay-image: url(${visual})`}>
               <a href={`/${essay.id}/`}>
                 <span class="essay-list__title">{essay.data.title}</span>
                 <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>
@@ -169,11 +171,27 @@ const essayVisuals: Record<string, string> = {
             );
           })}
         </ol>
-        {writing.length > 3 && (
-          <button class="section-reveal" type="button" data-reveal-toggle aria-controls="essay-list" aria-expanded="false">
-            <span data-reveal-label>All writing</span>
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
-          </button>
+        {archivedWriting.length > 0 && (
+          <details class="writing-archive">
+            <summary class="section-reveal">
+              <span>All writing</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
+            </summary>
+            <ol class="essay-list writing-archive__list">
+              {archivedWriting.map((essay) => {
+                const visual = essayVisual(essay);
+                return (
+                <li style={`--essay-image: url(${visual})`}>
+                  <a href={`/${essay.id}/`}>
+                    <span class="essay-list__title">{essay.data.title}</span>
+                    <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+                  </a>
+                </li>
+                );
+              })}
+            </ol>
+          </details>
         )}
       </div>
     </section>
@@ -182,7 +200,6 @@ const essayVisuals: Record<string, string> = {
   </main>
 
   <script>
-    import '../scripts/section-reveal';
     import '../scripts/project-polaroids';
   </script>
 </SiteLayout>

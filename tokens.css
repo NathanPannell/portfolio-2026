@@ -88,8 +88,8 @@
   --footer-accent-wash: rgba(184, 245, 61, 0.08);
   --hero-shadow-soft: rgba(2, 13, 17, 0.22);
   --hero-shadow-strong: rgba(2, 13, 17, 0.35);
-  --hero-header-wash-strong: rgba(248, 248, 244, 0.86);
-  --hero-header-wash-soft: rgba(248, 248, 244, 0.46);
+  --hero-shade-mid: rgba(2, 13, 17, 0.08);
+  --hero-shade-deep: rgba(2, 13, 17, 0.7);
   --header-shadow: rgba(0, 0, 0, 0.35);
   --screen-shadow: rgba(0, 0, 0, 0.72);
   --device-shadow: rgba(5, 18, 18, 0.2);

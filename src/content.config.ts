@@ -9,6 +9,7 @@ const publishedArticle = z.object({
   image: z.string().optional(),
   description: z.string().optional(),
   featured: z.boolean().optional(),
+  homeOrder: z.number().int().positive().optional(),
   draft: z.boolean().default(false),
 });
 
@@ -56,9 +57,12 @@ const projects = defineCollection({
     summary: z.string(),
     projectType: z.string(),
     order: z.number().int().positive(),
+    homeOrder: z.number().int().positive().optional(),
     displayDate: z.string(),
     cover: z.string(),
     coverAlt: z.string(),
+    cardImage: z.string().optional(),
+    cardImageAlt: z.string().optional(),
     accent: z.string(),
     highlights: z.array(highlight).min(2).max(3),
     collaborators: z.array(collaborator).default([]),

@@ -2,6 +2,7 @@
 title: 'Two Lessons From Owning a Production API at ICBC'
 category: 'Writing'
 pubDate: '2025-12-12'
+homeOrder: 1
 description: 'What I learned from porting, shipping, instrumenting, and maintaining a production API.'
 ---
 

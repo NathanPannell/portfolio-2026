@@ -103,6 +103,19 @@ assert.deepEqual(
 );
 
 const flatSlugs = [...writing, ...legacy].map(({ slug }) => slug);
+
+// Homepage selection is editorial and independent of the preserved route order.
+for (const [label, entries] of [['projects', projects], ['writing', [...writing, ...legacy]]]) {
+  const selected = entries.filter(({ data }) => data.has('homeOrder'));
+  const positions = selected.map(({ data }) => Number(data.get('homeOrder'))).sort((a, b) => a - b);
+  assert.deepEqual(positions, [1, 2, 3], `Homepage ${label} must have exactly three unique ordered selections`);
+  if (label === 'projects') {
+    for (const { slug, data } of selected) {
+      assert(data.get('cardImageAlt'), `${slug} needs descriptive homepage image text`);
+      assert(existsSync(join(root, 'public', data.get('cardImage'))), `${slug} homepage photograph must exist`);
+    }
+  }
+}
 assert.equal(new Set(flatSlugs).size, flatSlugs.length, 'Flat article slugs must be unique');
 assertIncludes(flatSlugs, requiredLegacy, 'Required flat article slugs');
 

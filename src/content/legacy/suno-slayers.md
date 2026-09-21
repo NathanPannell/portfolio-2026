@@ -2,6 +2,8 @@
 title: 'Suno Slayers: Detecting AI-Generated Music'
 category: 'Project'
 pubDate: '2026-05-09'
+homeOrder: 2
+description: 'A multimodal detector for AI-generated music, and what its failures revealed about confidence, data, and model updates.'
 ---
 
 Give Suno a text prompt and thirty seconds, and it hands back a finished song: vocals, lyrics, instruments, all of it. The output is good enough that it's already blending into streaming platforms next to human tracks, which turns "made by a person" into a label nobody can verify. Copyright holders, platform moderators, and listeners all inherit that problem.
@@ -48,6 +50,6 @@ It's the recurring story in applied ML: time spent gathering and polishing data 
 
 As my most ambitious AI research project to date, this work showed me how competitive the current GenAI detection arms race truly is. A detector is only as good as its understanding about what it's chasing, and that target moves every time someone ships a better generator.
 
-The transformer and CNN internals, with all the numbers, are in the [full report](https://github.com/NathanPannell/Suno-Slayers/blob/main/Multimodal%20Late%20Fusion%20for%20Robuest%20AI-Generated%20Music%20Detection.pdf).
+The transformer and CNN internals, with all the numbers, are in the [Suno Slayers repository](https://github.com/NathanPannell/Suno-Slayers).
 
 [View Suno Slayers on GitHub](https://github.com/NathanPannell/Suno-Slayers)
