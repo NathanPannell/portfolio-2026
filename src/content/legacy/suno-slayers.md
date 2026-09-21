@@ -3,6 +3,8 @@ title: 'Suno Slayers: Detecting AI-Generated Music'
 category: 'Project'
 pubDate: '2026-05-09'
 homeOrder: 2
+image: '/media/writing/suno-slayers.webp'
+imageAlt: 'Black studio headphones beside a metal tuning fork, a conceptual photograph about listening closely.'
 description: 'A multimodal detector for AI-generated music, and what its failures revealed about confidence, data, and model updates.'
 ---
 

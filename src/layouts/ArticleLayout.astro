@@ -8,21 +8,46 @@ interface Props {
   pubDate: Date;
   description?: string | undefined;
   image?: string | undefined;
+  imageAlt?: string | undefined;
 }
 
-const { title, pubDate, description, image } = Astro.props;
+const { title, pubDate, description, image, imageAlt } = Astro.props;
 const formattedDate = new Intl.DateTimeFormat('en-CA', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
   timeZone: 'UTC',
 }).format(pubDate);
+const articleDescription = description ?? `Nathan Pannell on ${title}.`;
+const articleImage = image ?? '/media/hero/nathan-on-boat-wide.webp';
+const articleImageAlt = imageAlt ?? 'Nathan Pannell on a boat off Vancouver Island';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const articleData = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description: articleDescription,
+  datePublished: pubDate.toISOString().slice(0, 10),
+  ...(image ? { image: new URL(image, Astro.site).href } : {}),
+  author: {
+    '@type': 'Person',
+    '@id': new URL('/#person', Astro.site).href,
+    name: 'Nathan Pannell',
+    url: new URL('/', Astro.site).href,
+  },
+  mainEntityOfPage: canonical,
+  url: canonical,
+};
 ---
 
 <SiteLayout
   title={`${title} | Nathan Pannell`}
-  description={description ?? `Nathan Pannell on ${title}.`}
-  image={image ?? '/media/hero/nathan-on-boat-wide.webp'}
+  description={articleDescription}
+  image={articleImage}
+  imageAlt={articleImageAlt}
+  type="article"
+  publishedTime={pubDate.toISOString()}
+  structuredData={articleData}
   pageClass="article-page"
 >
   <SiteHeader />

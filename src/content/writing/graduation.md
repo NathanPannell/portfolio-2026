@@ -2,6 +2,8 @@
 title: 'What Graduation Made Me Notice About Growth'
 category: 'Writing'
 pubDate: '2026-06-20'
+image: '/media/writing/graduation.webp'
+imageAlt: 'Nathan Pannell with family after graduating from the University of Victoria.'
 description: 'A degree marks the moment you notice years of quiet change.'
 ---
 

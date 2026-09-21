@@ -38,6 +38,8 @@ interface Props {
   accent: string;
   cover: string;
   coverAlt: string;
+  coverWidth: number;
+  coverHeight: number;
   highlights: ProjectHighlight[];
   links: ProjectLink[];
   collaborators?: Collaborator[] | undefined;
@@ -54,6 +56,8 @@ const {
   accent,
   cover,
   coverAlt,
+  coverWidth,
+  coverHeight,
   highlights,
   links,
   collaborators = [],
@@ -63,7 +67,7 @@ const {
 const detailMedia = media;
 ---
 
-<SiteLayout title={`${title} | Nathan Pannell`} description={summary} image={cover} pageClass="project-page">
+<SiteLayout title={`${title} | Nathan Pannell`} description={summary} image={cover} imageAlt={coverAlt} imageWidth={coverWidth} imageHeight={coverHeight} pageClass="project-page">
   <SiteHeader />
   <main id="main-content" class="project-main" style={`--project-accent: ${accent}`}>
     <header class:list={['project-intro', `project-intro--${slug}`]}>
@@ -93,7 +97,7 @@ const detailMedia = media;
         </div>
         <figure class="project-intro__visual">
           <span class="project-intro__visual-window">
-            <img src={cover} alt={coverAlt} fetchpriority="high" decoding="async" />
+            <img src={cover} alt={coverAlt} width={coverWidth} height={coverHeight} fetchpriority="high" decoding="async" />
           </span>
         </figure>
       </div>

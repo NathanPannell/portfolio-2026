@@ -220,7 +220,7 @@ a {
   margin: 0;
   color: var(--print-white);
   font-family: var(--display);
-  font-size: clamp(3.35rem, 5vw, 5.75rem);
+  font-size: clamp(3.7rem, 5.6vw, 6rem);
   font-variation-settings: 'wdth' 84;
   font-weight: 720;
   letter-spacing: -0.04em;

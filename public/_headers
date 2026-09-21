@@ -1,5 +1,4 @@
 /*
-  Cache-Control: public, max-age=0, must-revalidate
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
@@ -9,3 +8,18 @@
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Public media URLs are stable and can change between deploys, so revalidate daily.
+/media/*
+  Cache-Control: public, max-age=86400, must-revalidate
+
+# Both Pages projects and any branch-preview hostname serve the canonical site's HTML.
+# Match Pages hosts only; the www custom domain must remain indexable.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://staging.nathanpannell.com/*
+  X-Robots-Tag: noindex

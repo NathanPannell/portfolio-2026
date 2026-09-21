@@ -53,6 +53,8 @@ const LegacyContent = props.kind === 'project' && props.legacyEntry
     accent={props.entry.data.accent}
     cover={props.entry.data.cover}
     coverAlt={props.entry.data.coverAlt}
+    coverWidth={props.entry.data.coverWidth}
+    coverHeight={props.entry.data.coverHeight}
     highlights={props.entry.data.highlights}
     links={props.entry.data.links}
     collaborators={props.entry.data.collaborators}
@@ -74,6 +76,7 @@ const LegacyContent = props.kind === 'project' && props.legacyEntry
     pubDate={props.entry.data.pubDate}
     description={props.entry.data.description}
     image={props.entry.data.image}
+    imageAlt={props.entry.data.imageAlt}
   >
     <Content />
   </ArticleLayout>

@@ -3,9 +3,6 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { getLegacyPosts, getProjects, getPublishedWriting } from '../lib/content';
-import graduationImage from '../content/writing/_assets/grad.jpg';
-import hackathonImage from '../content/writing/_assets/hackathon-code-hack.jpg';
-import sunoImage from '../content/legacy/_assets/routing_histogram.png';
 
 const [projects, currentWriting, legacyWriting] = await Promise.all([
   getProjects(),
@@ -33,15 +30,8 @@ const essayDates = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'UTC',
 });
 
-const essayVisuals: Record<string, string> = {
-  graduation: graduationImage.src,
-  'icbc-coop': '/media/plates/writing-print.webp',
-  'hackathon-learnings': hackathonImage.src,
-  'suno-slayers': sunoImage.src,
-};
-
 const essayVisual = (essay: (typeof writingEntries)[number]) =>
-  essayVisuals[essay.id] ?? essay.data.image ?? '/media/plates/writing-print.webp';
+  essay.data.image ?? '/media/plates/writing-print.webp';
 ---
 
 <SiteLayout>
@@ -86,17 +76,17 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
       <div class="parkdex-story__gallery" aria-label="Parkdex interface previews">
         <div class="parkdex-frame parkdex-frame--laptop parkdex-frame--map">
           <div class="parkdex-frame__screen">
-            <img src="/media/parkdex/map-overview.webp" alt="Parkdex map overview showing Vancouver Island" loading="lazy" width="1600" height="875" />
+            <img src="/media/parkdex/west-island-map-2026.webp" alt="Parkdex map showing visited parks across Vancouver Island" loading="lazy" width="1662" height="1092" />
           </div>
         </div>
         <div class="parkdex-frame parkdex-frame--phone parkdex-frame--detail">
           <div class="parkdex-frame__screen">
-            <img src="/media/parkdex/park-detail.webp" alt="A park detail view in Parkdex" loading="lazy" width="720" height="1280" />
+            <img src="/media/parkdex/river-otter-badge-2026.webp" alt="Parkdex River Otter Rookie discovery badge" loading="lazy" width="714" height="1354" />
           </div>
         </div>
         <div class="parkdex-frame parkdex-frame--phone parkdex-frame--progress">
           <div class="parkdex-frame__screen">
-            <img src="/media/parkdex/island-progress.webp" alt="Vancouver Island completion progress in Parkdex" loading="lazy" width="720" height="1280" />
+            <img src="/media/parkdex/places-checklist-2026.webp" alt="Parkdex places checklist with Cowichan Valley parks expanded" loading="lazy" width="712" height="1359" />
           </div>
         </div>
         <p class="parkdex-story__caption">Parkdex, 2026 · Map © OpenStreetMap contributors.</p>

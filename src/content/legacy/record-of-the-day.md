@@ -2,6 +2,9 @@
 title: 'Record Of The Day: Discovering Essential Music'
 category: 'Project'
 pubDate: '2025-07-17'
+description: 'An F# script that refreshes a Spotify playlist with one album each day from a curated music catalogue.'
+image: '/media/writing/record-of-the-day.webp'
+imageAlt: 'A vinyl record with a plain yellow label partly pulled from a paper sleeve on a wooden table.'
 ---
 
 Do you like discovering new music?

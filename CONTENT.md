@@ -76,6 +76,7 @@ title: A specific, human title
 pubDate: '2026-09-19'
 description: One sentence that earns the click.
 image: /media/example-social-image.webp # optional
+imageAlt: A concrete description of the cover photograph.
 featured: true # optional
 homeOrder: 1 # optional; featured positions are exactly 1, 2, or 3
 draft: false
@@ -87,6 +88,7 @@ Rules:
 - Preserve flat URLs because external links may already point to them.
 - Titles should state the actual insight, not use a generic category label.
 - Descriptions should be concrete and short.
+- Give every standalone writing entry a specific `image` and `imageAlt`. The image supplies the homepage background and social preview. Keep documentary article media in the body; generated covers are conceptual illustrations, not evidence.
 - Place entry-owned images in a sibling `_assets` directory and write accurate alt text.
 - Use `homeOrder` only for the three selected homepage essays. Values must be unique and exactly `1`, `2`, and `3`; the current rows are ICBC, Suno Slayers, and What a Failed Hackathon Taught Me. `All writing` expands the remaining published writing and legacy entries in place.
 - Project detail pages remain separate from the Writing list; older project posts may appear as flat articles in the expanded list.

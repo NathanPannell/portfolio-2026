@@ -3,6 +3,8 @@ title: 'Two Lessons From Owning a Production API at ICBC'
 category: 'Writing'
 pubDate: '2025-12-12'
 homeOrder: 1
+image: '/media/writing/icbc-coop.webp'
+imageAlt: 'An analog meter and test probes on a green workbench, a conceptual photograph about monitoring a system.'
 description: 'What I learned from porting, shipping, instrumenting, and maintaining a production API.'
 ---
 

@@ -13,13 +13,16 @@ Shipping raster assets under `public/media` carry an `impeccable:prompt` record.
 
 ## Parkdex
 
-These are user-supplied product screenshots. WebP conversion only resizes and encodes them. Interface content and visible image credit remain unchanged.
+These are user-supplied product screenshots. The current homepage trio is encoded full-frame as WebP without resizing, cropping, or editing. Earlier assets remain for project-detail use or reference; their original conversion only resized and encoded them. Interface content and visible image credit remain unchanged.
 
 | Output | Dimensions | Homepage use and original |
 | --- | ---: | --- |
-| `public/media/parkdex/map-overview.webp` | 1920 x 1054 | Homepage laptop frame. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 135858.png` |
-| `public/media/parkdex/park-detail.webp` | 828 x 1276 | Homepage phone frame. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 191452.png` |
-| `public/media/parkdex/island-progress.webp` | 534 x 1252 | Homepage phone frame. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-12 001638.png` |
+| `public/media/parkdex/west-island-map-2026.webp` | 1662 x 1092 | Homepage laptop frame, visited parks map. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-21 134445.png` |
+| `public/media/parkdex/river-otter-badge-2026.webp` | 714 x 1354 | Homepage phone frame, River Otter Rookie badge. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181206.png` |
+| `public/media/parkdex/places-checklist-2026.webp` | 712 x 1359 | Homepage phone frame, places checklist. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181239.png` |
+| `public/media/parkdex/map-overview.webp` | 1920 x 1054 | Project-detail cover; formerly the homepage laptop frame. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 135858.png` |
+| `public/media/parkdex/park-detail.webp` | 828 x 1276 | Project-detail supporting media; formerly a homepage phone frame. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 191452.png` |
+| `public/media/parkdex/island-progress.webp` | 534 x 1252 | Earlier homepage phone frame retained as a source reference. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-12 001638.png` |
 | `public/media/parkdex/checklist.webp` | 649 x 1246 | Detail-page supporting media. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 192209.png` |
 
 ## Featured homepage project photographs
@@ -74,3 +77,18 @@ The approved Impeccable source plates live outside `public/` so only production 
 - Record each new asset's original path or public source, ownership, crop, retouching, encoding, and privacy-sensitive exclusions.
 - Keep accurate alt text in project and essay content when an asset changes.
 - Do not copy files from `.codex-remote-attachments/` into the repository unless Nathan identifies the specific file as a shipping asset.
+
+## Writing covers, September 21 follow-up
+
+All six standalone writing entries now declare their own image and accurate imageAlt. The same cover is used for the homepage writing background and social preview; article body photographs and diagrams remain in place.
+
+| Output under `public/media/writing/` | Source and treatment |
+| --- | --- |
+| `icbc-coop.webp` | Generated conceptual photograph of an analog meter and probes. 1200 x 800 WebP. Exact prompt and original generated PNG path in the adjacent `.webp.json`. |
+| `suno-slayers.webp` | Generated conceptual photograph of studio headphones and a tuning fork. 1200 x 800 WebP. Exact prompt and original generated PNG path in the adjacent `.webp.json`. |
+| `record-of-the-day.webp` | Generated conceptual photograph of a vinyl record and paper sleeve. 1200 x 800 WebP. Exact prompt and original generated PNG path in the adjacent `.webp.json`. |
+| `graduation.webp` | Existing `src/content/writing/_assets/grad.jpg`. Auto-oriented and mechanically encoded at 1200 x 1080, without crop or retouching. |
+| `hackathon-learnings.webp` | Existing `src/content/writing/_assets/hackathon-code-hack.jpg`. Auto-oriented and mechanically encoded at 1200 x 904, without crop or retouching. |
+| `echo.webp` | Existing `src/content/legacy/_assets/echo_team.jpg`. Auto-oriented and mechanically encoded at 1200 x 900, without crop or retouching. |
+
+The three generated still lifes use the built-in image generation tool. They illustrate an idea, not an actual workplace, experiment, or product. No article evidence was replaced by generated imagery.

@@ -29,7 +29,7 @@ typography:
     letterSpacing: "-0.04em"
   hero:
     fontFamily: "Strichpunkt Sans Variable, Bricolage Grotesque Variable, sans-serif"
-    fontSize: "clamp(3.35rem, 5vw, 5.75rem)"
+    fontSize: "clamp(3.7rem, 5.6vw, 6rem)"
     fontWeight: 720
     lineHeight: 0.92
     letterSpacing: "-0.04em"
@@ -161,7 +161,7 @@ The palette combines coastal water, fogged paper, forest shade, and Parkdex's el
 
 The homepage follows one experience sequence: full-height photo hero, Parkdex story, selected project deck, selected writing list, and email-first footer. Sections use fluid horizontal and vertical padding. The project and section grids cap near 94rem on wide screens so the artifacts have room to breathe.
 
-The hero is `100svh` tall. Its single wide boat photograph is absolutely positioned, covers the entire section, and keeps the subject on the right through a desktop and phone object position. The transparent masthead sits at the top. The headline and Victoria subcopy sit in the lower-left with fluid inset and width; on phone, the copy uses a one-rem inset on both sides.
+The hero is `100svh` tall. Its single wide boat photograph is absolutely positioned, covers the entire section, and keeps the subject on the right through a desktop and phone object position. The transparent masthead sits at the top. The headline and Victoria subcopy sit in the lower-left with fluid inset and width. The desktop headline is slightly larger while the phone headline keeps its own scale; on phone, the copy uses a one-rem inset on both sides.
 
 Parkdex uses an asymmetric story-and-gallery grid. The gallery contains one wide map screenshot in a matte laptop frame and two narrow phone frames, all lightly rotated. The project deck uses three columns on wide screens, two columns below 980px, and a vertical stack below 720px. Cards may alternate edges on phone to keep the deck tactile without changing reading order. The writing section uses a sticky introduction beside essay rows until the 980px breakpoint, then returns the introduction to normal flow.
 
@@ -206,7 +206,7 @@ Primary actions are ink-filled pills with bright text, a minimum 3.25rem height,
 
 ### Parkdex Gallery
 
-The gallery uses a wide map screenshot in a simplified matte laptop frame and two narrow neutral phone frames. Source pixels remain visible. The frame uses a dark rail, recessed screen edge, and contact shadow rather than chrome or screen sheen. Light rotation makes the three views read as objects laid out for review.
+The gallery uses a west-island map screenshot in a simplified matte laptop frame, plus a River Otter Rookie badge and a places checklist in two narrow neutral phone frames. Source pixels remain visible. The frame uses a dark rail, recessed screen edge, and contact shadow rather than chrome or screen sheen. Light rotation makes the three views read as objects laid out for review.
 
 ### Project Prints
 

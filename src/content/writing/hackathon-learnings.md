@@ -3,6 +3,8 @@ title: 'What a Failed Hackathon Taught Me'
 category: 'Writing'
 pubDate: '2025-10-05'
 homeOrder: 3
+image: '/media/writing/hackathon-learnings.webp'
+imageAlt: 'Nathan and fellow participants posing together at Code Hack.'
 description: 'Three lessons from a project that went wrong: research earlier, know your stack, and invite more perspectives.'
 ---
 

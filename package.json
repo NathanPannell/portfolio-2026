@@ -8,10 +8,11 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "npm run test:content && astro check && astro build",
+    "build": "npm run test:content && astro check && astro build && npm run test:seo",
     "preview": "astro preview",
     "check": "astro check",
-    "test:content": "node tests/content-contract.mjs"
+    "test:content": "node tests/content-contract.mjs",
+    "test:seo": "node tests/seo-contract.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.1",

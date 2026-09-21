@@ -2,6 +2,9 @@
 title: 'Echo: A Proactive Micro-Journalling Partner'
 category: 'Project'
 pubDate: '2025-10-19'
+description: 'Building a Discord journaling bot that checks in first, and lessons about timing, motivation, and making a hackathon demo visible.'
+image: '/media/writing/echo.webp'
+imageAlt: 'The Echo hackathon team gathered around laptops at a shared table.'
 ---
 
 Most journaling apps wait on your home screen for you to remember they exist. Echo messages you first.
