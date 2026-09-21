@@ -62,6 +62,14 @@ Never force-push either deployment branch.
 
 The project uses Cloudflare's Git integration. Wrangler is not required for normal deploys, and no Cloudflare API token should be stored in the repository.
 
+### Git-connected project audit
+
+There are two Cloudflare Pages projects connected to GitHub: the production project tracks `main`, and the staging project tracks `staging`. Automatic non-production branch previews are disabled in both projects. The branch-preview selector is verified as `None` in both dashboards. Automatic deployments remain enabled for the configured production branch in the production project and the configured staging branch in the staging project.
+
+This is a reversible dashboard configuration. It prevents feature branches from creating duplicate preview builds while keeping the two named deployment paths intact. No GitHub hook or repository action was added.
+
+At this handoff, the homepage finish is pushed as commit `6d260c4` on the review branch `codex/homepage-final`. Production `main` remains at `914db82`. Staging is the active deployed QA target. The independent finish review disposition is ship, with the review record in `docs/reviews/homepage-final/finish-review.md`.
+
 ## Analytics
 
 Cloudflare Web Analytics is intended, but it is not yet verified on either Pages hostname. No `cdn-cgi/rum` beacon was detectable at this handoff.

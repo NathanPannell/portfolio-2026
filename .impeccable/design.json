@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-21T20:35:50.5255773Z",
+  "title": "Design System: Nathan Pannell Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "neutral", "displayName": "Inlet Ink", "canonical": "#101b1b", "tonalRamp": ["#111818", "#1b2929", "#263939", "#344b4a", "#4b625f", "#71837d", "#a1ada6", "#f1f0e8"] },
+      "paper": { "role": "neutral", "displayName": "Fog Paper", "canonical": "#f1f0e8", "tonalRamp": ["#171a18", "#2f332f", "#4b504b", "#696e68", "#898d85", "#aaada4", "#cccfc5", "#f1f0e8"] },
+      "paper-deep": { "role": "neutral", "displayName": "Deep Paper", "canonical": "#e7e5db", "tonalRamp": ["#171817", "#30322f", "#4a4c48", "#666863", "#858780", "#a4a69d", "#c4c5bb", "#e7e5db"] },
+      "paper-bright": { "role": "neutral", "displayName": "Paper Bright", "canonical": "#f8f8f4", "tonalRamp": ["#171817", "#30312e", "#494a46", "#646560", "#82837d", "#a2a39d", "#cecec7", "#f8f8f4"] },
+      "paper-soft": { "role": "neutral", "displayName": "Soft Paper", "canonical": "#f6f4ec", "tonalRamp": ["#171816", "#30312e", "#494a45", "#65665f", "#84847d", "#a5a59e", "#cbc9c0", "#f6f4ec"] },
+      "print-white": { "role": "neutral", "displayName": "Print White", "canonical": "#fbfaf4", "tonalRamp": ["#171817", "#30312e", "#494a46", "#646560", "#82827c", "#a2a39c", "#cecdc5", "#fbfaf4"] },
+      "lime": { "role": "primary", "displayName": "Parkdex Lime", "canonical": "#b8f53d", "tonalRamp": ["#293b17", "#405c20", "#587d28", "#719f30", "#8fc137", "#b0e846", "#c9f875", "#efffcf"] },
+      "coral": { "role": "secondary", "displayName": "Coral Punctuation", "canonical": "#ff9a5d", "tonalRamp": ["#482317", "#713b25", "#995132", "#c1693f", "#e1834e", "#ff9a5d", "#ffbd8c", "#ffe4d1"] },
+      "sea": { "role": "secondary", "displayName": "Sea Green", "canonical": "#1c5361", "tonalRamp": ["#10262d", "#173d47", "#205461", "#2b6b78", "#3e8290", "#659ba4", "#96bbc0", "#d3ebed"] },
+      "project-field": { "role": "neutral", "displayName": "Project Field", "canonical": "#dce6d3", "tonalRamp": ["#1d281c", "#374936", "#536a51", "#708c6b", "#8eaa88", "#acc3a5", "#c7d8bf", "#dce6d3"] },
+      "writing-room": { "role": "neutral", "displayName": "Writing Room", "canonical": "#111414", "tonalRamp": ["#111414", "#1d2221", "#2a302e", "#3c4541", "#56625c", "#78847d", "#a8ada9", "#eef1eb"] },
+      "writing-muted": { "role": "neutral", "displayName": "Writing Muted", "canonical": "#a8ada9", "tonalRamp": ["#171918", "#303431", "#4a504c", "#656b67", "#7f8580", "#929995", "#a8ada9", "#eef1eb"] },
+      "writing-copy": { "role": "neutral", "displayName": "Writing Copy", "canonical": "#c6cbc6", "tonalRamp": ["#171918", "#303532", "#4a514d", "#656d68", "#828b86", "#a4ada7", "#c6cbc6", "#f1f4ed"] },
+      "writing-line": { "role": "neutral", "displayName": "Writing Line", "canonical": "#424744", "tonalRamp": ["#171918", "#262a28", "#343936", "#424744", "#5d625e", "#7b817b", "#a5aaa4", "#eef1eb"] },
+      "media-stage": { "role": "neutral", "displayName": "Media Stage", "canonical": "#0b1313", "tonalRamp": ["#0b1313", "#15201f", "#202e2c", "#30403c", "#475851", "#6b7870", "#a2aaa1", "#eef1eb"] },
+      "media-black": { "role": "neutral", "displayName": "Media Black", "canonical": "#030303", "tonalRamp": ["#030303", "#111111", "#202020", "#303030", "#454545", "#666666", "#a0a0a0", "#f2f2f2"] },
+      "hero-water": { "role": "secondary", "displayName": "Hero Water", "canonical": "#315c68", "tonalRamp": ["#11232a", "#1a3942", "#244f5a", "#2e6370", "#3d7784", "#64929c", "#9dbac0", "#d9eff0"] },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "rgba(16, 27, 27, 0.2)", "tonalRamp": ["rgba(16,27,27,.2)", "rgba(36,48,46,.2)", "rgba(61,72,69,.2)", "rgba(86,96,92,.2)", "rgba(113,122,116,.2)", "rgba(145,151,143,.2)", "rgba(190,193,183,.2)", "rgba(241,240,232,.2)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Strichpunkt Display", "purpose": "Large claims, section headings, essay titles, labels, and actions." },
+      "hero": { "displayName": "Hero Display", "purpose": "The short two-part claim over the full-height boat photograph." },
+      "body": { "displayName": "Ysabeau Body", "purpose": "Narrative copy and readable project detail text." },
+      "handwritten": { "displayName": "Caveat Captions", "purpose": "Full project print captions, including titles, dates, and story lines." },
+      "label": { "displayName": "Compact Label", "purpose": "Masthead actions, dates, and concise metadata." }
+    },
+    "shadows": [
+      { "name": "print-contact", "value": "0 0.08rem 0.12rem var(--print-shadow-contact)", "purpose": "Short contact shadow under a paper print." },
+      { "name": "print-falloff", "value": "0 0.45rem 0.9rem var(--print-shadow-mid), 0 1.5rem 3.5rem var(--print-shadow-falloff)", "purpose": "Broad depth under project prints." },
+      { "name": "device-contact", "value": "0 0.14rem 0.22rem var(--device-contact-shadow)", "purpose": "Contact shadow under Parkdex device frames." },
+      { "name": "hero-text", "value": "0 0.12rem 1.5rem var(--hero-shadow-soft)", "purpose": "Protects hero copy against the photograph without a panel." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default lift, arrow, and photographic wash easing." },
+      { "name": "dur-short", "value": "220ms", "purpose": "Compact link and focus transitions." },
+      { "name": "dur-medium", "value": "320ms", "purpose": "Project print elevation and image state changes." },
+      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce", "purpose": "Removes smooth scrolling, lifts, rotations, and nonessential transitions." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "980px" },
+      { "name": "phone", "value": "720px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Hero Masthead",
+      "kind": "nav",
+      "refersTo": "contact-link",
+      "description": "Transparent, borderless overlay masthead with identity and email action.",
+      "html": "<header class=\"ds-masthead\"><a class=\"ds-name\" href=\"#\">Nathan Pannell</a><a class=\"ds-contact\" href=\"#\">Email me <span aria-hidden=\"true\">↗</span></a></header>",
+      "css": ".ds-masthead { display:flex; align-items:center; justify-content:space-between; padding:1.45rem 3.4rem; color:var(--ink); font-family:var(--display); font-weight:700; } .ds-name { color:inherit; font-size:2.65rem; letter-spacing:-.04em; line-height:.94; text-decoration:none; } .ds-contact { min-height:2.75rem; display:inline-flex; align-items:center; gap:.38rem; padding:.55rem .1rem; background:linear-gradient(var(--lime),var(--lime)) 0 82%/100% .3rem no-repeat; color:inherit; font-size:1.12rem; text-decoration:none; } .ds-contact:focus-visible { outline:.2rem solid var(--lime); outline-offset:.25rem; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary Parkdex action inside the paper story section.",
+      "html": "<a class=\"ds-button\" href=\"#\">Explore the map</a>",
+      "css": ".ds-button { min-height:3.25rem; display:inline-flex; align-items:center; justify-content:center; padding:.8rem 1.35rem; border:0; border-radius:999px; background:var(--ink); color:var(--print-white); font-family:var(--display); font-weight:720; text-decoration:none; transition:transform 220ms var(--ease-out),box-shadow 220ms var(--ease-out); } .ds-button:hover { transform:translateY(-.18rem); box-shadow:0 .8rem 1.8rem var(--shadow-medium); } .ds-button:focus-visible { outline:.2rem solid var(--lime); outline-offset:.25rem; }"
+    },
+    {
+      "name": "Project Print",
+      "kind": "card",
+      "refersTo": "project-print",
+      "description": "A featured project link styled as a tactile photographic print.",
+      "html": "<a class=\"ds-print\" href=\"#\"><span class=\"ds-print-image\"><img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==\" alt=\"\" /></span><span class=\"ds-print-caption\"><strong>Doxxme</strong><span>August 2026</span><small>Doxx yourself for money.</small></span></a>",
+      "css": ".ds-print { --rotation:1.8deg; display:block; padding:1rem 1rem 6rem; overflow:hidden; border:1px solid var(--print-edge); border-radius:.2rem; background-color:var(--print-white); background-image:url('/media/plates/paper-ground.webp'); background-position:center; background-size:18rem auto; color:var(--ink); box-shadow:0 .08rem .12rem var(--print-shadow-contact),0 .45rem .9rem var(--print-shadow-mid),0 1.5rem 3.5rem var(--print-shadow-falloff),inset 0 0 0 1px var(--print-inset-highlight); text-decoration:none; transform:rotate(var(--rotation)); transition:transform 320ms var(--ease-out),box-shadow 320ms var(--ease-out); } .ds-print-image { display:block; aspect-ratio:4/3; overflow:hidden; background:var(--paper-deep); } .ds-print-image img { display:block; width:100%; height:100%; object-fit:cover; } .ds-print-caption { position:absolute; right:1.2rem; bottom:.85rem; left:1.2rem; display:flex; flex-direction:column; align-items:center; gap:.35rem; font-family:var(--handwritten); text-align:center; } .ds-print-caption strong { font-size:2rem; font-weight:650; } .ds-print-caption small { color:var(--ink-card-meta); font-size:1rem; } .ds-print:focus-visible { transform:translateY(-.8rem) rotate(calc(var(--rotation) + .7deg)); z-index:2; outline:.2rem solid var(--lime); outline-offset:.25rem; } @media (hover: hover) and (pointer: fine) { .ds-print:hover { transform:translateY(-.8rem) rotate(calc(var(--rotation) + .7deg)); z-index:2; } }"
+    },
+    {
+      "name": "Writing Row",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Flat essay row that reveals its photographic cover on interaction.",
+      "html": "<a class=\"ds-essay\" href=\"#\"><span>What a Failed Hackathon Taught Me</span><time>Oct 2025</time><b aria-hidden=\"true\">→</b></a>",
+      "css": ".ds-essay { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:1rem; align-items:center; min-height:8rem; padding:1.5rem 2rem; border-block:1px solid var(--line); color:var(--ink); text-decoration:none; overflow:hidden; } .ds-essay::before { content:''; position:absolute; z-index:-1; inset:0; background:var(--writing-room); opacity:0; transition:opacity 260ms var(--ease-out); } .ds-essay span { font-family:var(--display); font-size:clamp(2rem,3.7vw,4rem); font-weight:650; letter-spacing:-.04em; line-height:.98; transition:color 180ms var(--ease-out),transform 220ms var(--ease-out); } .ds-essay time { color:var(--writing-muted); font-size:.9rem; } .ds-essay:hover::before,.ds-essay:focus-visible::before { opacity:1; } .ds-essay:hover,.ds-essay:focus-visible { color:var(--print-white); } .ds-essay:hover span,.ds-essay:focus-visible span { transform:translateX(.25rem); } .ds-essay:focus-visible { outline:.2rem solid var(--lime); outline-offset:-.2rem; }"
+    },
+    {
+      "name": "Archive Disclosure",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Native in-place archive control for remaining projects or writing.",
+      "html": "<details class=\"ds-archive\"><summary>All writing <span aria-hidden=\"true\">⌄</span></summary><p>Older entries remain on their original routes.</p></details>",
+      "css": ".ds-archive summary { min-height:2.75rem; display:flex; align-items:center; justify-content:center; gap:.45rem; width:max-content; margin:2rem auto 0; padding:.55rem .1rem; background:linear-gradient(var(--lime),var(--lime)) 0 86%/100% .28rem no-repeat; color:var(--ink); font-family:var(--display); font-weight:720; cursor:pointer; list-style:none; } .ds-archive summary::-webkit-details-marker { display:none; } .ds-archive[open] summary span { transform:rotate(180deg); } .ds-archive summary:focus-visible { outline:.2rem solid var(--lime); outline-offset:.28rem; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Island Field Deck",
+    "overview": "The homepage starts with one real photograph of Nathan on a sailboat off Vancouver Island. The photo fills the first viewport, the masthead sits transparently over it, and the short claim stays in the lower-left water. From there, the story moves through Parkdex, three selected project prints, three selected essays, and a direct contact footer.\n\nThe system is candid, tactile, and technically precise. Fog paper and deep green-black ink carry the page. Lime marks actions and focus. Coral is reserved for the final phrase in the hero claim. The photograph, project artifacts, and essay images carry the personality, so the interface keeps supporting copy short.",
+    "keyCharacteristics": ["One full-height, real sailboat photograph leads every homepage visit.", "A transparent, borderless masthead overlays the hero without a white panel or divider.", "Large, tightly set display type uses short, concrete claims.", "Project cards feel like warm-white photographic prints with paper texture, rotation, and depth.", "The homepage curates three projects and three essays while preserving archives in place.", "Responsive layouts keep the same photo-first hierarchy on phone and desktop."],
+    "rules": [
+      { "name": "The Rare Accent Rule", "body": "Lime and coral are signals. Do not spread either color evenly across a surface.", "section": "colors" },
+      { "name": "The One Light Story Rule", "body": "The homepage remains one paper-and-photograph sequence. Dark areas are limited to media, writing interaction states, and the closing contact area.", "section": "colors" },
+      { "name": "The No Micro-Subtitle Rule", "body": "Do not add decorative eyebrows, tiny category labels, or stacked explanatory captions. Small type is for real dates, image credit, status, or accessibility context.", "section": "typography" },
+      { "name": "The Short Claim Rule", "body": "Large type makes one concrete point in Nathan's voice. Avoid generic positioning nouns such as builder, creator, innovator, or founder.", "section": "typography" },
+      { "name": "The Artifact Before Grid Rule", "body": "Use asymmetry and rotation to help a real artifact lead the eye. Keep the source order and destination clear.", "section": "layout" },
+      { "name": "The Flat Until Touched Rule", "body": "Editorial surfaces stay flat. Shadows and movement belong to photographic artifacts and direct interaction states.", "section": "elevation" },
+      { "name": "The Two Shape Families Rule", "body": "Use square paper objects for project evidence and pills for actions. Rounded containers are reserved for media framing and device silhouettes.", "section": "shapes" }
+    ],
+    "dos": ["Do lead with the existing real sailboat photograph at every viewport size.", "Do keep the masthead transparent and borderless over the photo.", "Do use Parkdex lime as a scarce action and focus signal.", "Do use real interface evidence on Parkdex detail pages and photographic covers on the selected homepage cards and essays.", "Do preserve the featured order through homeOrder and keep every routable archive entry reachable.", "Do keep project and article media within the visible screen height on detail pages.", "Do retain keyboard focus, useful alt text, skip navigation, touch behavior, and a complete reduced-motion path."],
+    "donts": ["Don't add hero preview prints, a white hero panel, or a header divider over the first photograph.", "Don't replace the hero photograph with a generated portrait or a different crop without an explicit source decision.", "Don't turn the homepage into a résumé, timeline, skills matrix, or uniform SaaS card grid.", "Don't distribute lime or coral as general decoration.", "Don't add micro-subtitles, decorative eyebrows, or redundant category labels.", "Don't invent a separate dark mode or a separate Writing scene.", "Don't use generic stock nature imagery, glassmorphism, floating gradient blobs, or cursor-following card effects.", "Don't crop page-level demo media merely to fill a container or allow portrait media to exceed the viewport."]
+  }
+}
