@@ -33,3 +33,5 @@ Search Console ownership, sitemap submission, indexing outcomes, and field Core 
 | Desktop claim | ![Before desktop hero](hero-before.png) | ![Larger desktop claim](hero-after.png) |
 | Parkdex | ![Earlier Parkdex screens](parkdex-before.png) | ![Supplied Parkdex screens](parkdex-after.png) |
 | Writing | ![Earlier writing covers](../homepage-final/writing-after.png) | ![New writing cover](writing-after.png) |
+
+The generated ICBC background was also inspected in its live keyboard-focus state: ![ICBC generated cover in use](writing-generated-after.png)
