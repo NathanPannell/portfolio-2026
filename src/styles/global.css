@@ -312,7 +312,7 @@ a {
 }
 
 .project-page {
-  --project-header-height: calc(2.75rem + 2rem + var(--rule-hair));
+  --project-header-height: calc(2.75rem + 2rem + var(--rule-hair) + 0.03rem);
 }
 
 .project-page > .site-header {
@@ -1883,17 +1883,27 @@ a {
   }
 
   .project-intro__visual {
+    display: grid;
+    place-items: center;
     transform: rotate(0.7deg);
   }
 
   .project-intro__visual-window {
+    width: min(100%, 60svh);
     height: min(36svh, 24rem);
     aspect-ratio: auto;
     padding: clamp(0.65rem, 1.2vw, 1.2rem);
   }
 
   .project-intro__visual img {
-    max-height: 100%;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: min(30svh, 20rem);
+  }
+
+  .project-intro--go-fetch .project-intro__visual-window {
+    width: min(100%, 32svh);
   }
 
   .project-highlights {
