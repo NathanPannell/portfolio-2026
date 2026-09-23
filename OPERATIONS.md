@@ -65,6 +65,8 @@ When production promotion is explicitly authorized:
 
 Never force-push either deployment branch.
 
+GitHub currently returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until branch protection is available, the draft PR, preview verification, staging merge, and staging browser check are agent-enforced release gates.
+
 ## Cloudflare Pages settings
 
 - Production branch: `main`
