@@ -1,16 +1,7 @@
----
-interface Props {
-  moreWriting?: boolean;
-}
-
-const { moreWriting = false } = Astro.props;
----
-
 <footer id="contact" class="site-footer">
   <div class="site-footer__lead">
     <p>Working on something that should exist?</p>
     <div class="site-footer__actions">
-      {moreWriting && <a class="site-footer__secondary" href="/#writing">More writing</a>}
       <a class="site-footer__email" href="mailto:contact@nathanpannell.com">Tell me about it <span aria-hidden="true">→</span></a>
     </div>
   </div>
