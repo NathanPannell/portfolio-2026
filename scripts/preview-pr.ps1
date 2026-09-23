@@ -154,12 +154,18 @@ try {
     throw 'The exact PR head did not become an immutable successful Pages deployment; retain journal for teardown.'
   }
   $journal | Add-Member -NotePropertyName deploymentId -NotePropertyValue $deployment.id -Force
-  $journal.previewUrl = $deployment.url
+  $journal | Add-Member -NotePropertyName deploymentUrl -NotePropertyValue $deployment.url -Force
+  $journal.previewUrl = "https://$projectName.pages.dev"
   $journal.phase = 'deployed'
   Save-PreviewJournal -Path $paths.Journal -Journal $journal
   $response = Invoke-WebRequest -Uri $journal.previewUrl -Method Head -SkipHttpErrorCheck -TimeoutSec 20
   if ([int]$response.StatusCode -ne 200 -or $response.Headers['X-Robots-Tag'] -notmatch 'noindex') {
     throw 'Preview did not serve HTTP 200 with X-Robots-Tag: noindex; retain journal for teardown.'
+  }
+  $servedProject = Get-PreviewProject -ProjectName $projectName
+  if (-not $servedProject -or $servedProject.id -cne $journal.projectId -or
+      $servedProject.canonical_deployment.id -cne $journal.deploymentId) {
+    throw 'Preview project changed after the live health check; retain journal for teardown.'
   }
   $freshPr = Get-DraftPullRequest -PullRequest $PullRequest
   if ($freshPr.headRefOid -cne $journal.headSha -or (Get-RemoteStagingSha) -cne $journal.baseSha) {
