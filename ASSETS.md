@@ -15,12 +15,12 @@ Shipping raster assets under `public/media` carry an `impeccable:prompt` record.
 
 These are user-supplied product screenshots. The current homepage trio is encoded full-frame as WebP without resizing, cropping, or editing. Earlier assets remain for project-detail use or reference; their original conversion only resized and encoded them. Interface content and visible image credit remain unchanged.
 
-The homepage device frames were supplied by Nathan in [issue #5](https://github.com/NathanPannell/portfolio-2026/issues/5#issuecomment-5789804979). They are transparent overlays above the existing screenshots; the screenshot pixels stay fully contained so no interface content is cropped.
+The homepage device frames were supplied by Nathan in [issue #5](https://github.com/NathanPannell/portfolio-2026/issues/5#issuecomment-5789804979). This site now uses the same processed transparent overlays and screen insets as the live Parkdex landing page. Screenshots use `object-fit: cover` inside the display apertures, so their edges can be cropped.
 
 | Output | Dimensions | Homepage use and original |
 | --- | ---: | --- |
-| `public/media/parkdex/laptop-frame.webp` | 4608 x 2675 | Transparent laptop frame overlay, losslessly encoded from the owner-provided PNG with alpha preserved. Source: `https://github.com/user-attachments/assets/8c34a1ae-2e88-4845-afc7-bbf794981c8d` |
-| `public/media/parkdex/phone-frame.webp` | 2090 x 4347 | Transparent phone frame overlay, losslessly encoded from the owner-provided 5000 x 5000 PNG after cropping only transparent outer canvas to alpha bounds (1457, 327) through (3546, 4673). All visible frame pixels and alpha are preserved. Source: `https://github.com/user-attachments/assets/f767709a-3b7a-4cf8-adbf-53985c02a357` |
+| `public/media/parkdex/laptop-frame.webp` | 2600 x 1509 | The live Parkdex landing page's transparent overlay, resized from the owner-provided 4608 x 2675 PNG with alpha preserved. Source: `https://github.com/user-attachments/assets/8c34a1ae-2e88-4845-afc7-bbf794981c8d` |
+| `public/media/parkdex/phone-frame.webp` | 1252 x 2604 | The live Parkdex landing page's transparent overlay, cropped from the owner-provided 5000 x 5000 PNG to (1460, 329) through (3547, 4670), then resized with alpha preserved. Source: `https://github.com/user-attachments/assets/f767709a-3b7a-4cf8-adbf-53985c02a357` |
 | `public/media/parkdex/west-island-map-2026.webp` | 1662 x 1092 | Homepage laptop frame, visited parks map. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-21 134445.png` |
 | `public/media/parkdex/river-otter-badge-2026.webp` | 714 x 1354 | Homepage phone frame, River Otter Rookie badge. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181206.png` |
 | `public/media/parkdex/places-checklist-2026.webp` | 712 x 1359 | Homepage phone frame, places checklist. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181239.png` |

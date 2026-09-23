@@ -95,7 +95,7 @@ const detailMedia = media;
             </div>
           </dl>
         </div>
-        <figure class="project-intro__visual">
+        <figure class="project-intro__visual" style={`--project-cover-ratio: ${coverWidth} / ${coverHeight}`}>
           <span class="project-intro__visual-window">
             <img src={cover} alt={coverAlt} width={coverWidth} height={coverHeight} fetchpriority="high" decoding="async" />
           </span>
