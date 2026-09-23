@@ -1,6 +1,6 @@
 # Portfolio 2026 handoff
 
-Last updated: September 19, 2026.
+Last updated: September 23, 2026.
 
 This is the first file a new chat should read. It records the current working state and points to the durable sources of truth.
 
@@ -22,18 +22,20 @@ This is the first file a new chat should read. It records the current working st
 - Hosting target: Cloudflare Pages
 - Intended canonical URL: <https://www.nathanpannell.com>
 - Current Cloudflare production project: <https://portfolio-2026-ady.pages.dev>
-- Staging URL: <https://portfolio-2026-staging.pages.dev>
+- Staging URL: <https://staging.nathanpannell.com>
+- Apex URL: <https://nathanpannell.com> redirects to `www.nathanpannell.com` with HTTP 308.
 
 ### Branches
 
-- `main` is the Cloudflare production branch. Its current UI baseline is `3675159` (`Replace Parkdex chrome with matte frames`).
-- `staging` is the review branch. Its latest UI baseline is `2bfb664` (`Redesign portfolio stories and pacing`). Documentation-only commits may follow that baseline.
-- The latest cohesion, copy, project-page, and writing-room redesign is on `staging` only.
+- `main` is the Cloudflare production branch. At this handoff, `origin/main` is `72de61d` (`Merge pull request #3 from NathanPannell/staging`).
+- `staging` is the shared review and QA branch. At this handoff, `origin/staging` is `53e0971` (`Merge pull request #2 from NathanPannell/codex/portfolio-parkdex-web-links`).
 - Do not update `main` or production without Nathan explicitly asking to promote staging.
 
-Cloudflare deploys both branches through its Git integration. A push to `staging` updates the staging URL. A push to `main` updates `portfolio-2026-ady.pages.dev`.
+Cloudflare deploys the persistent `staging` and `main` branches through Git integration. The `www.nathanpannell.com` production domain is live on Cloudflare Pages. The apex domain remains on Vercel and responds with HTTP 308 to the `www` URL.
 
-The custom-domain cutover is still pending. `www.nathanpannell.com` currently redirects to `nathanpannell.com`, which still serves the older Chiri portfolio from Vercel. Do not describe the new Cloudflare site as live on the custom domain until the DNS and Pages domain binding have been changed and verified.
+The staging workflow starts with a same-repository draft PR targeting `staging`. The PR head must include the current `staging` commit. `scripts/preview-pr.ps1` creates a temporary, isolated Cloudflare Pages Direct Upload project for review. The script defaults to provider-free plan mode; add `-Apply` and the Cloudflare account ID to create the preview. Test the deployed preview and keep it available through the merge and staging verification. The scripts track preview resources in a durable external journal, which must be retained through teardown. See `OPERATIONS.md` for commands and Cloudflare authentication details.
+
+After preview review, mark the PR ready and merge it into `staging`. Wait for the staging Git deployment and browser-test `staging.nathanpannell.com`. Then use `scripts/teardown-preview-pr.ps1` with `-Apply`, the same account ID, and `-StagingVerified` to remove the owned preview after the script confirms the exact staging deployment. For an explicitly authorized production release, open a promotion PR from the reviewed `staging` state to `main`, merge it, and verify the production custom domain.
 
 `portfolio-2026.pages.dev` is unrelated to this repository and currently identifies itself as “sujith varughese.” Never deploy to, link to, or treat that hostname as Nathan's portfolio.
 
@@ -75,12 +77,11 @@ The ignored `.impeccable/` directory contains historical review material and loc
 - Add an Android waitlist as a separate Parkdex action only when the real destination exists.
 - Nathan may rewrite project copy later. Preserve facts, dates, collaborators, results, and links while keeping the copy short.
 - Do not invent testimonials, users, revenue, customers, or metrics.
-- Complete the custom-domain cutover from the old Vercel site to the Cloudflare Pages production project when Nathan explicitly asks for it.
-- Cloudflare Web Analytics is intended, but neither current Pages hostname exposed a detectable `cdn-cgi/rum` beacon at this handoff. Verify configuration and one injected beacon during the production cutover.
+- Confirm Cloudflare Web Analytics configuration and verify exactly one `cdn-cgi/rum` beacon on the production `www` domain before claiming analytics is active.
 
 ## Last verified state
 
-The `staging` version at `2bfb664` passed:
+The full UI verification record at `2bfb664` is historical and predates the current branch heads. It records that revision passing:
 
 - `npm run build`, including the content contract, Astro diagnostics, and static generation
 - Astro diagnostics with zero errors, warnings, or hints
@@ -94,7 +95,7 @@ The `staging` version at `2bfb664` passed:
 
 1. Run `git status --short` and `git branch -vv` before editing.
 2. Preserve unrelated changes and the user-owned attachment directory.
-3. Work on `staging` unless Nathan explicitly requests production work.
+3. Create a feature branch from the latest `staging` commit and use the draft PR preview flow in `OPERATIONS.md`. Do not work directly on `main`.
 4. Read the documentation relevant to the requested surface.
 5. For UI work, compare the deployed URL before editing and verify the affected journey on deployed staging afterward.
 6. Run `npm run build` before delivery.
