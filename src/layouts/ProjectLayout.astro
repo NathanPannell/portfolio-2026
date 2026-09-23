@@ -111,37 +111,39 @@ const detailMedia = media;
       </dl>
     </header>
 
-    {detailMedia.length > 0 && (
-      <section class="project-media" aria-label={`${title} media`}>
-        {detailMedia.map((item) => (
-          <figure class="project-media__item">
-            {item.kind === 'image' && (
-              <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading="eager" decoding="async" />
-            )}
-            {item.kind === 'video' && (
-              <video controls preload="metadata" poster={item.poster} width={item.width} height={item.height} aria-label={item.alt}>
-                <source src={item.src} type="video/mp4" />
-                <a href={item.src}>Watch the {title} demo</a>
-              </video>
-            )}
-            {item.kind === 'youtube' && (
-              <iframe
-                src={item.src}
-                title={item.alt}
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
-              ></iframe>
-            )}
-            {item.caption && <figcaption>{item.caption}</figcaption>}
-          </figure>
-        ))}
-      </section>
-    )}
+    <div class:list={['project-story', { 'project-story--with-media': detailMedia.length > 0 }]}>
+      {detailMedia.length > 0 && (
+        <section class="project-media" aria-label={`${title} media`}>
+          {detailMedia.map((item) => (
+            <figure class="project-media__item">
+              {item.kind === 'image' && (
+                <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading="eager" decoding="async" />
+              )}
+              {item.kind === 'video' && (
+                <video controls preload="metadata" poster={item.poster} width={item.width} height={item.height} aria-label={item.alt}>
+                  <source src={item.src} type="video/mp4" />
+                  <a href={item.src}>Watch the {title} demo</a>
+                </video>
+              )}
+              {item.kind === 'youtube' && (
+                <iframe
+                  src={item.src}
+                  title={item.alt}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                ></iframe>
+              )}
+              {item.caption && <figcaption>{item.caption}</figcaption>}
+            </figure>
+          ))}
+        </section>
+      )}
 
-    <article class="project-body prose">
-      <slot />
-    </article>
+      <article class="project-body prose">
+        <slot />
+      </article>
+    </div>
 
     {collaborators.length > 0 && (
       <aside class="project-collaborators" aria-labelledby="project-collaborators-title">
