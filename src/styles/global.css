@@ -247,7 +247,7 @@ a {
   max-width: 42ch;
   margin: 1.15rem 0 0;
   color: var(--hero-copy-muted);
-  font-size: clamp(1rem, 1.22vw, 1.22rem);
+  font-size: clamp(1.7rem, 2.6vw, 2.65rem);
   font-weight: 560;
   line-height: 1.35;
   text-shadow: 0 0.12rem 1rem var(--hero-shadow-strong);
@@ -302,7 +302,7 @@ a {
     max-width: 27ch;
     margin-top: 0.8rem;
     margin-left: auto;
-    font-size: 0.94rem;
+    font-size: 1.25rem;
   }
 }
 .project-page,
@@ -1240,44 +1240,38 @@ a {
 }
 
 .parkdex-frame__screen {
-  display: block;
-  width: 100%;
+  position: absolute;
+  z-index: 1;
   overflow: hidden;
   background: var(--device-screen);
-  box-shadow: inset 0 0 0 1px var(--screen-shadow);
 }
 
-.parkdex-frame img {
+.parkdex-frame__screen img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: contain;
 }
 
+.parkdex-frame__asset {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
 .parkdex-frame--laptop {
-  padding: clamp(0.5rem, 0.85vw, 0.78rem) clamp(0.5rem, 0.85vw, 0.78rem) clamp(0.65rem, 1vw, 0.92rem);
-  border: 2px solid var(--device-laptop-rail);
-  border-radius: clamp(0.7rem, 1.2vw, 1rem) clamp(0.7rem, 1.2vw, 1rem) 0.32rem 0.32rem;
-  background: var(--device-laptop-shell);
-  box-shadow: inset 0 0 0 1px var(--device-highlight), 0 0.16rem 0.24rem var(--device-contact-shadow);
+  aspect-ratio: 4608 / 2675;
 }
 
 .parkdex-frame--laptop .parkdex-frame__screen {
-  border: clamp(0.22rem, 0.42vw, 0.36rem) solid var(--device-bezel);
-  border-radius: clamp(0.32rem, 0.6vw, 0.52rem);
-}
-
-.parkdex-frame--laptop::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  right: -4%;
-  bottom: -0.72rem;
-  left: -4%;
-  height: clamp(0.72rem, 1.2vw, 1rem);
-  border-radius: 0.12rem 0.12rem 0.48rem 0.48rem;
-  background: var(--device-base);
-  box-shadow: inset 0 1px var(--device-base-highlight), 0 0.35rem 0.6rem var(--device-base-shadow);
+  top: 2.13%;
+  left: 10.7%;
+  width: 78.6%;
+  height: 86.32%;
 }
 
 .parkdex-frame--map {
@@ -1288,16 +1282,15 @@ a {
 }
 
 .parkdex-frame--phone {
-  padding: clamp(0.38rem, 0.65vw, 0.55rem);
-  border: 2px solid var(--device-phone-rail);
-  border-radius: clamp(0.85rem, 1.8vw, 1.55rem);
-  background: var(--device-phone-shell);
-  box-shadow: inset 0 0 0 clamp(0.08rem, 0.13vw, 0.12rem) var(--device-bezel), 0 0.14rem 0.22rem var(--device-contact-shadow);
+  aspect-ratio: 2090 / 4347;
 }
 
 .parkdex-frame--phone .parkdex-frame__screen {
-  border: clamp(0.14rem, 0.25vw, 0.22rem) solid var(--device-phone-bezel);
-  border-radius: clamp(0.62rem, 1.45vw, 1.25rem);
+  top: 2.05%;
+  left: 4.31%;
+  width: 91.87%;
+  height: 95.88%;
+  border-radius: 7% / 3.3%;
 }
 
 .parkdex-frame--detail {
