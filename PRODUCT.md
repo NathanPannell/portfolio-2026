@@ -73,7 +73,7 @@ The selected article and project-writing backlog has been migrated from the earl
 
 ## Evidence on Hand
 
-- Live Parkdex product: <https://parkdex.app/>
+- Live Parkdex product: <https://web.parkdex.app/>
 - Current older portfolio on the intended domain: <https://nathanpannell.com/>
 - Cloudflare production project: <https://portfolio-2026-ady.pages.dev/>
 - Latest redesign staging site: <https://portfolio-2026-staging.pages.dev/>
