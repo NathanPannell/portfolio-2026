@@ -1250,7 +1250,7 @@ a {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .parkdex-frame__asset {
@@ -1268,10 +1268,10 @@ a {
 }
 
 .parkdex-frame--laptop .parkdex-frame__screen {
-  top: 2.13%;
-  left: 10.7%;
-  width: 78.6%;
-  height: 86.32%;
+  top: 1.9%;
+  left: 10.5%;
+  width: 79%;
+  height: 86.9%;
 }
 
 .parkdex-frame--map {
@@ -1282,15 +1282,15 @@ a {
 }
 
 .parkdex-frame--phone {
-  aspect-ratio: 2090 / 4347;
+  aspect-ratio: 2087 / 4341;
 }
 
 .parkdex-frame--phone .parkdex-frame__screen {
-  top: 2.05%;
-  left: 4.31%;
-  width: 91.87%;
-  height: 95.88%;
-  border-radius: 7% / 3.3%;
+  top: 1.8%;
+  left: 4%;
+  width: 92.6%;
+  height: 96.5%;
+  border-radius: 11% / 4%;
 }
 
 .parkdex-frame--detail {
