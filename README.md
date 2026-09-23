@@ -1,6 +1,6 @@
 # Nathan Pannell portfolio
 
-Static Astro portfolio intended for [nathanpannell.com](https://www.nathanpannell.com), deployed through Cloudflare Pages. The latest reviewed build lives on the staging hostname; the custom domain still serves the older Vercel site until an explicit cutover.
+Static Astro portfolio for [www.nathanpannell.com](https://www.nathanpannell.com), deployed through Cloudflare Pages. The production custom domain serves the current portfolio. The apex domain redirects to `www` with HTTP 308.
 
 ## Start here
 
@@ -18,11 +18,14 @@ New contributors and new Codex chats should read [CONTEXT.md](./CONTEXT.md) firs
 
 Current environments:
 
-- Staging: <https://portfolio-2026-staging.pages.dev>
-- Cloudflare `main`: <https://portfolio-2026-ady.pages.dev>
-- Intended custom domain: <https://www.nathanpannell.com> (cutover pending)
+- Draft PR preview: temporary per-PR Cloudflare Pages Direct Upload project, created on demand by `scripts/preview-pr.ps1` and removed after successful staging QA with `scripts/teardown-preview-pr.ps1`.
+- Staging: <https://staging.nathanpannell.com>
+- Production: <https://www.nathanpannell.com>
+- Cloudflare production diagnostic host: <https://portfolio-2026-ady.pages.dev>
 
 `portfolio-2026.pages.dev` is unrelated to this repository.
+
+The delivery path is draft PR, ephemeral Direct Upload preview, merge to `staging`, then an explicitly authorized promotion PR to `main`. See [OPERATIONS.md](./OPERATIONS.md) for preview commands, teardown, and release steps.
 
 ## Local development
 
