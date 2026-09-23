@@ -83,7 +83,7 @@ The persistent staging and production projects use Cloudflare's Git integration.
 
 There are two Cloudflare Pages projects connected to GitHub: the production project tracks `main`, and the staging project tracks `staging`. Automatic non-production branch previews are disabled in both projects. Draft PR previews are created only on demand by `scripts/preview-pr.ps1` as isolated Direct Upload projects, then removed with `scripts/teardown-preview-pr.ps1` after the staging merge and successful staging browser QA. Automatic deployments remain enabled for the configured production branch in the production project and the configured staging branch in the staging project.
 
-The two persistent Git-connected deployments remain the staging and production paths. The per-PR preview is a separate, explicitly managed deployment and does not add a GitHub hook or repository action.
+The two persistent Git-connected deployments remain the staging and production paths. The per-PR preview is a separate, explicitly managed deployment and does not add a GitHub hook or repository action. A feature-branch push can still leave an `Idle` deployment record in each Git-connected project even with previews set to `none`; those recorded URLs return HTTP 404 and are not usable preview sites. Audit status and HTTP response after the push.
 
 The current production site is live at `www.nathanpannell.com`. Staging is the shared QA target at `staging.nathanpannell.com`. Review previews are temporary and must be torn down after successful staging QA, before final delivery.
 
