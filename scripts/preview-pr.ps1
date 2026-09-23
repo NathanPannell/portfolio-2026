@@ -121,7 +121,7 @@ try {
   $journal.phase = 'creation-requested'
   $journal | Add-Member -NotePropertyName creationRequestedAt -NotePropertyValue ([DateTimeOffset]::UtcNow.ToString('o')) -Force
   Save-PreviewJournal -Path $paths.Journal -Journal $journal
-  $null = Invoke-PreviewWrangler -Arguments @('pages', 'project', 'create', $projectName, '--production-branch', $branch)
+  $null = Invoke-PreviewWrangler -Arguments @('pages', 'project', 'create', '--force', $projectName, '--production-branch', $branch)
   $project = Get-PreviewProject -ProjectName $projectName
   if (-not $project -or -not $project.id -or $project.production_branch -cne $branch -or
       ($project.PSObject.Properties['source'] -and $project.source)) {
@@ -133,7 +133,7 @@ try {
 
   $journal.phase = 'deploy-requested'
   Save-PreviewJournal -Path $paths.Journal -Journal $journal
-  $null = Invoke-PreviewWrangler -Arguments @('pages', 'deploy', (Join-Path $worktree 'dist'), '--project-name', $projectName, '--branch', $branch, '--commit-hash', $journal.headSha, '--commit-message', "Draft PR #$PullRequest exact head")
+  $null = Invoke-PreviewWrangler -Arguments @('pages', 'deploy', '--force', (Join-Path $worktree 'dist'), '--project-name', $projectName, '--branch', $branch, '--commit-hash', $journal.headSha, '--commit-message', "Draft PR #$PullRequest exact head")
   $deployment = $null
   for ($attempt = 0; $attempt -lt 12; $attempt++) {
     $deployedProject = Get-PreviewProject -ProjectName $projectName
