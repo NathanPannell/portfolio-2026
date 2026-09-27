@@ -33,9 +33,9 @@ This is the first file a new chat should read. It records the current working st
 
 Cloudflare deploys the persistent `staging` and `main` branches through Git integration. The `www.nathanpannell.com` production domain is live on Cloudflare Pages. The apex domain remains on Vercel and responds with HTTP 308 to the `www` URL.
 
-The staging workflow starts with a same-repository draft PR targeting `staging`. The PR head must include the current `staging` commit. `scripts/preview-pr.ps1` creates a temporary, isolated Cloudflare Pages Direct Upload project for review. The script defaults to provider-free plan mode; add `-Apply` and the Cloudflare account ID to create the preview. Test the deployed preview and keep it available through the merge and staging verification. The scripts track preview resources in a durable external journal, which must be retained through teardown. See `OPERATIONS.md` for commands and Cloudflare authentication details.
+The staging workflow starts with a same-repository draft PR targeting `staging`. The PR head must include the current `staging` commit. `scripts/preview-pr.ps1` deploys the built PR head as a Vercel preview in project `portfolio-2026`. Test the preview and keep it available through the merge and staging verification. See `OPERATIONS.md` for commands.
 
-After preview review, mark the PR ready and merge it into `staging`. Wait for the staging Git deployment and browser-test `staging.nathanpannell.com`. Then use `scripts/teardown-preview-pr.ps1` with `-Apply`, the same account ID, and `-StagingVerified` to remove the owned preview after the script confirms the exact staging deployment. For an explicitly authorized production release, open a promotion PR from the reviewed `staging` state to `main`, merge it, and verify the production custom domain.
+After preview review, mark the PR ready and merge it into `staging`. Wait for the staging Git deployment and browser-test `staging.nathanpannell.com`. Then remove the preview with `scripts/teardown-preview-pr.ps1 -DeploymentUrl <preview URL>`. For an explicitly authorized production release, open a promotion PR from the reviewed `staging` state to `main`, merge it, and verify the production custom domain.
 
 `portfolio-2026.pages.dev` is unrelated to this repository and currently identifies itself as “sujith varughese.” Never deploy to, link to, or treat that hostname as Nathan's portfolio.
 
@@ -57,7 +57,7 @@ The ignored `.impeccable/` directory contains historical review material and loc
 - Older project writing remains available within the matching project page under “Read the original build notes.” Other legacy posts retain flat direct URLs.
 - Underscore-prefixed content and entries with `draft: true` must never receive public routes.
 - The dedicated Writing page is the intentional dark room. The rest of the site has no alternate theme.
-- Parkdex screenshots are placeholders and may be replaced later without redesigning the surrounding device composition.
+- Parkdex is presented as the mobile field app. The homepage gallery is three phone frames with field app captures copied from the Parkdex landing page. There is no laptop frame and no link to `web.parkdex.app`.
 
 ## Interaction behavior that must be preserved
 
@@ -73,8 +73,7 @@ The ignored `.impeccable/` directory contains historical review material and loc
 
 ## Current content and asset follow-ups
 
-- Replace the current Parkdex screenshots when final captures are available. Keep the existing laptop plus two-phone composition and update `ASSETS.md` with the new provenance.
-- Add an Android waitlist as a separate Parkdex action only when the real destination exists.
+- When the Parkdex landing page changes its field app captures or facts, mirror them here and update `ASSETS.md` with the new provenance.
 - Nathan may rewrite project copy later. Preserve facts, dates, collaborators, results, and links while keeping the copy short.
 - Do not invent testimonials, users, revenue, customers, or metrics.
 - Confirm Cloudflare Web Analytics configuration and verify exactly one `cdn-cgi/rum` beacon on the production `www` domain before claiming analytics is active.

@@ -7,3 +7,4 @@ dist/
 assets/
 .DS_Store
 *.log
+.vercel/

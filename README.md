@@ -18,14 +18,14 @@ New contributors and new Codex chats should read [CONTEXT.md](./CONTEXT.md) firs
 
 Current environments:
 
-- Draft PR preview: temporary per-PR Cloudflare Pages Direct Upload project, created on demand by `scripts/preview-pr.ps1` and removed after successful staging QA with `scripts/teardown-preview-pr.ps1`.
+- Draft PR preview: Vercel preview deployment in project `portfolio-2026`, created by `scripts/preview-pr.ps1` and removed after successful staging QA with `scripts/teardown-preview-pr.ps1`.
 - Staging: <https://staging.nathanpannell.com>
 - Production: <https://www.nathanpannell.com>
 - Cloudflare production diagnostic host: <https://portfolio-2026-ady.pages.dev>
 
 `portfolio-2026.pages.dev` is unrelated to this repository.
 
-The delivery path is draft PR, ephemeral Direct Upload preview, merge to `staging`, then an explicitly authorized promotion PR to `main`. See [OPERATIONS.md](./OPERATIONS.md) for preview commands, teardown, and release steps.
+The delivery path is draft PR, Vercel preview, merge to `staging`, then an explicitly authorized promotion PR to `main`. See [OPERATIONS.md](./OPERATIONS.md) for preview commands, teardown, and release steps.
 
 ## Local development
 

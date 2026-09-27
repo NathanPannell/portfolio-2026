@@ -13,21 +13,25 @@ Shipping raster assets under `public/media` carry an `impeccable:prompt` record.
 
 ## Parkdex
 
-These are user-supplied product screenshots. The current homepage trio is encoded full-frame as WebP without resizing, cropping, or editing. Earlier assets remain for project-detail use or reference; their original conversion only resized and encoded them. Interface content and visible image credit remain unchanged.
+The current homepage trio and project page images are Parkdex field app captures copied unchanged from the Parkdex landing page. Earlier web app screenshots remain as unreferenced reference files. Interface content and visible image credit remain unchanged.
 
-The homepage device frames were supplied by Nathan in [issue #5](https://github.com/NathanPannell/portfolio-2026/issues/5#issuecomment-5789804979). This site now uses the same processed transparent overlays and screen insets as the live Parkdex landing page. Screenshots use `object-fit: cover` inside the display apertures, so their edges can be cropped.
+The homepage phone frame was supplied by Nathan in [issue #5](https://github.com/NathanPannell/portfolio-2026/issues/5#issuecomment-5789804979). It is byte-identical to the Parkdex landing page overlay and uses the same screen insets. Screenshots use `object-fit: cover` inside the display aperture, so their edges can be cropped. The laptop frame was removed in [issue #15](https://github.com/NathanPannell/portfolio-2026/issues/15).
 
 | Output | Dimensions | Homepage use and original |
 | --- | ---: | --- |
-| `public/media/parkdex/laptop-frame.webp` | 2600 x 1509 | The live Parkdex landing page's transparent overlay, resized from the owner-provided 4608 x 2675 PNG with alpha preserved. Source: `https://github.com/user-attachments/assets/8c34a1ae-2e88-4845-afc7-bbf794981c8d` |
+| `public/media/parkdex/field-park-sheet.webp` | 780 x 1688 | Homepage left phone, Gonzales Hill park sheet. Unchanged copy of `parkdex-landing/public/images/field-park-sheet.webp`, a field app capture. Sidecar records the checksum. |
+| `public/media/parkdex/field-map.webp` | 780 x 1688 | Homepage centre phone and project page cover, map of Victoria. Unchanged copy of the landing page's `field-map.webp`. |
+| `public/media/parkdex/field-claimed.webp` | 780 x 1688 | Homepage right phone, badge claimed. Unchanged copy of the landing page's `field-claimed.webp`. |
+| `public/media/parkdex/field-arrival.webp` | 780 x 1688 | Project page media, arrival inside a park boundary. Unchanged copy of the landing page's `field-arrival.webp`. |
+| `public/media/parkdex/field-case.webp` | 780 x 1688 | Project page media, badge case. Unchanged copy of the landing page's `field-case.webp`. |
 | `public/media/parkdex/phone-frame.webp` | 1252 x 2604 | The live Parkdex landing page's transparent overlay, cropped from the owner-provided 5000 x 5000 PNG to (1460, 329) through (3547, 4670), then resized with alpha preserved. Source: `https://github.com/user-attachments/assets/f767709a-3b7a-4cf8-adbf-53985c02a357` |
-| `public/media/parkdex/west-island-map-2026.webp` | 1662 x 1092 | Homepage laptop frame, visited parks map. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-21 134445.png` |
-| `public/media/parkdex/river-otter-badge-2026.webp` | 714 x 1354 | Homepage phone frame, River Otter Rookie badge. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181206.png` |
-| `public/media/parkdex/places-checklist-2026.webp` | 712 x 1359 | Homepage phone frame, places checklist. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181239.png` |
-| `public/media/parkdex/map-overview.webp` | 1920 x 1054 | Project-detail cover; formerly the homepage laptop frame. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 135858.png` |
-| `public/media/parkdex/park-detail.webp` | 828 x 1276 | Project-detail supporting media; formerly a homepage phone frame. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 191452.png` |
+| `public/media/parkdex/west-island-map-2026.webp` | 1662 x 1092 | Former homepage laptop frame, visited parks map. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-21 134445.png` |
+| `public/media/parkdex/river-otter-badge-2026.webp` | 714 x 1354 | Former homepage phone frame, River Otter Rookie badge. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181206.png` |
+| `public/media/parkdex/places-checklist-2026.webp` | 712 x 1359 | Former homepage phone frame, places checklist. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-19 181239.png` |
+| `public/media/parkdex/map-overview.webp` | 1920 x 1054 | Former project-detail cover; unreferenced. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 135858.png` |
+| `public/media/parkdex/park-detail.webp` | 828 x 1276 | Former project-detail media; unreferenced. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 191452.png` |
 | `public/media/parkdex/island-progress.webp` | 534 x 1252 | Earlier homepage phone frame retained as a source reference. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-12 001638.png` |
-| `public/media/parkdex/checklist.webp` | 649 x 1246 | Detail-page supporting media. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 192209.png` |
+| `public/media/parkdex/checklist.webp` | 649 x 1246 | Unreferenced reference file. Original: `C:\Users\n8tew\OneDrive\Pictures\Screenshots\Screenshot 2026-09-11 192209.png` |
 
 ## Featured homepage project photographs
 
@@ -77,7 +81,7 @@ The approved Impeccable source plates live outside `public/` so only production 
 ## Replacement rules
 
 - Keep the existing wide boat portrait when changing hero layout or copy. Record any new crop or treatment explicitly.
-- Preserve the Parkdex laptop plus two-phone composition unless Nathan requests a new direction.
+- Preserve the Parkdex three-phone composition unless Nathan requests a new direction.
 - Record each new asset's original path or public source, ownership, crop, retouching, encoding, and privacy-sensitive exclusions.
 - Keep accurate alt text in project and essay content when an asset changes.
 - Do not copy files from `.codex-remote-attachments/` into the repository unless Nathan identifies the specific file as a shipping asset.

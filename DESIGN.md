@@ -163,7 +163,7 @@ The homepage follows one experience sequence: full-height photo hero, Parkdex st
 
 The hero is `100svh` tall. Its single wide boat photograph is absolutely positioned, covers the entire section, and keeps the subject on the right through a desktop and phone object position. The transparent masthead sits at the top. The headline and Victoria subcopy sit in the lower-left with fluid inset and width. The desktop headline is slightly larger while the phone headline keeps its own scale; on phone, the copy uses a one-rem inset on both sides.
 
-Parkdex uses an asymmetric story-and-gallery grid. The gallery contains one wide map screenshot in a matte laptop frame and two narrow phone frames, all lightly rotated. The project deck uses three columns on wide screens, two columns below 980px, and a vertical stack below 720px. Cards may alternate edges on phone to keep the deck tactile without changing reading order. The writing section uses a sticky introduction beside essay rows until the 980px breakpoint, then returns the introduction to normal flow.
+Parkdex uses an asymmetric story-and-gallery grid. The gallery contains three phone frames, with the map phone raised in the centre and the two side phones lowered and lightly rotated. The project deck uses three columns on wide screens, two columns below 980px, and a vertical stack below 720px. Cards may alternate edges on phone to keep the deck tactile without changing reading order. The writing section uses a sticky introduction beside essay rows until the 980px breakpoint, then returns the introduction to normal flow.
 
 Only entries with `homeOrder` appear in the featured deck or first writing list. The homepage currently shows Parkdex, Doxxme, and Go Fetch, followed by ICBC, Suno Slayers, and What a Failed Hackathon Taught Me. `More projects` and `All writing` disclose the remaining routable entries in place and preserve their direct routes.
 
@@ -183,7 +183,7 @@ Fine-pointer hover and keyboard focus lift a project print by 0.8rem and add les
 
 - **Print contact:** Small dark contact shadow directly under the paper edge.
 - **Print falloff:** Broad, low-opacity shadow that separates the print from the green deck ground.
-- **Device contact:** Short shadow under the laptop base and phone rails.
+- **Device contact:** Short shadow under the phone rails.
 - **Hero text shade:** A restrained photographic shadow that protects the lower-left claim without adding a panel.
 
 ## Shapes
@@ -206,7 +206,7 @@ Primary actions are ink-filled pills with bright text, a minimum 3.25rem height,
 
 ### Parkdex Gallery
 
-The gallery uses a west-island map screenshot in a simplified matte laptop frame, plus a River Otter Rookie badge and a places checklist in two narrow neutral phone frames. Source pixels remain visible. The frame uses a dark rail, recessed screen edge, and contact shadow rather than chrome or screen sheen. Light rotation makes the three views read as objects laid out for review.
+The gallery shows the field app journey in three matte phone frames: a park sheet, the map, and a claimed badge. Source pixels remain visible. The frame uses a dark rail, recessed screen edge, and contact shadow rather than chrome or screen sheen. Light rotation makes the three views read as objects laid out for review.
 
 ### Project Prints
 
