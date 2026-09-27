@@ -41,7 +41,7 @@ Default workflow, from a feature branch through production:
    .\scripts\preview-pr.ps1 -PullRequest 123
    ```
 
-6. Test the printed `*.vercel.app` preview URL, including important routes and responsive states. Vercel does not apply Cloudflare `_headers`, so check headers on staging instead. Keep the preview until staging passes.
+6. Test the printed `*.vercel.app` preview URL, including important routes and responsive states. Previews sit behind Vercel Deployment Protection: open them in a browser signed in to Vercel, or fetch pages with `npx vercel curl /parkdex/ --deployment <preview URL>`. Never run `vercel --prod`; the Vercel project still lists the `www` domain, but DNS serves production from Cloudflare. Vercel does not apply Cloudflare `_headers`, so check headers on staging instead. Keep the preview until staging passes.
 7. Mark the PR ready and merge it into `staging`. Wait for Cloudflare's Git deployment of the exact staging commit, then test <https://staging.nathanpannell.com> in a browser.
 8. After staging browser QA succeeds, remove the preview deployment. The script refuses anything that is not a preview deployment.
 
