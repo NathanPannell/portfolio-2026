@@ -519,6 +519,9 @@ a {
 }
 
 .project-intro--parkdex .project-intro__visual-window {
+  /* Portrait phone capture: size by height so the window stays inside the viewport. */
+  width: min(100%, 32svh);
+  margin-inline: auto;
   background: var(--surface-parkdex);
 }
 
@@ -1213,6 +1216,9 @@ a {
 }
 
 .parkdex-story__gallery {
+  /* Three portrait phones get tall quickly; cap width so the stack fits one viewport. */
+  width: min(100%, 40rem);
+  justify-self: center;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: auto auto;
@@ -1226,6 +1232,7 @@ a {
   position: relative;
   grid-row: 1;
   min-width: 0;
+  aspect-ratio: 2087 / 4341;
   isolation: isolate;
   filter: drop-shadow(0 1.35rem 2rem var(--device-shadow)) drop-shadow(0 0.25rem 0.45rem var(--device-shadow));
 }
@@ -1233,7 +1240,12 @@ a {
 .parkdex-frame__screen {
   position: absolute;
   z-index: 1;
+  top: 1.8%;
+  left: 4%;
+  width: 92.6%;
+  height: 96.5%;
   overflow: hidden;
+  border-radius: 11% / 4%;
   background: var(--device-screen);
 }
 
@@ -1254,53 +1266,30 @@ a {
   user-select: none;
 }
 
-.parkdex-frame--laptop {
-  aspect-ratio: 4608 / 2675;
-}
-
-.parkdex-frame--laptop .parkdex-frame__screen {
-  top: 1.9%;
-  left: 10.5%;
-  width: 79%;
-  height: 86.9%;
+.parkdex-frame--pick {
+  z-index: 1;
+  grid-column: 1 / 6;
+  transform: translateY(9%) rotate(-4deg);
 }
 
 .parkdex-frame--map {
-  z-index: 1;
-  grid-column: 1 / 12;
-  align-self: start;
-  transform: rotate(1.2deg);
-}
-
-.parkdex-frame--phone {
-  aspect-ratio: 2087 / 4341;
-}
-
-.parkdex-frame--phone .parkdex-frame__screen {
-  top: 1.8%;
-  left: 4%;
-  width: 92.6%;
-  height: 96.5%;
-  border-radius: 11% / 4%;
-}
-
-.parkdex-frame--detail {
   z-index: 3;
-  grid-column: 9 / 13;
-  transform: translateY(7%) rotate(3.5deg);
+  grid-column: 4 / 10;
+  transform: rotate(1deg);
 }
 
-.parkdex-frame--progress {
+.parkdex-frame--claim {
   z-index: 2;
-  grid-column: 2 / 5;
-  transform: translateY(10%) rotate(-4deg);
+  grid-column: 8 / 13;
+  transform: translateY(11%) rotate(4deg);
 }
 
 .parkdex-story__caption {
   z-index: 5;
   grid-row: 2;
   grid-column: 1 / -1;
-  margin: 0;
+  /* Clears the lowered, rotated side phones; percentage tracks gallery width. */
+  margin: 10% 0 0;
   color: var(--device-caption);
   font-size: 0.83rem;
   line-height: 1.25;
@@ -1991,20 +1980,6 @@ a {
   .parkdex-story__gallery {
     gap: 1.35rem 0;
     min-height: 0;
-  }
-
-  .parkdex-frame--map {
-    grid-column: 1 / -1;
-  }
-
-  .parkdex-frame--detail {
-    grid-column: 9 / 13;
-    transform: translateY(8%) rotate(3deg);
-  }
-
-  .parkdex-frame--progress {
-    grid-column: 1 / 5;
-    transform: translateY(10%) rotate(-3.5deg);
   }
 
   .parkdex-story__caption {
