@@ -50,7 +50,7 @@ The selected article and project-writing backlog has been migrated from the earl
 - Homepage sequence: cropped photo hero, two-print mobile story bridge, Parkdex story, project Polaroids, expandable Writing list, email-first contact.
 - Project order: Parkdex, Doxxme, Commons, Go Fetch, Cup of Sugar.
 - Every project Polaroid links to a dedicated project page containing the relevant live product, repository, screenshots, demo, story, and team credits.
-- Parkdex balances the product with Nathan's reason for building it. Its primary action is “Explore Parkdex”; an Android waitlist will become a separate action when available.
+- Parkdex balances the product with Nathan's reason for building it. Its primary action is “Join the beta”, which links to the landing page at `parkdex.app` for the Android beta and App Store waitlist.
 - Doxxme is a playful August 2026 hackathon project credited to Nathan, Paurav H Param, and Christopher Huk. It won the Solana and Convex tracks.
 - Commons is an April 2026 Claude Hackathon project credited to Nathan and Arya Punjabi. It placed in the top two.
 - Go Fetch is a solo scalable semantic-search system with no frontend. Display its latest repository commit date, April 20, 2026.
@@ -73,7 +73,7 @@ The selected article and project-writing backlog has been migrated from the earl
 
 ## Evidence on Hand
 
-- Live Parkdex product: <https://web.parkdex.app/>
+- Parkdex landing page: <https://parkdex.app/>
 - Current older portfolio on the intended domain: <https://nathanpannell.com/>
 - Cloudflare production project: <https://portfolio-2026-ady.pages.dev/>
 - Latest redesign staging site: <https://portfolio-2026-staging.pages.dev/>

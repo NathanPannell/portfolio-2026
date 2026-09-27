@@ -57,7 +57,7 @@ The ignored `.impeccable/` directory contains historical review material and loc
 - Older project writing remains available within the matching project page under “Read the original build notes.” Other legacy posts retain flat direct URLs.
 - Underscore-prefixed content and entries with `draft: true` must never receive public routes.
 - The dedicated Writing page is the intentional dark room. The rest of the site has no alternate theme.
-- Parkdex screenshots are placeholders and may be replaced later without redesigning the surrounding device composition.
+- Parkdex is presented as the mobile field app. The homepage gallery is three phone frames with field app captures copied from the Parkdex landing page. There is no laptop frame and no link to `web.parkdex.app`.
 
 ## Interaction behavior that must be preserved
 
@@ -73,8 +73,7 @@ The ignored `.impeccable/` directory contains historical review material and loc
 
 ## Current content and asset follow-ups
 
-- Replace the current Parkdex screenshots when final captures are available. Keep the existing laptop plus two-phone composition and update `ASSETS.md` with the new provenance.
-- Add an Android waitlist as a separate Parkdex action only when the real destination exists.
+- When the Parkdex landing page changes its field app captures or facts, mirror them here and update `ASSETS.md` with the new provenance.
 - Nathan may rewrite project copy later. Preserve facts, dates, collaborators, results, and links while keeping the copy short.
 - Do not invent testimonials, users, revenue, customers, or metrics.
 - Confirm Cloudflare Web Analytics configuration and verify exactly one `cdn-cgi/rum` beacon on the production `www` domain before claiming analytics is active.
