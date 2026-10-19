@@ -2,66 +2,77 @@
 
 ## Local requirements
 
-- Node.js 22 is the intended runtime. `package.json` allows Node 22 through 24.
-- Use the committed lockfile and `npm install` or `npm ci`.
+- Node.js 22 is the intended runtime (`.nvmrc`). `package.json` allows Node 22 through 24.
+- Install from the committed lockfile with `npm ci`.
 
 Common commands:
 
 ```sh
 npm run dev
-npm run check
-npm run test:content
-npm run build
+npm run format        # rewrite files with Prettier
+npm run format:check
+npm run lint          # ESLint, zero warnings allowed
+npm run check         # astro check
+npm run build         # content contract, astro check, astro build, SEO contract
+npm run test:e2e      # Playwright against astro preview of dist/; run after npm run build
 npm run preview
 ```
 
-`npm run build` is the release gate. It runs the content contract, Astro diagnostics, and the production build in that order.
+Run `npx playwright install chromium` once before the first local e2e run.
+
+## CI gate
+
+`.github/workflows/ci.yml` runs on every pull request to `staging` or `main` and on every push to `staging`. Every job must pass on the PR's head commit before it is marked ready or merged.
+
+| Job | What it runs |
+| --- | --- |
+| Format | `npm ci`, then `prettier --check .` |
+| Lint | `eslint --max-warnings=0 .` |
+| Types | `astro check` |
+| Build | `npm run build`: the content contract, `astro check`, `astro build`, then the generated-output SEO contract |
+| E2E | Playwright (desktop and mobile Chromium) against `astro preview` of the Build job's `dist/`: every sitemap route renders with no console errors or failed requests, the 404 page, the main navigation journeys, and a crawl that fails on any broken internal link, asset, or `#fragment` |
+| Security | `npm audit --audit-level=high`, no committed `.env` files, and a gitleaks scan of the full git history |
+
+There is no unit-test coverage job: the site has no unit-testable modules, so the contracts and the e2e suite are its tests. There is no database job because the site has no database. The workflow says the same in a comment.
+
+Never weaken the gate to get green: no skipped tests, no `continue-on-error`, no new lint or format ignores, and no rerunning a flaky job until it passes.
+
+GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the CI gate is enforced by the delivery rule: never merge with a check failing, pending, or missing on the head commit.
 
 ## Branch and deployment model
 
-| Branch | Purpose | Cloudflare destination |
+| Branch | Purpose | Destination |
 | --- | --- | --- |
-| Draft PR targeting `staging` | Isolated review | Vercel preview deployment in project `portfolio-2026`, removed after staging QA |
-| `staging` | Shared QA and release candidate | <https://staging.nathanpannell.com> |
-| `main` | Cloudflare production | <https://www.nathanpannell.com> |
+| Draft PR targeting `staging` | Review and CI gate | None. CI is the gate; there are no preview deployments. |
+| `staging` | Shared QA and release candidate | <https://staging.nathanpannell.com> (Cloudflare Pages project `portfolio-2026-staging`) |
+| `main` | Production | <https://www.nathanpannell.com> (Cloudflare Pages project `portfolio-2026`) |
 
 The canonical production URL is `https://www.nathanpannell.com`, and it serves the current portfolio from Cloudflare Pages. It is bound to the production Pages project through a `www` CNAME to `portfolio-2026-ady.pages.dev`. The apex domain remains on Vercel and returns HTTP 308 to the canonical `www` URL. Keep the Pages hostname as a diagnostic origin, not the public production URL.
 
 Do not use `https://portfolio-2026.pages.dev`. It is an unrelated site and is not connected to this repository.
 
-Default workflow, from a feature branch through production:
+Default workflow, from a branch to staging:
 
 1. Begin with `git status --short` and `git branch -vv`.
-2. Branch from the latest `staging` commit, make the change, and open a same-repository draft PR targeting `staging`. Keep the PR head current with `staging` before previewing.
-3. Run `npm run build`.
-4. Commit only relevant repository files. Never add `.codex-remote-attachments/`.
-5. Create the review deployment with `scripts/preview-pr.ps1`. It requires an open PR targeting `staging` from this repository, a clean checkout of the exact PR head, and the latest `staging` commit in that head. It runs `npm run build`, packages `dist/` in Vercel's Build Output API format under the ignored `.vercel/output/`, and deploys it as a preview of the Vercel project `portfolio-2026`. Only the built output is uploaded, so untracked workspace files never leave the machine. The Vercel CLI must be logged in (`npx vercel whoami`).
-
-   ```powershell
-   .\scripts\preview-pr.ps1 -PullRequest 123
-   ```
-
-6. Test the printed `*.vercel.app` preview URL, including important routes and responsive states. Previews sit behind Vercel Deployment Protection: open them in a browser signed in to Vercel, or fetch pages with `npx vercel curl /parkdex/ --deployment <preview URL>`. Never run `vercel --prod`; the Vercel project still lists the `www` domain, but DNS serves production from Cloudflare. Vercel does not apply Cloudflare `_headers`, so check headers on staging instead. Keep the preview until staging passes.
-7. Mark the PR ready and merge it into `staging`. Wait for Cloudflare's Git deployment of the exact staging commit, then test <https://staging.nathanpannell.com> in a browser.
-8. After staging browser QA succeeds, remove the preview deployment. The script refuses anything that is not a preview deployment.
-
-   ```powershell
-   .\scripts\teardown-preview-pr.ps1 -DeploymentUrl https://portfolio-2026-abc123-nathanpannells-projects.vercel.app
-   ```
-
-9. Leave production unchanged until Nathan explicitly authorizes promotion. For an authorized release, open a promotion PR from the reviewed `staging` state to `main`, merge it without rewriting history, then verify the production Pages host and custom domain.
+2. Branch from the latest `origin/staging` as `feat/`, `fix/`, `chore/` or `ci/<name>`. Keep temporary files in `.claude/tmp/<branch>/`.
+3. Make the change and commit only relevant repository files. Never add `.codex-remote-attachments/`.
+4. Run the CI checks locally: `npm ci`, `npm run format:check`, `npm run lint`, `npm run build`, `npm run test:e2e`, and `npm audit --audit-level=high`.
+5. Push and open a same-repository **draft** PR targeting `staging`.
+6. Wait for every CI job to pass on the head commit. On a failure, read the job log, fix the cause, and push.
+7. Review the full diff against `origin/staging` and fix blocking findings. Mark the PR ready once every check is green on the current head commit.
+8. Squash-merge the PR into `staging`. Cloudflare Pages' Git integration deploys `staging` to <https://staging.nathanpannell.com>.
+9. Confirm the CI run for the merge commit on `staging` passes and the staging deployment serves that commit, then check the affected page at <https://staging.nathanpannell.com> in a browser. If anything breaks, fix forward with a new PR.
+10. Leave production unchanged until Nathan explicitly authorizes promotion.
 
 When production promotion is explicitly authorized:
 
 1. Confirm the workspace is clean except for known user-owned untracked files.
-2. Confirm the promotion PR contains the exact reviewed `staging` state.
-3. Merge the promotion PR into `main` without rewriting history. Cloudflare's Git integration deploys the configured production branch.
+2. Open a promotion PR from `staging` to `main` and let the same CI gate pass. Confirm it contains the exact reviewed `staging` state.
+3. Merge the promotion PR into `main` without rewriting history, only after Nathan approves. Cloudflare's Git integration deploys the configured production branch.
 4. Verify `https://www.nathanpannell.com`, the apex HTTP 308 redirect, and important routes after Cloudflare finishes.
 5. Confirm that staging and production point to the expected commits.
 
 Never force-push either deployment branch.
-
-GitHub currently returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until branch protection is available, the draft PR, preview verification, staging merge, and staging browser check are agent-enforced release gates.
 
 ## Cloudflare Pages settings
 
@@ -73,15 +84,15 @@ GitHub currently returns HTTP 403 for branch protection and rulesets on this pri
 - Pages Functions: none
 - Astro Cloudflare adapter: not required
 
-The persistent staging and production projects use Cloudflare's Git integration. Wrangler and Cloudflare credentials are not required: merging to `staging` or `main` deploys automatically. Per-PR previews run on Vercel instead. No provider token should be stored in the repository.
+The persistent staging and production projects use Cloudflare's Git integration. Wrangler and Cloudflare credentials are not required: merging to `staging` or `main` deploys automatically. No provider token should be stored in the repository.
 
 ### Git-connected project audit
 
-There are two Cloudflare Pages projects connected to GitHub: the production project tracks `main`, and the staging project tracks `staging`. Automatic non-production branch previews are disabled in both projects. Draft PR previews are Vercel preview deployments created on demand by `scripts/preview-pr.ps1`, then removed with `scripts/teardown-preview-pr.ps1` after the staging merge and successful staging browser QA. Automatic deployments remain enabled for the configured production branch in the production project and the configured staging branch in the staging project.
+There are two Cloudflare Pages projects connected to GitHub: the production project tracks `main`, and the staging project tracks `staging`. Automatic non-production branch previews are disabled in both projects. Automatic deployments remain enabled for the configured production branch in the production project and the configured staging branch in the staging project.
 
-The two persistent Git-connected deployments remain the staging and production paths. The per-PR preview is a separate, explicitly managed deployment and does not add a GitHub hook or repository action. A feature-branch push can still leave an `Idle` deployment record in each Git-connected project even with previews set to `none`; those recorded URLs return HTTP 404 and are not usable preview sites. Audit status and HTTP response after the push.
+A feature-branch push can still leave an `Idle` deployment record in each Git-connected project even with previews set to `none`; those recorded URLs return HTTP 404 and are not usable preview sites.
 
-The current production site is live at `www.nathanpannell.com`. Staging is the shared QA target at `staging.nathanpannell.com`. Review previews are temporary and must be torn down after successful staging QA, before final delivery.
+The current production site is live at `www.nathanpannell.com`. Staging is the shared QA target at `staging.nathanpannell.com`.
 
 ## Analytics
 

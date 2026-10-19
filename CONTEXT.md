@@ -33,9 +33,9 @@ This is the first file a new chat should read. It records the current working st
 
 Cloudflare deploys the persistent `staging` and `main` branches through Git integration. The `www.nathanpannell.com` production domain is live on Cloudflare Pages. The apex domain remains on Vercel and responds with HTTP 308 to the `www` URL.
 
-The staging workflow starts with a same-repository draft PR targeting `staging`. The PR head must include the current `staging` commit. `scripts/preview-pr.ps1` deploys the built PR head as a Vercel preview in project `portfolio-2026`. Test the preview and keep it available through the merge and staging verification. See `OPERATIONS.md` for commands.
+The delivery workflow starts with a same-repository draft PR targeting `staging`, branched from the latest `origin/staging`. There are no preview deployments. The PR must pass the CI gate in `.github/workflows/ci.yml` on its head commit: format, lint, types, the build with its content and SEO contracts, Playwright e2e against `astro preview`, dependency audit, and secret scan. See `OPERATIONS.md` for commands.
 
-After preview review, mark the PR ready and merge it into `staging`. Wait for the staging Git deployment and browser-test `staging.nathanpannell.com`. Then remove the preview with `scripts/teardown-preview-pr.ps1 -DeploymentUrl <preview URL>`. For an explicitly authorized production release, open a promotion PR from the reviewed `staging` state to `main`, merge it, and verify the production custom domain.
+After review, mark the PR ready and squash-merge it into `staging`. Cloudflare Pages deploys `staging` to `staging.nathanpannell.com`; confirm it serves the merge commit and browser-test the affected page there. For an explicitly authorized production release, open a promotion PR from the reviewed `staging` state to `main`, merge it, and verify the production custom domain.
 
 `portfolio-2026.pages.dev` is unrelated to this repository and currently identifies itself as “sujith varughese.” Never deploy to, link to, or treat that hostname as Nathan's portfolio.
 
@@ -94,8 +94,8 @@ The full UI verification record at `2bfb664` is historical and predates the curr
 
 1. Run `git status --short` and `git branch -vv` before editing.
 2. Preserve unrelated changes and the user-owned attachment directory.
-3. Create a feature branch from the latest `staging` commit and use the draft PR preview flow in `OPERATIONS.md`. Do not work directly on `main`.
+3. Create a feature branch from the latest `staging` commit and use the draft PR and CI flow in `OPERATIONS.md`. Do not work directly on `main`.
 4. Read the documentation relevant to the requested surface.
 5. For UI work, compare the deployed URL before editing and verify the affected journey on deployed staging afterward.
-6. Run `npm run build` before delivery.
+6. Run the CI checks locally (`npm run format:check`, `npm run lint`, `npm run build`, `npm run test:e2e`) before pushing. Keep temporary files in `.claude/tmp/<branch>/`.
 7. Do not promote staging to `main` without explicit approval.
