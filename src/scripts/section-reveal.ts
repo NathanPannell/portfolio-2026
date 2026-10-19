@@ -14,11 +14,12 @@ const startSectionReveals = () => {
     const collapsedCount = Number(list.dataset.collapsedCount ?? 3);
     const label = toggle.querySelector<HTMLElement>('[data-reveal-label]');
     const allLabel = label?.textContent?.trim() || 'Show all';
-    const fewerLabel = allLabel === 'All projects'
-      ? 'Show fewer projects'
-      : allLabel === 'All writing'
-        ? 'Show less writing'
-        : 'Show fewer';
+    const fewerLabel =
+      allLabel === 'All projects'
+        ? 'Show fewer projects'
+        : allLabel === 'All writing'
+          ? 'Show less writing'
+          : 'Show fewer';
 
     if (items.length <= collapsedCount) {
       toggle.hidden = true;
@@ -36,16 +37,24 @@ const startSectionReveals = () => {
       window.dispatchEvent(new CustomEvent('portfolio:content-revealed'));
     };
 
-    toggle.addEventListener('click', () => {
-      sync(toggle.getAttribute('aria-expanded') !== 'true');
-    }, { signal });
+    toggle.addEventListener(
+      'click',
+      () => {
+        sync(toggle.getAttribute('aria-expanded') !== 'true');
+      },
+      { signal },
+    );
 
     sync(false);
   });
 
-  window.addEventListener('pagehide', (event) => {
-    if (!event.persisted) controller.abort();
-  }, { signal });
+  window.addEventListener(
+    'pagehide',
+    (event) => {
+      if (!event.persisted) controller.abort();
+    },
+    { signal },
+  );
 };
 
 startSectionReveals();

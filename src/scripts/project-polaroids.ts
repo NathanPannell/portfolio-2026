@@ -101,26 +101,34 @@ const startCardInteractions = () => {
   };
 
   cards.forEach((card) => {
-    card.addEventListener('pointerup', (event) => {
-      if (event.pointerType === 'mouse') return;
+    card.addEventListener(
+      'pointerup',
+      (event) => {
+        if (event.pointerType === 'mouse') return;
 
-      window.requestAnimationFrame(() => {
-        if (document.activeElement === card) card.blur();
-        schedule();
-      });
-    }, { signal, passive: true });
+        window.requestAnimationFrame(() => {
+          if (document.activeElement === card) card.blur();
+          schedule();
+        });
+      },
+      { signal, passive: true },
+    );
   });
 
   window.addEventListener('scroll', schedule, { signal, passive: true });
   window.addEventListener('resize', schedule, { signal, passive: true });
   window.addEventListener('portfolio:content-revealed', schedule, { signal });
   window.addEventListener('pageshow', schedule, { signal });
-  window.addEventListener('pagehide', (event) => {
-    window.cancelAnimationFrame(frame);
-    frame = 0;
+  window.addEventListener(
+    'pagehide',
+    (event) => {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
 
-    if (!event.persisted) controller.abort();
-  }, { signal });
+      if (!event.persisted) controller.abort();
+    },
+    { signal },
+  );
 
   update();
 };

@@ -6,21 +6,9 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contentRoot = join(root, 'src', 'content');
 
-const requiredProjects = [
-  'parkdex',
-  'doxxme',
-  'commons',
-  'go-fetch',
-  'cup-of-sugar',
-];
+const requiredProjects = ['parkdex', 'doxxme', 'commons', 'go-fetch', 'cup-of-sugar'];
 
-const requiredLegacy = [
-  'cup-of-sugar',
-  'echo',
-  'go-fetch',
-  'record-of-the-day',
-  'suno-slayers',
-];
+const requiredLegacy = ['cup-of-sugar', 'echo', 'go-fetch', 'record-of-the-day', 'suno-slayers'];
 
 function filesUnder(directory) {
   if (!existsSync(directory)) return [];
@@ -62,8 +50,11 @@ function isUnderscorePath(slug) {
 
 function collectionEntries(collection) {
   const directory = join(contentRoot, collection);
-  return contentFiles(directory)
-    .map((path) => ({ path, slug: slugFor(path, directory), data: parseFrontmatter(path) }));
+  return contentFiles(directory).map((path) => ({
+    path,
+    slug: slugFor(path, directory),
+    data: parseFrontmatter(path),
+  }));
 }
 
 function publicEntries(collection) {
@@ -83,10 +74,21 @@ const projects = publicEntries('projects');
 const writing = publicEntries('writing');
 const legacy = publicEntries('legacy');
 
-assert(projects.length >= requiredProjects.length, 'The featured project collection cannot lose existing work');
+assert(
+  projects.length >= requiredProjects.length,
+  'The featured project collection cannot lose existing work',
+);
 assert(writing.length > 0, 'At least one published writing entry is required');
-assertIncludes(projects.map(({ slug }) => slug), requiredProjects, 'Featured projects');
-assertIncludes(legacy.map(({ slug }) => slug), requiredLegacy, 'Legacy posts');
+assertIncludes(
+  projects.map(({ slug }) => slug),
+  requiredProjects,
+  'Featured projects',
+);
+assertIncludes(
+  legacy.map(({ slug }) => slug),
+  requiredLegacy,
+  'Legacy posts',
+);
 
 const orderedProjects = projects
   .map(({ slug, data }) => ({ slug, order: Number(data.get('order')) }))
@@ -105,14 +107,24 @@ assert.deepEqual(
 const flatSlugs = [...writing, ...legacy].map(({ slug }) => slug);
 
 // Homepage selection is editorial and independent of the preserved route order.
-for (const [label, entries] of [['projects', projects], ['writing', [...writing, ...legacy]]]) {
+for (const [label, entries] of [
+  ['projects', projects],
+  ['writing', [...writing, ...legacy]],
+]) {
   const selected = entries.filter(({ data }) => data.has('homeOrder'));
   const positions = selected.map(({ data }) => Number(data.get('homeOrder'))).sort((a, b) => a - b);
-  assert.deepEqual(positions, [1, 2, 3], `Homepage ${label} must have exactly three unique ordered selections`);
+  assert.deepEqual(
+    positions,
+    [1, 2, 3],
+    `Homepage ${label} must have exactly three unique ordered selections`,
+  );
   if (label === 'projects') {
     for (const { slug, data } of selected) {
       assert(data.get('cardImageAlt'), `${slug} needs descriptive homepage image text`);
-      assert(existsSync(join(root, 'public', data.get('cardImage'))), `${slug} homepage photograph must exist`);
+      assert(
+        existsSync(join(root, 'public', data.get('cardImage'))),
+        `${slug} homepage photograph must exist`,
+      );
     }
   }
 }
@@ -120,7 +132,17 @@ assert.equal(new Set(flatSlugs).size, flatSlugs.length, 'Flat article slugs must
 assertIncludes(flatSlugs, requiredLegacy, 'Required flat article slugs');
 
 for (const { slug, data } of projects) {
-  for (const field of ['title', 'tagline', 'cardCaption', 'summary', 'projectType', 'displayDate', 'cover', 'coverAlt', 'highlights']) {
+  for (const field of [
+    'title',
+    'tagline',
+    'cardCaption',
+    'summary',
+    'projectType',
+    'displayDate',
+    'cover',
+    'coverAlt',
+    'highlights',
+  ]) {
     assert(data.has(field), `${slug} is missing required project frontmatter: ${field}`);
   }
 }
@@ -136,11 +158,13 @@ for (const entry of [...projects, ...writing, ...legacy]) {
 
 const dist = join(root, 'dist');
 if (existsSync(dist) && statSync(dist).isDirectory()) {
-  const expectedRoutes = [...new Set([
-    'index.html',
-    ...projects.map(({ slug }) => `${slug}/index.html`),
-    ...flatSlugs.map((slug) => `${slug}/index.html`),
-  ])];
+  const expectedRoutes = [
+    ...new Set([
+      'index.html',
+      ...projects.map(({ slug }) => `${slug}/index.html`),
+      ...flatSlugs.map((slug) => `${slug}/index.html`),
+    ]),
+  ];
 
   for (const route of expectedRoutes) {
     assert(existsSync(join(dist, ...route.split('/'))), `Missing generated route: /${route}`);
