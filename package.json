@@ -12,7 +12,11 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:content": "node tests/content-contract.mjs",
-    "test:seo": "node tests/seo-contract.mjs"
+    "test:seo": "node tests/seo-contract.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint --max-warnings=0 .",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.1",
@@ -25,6 +29,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
-    "typescript": "^5.9.2"
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-astro": "^3.2.1",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.72.0"
   }
 }

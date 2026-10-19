@@ -12,7 +12,11 @@ const [projects, currentWriting, legacyWriting] = await Promise.all([
 const projectIds = new Set(projects.map((project) => project.id));
 const featuredProjects = projects
   .filter((project) => project.data.homeOrder !== undefined)
-  .sort((a, b) => (a.data.homeOrder ?? Number.POSITIVE_INFINITY) - (b.data.homeOrder ?? Number.POSITIVE_INFINITY));
+  .sort(
+    (a, b) =>
+      (a.data.homeOrder ?? Number.POSITIVE_INFINITY) -
+      (b.data.homeOrder ?? Number.POSITIVE_INFINITY),
+  );
 const archivedProjects = projects
   .filter((project) => project.data.homeOrder === undefined)
   .sort((a, b) => a.data.order - b.data.order);
@@ -21,7 +25,11 @@ const writingEntries = [...currentWriting, ...legacyWriting]
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const featuredWriting = writingEntries
   .filter((entry) => entry.data.homeOrder !== undefined)
-  .sort((a, b) => (a.data.homeOrder ?? Number.POSITIVE_INFINITY) - (b.data.homeOrder ?? Number.POSITIVE_INFINITY));
+  .sort(
+    (a, b) =>
+      (a.data.homeOrder ?? Number.POSITIVE_INFINITY) -
+      (b.data.homeOrder ?? Number.POSITIVE_INFINITY),
+  );
 const archivedWriting = writingEntries.filter((entry) => entry.data.homeOrder === undefined);
 
 const essayDates = new Intl.DateTimeFormat('en-CA', {
@@ -48,7 +56,10 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
       <SiteHeader tone="dark" overlay />
       <div class="hero__copy">
         <h1 id="hero-title" class="hero__title">
-          <span>I build upbeat apps <br />that get people</span>{' '}
+          <span>
+            I build upbeat apps <br />
+            that get people
+          </span>{' '}
           <em>into the real world.</em>
         </h1>
         <p class="hero__subcopy">I’m in Victoria, building Parkdex.</p>
@@ -62,13 +73,19 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
           I made Parkdex to get myself out to every park on Vancouver Island.
         </p>
         <p>
-          Parkdex maps 122 national, provincial, and regional parks on an offline map. Pick a park, see the badge and the drive, then step inside the boundary to check in and claim it. There are 20 badges to collect, from common to legendary.
+          Parkdex maps 122 national, provincial, and regional parks on an offline map. Pick a park,
+          see the badge and the drive, then step inside the boundary to check in and claim it. There
+          are 20 badges to collect, from common to legendary.
         </p>
         <div class="button-row">
-          <a class="button button--primary" href="https://parkdex.app">Join the beta</a>
+          <a class="button button--primary" href="https://parkdex.app">
+            Join the beta
+          </a>
           <a class="text-link" href="/parkdex/">
             Read the build story
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5M7 5h8v8" /></svg>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5 15 15 5M7 5h8v8" />
+            </svg>
           </a>
         </div>
       </div>
@@ -76,23 +93,67 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
       <div class="parkdex-story__gallery" aria-label="Parkdex app screens">
         <div class="parkdex-frame parkdex-frame--pick">
           <div class="parkdex-frame__screen">
-            <img src="/media/parkdex/field-park-sheet.webp" alt="Parkdex park sheet for Gonzales Hill Regional Park showing its badge, 5 km road distance, 12 minute drive and a Let’s go button" loading="lazy" width="780" height="1688" />
+            <img
+              src="/media/parkdex/field-park-sheet.webp"
+              alt="Parkdex park sheet for Gonzales Hill Regional Park showing its badge, 5 km road distance, 12 minute drive and a Let’s go button"
+              loading="lazy"
+              width="780"
+              height="1688"
+            />
           </div>
-          <img class="parkdex-frame__asset" src="/media/parkdex/phone-frame.webp" alt="" aria-hidden="true" loading="lazy" width="1252" height="2604" />
+          <img
+            class="parkdex-frame__asset"
+            src="/media/parkdex/phone-frame.webp"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            width="1252"
+            height="2604"
+          />
         </div>
         <div class="parkdex-frame parkdex-frame--map">
           <div class="parkdex-frame__screen">
-            <img src="/media/parkdex/field-map.webp" alt="Parkdex map of Victoria with a Gonzales Hill badge pin, a 0 of 20 badges counter and nearby badges" loading="lazy" width="780" height="1688" />
+            <img
+              src="/media/parkdex/field-map.webp"
+              alt="Parkdex map of Victoria with a Gonzales Hill badge pin, a 0 of 20 badges counter and nearby badges"
+              loading="lazy"
+              width="780"
+              height="1688"
+            />
           </div>
-          <img class="parkdex-frame__asset" src="/media/parkdex/phone-frame.webp" alt="" aria-hidden="true" loading="lazy" width="1252" height="2604" />
+          <img
+            class="parkdex-frame__asset"
+            src="/media/parkdex/phone-frame.webp"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            width="1252"
+            height="2604"
+          />
         </div>
         <div class="parkdex-frame parkdex-frame--claim">
           <div class="parkdex-frame__screen">
-            <img src="/media/parkdex/field-claimed.webp" alt="Parkdex badge claimed screen for Gonzales Hill, badge 1 of 20, with a Share it button" loading="lazy" width="780" height="1688" />
+            <img
+              src="/media/parkdex/field-claimed.webp"
+              alt="Parkdex badge claimed screen for Gonzales Hill, badge 1 of 20, with a Share it button"
+              loading="lazy"
+              width="780"
+              height="1688"
+            />
           </div>
-          <img class="parkdex-frame__asset" src="/media/parkdex/phone-frame.webp" alt="" aria-hidden="true" loading="lazy" width="1252" height="2604" />
+          <img
+            class="parkdex-frame__asset"
+            src="/media/parkdex/phone-frame.webp"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            width="1252"
+            height="2604"
+          />
         </div>
-        <p class="parkdex-story__caption">Parkdex, 2026 · Map © Protomaps and OpenStreetMap contributors.</p>
+        <p class="parkdex-story__caption">
+          Parkdex, 2026 · Map © Protomaps and OpenStreetMap contributors.
+        </p>
       </div>
     </section>
 
@@ -107,7 +168,12 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
           const cardImage = project.data.cardImage ?? project.data.cover;
           const cardImageAlt = project.data.cardImageAlt ?? project.data.coverAlt;
           return (
-            <a class:list={['project-polaroid', `project-polaroid--${project.id}`]} data-polaroid href={`/${project.id}/`} style={`--project-accent:${project.data.accent}`}>
+            <a
+              class:list={['project-polaroid', `project-polaroid--${project.id}`]}
+              data-polaroid
+              href={`/${project.id}/`}
+              style={`--project-accent:${project.data.accent}`}
+            >
               <span class="project-polaroid__image">
                 <img src={cardImage} alt={cardImageAlt} loading="lazy" width="1000" height="750" />
               </span>
@@ -126,7 +192,9 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
         <details class="project-deck-archive">
           <summary class="section-reveal">
             <span>More projects</span>
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M4 7.5 10 13l6-5.5" />
+            </svg>
           </summary>
           <div class="project-deck-archive__list">
             {archivedProjects.map((project) => (
@@ -136,7 +204,9 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
                   <span>{project.data.cardCaption}</span>
                 </span>
                 <time>{project.data.displayDate}</time>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h13M13 6l6 6-6 6" />
+                </svg>
               </a>
             ))}
           </div>
@@ -154,13 +224,17 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
           {featuredWriting.map((essay) => {
             const visual = essayVisual(essay);
             return (
-            <li data-essay-item style={`--essay-image: url(${visual})`}>
-              <a href={`/${essay.id}/`}>
-                <span class="essay-list__title">{essay.data.title}</span>
-                <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
-              </a>
-            </li>
+              <li data-essay-item style={`--essay-image: url(${visual})`}>
+                <a href={`/${essay.id}/`}>
+                  <span class="essay-list__title">{essay.data.title}</span>
+                  <time datetime={essay.data.pubDate.toISOString()}>
+                    {essayDates.format(essay.data.pubDate)}
+                  </time>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h13M13 6l6 6-6 6" />
+                  </svg>
+                </a>
+              </li>
             );
           })}
         </ol>
@@ -168,19 +242,25 @@ const essayVisual = (essay: (typeof writingEntries)[number]) =>
           <details class="writing-archive">
             <summary class="section-reveal">
               <span>All writing</span>
-              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5 10 13l6-5.5" /></svg>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M4 7.5 10 13l6-5.5" />
+              </svg>
             </summary>
             <ol class="essay-list writing-archive__list">
               {archivedWriting.map((essay) => {
                 const visual = essayVisual(essay);
                 return (
-                <li style={`--essay-image: url(${visual})`}>
-                  <a href={`/${essay.id}/`}>
-                    <span class="essay-list__title">{essay.data.title}</span>
-                    <time datetime={essay.data.pubDate.toISOString()}>{essayDates.format(essay.data.pubDate)}</time>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
-                  </a>
-                </li>
+                  <li style={`--essay-image: url(${visual})`}>
+                    <a href={`/${essay.id}/`}>
+                      <span class="essay-list__title">{essay.data.title}</span>
+                      <time datetime={essay.data.pubDate.toISOString()}>
+                        {essayDates.format(essay.data.pubDate)}
+                      </time>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h13M13 6l6 6-6 6" />
+                      </svg>
+                    </a>
+                  </li>
                 );
               })}
             </ol>

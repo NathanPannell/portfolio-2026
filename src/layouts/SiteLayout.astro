@@ -32,28 +32,31 @@ const {
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
 const personId = new URL('/#person', Astro.site).href;
-const homeData = Astro.url.pathname === '/' ? {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Person',
-      '@id': personId,
-      name: 'Nathan Pannell',
-      url: new URL('/', Astro.site).href,
-      sameAs: [
-        'https://www.github.com/nathanpannell',
-        'https://www.linkedin.com/in/nathanpannell',
-      ],
-    },
-    {
-      '@type': 'WebSite',
-      '@id': new URL('/#website', Astro.site).href,
-      name: 'Nathan Pannell',
-      url: new URL('/', Astro.site).href,
-      publisher: { '@id': personId },
-    },
-  ],
-} : undefined;
+const homeData =
+  Astro.url.pathname === '/'
+    ? {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'Person',
+            '@id': personId,
+            name: 'Nathan Pannell',
+            url: new URL('/', Astro.site).href,
+            sameAs: [
+              'https://www.github.com/nathanpannell',
+              'https://www.linkedin.com/in/nathanpannell',
+            ],
+          },
+          {
+            '@type': 'WebSite',
+            '@id': new URL('/#website', Astro.site).href,
+            name: 'Nathan Pannell',
+            url: new URL('/', Astro.site).href,
+            publisher: { '@id': personId },
+          },
+        ],
+      }
+    : undefined;
 const jsonLd = structuredData ?? homeData;
 ---
 
@@ -84,10 +87,18 @@ const jsonLd = structuredData ?? homeData;
     <meta name="twitter:image:alt" content={imageAlt} />
     <meta name="theme-color" content="#f1f0e8" />
     <title>{title}</title>
-    {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd).replaceAll('<', '\\u003c')} />}
+    {jsonLd && (
+      <script
+        type="application/ld+json"
+        is:inline
+        set:html={JSON.stringify(jsonLd).replaceAll('<', '\\u003c')}
+      />
+    )}
   </head>
   <body class={pageClass}>
-    <a class="skip-link" href="#main-content">Skip to content</a>
+    <a class="skip-link" href="#main-content">
+      Skip to content
+    </a>
     <slot />
     <script>
       import '../scripts/navigation-focus';

@@ -1,0 +1,2 @@
+# Check out text files with LF everywhere so Prettier gives the same result on Windows and in CI.
+* text=auto eol=lf

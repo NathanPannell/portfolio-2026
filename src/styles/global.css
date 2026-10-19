@@ -154,7 +154,9 @@ a {
   color: inherit;
   font-size: 1.12rem;
   text-shadow: inherit;
-  transition: background-size 180ms var(--ease-out), transform 180ms var(--ease-out);
+  transition:
+    background-size 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
 }
 
 .site-header__contact svg {
@@ -348,7 +350,11 @@ a {
   padding: clamp(3rem, 5vw, 5rem) clamp(1.25rem, 5vw, 5rem) clamp(2.75rem, 5vw, 5rem);
   border-block: 1px solid color-mix(in srgb, var(--project-accent) 22%, var(--line));
   background:
-    linear-gradient(132deg, color-mix(in srgb, var(--project-accent) 11%, transparent), transparent 54%),
+    linear-gradient(
+      132deg,
+      color-mix(in srgb, var(--project-accent) 11%, transparent),
+      transparent 54%
+    ),
     var(--paper);
   color: var(--ink);
 }
@@ -434,7 +440,9 @@ a {
   font-family: var(--display);
   font-weight: 700;
   text-decoration: none;
-  transition: transform 180ms var(--ease-out), border-color 180ms var(--ease-out);
+  transition:
+    transform 180ms var(--ease-out),
+    border-color 180ms var(--ease-out);
 }
 
 .project-actions__link--primary {
@@ -498,7 +506,9 @@ a {
   border: 1px solid var(--media-border);
   border-radius: 1rem;
   background: color-mix(in srgb, var(--project-accent) 16%, var(--paper-deep));
-  box-shadow: 0 1.5rem 3.8rem var(--shadow-medium), 0 0.2rem 0.6rem var(--shadow-soft);
+  box-shadow:
+    0 1.5rem 3.8rem var(--shadow-medium),
+    0 0.2rem 0.6rem var(--shadow-soft);
 }
 
 .project-intro__visual-window::after {
@@ -755,7 +765,9 @@ a {
 }
 
 .project-archive[open] summary::after {
-  background-size: 100% 0.1rem, 0 100%;
+  background-size:
+    100% 0.1rem,
+    0 100%;
 }
 
 .project-archive__body {
@@ -798,8 +810,7 @@ a {
   gap: clamp(2.25rem, 5vw, 4rem);
   padding: clamp(3rem, 5vw, 5rem) clamp(1.25rem, 5vw, 5rem) 1.5rem;
   background:
-    radial-gradient(circle at 12% 0%, var(--footer-accent-wash), transparent 22rem),
-    var(--ink);
+    radial-gradient(circle at 12% 0%, var(--footer-accent-wash), transparent 22rem), var(--ink);
   color: var(--print-white);
 }
 
@@ -1177,7 +1188,9 @@ a {
   font-family: var(--display);
   font-weight: 720;
   text-decoration: none;
-  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out);
 }
 
 .button--primary {
@@ -1234,7 +1247,8 @@ a {
   min-width: 0;
   aspect-ratio: 2087 / 4341;
   isolation: isolate;
-  filter: drop-shadow(0 1.35rem 2rem var(--device-shadow)) drop-shadow(0 0.25rem 0.45rem var(--device-shadow));
+  filter: drop-shadow(0 1.35rem 2rem var(--device-shadow))
+    drop-shadow(0 0.25rem 0.45rem var(--device-shadow));
 }
 
 .parkdex-frame__screen {
@@ -1338,7 +1352,8 @@ a {
   position: relative;
   display: block;
   min-width: 0;
-  padding: clamp(0.65rem, 1.1vw, 1.05rem) clamp(0.65rem, 1.1vw, 1.05rem) clamp(5.6rem, 6.6vw, 6.6rem);
+  padding: clamp(0.65rem, 1.1vw, 1.05rem) clamp(0.65rem, 1.1vw, 1.05rem)
+    clamp(5.6rem, 6.6vw, 6.6rem);
   overflow: hidden;
   border: 1px solid var(--print-edge);
   border-radius: 0.2rem;
@@ -1356,7 +1371,9 @@ a {
   touch-action: pan-y;
   transform: translateY(var(--lift)) rotate(var(--rotation)) scale(var(--card-scale));
   transform-origin: 50% 75%;
-  transition: transform var(--dur-medium) var(--ease-out), box-shadow var(--dur-medium) var(--ease-out);
+  transition:
+    transform var(--dur-medium) var(--ease-out),
+    box-shadow var(--dur-medium) var(--ease-out);
 }
 
 .project-polaroid:focus-visible {
@@ -1375,7 +1392,6 @@ a {
   .project-polaroid:nth-child(even):hover {
     --hover-rotation: -0.7deg;
   }
-
 }
 
 .project-polaroid:active {
@@ -1655,7 +1671,9 @@ a {
   font-weight: 720;
   letter-spacing: -0.025em;
   cursor: pointer;
-  transition: background-size var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
+  transition:
+    background-size var(--dur-short) var(--ease-out),
+    transform var(--dur-short) var(--ease-out);
 }
 
 .section-reveal svg {
@@ -1709,7 +1727,9 @@ a {
     var(--essay-image) center / cover;
   opacity: 0;
   transform: scale(1.035);
-  transition: opacity 260ms var(--ease-out), transform 520ms var(--ease-out);
+  transition:
+    opacity 260ms var(--ease-out),
+    transform 520ms var(--ease-out);
 }
 
 .essay-list a {
@@ -1733,7 +1753,9 @@ a {
   letter-spacing: -0.04em;
   line-height: 0.98;
   text-wrap: balance;
-  transition: color 180ms var(--ease-out), transform 220ms var(--ease-out);
+  transition:
+    color 180ms var(--ease-out),
+    transform 220ms var(--ease-out);
 }
 
 .essay-list time {
@@ -1958,7 +1980,6 @@ a {
     grid-column: 1 / -1;
     width: 82%;
   }
-
 }
 
 @media (max-width: 720px) {

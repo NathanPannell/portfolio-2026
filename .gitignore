@@ -7,4 +7,6 @@ dist/
 assets/
 .DS_Store
 *.log
-.vercel/
+playwright-report/
+test-results/
+.claude/tmp/

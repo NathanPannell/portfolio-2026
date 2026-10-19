@@ -17,10 +17,12 @@ export async function getStaticPaths() {
   const projectIds = new Set(projects.map((entry) => entry.id));
 
   return [
-    ...articles.filter((entry) => !projectIds.has(entry.id)).map((entry) => ({
-      params: { slug: entry.id },
-      props: { kind: 'article' as const, entry },
-    })),
+    ...articles
+      .filter((entry) => !projectIds.has(entry.id))
+      .map((entry) => ({
+        params: { slug: entry.id },
+        props: { kind: 'article' as const, entry },
+      })),
     ...projects.map((entry) => ({
       params: { slug: entry.id },
       props: {
@@ -37,9 +39,10 @@ export async function getStaticPaths() {
 
 const props = Astro.props as Props;
 const { Content } = await render(props.entry);
-const LegacyContent = props.kind === 'project' && props.legacyEntry
-  ? (await render(props.legacyEntry)).Content
-  : undefined;
+const LegacyContent =
+  props.kind === 'project' && props.legacyEntry
+    ? (await render(props.legacyEntry)).Content
+    : undefined;
 ---
 
 {props.kind === 'project' ? (

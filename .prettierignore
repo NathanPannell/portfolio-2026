@@ -1,0 +1,17 @@
+# Generated output and dependencies
+dist/
+.astro/
+node_modules/
+package-lock.json
+playwright-report/
+test-results/
+
+# Authored prose and MDX content. Reflowing it changes rendered copy and can break MDX JSX.
+*.md
+*.mdx
+
+# Static files served as-is, and tool-written records
+public/
+.hallmark/
+.impeccable/
+docs/reviews/
