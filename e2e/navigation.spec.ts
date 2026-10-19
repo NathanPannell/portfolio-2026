@@ -49,7 +49,7 @@ test('the 404 page links back into the site', async ({ page }) => {
   await expect(page.locator('h1')).toBeVisible();
 });
 
-test('the skip link moves focus to the main content', async ({ page, isMobile }) => {
+test('the skip link moves keyboard focus past the header', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/parkdex/');
   await page.keyboard.press('Tab');
@@ -57,4 +57,7 @@ test('the skip link moves focus to the main content', async ({ page, isMobile })
   await expect(skip).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#main-content$/);
+  // The next Tab lands inside the main content, not on the header links.
+  await page.keyboard.press('Tab');
+  await expect(page.locator('#main-content :focus')).toHaveCount(1);
 });

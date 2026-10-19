@@ -30,8 +30,20 @@ for (const route of sitemapRoutes()) {
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('main#main-content')).toBeVisible();
     await expect(page.locator('.site-header__name')).toHaveAttribute('href', '/');
-    // Scroll through the page so lazy media loads and is checked too.
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    // Step through the page so every lazy image and video loads and is checked too.
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += window.innerHeight / 2) {
+        window.scrollTo(0, y);
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+    });
+    const pending = page.locator('img[loading="lazy"]');
+    for (const image of await pending.all()) {
+      if (!(await image.isVisible())) continue;
+      await expect
+        .poll(() => image.evaluate((element) => (element as HTMLImageElement).complete))
+        .toBe(true);
+    }
     await page.waitForLoadState('networkidle');
     expect(errors).toEqual([]);
   });

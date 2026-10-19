@@ -35,7 +35,7 @@ Run `npx playwright install chromium` once before the first local e2e run.
 
 There is no unit-test coverage job: the site has no unit-testable modules, so the contracts and the e2e suite are its tests. There is no database job because the site has no database. The workflow says the same in a comment.
 
-Never weaken the gate to get green: no skipped tests, no `continue-on-error`, no new lint or format ignores, and no rerunning a flaky job until it passes.
+Never weaken the gate to get green: no new test skips or deleted tests, no `continue-on-error`, no new lint or format ignores, and no rerunning a flaky job until it passes.
 
 GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the CI gate is enforced by the delivery rule: never merge with a check failing, pending, or missing on the head commit.
 
