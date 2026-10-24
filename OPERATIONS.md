@@ -37,7 +37,7 @@ There is no unit-test coverage job: the site has no unit-testable modules, so th
 
 Never weaken the gate to get green: no new test skips or deleted tests, no `continue-on-error`, no new lint or format ignores, and no rerunning a flaky job until it passes.
 
-GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the CI gate is enforced by the delivery rule: never merge with a check failing, pending, or missing on the head commit.
+GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the gate is enforced by the delivery rule: never merge a PR to `main` with a CI check failing, pending, or missing on the head commit, or a PR to `staging` without every local check passing on it.
 
 ## Branch and deployment model
 
@@ -61,7 +61,7 @@ Default workflow, from a branch to staging:
 6. Make sure every local check passed on the head commit you pushed. (On a PR to `main`, wait for every CI job to pass; on a failure, read the job log, fix the cause, and push.)
 7. Review the full diff against `origin/staging` and fix blocking findings. Mark the PR ready once every check is green on the current head commit.
 8. Squash-merge the PR into `staging`. Cloudflare Pages' Git integration deploys `staging` to <https://staging.nathanpannell.com>.
-9. Confirm the CI run for the merge commit on `staging` passes and the staging deployment serves that commit, then check the affected page at <https://staging.nathanpannell.com> in a browser. If anything breaks, fix forward with a new PR.
+9. Confirm the staging deployment serves the merge commit (no CI runs on `staging`), then check the affected page at <https://staging.nathanpannell.com> in a browser. If anything breaks, fix forward with a new PR.
 10. Leave production unchanged until Nathan explicitly authorizes promotion.
 
 When production promotion is explicitly authorized:
