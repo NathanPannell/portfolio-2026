@@ -42,7 +42,7 @@ Cloudflare Pages
 | `tests/content-contract.mjs` | Publishing invariants, required legacy routes, project ordering, drafts, and generated-route checks. |
 | `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonicals, structured data, covers, and the 404 page. |
 | `e2e/` | Playwright suite run against `astro preview` of `dist/`: every sitemap route, the main navigation journeys, and a crawl for broken internal links, assets, and fragments. |
-| `.github/workflows/ci.yml` | The PR gate: format, lint, types, build, e2e, dependency audit, and secret scan. |
+| `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`): format, lint, types, build, e2e, dependency audit, and secret scan. |
 | `public/_headers` | Cloudflare security and caching headers. |
 
 ## Page composition

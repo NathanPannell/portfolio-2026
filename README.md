@@ -24,7 +24,7 @@ Current environments:
 
 `portfolio-2026.pages.dev` is unrelated to this repository.
 
-The delivery path is a draft PR to `staging`, the CI gate in `.github/workflows/ci.yml`, a squash merge to `staging` (which Cloudflare Pages deploys to staging), then an explicitly authorized promotion PR to `main`. There are no preview deployments. See [OPERATIONS.md](./OPERATIONS.md) for the CI gate and release steps.
+The delivery path is a draft PR to `staging`, the checks in `.github/workflows/ci.yml` run locally (GitHub CI runs only for `main`), a squash merge to `staging` (which Cloudflare Pages deploys to staging), then an explicitly authorized promotion PR to `main`. There are no preview deployments. See [OPERATIONS.md](./OPERATIONS.md) for the CI gate and release steps.
 
 ## Local development
 

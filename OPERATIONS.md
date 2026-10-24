@@ -22,7 +22,7 @@ Run `npx playwright install chromium` once before the first local e2e run.
 
 ## CI gate
 
-`.github/workflows/ci.yml` runs on every pull request to `staging` or `main` and on every push to `staging`. Every job must pass on the PR's head commit before it is marked ready or merged.
+`.github/workflows/ci.yml` runs on every pull request to `main` and on every push to `main` (owner's decision, 2026-10-24); it does not run for `staging`. For a PR to `staging`, run the same checks locally; every job must pass on the PR's head commit before it is marked ready or merged.
 
 | Job | What it runs |
 | --- | --- |
@@ -37,13 +37,13 @@ There is no unit-test coverage job: the site has no unit-testable modules, so th
 
 Never weaken the gate to get green: no new test skips or deleted tests, no `continue-on-error`, no new lint or format ignores, and no rerunning a flaky job until it passes.
 
-GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the CI gate is enforced by the delivery rule: never merge with a check failing, pending, or missing on the head commit.
+GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the gate is enforced by the delivery rule: never merge a PR to `main` with a CI check failing, pending, or missing on the head commit, or a PR to `staging` without every local check passing on it.
 
 ## Branch and deployment model
 
 | Branch | Purpose | Destination |
 | --- | --- | --- |
-| Draft PR targeting `staging` | Review and CI gate | None. CI is the gate; there are no preview deployments. |
+| Draft PR targeting `staging` | Review and local check gate | None. Local checks are the gate; there are no preview deployments. |
 | `staging` | Shared QA and release candidate | <https://staging.nathanpannell.com> (Cloudflare Pages project `portfolio-2026-staging`) |
 | `main` | Production | <https://www.nathanpannell.com> (Cloudflare Pages project `portfolio-2026`) |
 
@@ -58,10 +58,10 @@ Default workflow, from a branch to staging:
 3. Make the change and commit only relevant repository files. Never add `.codex-remote-attachments/`.
 4. Run the CI checks locally: `npm ci`, `npm run format:check`, `npm run lint`, `npm run build`, `npm run test:e2e`, and `npm audit --audit-level=high`.
 5. Push and open a same-repository **draft** PR targeting `staging`.
-6. Wait for every CI job to pass on the head commit. On a failure, read the job log, fix the cause, and push.
+6. Make sure every local check passed on the head commit you pushed. (On a PR to `main`, wait for every CI job to pass; on a failure, read the job log, fix the cause, and push.)
 7. Review the full diff against `origin/staging` and fix blocking findings. Mark the PR ready once every check is green on the current head commit.
 8. Squash-merge the PR into `staging`. Cloudflare Pages' Git integration deploys `staging` to <https://staging.nathanpannell.com>.
-9. Confirm the CI run for the merge commit on `staging` passes and the staging deployment serves that commit, then check the affected page at <https://staging.nathanpannell.com> in a browser. If anything breaks, fix forward with a new PR.
+9. Confirm the staging deployment serves the merge commit (no CI runs on `staging`), then check the affected page at <https://staging.nathanpannell.com> in a browser. If anything breaks, fix forward with a new PR.
 10. Leave production unchanged until Nathan explicitly authorizes promotion.
 
 When production promotion is explicitly authorized:
