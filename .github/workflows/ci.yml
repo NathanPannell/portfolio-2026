@@ -2,13 +2,13 @@ name: CI
 
 on:
   pull_request:
-    branches: [staging, main]
+    branches: [main]
   push:
-    branches: [staging]
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  # Superseded PR runs are cancelled; every push to staging keeps its own result.
+  # Superseded PR runs are cancelled; every push to main keeps its own result.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:

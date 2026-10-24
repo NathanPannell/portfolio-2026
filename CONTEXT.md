@@ -33,7 +33,7 @@ This is the first file a new chat should read. It records the current working st
 
 Cloudflare deploys the persistent `staging` and `main` branches through Git integration. The `www.nathanpannell.com` production domain is live on Cloudflare Pages. The apex domain remains on Vercel and responds with HTTP 308 to the `www` URL.
 
-The delivery workflow starts with a same-repository draft PR targeting `staging`, branched from the latest `origin/staging`. There are no preview deployments. The PR must pass the CI gate in `.github/workflows/ci.yml` on its head commit: format, lint, types, the build with its content and SEO contracts, Playwright e2e against `astro preview`, dependency audit, and secret scan. See `OPERATIONS.md` for commands.
+The delivery workflow starts with a same-repository draft PR targeting `staging`, branched from the latest `origin/staging`. There are no preview deployments. The PR must pass the checks in `.github/workflows/ci.yml`, run locally, on its head commit (GitHub CI runs only for PRs and pushes to `main`): format, lint, types, the build with its content and SEO contracts, Playwright e2e against `astro preview`, dependency audit, and secret scan. See `OPERATIONS.md` for commands.
 
 After review, mark the PR ready and squash-merge it into `staging`. Cloudflare Pages deploys `staging` to `staging.nathanpannell.com`; confirm it serves the merge commit and browser-test the affected page there. For an explicitly authorized production release, open a promotion PR from the reviewed `staging` state to `main`, merge it, and verify the production custom domain.
 
