@@ -39,6 +39,8 @@ Never weaken the gate to get green: no new test skips or deleted tests, no `cont
 
 GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the gate is enforced by the delivery rule: never merge a PR to `main` with a CI check failing, pending, or missing on the head commit, or a PR to `staging` without every local check passing on it.
 
+Run the E2E job at the configured worker count. More than about four software-rendered browsers on one machine starve each other, frames stop for seconds at a time, and timed tests fail for reasons that have nothing to do with the site.
+
 ## Branch and deployment model
 
 | Branch | Purpose | Destination |

@@ -534,6 +534,7 @@ for (const scene of ['#offbooked', '.pk-ground', '#rules']) {
       look();
     });
     await page.reload();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(top);
     await page.waitForTimeout(700);
     const trail = await page.evaluate(
       () => (window as unknown as { scrollTrail: number[] }).scrollTrail,
@@ -756,8 +757,9 @@ for (const [width, height] of everySize) {
     await expect(page.locator('.abn-room__plan canvas')).toBeInViewport({ ratio: 0.98 });
 
     await landKip(page);
+    // Just under 1, because a fractional phone size can leave a millionth of one off screen.
     for (const stop of await page.locator('[data-stop]').all()) {
-      await expect(stop).toBeInViewport({ ratio: 1, timeout: 4000 });
+      await expect(stop).toBeInViewport({ ratio: 0.995, timeout: 4000 });
     }
 
     await jumpTo(page, '.pk-ground');
