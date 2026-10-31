@@ -49,6 +49,8 @@ export const startLevel = () => {
   onProgress(track, (next) => {
     progress = Math.min(1, Math.max(0, (next - 0.08) / 0.84));
     stage.toggleAttribute('data-done', progress > 0.96);
+    // Nothing scores until the level starts moving: wide screens can see the first phone at rest.
+    if (progress === 0) return;
     const screenX = progress * travel + window.innerWidth * 0.72;
     for (const spot of spots) {
       if (spot.hasAttribute('data-reached') || spot.offsetLeft > screenX) continue;
