@@ -13,55 +13,77 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/pages/404.astro` | Static recovery page. |
 | `src/layouts/SiteLayout.astro` | Document shell, metadata, JSON-LD, shared fonts, and global styles. |
 | `src/styles/global.css` | Shell only: reset, tokens, skip link, reveal transitions, 404. |
-| `src/components/Chrome.astro` | Fixed name link and the "for ___" label that follows the scroll. |
-| `src/components/Hero.astro` | Hero stage. The orange block grows from the wordmark cursor to fill the screen. |
-| `src/components/BuildNight.astro` | AI Build Night: wordmark opener, room scrub, tenets, website showcase. |
-| `src/components/Offbooked.astro` | Curtain reveal, then the ad assembling on stage and looping. |
-| `src/components/Parkdex.astro` | The trip down the vine: sky, canopy, stops, ground, score, Plant! button. |
-| `src/components/Sandbox.astro` | The crayon wipe and Play by the Sandbox. |
+| `src/components/Chrome.astro` | Fixed name link and the "for ___" label that follows the page. |
+| `src/components/Hero.astro` | The hero frame, the five options while they are under review, and the toggle. |
+| `src/components/heroes/` | One component per hero concept, plus `worlds.ts`, the facts they all share. |
+| `src/components/BuildNight.astro` | AI Build Night: cover and key, live site, room, tenets. |
+| `src/components/Offbooked.astro` | Curtains and rope, then the ad landing on a clock and looping. |
+| `src/components/Parkdex.astro` | Sky, Plant!, the ride, the stops, and the ground with its links. |
+| `src/components/Sandbox.astro` | Toy box and rainbow, comic panels, and the toy yard. |
 | `src/components/Index.astro` | Working rules, the image-fill index, contact footer. |
-| `src/scripts/scroll.ts` | One scroll listener: sets `--p` on every `[data-track]`, plus reveals and lazy video loops. |
-| `src/scripts/crowd.ts` | Hero canvas: squares spell each audience, react to pointer and touch, funnel into the block. |
-| `src/scripts/room.ts` | AI Build Night room canvas, scrubbed by scroll from doors to demos. |
+| `src/scripts/frames.ts` | Marks the frame on screen, and guides a stopped scroll on to the next frame. |
+| `src/scripts/moments.ts` | The click-to-open scenes, and the ways each one opens without a click. |
+| `src/scripts/motion.ts` | Reduced-motion check, reveals, resting loops, and lazy video. |
+| `src/scripts/heroes.ts` | The hero toggle, and the scripts for the heroes that need one. |
+| `src/scripts/room.ts` | AI Build Night: the room on a clock, and the cursor the live site opens from. |
+| `src/scripts/ride.ts` | Parkdex: Kip's timed ride down the vine, forest layers, scoring. |
+| `src/scripts/collage.ts` | Offbooked: pointer parallax. |
 | `src/scripts/toys.ts` | Throwable toys with a small physics loop that sleeps when everything settles. |
-| `src/scripts/collage.ts` | Offbooked: calls each `[data-at]` piece on stage, pointer parallax, rests the loops off screen. |
-| `src/scripts/descent.ts` | Parkdex: Kip following the vine, forest layers, scoring, Plant!. |
-| `src/scripts/wipe.ts` | The crayon wipe, which chases the scroll position instead of copying it. |
 | `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
 | `tests/content-contract.mjs` | Section order, required links, claims guards, reduced-motion coverage, media budget. |
 | `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonical, share card, JSON-LD, 404. |
-| `e2e/` | Playwright against `astro preview`: rendering, every interaction, six widths, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
+| `e2e/` | Playwright against `astro preview`: rendering, the guide, every hero and click moment, ten viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
 | `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`). |
 | `public/_headers` | Cloudflare security and caching headers. |
 | `public/_redirects` | Old project and essay URLs. |
 
-## How scroll scenes work
+## Frames
 
-A scene is a tall `[data-track]` element with a `position: sticky` stage inside it, marked `data-stage`. `scroll.ts` writes the element's progress to `--p` (0 to 1), and CSS derives everything from it. Canvas and scoring code subscribe with `onProgress`. Progress runs out exactly when the stage lets go, because it is measured from the stage's real height, and a `ResizeObserver` on the body keeps tracks right when late fonts or images move the page.
+The page is a stack of `[data-frame]` elements in ordinary document flow. Nothing is pinned and nothing is scrubbed by the scroll position: a frame plays on its own clock once it arrives. The content contract fails on `position: sticky` or `data-track`, so scroll-driven scenes can't creep back in.
 
-Avoid `overflow: hidden` on an ancestor of a sticky stage. Use `overflow: clip`.
+`frames.ts` does two jobs.
 
-Offbooked mixes two kinds of motion. Scroll decides when a `[data-at]` piece comes on stage, and a CSS spring decides how, so a fast scroll still gets the full bounce. Pieces only wait off stage once `collage.ts` has set `data-ready`, so a failed script can't hide the ad, and the springs join two frames later (`data-sprung`), so a reload doesn't play pieces leaving.
+- **Arrival.** The one frame crossing the middle of the screen gets `data-here`, and keeps `data-played` once it has been there. Timed CSS hangs off those. Scripts listen for `frame:change`.
+- **The guide.** Once a wheel, touch or key scroll has come to rest (`SETTLE` milliseconds with no scroll events), a page left between two frames is sent on to the next one in the direction it was travelling, or back if it only moved a few pixels. This is the only thing it does. It never listens to cancel a scroll, so wheel, trackpad, touch and keys stay native, and a continuous scroll passes straight through. Frames taller than the screen scroll freely until their end comes on screen, which is why the index works. Anchors, Tab and find-in-page aren't wheel, touch or key scrolls, so they stay where they land. The guide is off under reduced motion, and it waits while a finger is down or the page is pinch-zoomed.
+
+There is deliberately no CSS scroll snapping. `proximity` undoes a single wheel notch by snapping back to the frame it left, and `mandatory` can strand content in anything taller than the screen. It is also the least predictable part of iOS Safari, alongside the address bar. A smooth `scrollTo` after the page stops avoids all of that. If something interrupts one, the guide tries again, up to three times.
+
+Keyboard focus inside a frame lines the whole frame up, not just the focused element. Tall frames are left to the browser.
+
+## Click moments
+
+A `[data-moment]` scene has one `[data-moment-control]`, always a real `<button>`: the key, the rope, Plant!, the toy box. The default markup and CSS are the open scene. `moments.ts` sets `data-waiting` to close it, which is why a script that fails to load hides nothing, and the control only displays under `data-waiting`.
+
+Using the control swaps `data-waiting` for `data-open` and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
+
+Nothing behind a moment depends on the click. A scene also opens:
+
+- after `AUTO_OPEN` milliseconds on screen,
+- when the page scrolls past it,
+- when a link inside it takes keyboard focus, which is why closed content is covered up, not `hidden`,
+- already open, as `data-open data-settled`, if it was above the viewport when the page loaded. `data-settled` skips the transitions, so a reload doesn't replay anything.
+
+AI Build Night's site opens from the block cursor: `startCover` measures the cursor and clips the panel to it. The panel is painted the cursor's colour rather than hidden, so its links can still take focus.
+
+Parkdex's ride is a timed `requestAnimationFrame` tween rather than CSS, because Kip has to follow the vine's curve at whatever width the screen is. Without a script the trip is plain flow. It only becomes a stage under `data-waiting` or `data-open`.
+
+The rainbow is two CSS animations: the bands cross by `transform` alone, and the toy box disappears while they cover the screen. It plays whole whatever the scroll does. Don't go back to drawing it with `stroke-dashoffset`: a dash restarts on every subpath.
 
 A `[data-loops]` scene has its looping CSS paused while it is off screen (`startRests`), which stops a page's worth of idle animations from recalculating style every frame.
 
-Parkdex isn't pinned. The route is ordinary page content, so scrolling and tabbing work as they do anywhere else. Two sticky layers take no height of their own and sit behind and in front of it. Kip holds still on screen and follows the vine's curve as it slides past. Forest layers are two tiles tall and wrap, so a long trip never needs a huge image.
+## The hero toggle
 
-The crayon wipe has its own pinned stage rather than overlapping its neighbours. It opens on Parkdex's ground colour and ends on Sandbox's paper, so nothing from either world can show through. Its bands and paper move by `transform` only, and follow a smoothed copy of the progress, so a wheel jump plays the wipe quickly instead of skipping it. Don't go back to drawing it with `stroke-dashoffset`: a dash restarts on every subpath, which is what made the first version snap, and the scroll distance was too short for a wheel notch.
+All five heroes are built. The default is rendered in place, and the others sit in `<template>`s, so there is only ever one `<h1>` and search engines and no-JavaScript visitors see one hero. The toggle only appears on staging and local hosts, and `?hero=` is ignored anywhere else, so a promotion can't show it to the public by accident. `OPERATIONS.md` has the steps for settling on one.
 
 ## Reduced motion and no JavaScript
 
-Each component has one `@media (prefers-reduced-motion: reduce), (scripting: none)` block that switches its pinned scene to normal flow and shows everything at once, so both cases share a layout. `startScroll` does nothing under reduced motion, so `--p` falls back to each rule's default. Canvases draw one still frame under reduced motion and are not needed without JavaScript. The wipe is hidden in both cases.
+Each component has a `@media (prefers-reduced-motion: reduce), (scripting: none)` block for a still, complete layout, so both cases share it. Under reduced motion `startMoments` and the guide do nothing, so every scene is simply open and a scroll stops where it stops. Canvases draw one still frame and are not needed without JavaScript.
 
-`SiteLayout` adds `.js` to `<html>` with a one-line inline script. The canvas hero only applies under `.js`. Reveals and Offbooked's off-stage states wait for their scripts to switch them on, so a script that fails to load leaves content visible.
+`SiteLayout` adds `.js` to `<html>` with a one-line inline script. Reveals, including the timed tenets and rules, wait for `startReveals` to add `.reveals`, so a script that fails to load leaves content visible.
 
 ## Tall phone viewports
 
-Pinned stages that sit on a different colour from what follows use `100lvh`, not `100svh`, so nothing shows under them when a phone's address bar collapses. The AI Build Night and rules stages stay on `100svh` because their tracks match their backgrounds. Anything pinned to the bottom of a `100lvh` stage adds `100lvh - 100svh` to its offset, so it stays above the bar when the bar is showing. Offbooked names that offset `--bar`, and a test stands in a fake bar through it, because test browsers have none.
-
-## Keyboard focus in pinned scenes
-
-A `[data-track]` with `data-focus-at` jumps to that progress when keyboard focus enters it: the hero's chips at 0, the Offbooked ticket once it's on stage. Parkdex needs nothing, because its links are in normal flow.
+Frames are `100lvh`, so nothing shows under them when a phone's address bar collapses. What has to be seen sits inside `100svh`: anything at the bottom of a frame adds `--bar`, which is `100lvh - 100svh`, to its offset. A test stands in a fake bar through `--bar`, because test browsers have none. The toy yard goes further: its floor is at the bottom of `100svh`, and the sand continues below it.
 
 ## Styling strategy
 

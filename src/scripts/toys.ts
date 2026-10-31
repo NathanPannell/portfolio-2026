@@ -1,7 +1,7 @@
 // "Grab a toy": a small physics yard. Toys drop in when the yard scrolls into view and can be
 // picked up and thrown with a mouse or a finger. The loop sleeps once everything has settled.
 
-import { reducedMotion } from './scroll';
+import { reducedMotion } from './motion';
 
 interface Toy {
   element: HTMLElement;

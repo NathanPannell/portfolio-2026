@@ -10,7 +10,7 @@ People who might work with Nathan, join AI Build Night, or try one of the produc
 
 ## Positioning
 
-The line is "I build for real people." Each section names the people it is for. The hero spells them out: builders, casts, rivals, creators.
+The line is "I build for real people." Each section names the people it is for: builders, casts, rivals, creators.
 
 Move away from "outdoorsy nature app builder". Parkdex stays on the site as a game, not as the identity.
 

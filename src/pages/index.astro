@@ -25,23 +25,27 @@ import Sandbox from '../components/Sandbox.astro';
 
 <script>
   import { startCollage } from '../scripts/collage';
-  import { startCrowd } from '../scripts/crowd';
-  import { startDescent } from '../scripts/descent';
-  import { startRoom } from '../scripts/room';
-  import { startLoops, startRests, startReveals, startScroll } from '../scripts/scroll';
+  import { startFrames } from '../scripts/frames';
+  import { startHeroes } from '../scripts/heroes';
+  import { startMoments } from '../scripts/moments';
+  import { startLoops, startRests, startReveals } from '../scripts/motion';
+  import { startRide } from '../scripts/ride';
+  import { startCover, startRoom } from '../scripts/room';
   import { startToys } from '../scripts/toys';
   import { startWash } from '../scripts/wash';
-  import { startWipe } from '../scripts/wipe';
 
-  startScroll();
+  startHeroes();
+  // Scenes close first, so everything below finds them in the state they will open from.
+  startMoments();
   startReveals();
   startLoops();
   startRests();
   startRoom();
-  startDescent();
+  startCover();
+  startRide();
   startCollage();
   startToys();
-  startWipe();
   startWash();
-  void startCrowd();
+  // Last, so the frame that is on screen is heard by the scripts above.
+  startFrames();
 </script>

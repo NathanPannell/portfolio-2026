@@ -27,57 +27,14 @@ const stops = [
 ];
 ---
 
-<svg class="pk-rise" viewBox="0 0 1440 170" preserveAspectRatio="none" aria-hidden="true">
-  <path d="M0 170V96c60-44 150-40 196 4 50-62 164-72 222-8 44-40 130-44 176 2 64-74 196-70 250 8 52-46 150-44 192 6 58-52 164-48 214 6 40-34 116-36 190-12v164z"></path>
-</svg>
-
 <section id="parkdex" class="pk" data-audience="rivals" aria-labelledby="pk-title">
-  <div class="pk-trip" data-track data-descent data-loops>
+  <div class="pk-trip" data-frame data-moment data-trip data-loops tabindex="-1">
     <div class="pk-back" aria-hidden="true">
       <div class="pk-layer pk-layer--far" data-layer="0.12"></div>
       <div class="pk-layer pk-layer--mid" data-layer="0.3"></div>
     </div>
 
-    <div class="pk-front" data-front>
-      <div class="pk-layer pk-layer--near" data-layer="1.5" aria-hidden="true"></div>
-
-      <p class="pk-score" aria-hidden="true">
-        <i class="flagmark"></i>
-        <b data-score>0</b>
-      </p>
-
-      <div class="pk-rider" data-rider aria-hidden="true">
-        <span class="pk-rider__say" data-kip>
-          KLEEP!
-        </span>
-        <img
-          data-pose
-          data-on
-          src="/media/parkdex/kip-wave.webp"
-          width="360"
-          height="360"
-          loading="lazy"
-          alt=""
-        />
-        <img
-          data-pose
-          src="/media/parkdex/kip-point.webp"
-          width="360"
-          height="360"
-          loading="lazy"
-          alt=""
-        />
-      </div>
-
-      <button class="pk-plant" type="button" data-plant>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 21V3h13l-3 4.5 3 4.5H6"></path>
-        </svg>
-        <span>Plant!</span>
-      </button>
-    </div>
-
-    <div class="pk-route">
+    <div class="pk-world" data-world>
       <div class="pk-vine" data-vine aria-hidden="true"></div>
 
       <div class="pk-sky">
@@ -86,78 +43,113 @@ const stops = [
         <h2 id="pk-title">Capture the flag, for real parks.</h2>
       </div>
 
-      <div class="pk-canopy" data-canopy aria-hidden="true"></div>
+      <div class="pk-canopy" aria-hidden="true"></div>
 
-      {stops.map((stop) => (
-        <article class="pk-stop" data-stop>
-          <h3>{stop.title}</h3>
-          <figure class="pk-hang">
-            <div
-              class="pk-pole"
-              style={`--a: ${stop.flag[0]}; --b: ${stop.flag[1]}`}
-              aria-hidden="true"
-            >
-              <i />
-            </div>
-            <img
-              src={`/media/parkdex/${stop.image}-360.webp`}
-              srcset={`/media/parkdex/${stop.image}-360.webp 360w, /media/parkdex/${stop.image}-640.webp 640w`}
-              sizes="(max-width: 760px) 60vw, 19rem"
-              width="640"
-              height="1385"
-              loading="lazy"
-              decoding="async"
-              alt={stop.alt}
-            />
-          </figure>
-        </article>
-      ))}
+      <div class="pk-forest" data-forest-floor>
+        <ol class="pk-stops">
+          {stops.map((stop, index) => (
+            <li class="pk-stop" data-stop style={`--stop: ${index}`}>
+              <h3>{stop.title}</h3>
+              <figure class="pk-hang">
+                <div
+                  class="pk-pole"
+                  style={`--a: ${stop.flag[0]}; --b: ${stop.flag[1]}`}
+                  aria-hidden="true"
+                >
+                  <i />
+                </div>
+                <img
+                  src={`/media/parkdex/${stop.image}-360.webp`}
+                  srcset={`/media/parkdex/${stop.image}-360.webp 360w, /media/parkdex/${stop.image}-640.webp 640w`}
+                  sizes="(max-width: 760px) 40vw, 19rem"
+                  width="640"
+                  height="1385"
+                  loading="lazy"
+                  decoding="async"
+                  alt={stop.alt}
+                />
+              </figure>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
 
-      <div class="pk-ground" data-ground>
-        <svg class="pk-hill" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 220V120C220 30 460 20 720 70s520 70 720-20v170z"></path>
-        </svg>
-        <div class="pk-end">
-          <img
-            class="pk-end__kip"
-            src="/media/parkdex/kip-cheer.webp"
-            width="360"
-            height="360"
-            loading="lazy"
-            alt=""
-          />
-          <h3>1,000+ parks. Which one’s yours?</h3>
-          <div class="pk-end__links">
-            <a
-              class="pk-btn pk-btn--main"
-              href="https://play.google.com/store/apps/details?id=app.parkdex"
-            >
-              Get it on Google Play
-            </a>
-            <a class="pk-btn" href="https://parkdex.app/">
-              parkdex.app ↗
-            </a>
-            <a class="pk-btn" href="https://web.parkdex.app/">
-              Open the web app ↗
-            </a>
-          </div>
-        </div>
+    <div class="pk-layer pk-layer--near" data-layer="1.5" aria-hidden="true"></div>
+
+    <p class="pk-score" aria-hidden="true">
+      <i class="flagmark"></i>
+      <b data-score>0</b>
+    </p>
+
+    <div class="pk-rider" data-rider aria-hidden="true">
+      <span class="pk-rider__say">KLEEP!</span>
+      <img
+        data-pose
+        data-on
+        src="/media/parkdex/kip-wave.webp"
+        width="360"
+        height="360"
+        loading="lazy"
+        alt=""
+      />
+      <img
+        data-pose
+        src="/media/parkdex/kip-point.webp"
+        width="360"
+        height="360"
+        loading="lazy"
+        alt=""
+      />
+    </div>
+
+    <button
+      class="pk-plant"
+      type="button"
+      data-moment-control
+      aria-expanded="false"
+      aria-label="Plant your flag and ride the vine down"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 21V3h13l-3 4.5 3 4.5H6"></path>
+      </svg>
+      <span>Plant!</span>
+    </button>
+  </div>
+
+  <div class="pk-ground" data-frame>
+    <svg class="pk-hill" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 220V120C220 30 460 20 720 70s520 70 720-20v170z"></path>
+    </svg>
+    <div class="pk-end">
+      <img
+        class="pk-end__kip"
+        src="/media/parkdex/kip-cheer.webp"
+        width="360"
+        height="360"
+        loading="lazy"
+        alt=""
+      />
+      <h3>1,000+ parks. Which one’s yours?</h3>
+      <div class="pk-end__links">
+        <a
+          class="pk-btn pk-btn--main"
+          href="https://play.google.com/store/apps/details?id=app.parkdex"
+        >
+          Get it on Google Play
+        </a>
+        <a class="pk-btn" href="https://parkdex.app/">
+          parkdex.app ↗
+        </a>
+        <a class="pk-btn" href="https://web.parkdex.app/">
+          Open the web app ↗
+        </a>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .pk-rise {
-    position: relative;
-    pointer-events: none;
-    z-index: 3;
-    width: 100%;
-    height: clamp(5rem, 12vw, 11rem);
-    margin-top: calc(clamp(5rem, 12vw, 11rem) * -1);
-    fill: #cdeeff;
-  }
-
   .pk {
     --ink: #142620;
     --orange: #ff5a1f;
@@ -165,45 +157,52 @@ const stops = [
     --yellow: #ffc83d;
     --forest: #1f6448;
     --floor: #16452f;
+    --bar: calc(100lvh - 100svh);
     position: relative;
-    z-index: 2;
     color: var(--ink);
     font-family: 'Bricolage Grotesque Variable', var(--sans);
   }
 
+  /* With no script the trip is plain page content, top to bottom. The script makes it a stage. */
   .pk-trip {
     position: relative;
     background: var(--forest);
   }
 
-  /* Pinned for the whole trip, behind and in front of the route. Taking no height of their own, they
-     let the route set the page's length, so the journey is ordinary scrolling. */
-  .pk-back,
-  .pk-front {
-    position: sticky;
-    top: 0;
+  .pk-trip:focus {
+    outline: none;
+  }
+
+  .pk-trip[data-waiting],
+  .pk-trip[data-open] {
     height: 100lvh;
-    margin-bottom: -100lvh;
     overflow: clip;
-    pointer-events: none;
   }
 
-  .pk-back {
-    z-index: 0;
-    background: linear-gradient(#58b488, #2c7f5c);
+  .pk-back,
+  .pk-layer--near,
+  .pk-rider,
+  .pk-score,
+  .pk-plant {
+    display: none;
   }
 
-  /* The forest darkens the deeper it goes. */
+  .pk-trip[data-waiting] .pk-back,
+  .pk-trip[data-open] .pk-back {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: clip;
+    background: linear-gradient(#3f9a72, #1f6a4c);
+  }
+
+  /* A little dusk over the trees, so the stops stand out. */
   .pk-back::after {
     content: '';
     position: absolute;
     inset: 0;
     background: #0d3024;
-    opacity: calc(var(--p, 0) * 0.6);
-  }
-
-  .pk-front {
-    z-index: 2;
+    opacity: 0.3;
   }
 
   .pk-layer {
@@ -214,6 +213,7 @@ const stops = [
     height: 200%;
     background-repeat: repeat;
     will-change: transform;
+    pointer-events: none;
   }
 
   .pk-layer--far {
@@ -228,30 +228,27 @@ const stops = [
     background-size: max(100%, 56rem) 50%;
   }
 
-  /* Foreground leaves belong to the forest, so they stay off the sky and the ground. */
-  .pk-layer--near {
-    opacity: 0;
-    transition: opacity 260ms;
-  }
-
-  .pk-front[data-forest] .pk-layer--near {
-    opacity: 1;
-  }
-
-  /* The header blends with what's behind it, and mid-greens would swallow it. */
-  .pk-front::before {
-    content: '';
-    position: absolute;
+  /* Foreground leaves whip past on the ride, and are gone by the time Kip lands. */
+  .pk-trip[data-riding] .pk-layer--near {
+    display: block;
     z-index: 3;
-    inset: 0 0 auto;
-    height: 5rem;
-    background: linear-gradient(rgb(9 36 27 / 85%), transparent);
-    opacity: 0;
-    transition: opacity 260ms;
+    animation: leaves 2800ms ease-in-out both;
   }
 
-  .pk-front[data-forest]::before {
-    opacity: 1;
+  @keyframes leaves {
+    0%,
+    30% {
+      opacity: 0;
+    }
+
+    50%,
+    80% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
   }
 
   .pk-layer--near::before,
@@ -271,11 +268,17 @@ const stops = [
     scale: -1 1;
   }
 
-  .pk-route {
+  .pk-world {
     position: relative;
-    z-index: 1;
     --vine-x: 50%;
     --vine-width: clamp(14rem, 23vw, 21.5rem);
+  }
+
+  .pk-trip[data-waiting] .pk-world,
+  .pk-trip[data-open] .pk-world {
+    position: absolute;
+    inset: 0 0 auto;
+    will-change: transform;
   }
 
   .pk-vine {
@@ -292,8 +295,8 @@ const stops = [
     position: relative;
     display: grid;
     align-content: center;
-    min-height: 120lvh;
-    padding: 6rem var(--gutter) 2rem;
+    height: 100lvh;
+    padding: 5rem var(--gutter) calc(2rem + var(--bar));
     overflow: clip;
     background: linear-gradient(#cdeeff, #eaf7ff);
   }
@@ -302,7 +305,7 @@ const stops = [
     position: relative;
     z-index: 2;
     max-width: 42vw;
-    font-size: clamp(3rem, 7.4vw, 7rem);
+    font-size: clamp(3rem, min(7.4vw, 15svh), 7rem);
     font-weight: 800;
     line-height: 0.95;
     letter-spacing: -0.045em;
@@ -345,14 +348,50 @@ const stops = [
     background: url('../art/parkdex/canopy.svg') center / cover no-repeat;
   }
 
-  .pk-stop {
+  .pk-forest {
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: center;
-    min-height: 118lvh;
-    padding: 2rem calc(var(--gutter) + 9vw);
+    align-content: center;
+    min-height: 100svh;
+    padding: 4.5rem var(--gutter) 1.5rem;
+  }
+
+  .pk-trip[data-waiting] .pk-forest,
+  .pk-trip[data-open] .pk-forest {
+    height: 100lvh;
+    padding-bottom: calc(1.5rem + var(--bar));
+  }
+
+  /* Four phones in a row, each sized from whichever runs out first, the width or the height. */
+  .pk-stops {
+    --shot: min(calc((100vw - var(--gutter) * 2 - 6rem) / 4), calc((100svh - 11rem) * 0.4624));
+    display: flex;
+    gap: 2rem;
+    align-items: start;
+    justify-content: center;
+  }
+
+  .pk-stop {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: center;
+    width: var(--shot);
+  }
+
+  .pk-stop:nth-child(even) {
+    margin-top: 1.5rem;
+  }
+
+  /* The phones drop in on the vine one by one, once Kip has landed. */
+  .pk-trip:not([data-landed])[data-waiting] .pk-stop,
+  .pk-trip:not([data-landed])[data-open] .pk-stop {
+    visibility: hidden;
+    transform: translate3d(0, -110lvh, 0) rotate(6deg);
+  }
+
+  .pk-trip[data-landed]:not([data-settled]) .pk-stop {
+    transition: transform 760ms cubic-bezier(0.2, 1.3, 0.4, 1) calc(var(--stop) * 260ms);
   }
 
   h3 {
@@ -361,36 +400,28 @@ const stops = [
   }
 
   .pk-stop h3 {
-    justify-self: start;
-    max-width: 12ch;
-    padding: 0.5rem 1rem 0.6rem;
-    border: 4px solid var(--ink);
-    border-radius: 1.1rem;
+    padding: 0.25rem 0.7rem 0.35rem;
+    border: 3px solid var(--ink);
+    border-radius: 0.8rem;
     background: var(--cream);
-    box-shadow: 0 0.4rem 0 var(--ink);
-    font-size: clamp(2.2rem, 4.2vw, 3.9rem);
+    box-shadow: 0 0.25rem 0 var(--ink);
+    font-size: clamp(0.9rem, min(1.75vw, 3.1svh), 1.7rem);
     line-height: 1;
+    white-space: nowrap;
     rotate: -2deg;
   }
 
-  .pk-stop:nth-of-type(odd) h3 {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
+  .pk-stop:nth-child(even) h3 {
     rotate: 2deg;
   }
 
   .pk-hang {
     position: relative;
-    justify-self: center;
-    width: fit-content;
     transform-origin: 50% -2rem;
     animation: swing 3.4s ease-in-out infinite alternate;
   }
 
-  .pk-stop:nth-of-type(odd) .pk-hang {
-    grid-column: 1;
-    grid-row: 1;
+  .pk-stop:nth-child(even) .pk-hang {
     animation-delay: -1.4s;
   }
 
@@ -406,54 +437,44 @@ const stops = [
 
   .pk-hang img {
     position: relative;
-    width: auto;
-    height: min(74lvh, 40rem);
-    max-width: none;
-    border: 0.45rem solid var(--ink);
-    border-radius: 2.1rem;
-    box-shadow: 0.55rem 0.55rem 0 var(--ink);
+    width: var(--shot);
+    border: 0.3rem solid var(--ink);
+    border-radius: 1.6rem;
+    box-shadow: 0.35rem 0.35rem 0 var(--ink);
   }
 
   .pk-pole {
     position: absolute;
     z-index: 2;
-    top: 8%;
-    left: -2.4rem;
-    width: 0.55rem;
-    height: 62%;
+    top: -0.5rem;
+    right: 0.6rem;
+    width: 0.4rem;
+    height: 3.4rem;
     border: 2px solid var(--ink);
     border-radius: 0.3rem;
     background: var(--cream);
-    transform: scaleY(0);
     transform-origin: 50% 100%;
-    transition: transform 500ms cubic-bezier(0.2, 1.5, 0.4, 1) 120ms;
   }
 
-  .pk-stop:nth-of-type(even) .pk-pole {
-    right: -2.4rem;
-    left: auto;
+  .pk-trip:not([data-landed])[data-waiting] .pk-pole,
+  .pk-trip:not([data-landed])[data-open] .pk-pole {
+    transform: scaleY(0);
   }
 
-  .pk-stop[data-reached] .pk-pole {
-    transform: none;
+  .pk-trip[data-landed]:not([data-settled]) .pk-pole {
+    transition: transform 500ms cubic-bezier(0.2, 1.5, 0.4, 1) calc(var(--stop) * 260ms + 500ms);
   }
 
   .pk-pole i {
     position: absolute;
-    top: 0.2rem;
-    left: 100%;
-    width: 4rem;
-    height: 2.7rem;
+    top: 0.1rem;
+    right: 100%;
+    width: 2.6rem;
+    height: 1.8rem;
     border: 3px solid var(--ink);
     background: linear-gradient(90deg, var(--a) 50%, var(--b) 50%);
-    transform-origin: 0 50%;
-    animation: wave 1.5s ease-in-out infinite alternate;
-  }
-
-  .pk-stop:nth-of-type(odd) .pk-pole i {
-    right: 100%;
-    left: auto;
     transform-origin: 100% 50%;
+    animation: wave 1.5s ease-in-out infinite alternate;
   }
 
   @keyframes wave {
@@ -464,13 +485,12 @@ const stops = [
 
   .pk-ground {
     position: relative;
-    z-index: 2;
     display: grid;
     align-content: center;
     min-height: 100lvh;
-    padding: clamp(7rem, 16vw, 13rem) var(--gutter) 4rem;
+    padding: clamp(4.5rem, 10vw, 8rem) var(--gutter) calc(2rem + var(--bar));
     color: var(--cream);
-    background: linear-gradient(transparent clamp(5rem, 14vw, 11rem), var(--floor) 0);
+    background: linear-gradient(var(--forest) clamp(3rem, 8vw, 6rem), var(--floor) 0);
   }
 
   .pk-hill {
@@ -478,7 +498,7 @@ const stops = [
     top: 0;
     left: 0;
     width: 100%;
-    height: clamp(5rem, 14vw, 11rem);
+    height: clamp(3rem, 8vw, 6rem);
     fill: var(--floor);
   }
 
@@ -491,7 +511,7 @@ const stops = [
   }
 
   .pk-end__kip {
-    width: clamp(8rem, 15vw, 13rem);
+    width: clamp(8rem, min(15vw, 26svh), 13rem);
     animation: hop 1s ease-in-out infinite alternate;
   }
 
@@ -503,7 +523,7 @@ const stops = [
 
   .pk-end h3 {
     max-width: 14ch;
-    font-size: clamp(2.8rem, 7vw, 6.5rem);
+    font-size: clamp(2.8rem, min(7vw, 13svh), 6.5rem);
     line-height: 0.95;
   }
 
@@ -541,15 +561,16 @@ const stops = [
     background: var(--orange);
   }
 
-  .pk-score {
+  .pk-trip[data-waiting] .pk-score,
+  .pk-trip[data-open] .pk-score {
     position: absolute;
-    z-index: 3;
-    top: 4rem;
+    z-index: 4;
+    top: 3.4rem;
     right: var(--gutter);
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    padding: 0.35rem 1rem 0.35rem 0.55rem;
+    padding: 0.3rem 0.9rem 0.3rem 0.5rem;
     border: 3px solid var(--ink);
     border-radius: 99rem;
     background: var(--cream);
@@ -582,6 +603,15 @@ const stops = [
     transition: opacity 240ms;
   }
 
+  .pk-trip[data-waiting] .pk-rider,
+  .pk-trip[data-open] .pk-rider {
+    display: block;
+  }
+
+  .pk-trip[data-landed] .pk-rider {
+    opacity: 0;
+  }
+
   .pk-rider img {
     position: absolute;
     inset: 0;
@@ -607,42 +637,77 @@ const stops = [
     white-space: nowrap;
   }
 
-  .pk-front[data-done] .pk-rider,
-  .pk-front[data-done] .pk-score {
-    opacity: 0;
-  }
-
-  /* Over the ground, the buttons need the room. */
-  .pk-front[data-done] .pk-plant {
-    visibility: hidden;
-  }
-
+  /* The one big button, and the point of the game: plant it. */
   .pk-plant {
     position: absolute;
     z-index: 3;
-    right: var(--gutter);
-    bottom: calc(1.25rem + 100lvh - 100svh);
-    display: grid;
+    top: calc(50svh - 4.25rem);
+    left: calc(50% + clamp(6rem, 13vw, 11rem));
     justify-items: center;
-    width: 5.6rem;
-    height: 5.6rem;
-    padding: 0.8rem 0 0;
-    border: 4px solid var(--ink);
+    width: 8.5rem;
+    height: 8.5rem;
+    padding: 1.15rem 0 0;
+    border: 5px solid var(--ink);
     border-radius: 50%;
     background: var(--orange);
-    box-shadow: 0 0 0 4px var(--cream);
+    box-shadow:
+      0 0 0 5px var(--cream),
+      0 0.65rem 0 5px var(--ink);
     color: var(--cream);
-    pointer-events: auto;
-    transition: transform 100ms;
+    transition:
+      transform 100ms,
+      box-shadow 100ms;
+  }
+
+  .pk-trip[data-waiting] .pk-plant {
+    display: grid;
+    animation: beckon 2.2s ease-in-out infinite;
+  }
+
+  .pk-trip[data-open]:not([data-settled]) .pk-plant {
+    display: grid;
+    pointer-events: none;
+    animation: planted 520ms var(--ease) forwards;
+  }
+
+  @keyframes beckon {
+    0%,
+    70%,
+    100% {
+      scale: 1;
+    }
+
+    80% {
+      scale: 1.07;
+    }
+
+    90% {
+      scale: 0.98;
+    }
+  }
+
+  @keyframes planted {
+    20% {
+      transform: translateY(0.65rem) scale(0.94);
+    }
+
+    100% {
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(0.65rem) scale(0.2);
+    }
   }
 
   .pk-plant:active {
-    transform: scale(0.92);
+    transform: translateY(0.45rem);
+    box-shadow:
+      0 0 0 5px var(--cream),
+      0 0.2rem 0 5px var(--ink);
   }
 
   .pk-plant svg {
-    width: 2.2rem;
-    height: 2.2rem;
+    width: 3.2rem;
+    height: 3.2rem;
     fill: none;
     stroke: currentColor;
     stroke-width: 2.6;
@@ -652,12 +717,12 @@ const stops = [
 
   .pk-plant span {
     margin-top: -0.2rem;
-    padding: 0 0.5rem;
+    padding: 0 0.7rem;
     border: 2px solid var(--ink);
     border-radius: 99rem;
     background: var(--yellow);
     color: var(--ink);
-    font-size: 0.8rem;
+    font-size: 1.1rem;
     font-weight: 800;
   }
 
@@ -709,24 +774,9 @@ const stops = [
     }
   }
 
-  /* Short of room at the edge of the screen, the flags fly in over their phones. */
-  @media (max-width: 1000px) {
-    .pk-stop:nth-of-type(even) .pk-pole i {
-      right: 100%;
-      left: auto;
-      transform-origin: 100% 50%;
-    }
-
-    .pk-stop:nth-of-type(odd) .pk-pole i {
-      right: auto;
-      left: 100%;
-      transform-origin: 0 50%;
-    }
-  }
-
-  /* On a phone the vine runs down the left, and the stops hang beside it. */
+  /* On a phone the vine runs down the left, and the stops sit two by two. */
   @media (max-width: 760px) {
-    .pk-route {
+    .pk-world {
       --vine-x: 17%;
       --vine-width: 10rem;
     }
@@ -767,55 +817,46 @@ const stops = [
       right: -6rem;
     }
 
+    .pk-forest {
+      padding: 5.5rem 0.75rem 1rem;
+    }
+
+    .pk-trip[data-waiting] .pk-forest,
+    .pk-trip[data-open] .pk-forest {
+      padding-bottom: calc(1rem + var(--bar));
+    }
+
+    .pk-stops {
+      --shot: min(calc((100vw - 3.5rem) / 2), calc((100svh - 14rem) / 2 * 0.4624));
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+    }
+
     .pk-stop {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 1.25rem;
-      justify-items: center;
-      align-content: center;
-      min-height: 108lvh;
-      padding: 1.5rem 1rem 1.5rem 30%;
+      gap: 0.45rem;
     }
 
-    .pk-stop h3,
-    .pk-stop:nth-of-type(odd) h3 {
-      grid-column: 1;
-      grid-row: auto;
-      justify-self: center;
-      max-width: none;
-      font-size: clamp(1.7rem, 7.8vw, 2.6rem);
-      text-align: center;
-      white-space: nowrap;
+    .pk-stop:nth-child(even) {
+      margin-top: 0;
     }
 
-    .pk-stop:nth-of-type(odd) .pk-hang {
-      grid-column: 1;
-      grid-row: auto;
+    .pk-stop h3 {
+      font-size: 0.95rem;
     }
 
-    /* Sized from whichever runs out first, the space beside the vine or the screen's height. */
     .pk-hang img {
-      width: min(70vw - 1.75rem, 62svh * 0.4624, 13.9rem);
-      height: auto;
-      border-width: 0.3rem;
-      border-radius: 1.5rem;
-      box-shadow: 0.35rem 0.35rem 0 var(--ink);
+      border-width: 0.22rem;
+      border-radius: 1.05rem;
+      box-shadow: 0.22rem 0.22rem 0 var(--ink);
     }
 
-    .pk-pole,
-    .pk-stop:nth-of-type(even) .pk-pole {
-      top: -0.5rem;
-      right: 1rem;
-      left: auto;
-      height: 3.4rem;
+    .pk-pole {
+      height: 2.6rem;
     }
 
-    .pk-pole i,
-    .pk-stop:nth-of-type(odd) .pk-pole i {
-      right: 100%;
-      left: auto;
-      width: 2.6rem;
-      height: 1.8rem;
-      transform-origin: 100% 50%;
+    .pk-pole i {
+      width: 2rem;
+      height: 1.4rem;
     }
 
     .pk-rider {
@@ -828,57 +869,86 @@ const stops = [
       display: none;
     }
 
+    .pk-trip[data-waiting] .pk-score,
+    .pk-trip[data-open] .pk-score {
+      top: 2.9rem;
+    }
+
     .pk-plant {
-      width: 4.6rem;
-      height: 4.6rem;
-      padding-top: 0.55rem;
+      top: auto;
+      right: var(--gutter);
+      bottom: calc(2rem + var(--bar));
+      left: auto;
+      width: 7rem;
+      height: 7rem;
+      padding-top: 0.85rem;
     }
 
     .pk-plant svg {
-      width: 1.8rem;
-      height: 1.8rem;
+      width: 2.6rem;
+      height: 2.6rem;
     }
   }
 
-  /* Phones on their side: the stops keep their phones and lose the controls that would cover them. */
+  /* Phones on their side: four across, with just enough room for each title. */
   @media (max-height: 480px) {
-    .pk-plant,
-    .pk-rider {
-      display: none;
+    .pk-forest {
+      padding-top: 3.25rem;
     }
 
-    .pk-hang img {
-      width: auto;
-      height: 82svh;
+    .pk-stops {
+      --shot: calc((100svh - 6rem) * 0.4624);
+      flex-wrap: nowrap;
+      gap: 1rem;
+    }
+
+    .pk-stop {
+      gap: 0.3rem;
+    }
+
+    .pk-stop h3 {
+      font-size: 0.8rem;
     }
 
     .pk-sky {
-      min-height: 100lvh;
+      padding-top: 3rem;
     }
 
     h2 {
+      max-width: 50vw;
       font-size: 2.4rem;
     }
-  }
 
-  @media (scripting: none) {
-    .pk-plant,
-    .pk-score,
-    .pk-rider {
+    .pk-ground {
+      padding-top: 3rem;
+    }
+
+    .pk-end__kip {
       display: none;
+    }
+
+    .pk-end h3 {
+      max-width: none;
+      font-size: 2.2rem;
+    }
+
+    .pk-plant {
+      top: auto;
+      right: 12vw;
+      bottom: calc(1rem + var(--bar));
+      left: auto;
+      width: 6rem;
+      height: 6rem;
+      padding-top: 0.6rem;
+    }
+
+    .pk-plant svg {
+      width: 2rem;
+      height: 2rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .pk-back,
-    .pk-front {
-      display: none;
-    }
-
-    .pk-trip {
-      background: #2c7f5c;
-    }
-
     .pk-cloud,
     .pk-hang,
     .pk-pole i,
@@ -886,21 +956,23 @@ const stops = [
       animation: none;
     }
 
-    .pk-pole {
-      transform: none;
-    }
-
-    .pk-stop {
-      min-height: 0;
-      padding-block: 3rem;
+    .pk-trip {
+      background: #2c7f5c;
     }
 
     .pk-sky {
+      height: auto;
       min-height: 70svh;
     }
 
     .pk-canopy {
-      height: 60svh;
+      height: 40svh;
+    }
+
+    /* Nothing is timed here, so a tall frame just scrolls. */
+    .pk-forest {
+      min-height: 0;
+      padding-block: 3rem;
     }
   }
 </style>

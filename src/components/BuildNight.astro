@@ -9,116 +9,140 @@ const contours = [
   'M-50 650C200 590 340 730 560 640S860 570 1050 690',
   'M-50 760C180 700 300 850 540 750S830 690 1050 800',
 ];
+// Fresh captures of the live home page, stacked into one long strip. The Night 001 photos are
+// spliced out while attendee permission is pending.
+const desktop = [1018, 1018, 1019];
+const phone = [2142, 2142, 2142];
 ---
 
 <section id="ai-build-night" class="abn" data-audience="builders" aria-labelledby="abn-title">
-  <div class="abn-open" data-loops>
-    <h2 id="abn-title">
-      AI Build
-      <span>
-        Night<i aria-hidden="true"></i>
-      </span>
-    </h2>
-    <div class="abn-open__body">
-      <p class="abn-open__line">Stop reading about AI. Start building with it.</p>
-      <p>A free night in Victoria, BC. I co-run it and built the site.</p>
+  <div class="abn-cover" data-frame data-moment data-cover data-loops tabindex="-1">
+    <div class="abn-cover__type">
+      <h2 id="abn-title">
+        AI Build
+        <span>
+          Night<i data-cursor aria-hidden="true"></i>
+        </span>
+      </h2>
+      <div class="abn-cover__foot">
+        <p class="abn-cover__line">Stop reading about AI. Start building with it.</p>
+        <button
+          class="abn-key"
+          type="button"
+          data-moment-control
+          aria-expanded="false"
+          aria-label="Press Enter to open the live site"
+        >
+          <span class="abn-key__cap">
+            <span class="abn-key__word">Enter</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 6v6H6M10 8l-4 4 4 4"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <div class="abn-room" data-track data-room>
-    <div class="abn-room__stage" data-stage>
+    <div class="abn-show">
       <svg
-        class="abn-room__contours"
+        class="abn-contours"
         viewBox="0 0 1000 900"
         preserveAspectRatio="xMidYMid slice"
         aria-hidden="true"
       >
         {contours.map((d) => (
-          <path d={d} pathLength="1" />
+          <path d={d} />
         ))}
       </svg>
-      <ol class="abn-room__copy">
-        {steps.map((step) => (
-          <li data-step>{step}</li>
-        ))}
-      </ol>
-      <figure class="abn-room__plan">
-        <canvas
-          role="img"
-          aria-label="A top-down drawing of a room filling with people and laptops"
-        ></canvas>
-      </figure>
-    </div>
-  </div>
 
-  <div class="abn-tenets" data-track>
-    <div class="abn-tenets__stage" data-stage>
-      <p class="abn-tenets__one">The next unicorn can come from Vancouver Island.</p>
-      <p class="abn-tenets__two">We share what we learn.</p>
-    </div>
-  </div>
-
-  <div class="abn-site">
-    <div class="abn-site__copy" data-reveal>
-      <h3>Night 001 filled up. Night 002 is next.</h3>
-      <div class="abn-site__links">
-        <a class="abn-site__cta" href="https://aibuildnight.ca/">
-          <span>aibuildnight.ca</span>
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a class="abn-site__recap" href="https://aibuildnight.ca/pages/past-nights">
-          <span>Read the recap</span>
-          <span aria-hidden="true">↗</span>
-        </a>
+      <div class="abn-show__copy">
+        <h3>Night 001 filled up. Night 002 is next.</h3>
+        <p>A free night in Victoria, BC. I co-run it and built the site.</p>
+        <div class="abn-show__links">
+          <a class="abn-show__cta" href="https://aibuildnight.ca/">
+            <span>aibuildnight.ca</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a class="abn-show__recap" href="https://aibuildnight.ca/pages/past-nights">
+            <span>Read the recap</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <div class="abn-site__show">
-      <figure class="abn-browser" data-reveal>
+      <figure class="abn-browser">
         <div class="abn-browser__bar" aria-hidden="true">
           <i></i>
           <i></i>
           <i></i>
           <span>aibuildnight.ca</span>
         </div>
-        <video
-          data-src="/media/build-night/site-loop.mp4"
-          poster="/media/build-night/site-800.webp"
-          width="1120"
-          height="700"
-          muted
-          loop
-          playsinline
-          preload="none"
-          aria-label="The AI Build Night homepage: Stop reading about AI. Start building with it."
-        ></video>
+        <div class="abn-browser__view">
+          <div class="abn-strip abn-strip--desktop">
+            {desktop.map((height, index) => (
+              <img
+                src={`/media/build-night/live-${index + 1}.webp`}
+                width="1400"
+                height={height}
+                loading="lazy"
+                decoding="async"
+                alt={
+                  index === 0
+                    ? 'The live AI Build Night home page, scrolling from its headline to what we believe and who runs it'
+                    : ''
+                }
+              />
+            ))}
+          </div>
+        </div>
       </figure>
-      <img
-        class="abn-phone"
-        data-reveal
-        src="/media/build-night/phone-360.webp"
-        srcset="/media/build-night/phone-360.webp 360w, /media/build-night/phone-640.webp 640w"
-        sizes="(max-width: 700px) 34vw, 15rem"
-        width="640"
-        height="1385"
-        loading="lazy"
-        decoding="async"
-        alt="The AI Build Night homepage on a phone"
-      />
-      <img
-        class="abn-card"
-        data-reveal
-        style="--reveal-turn: 5deg"
-        src="/media/build-night/first-night-480.webp"
-        srcset="/media/build-night/first-night-480.webp 480w, /media/build-night/first-night-900.webp 900w"
-        sizes="(max-width: 700px) 60vw, 26rem"
-        width="900"
-        height="238"
-        loading="lazy"
-        decoding="async"
-        alt="The Night 001 band on the AI Build Night homepage"
-      />
+
+      <figure class="abn-phone">
+        <div class="abn-phone__view">
+          <div class="abn-strip abn-strip--phone">
+            {phone.map((height, index) => (
+              <img
+                src={`/media/build-night/live-phone-${index + 1}.webp`}
+                width="640"
+                height={height}
+                loading="lazy"
+                decoding="async"
+                alt={index === 0 ? 'The same page on a phone' : ''}
+              />
+            ))}
+          </div>
+        </div>
+      </figure>
     </div>
+  </div>
+
+  <div class="abn-room" data-frame data-room>
+    <svg
+      class="abn-contours"
+      viewBox="0 0 1000 900"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      {contours.map((d) => (
+        <path d={d} />
+      ))}
+    </svg>
+    <ol class="abn-room__copy">
+      {steps.map((step) => (
+        <li data-step>{step}</li>
+      ))}
+    </ol>
+    <figure class="abn-room__plan">
+      <canvas
+        role="img"
+        aria-label="A top-down drawing of a room filling with people and laptops"
+      ></canvas>
+    </figure>
+  </div>
+
+  <div class="abn-tenets" data-frame>
+    <p class="abn-tenets__one">The next unicorn can come from Vancouver Island.</p>
+    <p class="abn-tenets__two">We share what we learn.</p>
   </div>
 </section>
 
@@ -129,22 +153,36 @@ const contours = [
     --glass: #bfe6da;
     --harbour: #1f4e5a;
     --signal: #ff5b23;
+    --bar: calc(100lvh - 100svh);
     position: relative;
     background: var(--signal);
     color: var(--ink);
     font-family: var(--sans);
   }
 
-  .abn-open {
-    min-height: 100svh;
+  /* The cover: an orange wall, a cursor, and one key. */
+  .abn-cover {
+    position: relative;
+    height: 100lvh;
+    overflow: clip;
+  }
+
+  .abn-cover:focus {
+    outline: none;
+  }
+
+  .abn-cover__type {
+    position: absolute;
+    inset: 0 0 auto;
     display: grid;
     align-content: space-between;
-    gap: 2.5rem;
-    padding: clamp(5rem, 11svh, 7rem) var(--gutter) var(--gutter);
+    gap: 1.5rem;
+    height: 100svh;
+    padding: clamp(4.5rem, 11svh, 7rem) var(--gutter) var(--gutter);
   }
 
   h2 {
-    font-size: clamp(5rem, 21vw, 21rem);
+    font-size: clamp(4.4rem, min(21vw, 34svh), 21rem);
     font-weight: 900;
     line-height: 0.82;
     letter-spacing: -0.055em;
@@ -169,42 +207,135 @@ const contours = [
     }
   }
 
-  .abn-open__body {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
-    align-items: end;
+  .abn-cover__foot {
+    display: flex;
+    flex-wrap: wrap;
     gap: 1rem 3rem;
-    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-    font-weight: 500;
-    line-height: 1.35;
+    align-items: end;
+    justify-content: space-between;
   }
 
-  .abn-open__line {
-    font-size: clamp(1.7rem, 3.6vw, 3.2rem);
+  .abn-cover__line {
+    max-width: 16ch;
+    font-size: clamp(1.7rem, min(3.6vw, 6svh), 3.2rem);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.03em;
   }
 
-  .abn-room {
-    height: 420svh;
-    background: var(--bone);
+  /* A real, chunky key. It only exists while there is something to press it for. */
+  .abn-key {
+    display: none;
+    padding: 0 0 0.75rem;
+    border: 0;
+    border-radius: 1.1rem;
+    background: var(--ink);
+    transition: padding 90ms;
   }
 
-  .abn-room__stage {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: clip;
+  .abn-cover[data-waiting] .abn-key {
+    display: block;
+  }
+
+  .abn-key__cap {
+    display: flex;
+    gap: 1.1rem;
+    align-items: end;
+    justify-content: space-between;
+    width: clamp(10.5rem, 20vw, 15rem);
+    height: clamp(6rem, 11vw, 8.5rem);
+    padding: 0.9rem 1.1rem;
+    border: 3px solid var(--ink);
+    border-radius: 1.1rem;
+    background: var(--bone);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: clamp(1.1rem, 1.7vw, 1.45rem);
+    font-weight: 700;
+    transition: transform 90ms;
+  }
+
+  .abn-key svg {
+    width: 2rem;
+    height: 2rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.4;
+  }
+
+  .abn-key:active .abn-key__cap {
+    transform: translateY(0.55rem);
+  }
+
+  /* The key dips by itself every few seconds, so it reads as something to press. */
+  .abn-cover[data-here][data-waiting] .abn-key__cap {
+    animation: dip 3.4s ease-in-out infinite;
+  }
+
+  @keyframes dip {
+    0%,
+    80%,
+    100% {
+      transform: none;
+    }
+
+    86%,
+    90% {
+      transform: translateY(0.45rem);
+    }
+  }
+
+  /* The live site, opening out of the cursor. */
+  .abn-show {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+    grid-template-columns: minmax(14rem, 1fr) auto;
+    gap: clamp(1.5rem, 3vw, 3rem);
     align-items: center;
-    gap: clamp(1.5rem, 5vw, 5rem);
-    padding: 4.5rem var(--gutter) var(--gutter);
+    height: 100lvh;
+    padding: 4rem calc(var(--gutter) + 5vw) calc(1.5rem + var(--bar)) var(--gutter);
+    overflow: clip;
     background: var(--bone);
+    clip-path: inset(0);
   }
 
-  .abn-room__contours {
+  .abn-cover[data-waiting] .abn-show {
+    clip-path: inset(var(--cursor, 100% 0 0 0));
+  }
+
+  /* Cut down to the cursor and painted to match it, so the cursor stays a cursor until the key is
+     pressed. Only painted over, because its links still have to take keyboard focus. */
+  .abn-show::after {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms;
+  }
+
+  .abn-cover[data-waiting] .abn-show::after {
+    opacity: 1;
+    animation: cursor-paint 1.1s steps(2, jump-none) infinite;
+  }
+
+  @keyframes cursor-paint {
+    50% {
+      background: #db5120;
+    }
+  }
+
+  .abn-cover[data-open]:not([data-settled]) .abn-show {
+    transition: clip-path 1000ms cubic-bezier(0.7, 0, 0.15, 1) 120ms;
+  }
+
+  .abn-contours {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -215,122 +346,43 @@ const contours = [
     opacity: 0.32;
   }
 
-  .abn-room__contours path {
-    stroke-dasharray: 1;
-    stroke-dashoffset: calc(1 - min(1, var(--p, 1) * 1.6));
-  }
-
-  /* The words swap in place, at a size that fills the side of the room. */
-  .abn-room__copy {
+  .abn-show__copy {
     position: relative;
-    z-index: 1;
     display: grid;
+    gap: 0.9rem;
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    font-weight: 500;
+    line-height: 1.3;
   }
 
-  .abn-room__copy li {
-    grid-area: 1 / 1;
-    font-size: clamp(3.2rem, 9.4vw, 9.5rem);
-    font-weight: 900;
-    line-height: 0.92;
-    letter-spacing: -0.05em;
-    opacity: 0;
-    transform: translateY(1.2rem) scale(0.96);
-    transform-origin: 0 100%;
-    transition:
-      opacity 200ms,
-      transform 340ms var(--ease);
-  }
-
-  .abn-room__copy li[data-on] {
-    opacity: 1;
-    transform: none;
-  }
-
-  .abn-room__plan {
-    position: relative;
-    z-index: 1;
-    width: min(46vw, calc(100svh - 8rem));
-  }
-
-  .abn-room__plan canvas {
-    width: 100%;
-    aspect-ratio: 1;
-    box-shadow: 0.6rem 0.6rem 0 var(--ink);
-  }
-
-  .abn-tenets {
-    height: 220svh;
-    background: var(--ink);
-  }
-
-  .abn-tenets__stage {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: clip;
-    display: grid;
-    align-content: center;
-    gap: clamp(1rem, 3svh, 2rem);
-    padding: 4rem var(--gutter);
-    color: var(--glass);
-  }
-
-  .abn-tenets__one,
-  .abn-tenets__two {
-    font-size: clamp(2.3rem, min(8.6vw, 12svh), 9rem);
-    font-weight: 900;
-    line-height: 0.93;
-    letter-spacing: -0.045em;
-    text-wrap: balance;
-  }
-
-  .abn-tenets__one {
-    clip-path: inset(0 calc(100% - min(1, var(--p, 1) * 2.2) * 100%) 0 0);
-  }
-
-  .abn-tenets__two {
-    color: var(--signal);
-    clip-path: inset(0 calc(100% - min(1, max(0, var(--p, 1) - 0.42) * 2.4) * 100%) 0 0);
-  }
-
-  .abn-site {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: center;
-    gap: clamp(2rem, 6vw, 6rem);
-    padding: clamp(5rem, 12vw, 10rem) var(--gutter);
-    background: var(--glass);
-  }
-
-  .abn-site h3 {
-    margin: 0.8rem 0 1rem;
-    font-size: clamp(2.2rem, 4.8vw, 4.75rem);
+  .abn-show__copy h3 {
+    font-size: clamp(2rem, min(3.6vw, 6.4svh), 3.6rem);
     font-weight: 900;
     line-height: 0.96;
     letter-spacing: -0.04em;
   }
 
-  .abn-site__links {
+  .abn-show__links {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem 1.25rem;
     align-items: center;
   }
 
-  .abn-site__recap {
+  .abn-show__recap {
     display: inline-flex;
     gap: 0.5rem;
     font-weight: 700;
     text-underline-offset: 0.2em;
   }
 
-  .abn-site__cta {
+  .abn-show__cta {
     display: inline-flex;
     gap: 1.2rem;
-    padding: 1rem 1.35rem;
+    padding: 0.9rem 1.2rem;
     background: var(--ink);
     color: var(--bone);
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 800;
     letter-spacing: -0.015em;
     text-decoration: none;
@@ -340,19 +392,17 @@ const contours = [
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .abn-site__cta:hover {
+    .abn-show__cta:hover {
       transform: translate(-0.2rem, -0.2rem);
       background: var(--signal);
       color: var(--ink);
     }
   }
 
-  .abn-site__show {
-    position: relative;
-    padding-bottom: 14%;
-  }
-
+  /* As big as the frame allows: these captures are the point of this frame. */
   .abn-browser {
+    position: relative;
+    width: min(62vw, calc((100svh - 9rem) * 1.55));
     overflow: hidden;
     border: 2px solid var(--ink);
     border-radius: 0.7rem;
@@ -381,50 +431,279 @@ const contours = [
     margin-left: 0.5rem;
   }
 
-  .abn-browser video {
-    width: 100%;
-    height: auto;
+  .abn-browser__view {
     aspect-ratio: 8 / 5;
-    object-fit: cover;
-    background: var(--bone);
+    overflow: hidden;
+  }
+
+  .abn-strip img {
+    display: block;
+    width: 100%;
+  }
+
+  /* Reading down the page on a clock: a held beat on each band, then back to the top. */
+  .abn-strip--desktop {
+    animation: read-desktop 24s var(--ease) infinite;
+  }
+
+  .abn-strip--phone {
+    animation: read-phone 24s var(--ease) infinite 0.6s;
+  }
+
+  @keyframes read-desktop {
+    0%,
+    14% {
+      transform: none;
+    }
+
+    20%,
+    34% {
+      transform: translateY(-36.4%);
+    }
+
+    40%,
+    54% {
+      transform: translateY(-56.2%);
+    }
+
+    60%,
+    74% {
+      transform: translateY(-66.9%);
+    }
+
+    80%,
+    94% {
+      transform: translateY(-71.4%);
+    }
+  }
+
+  @keyframes read-phone {
+    0%,
+    14% {
+      transform: none;
+    }
+
+    20%,
+    34% {
+      transform: translateY(-22.6%);
+    }
+
+    40%,
+    54% {
+      transform: translateY(-40.7%);
+    }
+
+    60%,
+    74% {
+      transform: translateY(-53.9%);
+    }
+
+    80%,
+    94% {
+      transform: translateY(-78.5%);
+    }
+  }
+
+  .abn-cover[data-waiting] .abn-strip {
+    animation-play-state: paused;
   }
 
   .abn-phone {
     position: absolute;
-    right: -2%;
-    bottom: 0;
-    width: 25%;
-    border: 5px solid var(--ink);
+    z-index: 2;
+    right: 1.25rem;
+    bottom: calc(1rem + var(--bar));
+    width: min(14vw, calc((100svh - 12rem) * 0.3));
+    padding: 0.4rem;
     border-radius: 1.5rem;
-    box-shadow: 0.5rem 0.5rem 0 var(--ink);
+    background: var(--ink);
+    box-shadow: 0.45rem 0.45rem 0 rgb(14 17 19 / 28%);
   }
 
-  .abn-card {
-    position: absolute;
-    bottom: 2%;
-    left: -3%;
-    width: 58%;
-    border: 2px solid var(--ink);
-    box-shadow: 0.4rem 0.4rem 0 var(--ink);
-    rotate: -2deg;
+  .abn-phone__view {
+    aspect-ratio: 9 / 19.5;
+    overflow: hidden;
+    border-radius: 1.15rem;
+  }
+
+  /* Each piece follows the cursor's opening, in turn. */
+  .abn-cover[data-open]:not([data-settled]) .abn-browser,
+  .abn-cover[data-open]:not([data-settled]) .abn-phone,
+  .abn-cover[data-open]:not([data-settled]) .abn-show__copy {
+    transition: transform 700ms var(--ease) var(--wait, 700ms);
+  }
+
+  .abn-cover[data-waiting] .abn-browser {
+    transform: translateY(6rem) scale(0.94);
+  }
+
+  .abn-cover[data-waiting] .abn-phone {
+    --wait: 950ms;
+    transform: translateY(120%) rotate(8deg);
+  }
+
+  .abn-cover[data-waiting] .abn-show__copy {
+    --wait: 800ms;
+    transform: translateX(-3rem);
+  }
+
+  .abn-room {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+    gap: clamp(1.5rem, 5vw, 5rem);
+    align-items: center;
+    height: 100lvh;
+    overflow: clip;
+    padding: 4.5rem var(--gutter) calc(var(--gutter) + var(--bar));
+    background: var(--bone);
+  }
+
+  .abn-room .abn-contours path {
+    stroke-dasharray: 1400;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .abn-room .abn-contours path {
+      transition: stroke-dashoffset 3.5s var(--ease);
+    }
+
+    :global(.reveals) .abn-room:not([data-played]) .abn-contours path {
+      stroke-dashoffset: 1400;
+    }
+  }
+
+  /* The words swap in place, at a size that fills the side of the room. */
+  .abn-room__copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+  }
+
+  .abn-room__copy li {
+    grid-area: 1 / 1;
+    font-size: clamp(3.2rem, 9.4vw, 9.5rem);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+  }
+
+  :global(.reveals) .abn-room__copy li {
+    opacity: 0;
+    transform: translateY(1.2rem) scale(0.96);
+    transform-origin: 0 100%;
+    transition:
+      opacity 200ms,
+      transform 340ms var(--ease);
+  }
+
+  :global(.reveals) .abn-room__copy li[data-on] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .abn-room__plan {
+    position: relative;
+    z-index: 1;
+    width: min(46vw, calc(100svh - 8rem));
+  }
+
+  .abn-room__plan canvas {
+    width: 100%;
+    aspect-ratio: 1;
+    box-shadow: 0.6rem 0.6rem 0 var(--ink);
+  }
+
+  .abn-tenets {
+    display: grid;
+    align-content: center;
+    gap: clamp(1rem, 3svh, 2rem);
+    height: 100lvh;
+    overflow: clip;
+    padding: 4rem var(--gutter) calc(4rem + var(--bar));
+    background: var(--ink);
+    color: var(--glass);
+  }
+
+  .abn-tenets__one,
+  .abn-tenets__two {
+    font-size: clamp(2.3rem, min(8.6vw, 12svh), 9rem);
+    font-weight: 900;
+    line-height: 0.93;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
+  .abn-tenets__two {
+    color: var(--signal);
+  }
+
+  /* Each line wipes on when the frame arrives. */
+  @media (prefers-reduced-motion: no-preference) {
+    .abn-tenets__one,
+    .abn-tenets__two {
+      transition: clip-path 1100ms var(--ease) 200ms;
+    }
+
+    .abn-tenets__two {
+      transition-delay: 1000ms;
+    }
+
+    :global(.reveals) .abn-tenets:not([data-played]) p {
+      clip-path: inset(0 100% 0 0);
+    }
   }
 
   @media (max-width: 860px) {
-    .abn-open__body {
+    .abn-show {
       grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+      padding: 3.5rem var(--gutter) calc(1.5rem + var(--bar));
     }
 
-    .abn-site {
-      grid-template-columns: minmax(0, 1fr);
+    /* Under the browser, the links sit beside the phone. */
+    .abn-show__copy {
+      position: static;
     }
 
-    .abn-site__show {
-      padding-bottom: 22%;
+    .abn-show__links {
+      position: absolute;
+      bottom: calc(1.5rem + var(--bar));
+      left: var(--gutter);
+      z-index: 1;
+      display: grid;
+      justify-items: start;
+    }
+
+    .abn-show__cta {
+      gap: 0.6rem;
+      padding: 0.7rem 0.8rem;
+      font-size: 1rem;
+    }
+
+    .abn-show__copy h3 {
+      font-size: clamp(1.7rem, min(7.4vw, 4.4svh), 2.6rem);
+    }
+
+    .abn-show__copy p {
+      display: none;
+    }
+
+    .abn-browser {
+      width: min(100%, calc((100svh - 13rem) * 0.7));
+      box-shadow: 0.4rem 0.4rem 0 var(--ink);
+    }
+
+    .abn-phone {
+      right: var(--gutter);
+      width: min(44vw, calc(44svh * 0.46));
     }
   }
 
   @media (max-width: 860px) and (orientation: portrait) {
-    .abn-room__stage {
+    .abn-room {
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto minmax(0, 1fr);
       gap: 0.85rem;
@@ -446,11 +725,47 @@ const contours = [
     }
   }
 
-  /* Phones on their side keep the drawing beside the word. */
+  /* Phones on their side keep the drawing beside the word, and the site beside its links. */
   @media (max-height: 480px) {
-    .abn-room__stage {
+    .abn-cover__type {
       padding-top: 3rem;
-      padding-bottom: 0.5rem;
+    }
+
+    .abn-cover__line {
+      font-size: 1.4rem;
+    }
+
+    .abn-key__cap {
+      height: 4.5rem;
+    }
+
+    .abn-show {
+      grid-template-columns: minmax(10rem, 1fr) auto;
+      grid-template-rows: none;
+      align-items: center;
+      padding-top: 2.75rem;
+    }
+
+    .abn-show__copy {
+      position: relative;
+    }
+
+    .abn-show__links {
+      position: static;
+      display: flex;
+    }
+
+    .abn-browser {
+      width: calc((100svh - 5.5rem) * 1.45);
+    }
+
+    .abn-phone {
+      display: none;
+    }
+
+    .abn-room {
+      padding-top: 3rem;
+      padding-bottom: calc(0.5rem + var(--bar));
     }
 
     .abn-room__copy li {
@@ -473,27 +788,29 @@ const contours = [
       animation: none;
     }
 
-    .abn-room,
-    .abn-tenets {
+    .abn-strip {
+      animation: none;
+    }
+
+    /* Nothing to press: the live site simply follows the cover. */
+    .abn-cover {
       height: auto;
     }
 
-    .abn-room__stage,
-    .abn-tenets__stage {
+    .abn-cover__type,
+    .abn-show {
       position: relative;
+      height: auto;
+      min-height: 100svh;
+    }
+
+    .abn-room {
       height: auto;
       min-height: 100svh;
     }
 
     .abn-room__copy li {
       grid-area: auto;
-      opacity: 1;
-      transform: none;
-    }
-
-    .abn-tenets__one,
-    .abn-tenets__two {
-      clip-path: none;
     }
   }
 </style>

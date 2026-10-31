@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
 
 for (const [label, id] of [
-  ['Builders', 'ai-build-night'],
-  ['Casts', 'offbooked'],
-  ['Rivals', 'parkdex'],
-  ['Creators', 'play-by-the-sandbox'],
+  ['AI Build Night', 'ai-build-night'],
+  ['Offbooked', 'offbooked'],
+  ['Parkdex', 'parkdex'],
+  ['Play by the Sandbox', 'play-by-the-sandbox'],
 ] as const) {
-  test(`the ${label} chip jumps to its world`, async ({ page }) => {
+  test(`the ${label} door jumps to its world`, async ({ page }) => {
     await page.goto('/');
-    await page.locator('.hero__chips a', { hasText: label }).click();
+    await page.locator('.door a', { hasText: label }).click();
     await expect(page).toHaveURL(new RegExp(`#${id}$`));
     await expect
       .poll(() => page.locator(`#${id}`).evaluate((e) => Math.abs(e.getBoundingClientRect().top)))
@@ -65,28 +65,36 @@ test('the skip link moves keyboard focus past the header', async ({ page, isMobi
   await expect(page.locator('#main-content :focus')).toHaveCount(1);
 });
 
-test('tabbing into the curtain lands on an open stage', async ({ page, isMobile }) => {
+test('tabbing through a closed scene opens it as soon as a link takes focus', async ({
+  page,
+  isMobile,
+}) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
-  await page.locator('.abn-site__recap').focus();
+  await page.locator('.rope').focus();
   await page.keyboard.press('Tab');
   const ticket = page.locator('.ticket');
   await expect(ticket).toBeFocused();
-  await expect(ticket).toBeInViewport();
-  const onTop = await ticket.evaluate((element) => {
-    const { left, top, width, height } = element.getBoundingClientRect();
-    return element.contains(document.elementFromPoint(left + width / 2, top + height / 2));
-  });
-  expect(onTop).toBe(true);
+  await expect(page.locator('#offbooked')).toHaveAttribute('data-open', '');
+  await expect(ticket).toBeInViewport({ timeout: 6000 });
+  await expect
+    .poll(
+      () =>
+        ticket.evaluate((element) => {
+          const { left, top, width, height } = element.getBoundingClientRect();
+          return element.contains(document.elementFromPoint(left + width / 2, top + height / 2));
+        }),
+      { timeout: 6000 },
+    )
+    .toBe(true);
 });
 
-test('reverse tabbing into the hero shows its chips', async ({ page, isMobile }) => {
+test('reverse tabbing goes back up into the hero', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
-  await page.locator('.abn-site__cta').focus();
+  await page.locator('.abn-key').focus();
   await page.keyboard.press('Shift+Tab');
-  const chip = page.locator('.hero__chips a').last();
-  await expect(chip).toBeFocused();
+  await expect(page.locator('[data-hero-toggle] button').last()).toBeFocused();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5);
 });
 
@@ -95,15 +103,9 @@ test('Plant! can be reached with the keyboard', async ({ page, isMobile }) => {
   await page.goto('/');
   await page.locator('.ticket').focus();
   await page.keyboard.press('Tab');
-  const plant = page.locator('[data-plant]');
+  const plant = page.locator('.pk-plant');
   await expect(plant).toBeFocused();
   await expect(plant).toBeInViewport();
-  // Focus lands at the start of the trip, not part-way down it.
-  await expect
-    .poll(() =>
-      page.locator('[data-descent]').evaluate((e) => Math.abs(e.getBoundingClientRect().top)),
-    )
-    .toBeLessThan(2);
   await page.keyboard.press('Enter');
   await expect(page.locator('.pk-mark')).toHaveCount(1);
 });

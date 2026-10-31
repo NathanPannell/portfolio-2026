@@ -11,23 +11,6 @@ const panels = [
 ];
 ---
 
-<div class="wipe" data-track data-wipe aria-hidden="true">
-  <div class="wipe__stage" data-stage>
-    {crayons.map((colour, index) => (
-      <div class="wipe__band" data-band style={`--band: ${colour}; --row: ${index}`}>
-        <svg class="wipe__edge" viewBox="0 0 120 100" preserveAspectRatio="none">
-          <path d="M0 0H52L88 8 60 17l48 9-42 9 54 11-50 10 44 10-52 9 46 9-44 8H0z" />
-        </svg>
-        <svg class="wipe__crayon" viewBox="0 0 200 60">
-          <path class="wipe__wax" d="M0 8h150l50 22-50 22H0z" />
-          <path class="wipe__label" d="M24 8h96v44H24z" />
-        </svg>
-      </div>
-    ))}
-    <div class="wipe__paper" data-paper></div>
-  </div>
-</div>
-
 <section
   id="play-by-the-sandbox"
   class="sb"
@@ -35,140 +18,390 @@ const panels = [
   data-loops
   aria-labelledby="sb-title"
 >
-  <header class="sb__head">
-    <img
-      class="sb__word"
-      src="/media/sandbox/wordmark-800.webp"
-      srcset="/media/sandbox/wordmark-480.webp 480w, /media/sandbox/wordmark-800.webp 800w"
-      sizes="(max-width: 700px) 86vw, 34rem"
-      width="800"
-      height="225"
-      loading="lazy"
-      decoding="async"
-      alt="Play by the Sandbox, January 2027, Vancouver Art Gallery"
-    />
-    <h2 id="sb-title">I made an ad showdown look like a toy box.</h2>
-    <p class="sb__lede">
-      Mello’s event at the Vancouver Art Gallery. I designed and built the site.
-    </p>
-  </header>
+  <div class="sb-open" data-frame data-moment tabindex="-1">
+    <div class="sb-open__page">
+      <header class="sb__head">
+        <img
+          class="sb__word"
+          src="/media/sandbox/wordmark-800.webp"
+          srcset="/media/sandbox/wordmark-480.webp 480w, /media/sandbox/wordmark-800.webp 800w"
+          sizes="(max-width: 700px) 70vw, 30rem"
+          width="800"
+          height="225"
+          loading="lazy"
+          decoding="async"
+          alt="Play by the Sandbox, January 2027, Vancouver Art Gallery"
+        />
+        <h2 id="sb-title">I made an ad showdown look like a toy box.</h2>
+        <p class="sb__lede">
+          Mello’s event at the Vancouver Art Gallery. I designed and built the site.
+        </p>
+      </header>
 
-  <figure class="sb__screen" data-reveal style="--reveal-turn: -3deg">
-    <span class="sb__tape sb__tape--left" aria-hidden="true"></span>
-    <span class="sb__tape sb__tape--right" aria-hidden="true"></span>
-    <video
-      data-src="/media/sandbox/site-loop.mp4"
-      poster="/media/sandbox/site-800.webp"
-      width="1120"
-      height="700"
-      muted
-      loop
-      playsinline
-      preload="none"
-      aria-label="The Play by the Sandbox homepage: a pixel-art Vancouver Art Gallery with a marquee sign"
-    ></video>
-    <span class="sb__bubble" aria-hidden="true">
-      premiere night!
-    </span>
-  </figure>
+      <figure class="sb__screen">
+        <span class="sb__tape sb__tape--left" aria-hidden="true"></span>
+        <span class="sb__tape sb__tape--right" aria-hidden="true"></span>
+        <video
+          data-src="/media/sandbox/site-loop.mp4"
+          poster="/media/sandbox/site-800.webp"
+          width="1120"
+          height="700"
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label="The Play by the Sandbox homepage: a pixel-art Vancouver Art Gallery with a marquee sign"
+        ></video>
+        <span class="sb__bubble" aria-hidden="true">
+          premiere night!
+        </span>
+      </figure>
+    </div>
 
-  <div class="sb__strip">
-    {panels.map(({ name, width, height, alt }, index) => (
+    <div class="sb-box">
       <img
-        data-reveal
-        style={`--reveal-delay: ${index * 90}ms; --reveal-turn: ${index * 2 - 2}deg`}
-        src={`/media/sandbox/panel-${name}-480.webp`}
-        srcset={`/media/sandbox/panel-${name}-480.webp 480w, /media/sandbox/panel-${name}-900.webp 900w`}
-        sizes="(max-width: 700px) 82vw, 30vw"
-        width={width}
-        height={height}
+        class="sb-box__word"
+        src="/media/sandbox/wordmark-480.webp"
+        width="480"
+        height="135"
         loading="lazy"
         decoding="async"
-        alt={alt}
+        alt=""
       />
-    ))}
+      <button
+        class="sb-box__open"
+        type="button"
+        data-moment-control
+        aria-expanded="false"
+        aria-label="Open the toy box"
+      >
+        <svg viewBox="0 0 400 330" aria-hidden="true">
+          <g class="sb-box__crayons">
+            {crayons.map((colour, index) => (
+              <path
+                d={`M${82 + index * 44} 190v-70l14-30 14 30v70z`}
+                fill={colour}
+                style={`--row: ${index}`}
+              />
+            ))}
+          </g>
+          <path
+            class="sb-box__wall"
+            d="M40 140h320l-16 176a10 10 0 0 1-10 9H66a10 10 0 0 1-10-9z"
+          />
+          <path class="sb-box__plank" d="M46 200h308M51 262h298" />
+          <path
+            class="sb-box__star"
+            d="m200 172 16 34 37 5-27 26 7 37-33-18-33 18 7-37-27-26 37-5z"
+          />
+          <g class="sb-box__lid">
+            <path d="M26 92h348a10 10 0 0 1 10 10v30a10 10 0 0 1-10 10H26a10 10 0 0 1-10-10v-30a10 10 0 0 1 10-10z" />
+            <path class="sb-box__latch" d="M182 124h36v42a18 18 0 0 1-36 0z" />
+          </g>
+        </svg>
+        <span class="sb-box__tag" aria-hidden="true">
+          open me!
+        </span>
+      </button>
+    </div>
+
+    <div class="wipe" aria-hidden="true">
+      {crayons.map((colour, index) => (
+        <div class="wipe__band" style={`--band: ${colour}; --row: ${index}`}>
+          <svg class="wipe__edge" viewBox="0 0 120 100" preserveAspectRatio="none">
+            <path d="M0 0H52L88 8 60 17l48 9-42 9 54 11-50 10 44 10-52 9 46 9-44 8H0z" />
+          </svg>
+          <svg class="wipe__edge wipe__edge--tail" viewBox="0 0 120 100" preserveAspectRatio="none">
+            <path d="M0 0H52L88 8 60 17l48 9-42 9 54 11-50 10 44 10-52 9 46 9-44 8H0z" />
+          </svg>
+          <svg class="wipe__crayon" viewBox="0 0 200 60">
+            <path class="wipe__wax" d="M0 8h150l50 22-50 22H0z" />
+            <path class="wipe__label" d="M24 8h96v44H24z" />
+          </svg>
+        </div>
+      ))}
+    </div>
   </div>
 
-  <div class="sb__yard" data-yard>
-    <p class="sb__yard-title">grab a toy</p>
+  <div class="sb-panels" data-frame>
+    <div class="sb__strip">
+      {panels.map(({ name, width, height, alt }, index) => (
+        <img
+          data-reveal
+          style={`--reveal-delay: ${index * 220 + 100}ms; --reveal-turn: ${index * 8 - 8}deg`}
+          src={`/media/sandbox/panel-${name}-480.webp`}
+          srcset={`/media/sandbox/panel-${name}-480.webp 480w, /media/sandbox/panel-${name}-900.webp 900w`}
+          sizes="(max-width: 700px) 56vw, 30vw"
+          width={width}
+          height={height}
+          loading="lazy"
+          decoding="async"
+          alt={alt}
+        />
+      ))}
+    </div>
+  </div>
 
-    <div class="toy" data-toy>
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <path d="M18 34h64l-9 58H27z" fill="#f4b6c6"></path>
-        <path d="M18 34h64l-9 58H27zM26 34C28 4 72 4 74 34" fill="none"></path>
-        <path d="m50 50 5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f7e29a"></path>
-      </svg>
-      <span class="sr-only">Bucket</span>
+  <div class="sb-lot" data-frame>
+    <div class="sb__yard" data-yard>
+      <p class="sb__yard-title">grab a toy</p>
+
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M18 34h64l-9 58H27z" fill="#f4b6c6"></path>
+          <path d="M18 34h64l-9 58H27zM26 34C28 4 72 4 74 34" fill="none"></path>
+          <path d="m50 50 5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f7e29a"></path>
+        </svg>
+        <span class="sr-only">Bucket</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="42" fill="#b9d6f2"></circle>
+          <path
+            d="M8 50c14-14 70-14 84 0M50 8c-16 22-16 62 0 84M50 8c16 22 16 62 0 84"
+            fill="none"
+          ></path>
+          <circle cx="50" cy="50" r="42" fill="none"></circle>
+        </svg>
+        <span class="sr-only">Beach ball</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M44 8h12v46H44z" fill="#d7b7f0"></path>
+          <path d="M28 54h44l-6 26c-3 12-29 12-32 0z" fill="#bfe6c8"></path>
+        </svg>
+        <span class="sr-only">Spade</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path
+            d="M22 62c0-22 16-26 26-26 4-22 34-18 30 4-2 8-8 10-8 10 16 2 26-2 28-6 4 26-22 42-46 42S22 78 22 62z"
+            fill="#f7e29a"
+          ></path>
+          <circle cx="66" cy="28" r="3.5" fill="#2e2a45"></circle>
+          <path d="M78 34l14 2-13 7" fill="#f28b1e"></path>
+        </svg>
+        <span class="sr-only">Rubber duck</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="m50 6 13 28 31 4-23 21 6 31-27-15-27 15 6-31L6 38l31-4z" fill="#f3b48a"></path>
+        </svg>
+        <span class="sr-only">Star</span>
+      </div>
+      <a class="sb__cta" href="https://www.playbythesandbox.ca/">
+        I wanna play <span aria-hidden="true">→</span>
+      </a>
     </div>
-    <div class="toy" data-toy>
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="42" fill="#b9d6f2"></circle>
-        <path
-          d="M8 50c14-14 70-14 84 0M50 8c-16 22-16 62 0 84M50 8c16 22 16 62 0 84"
-          fill="none"
-        ></path>
-        <circle cx="50" cy="50" r="42" fill="none"></circle>
-      </svg>
-      <span class="sr-only">Beach ball</span>
-    </div>
-    <div class="toy" data-toy>
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <path d="M44 8h12v46H44z" fill="#d7b7f0"></path>
-        <path d="M28 54h44l-6 26c-3 12-29 12-32 0z" fill="#bfe6c8"></path>
-      </svg>
-      <span class="sr-only">Spade</span>
-    </div>
-    <div class="toy" data-toy>
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <path
-          d="M22 62c0-22 16-26 26-26 4-22 34-18 30 4-2 8-8 10-8 10 16 2 26-2 28-6 4 26-22 42-46 42S22 78 22 62z"
-          fill="#f7e29a"
-        ></path>
-        <circle cx="66" cy="28" r="3.5" fill="#2e2a45"></circle>
-        <path d="M78 34l14 2-13 7" fill="#f28b1e"></path>
-      </svg>
-      <span class="sr-only">Rubber duck</span>
-    </div>
-    <div class="toy" data-toy>
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <path d="m50 6 13 28 31 4-23 21 6 31-27-15-27 15 6-31L6 38l31-4z" fill="#f3b48a"></path>
-      </svg>
-      <span class="sr-only">Star</span>
-    </div>
-    <a class="sb__cta" href="https://www.playbythesandbox.ca/">
-      I wanna play <span aria-hidden="true">→</span>
-    </a>
   </div>
 </section>
 
 <style>
-  .wipe,
   .sb {
     --sb-paper: #fff7ec;
     --sb-grid:
       linear-gradient(rgb(46 42 69 / 5%) 1px, transparent 1px),
       linear-gradient(90deg, rgb(46 42 69 / 5%) 1px, transparent 1px);
     --sb-grid-size: 2rem 2rem;
-  }
-
-  /* Its own pinned stage, starting on Parkdex's ground colour and ending on Sandbox's paper, so it
-     looks the same at any scroll speed and nothing from either world can show through. */
-  .wipe {
+    --sand: #f0cf8e;
+    --bar: calc(100lvh - 100svh);
+    --ink: #2e2a45;
     position: relative;
-    z-index: 2;
-    height: 260lvh;
+    overflow: clip;
     background: var(--sb-paper);
+    background-image: var(--sb-grid);
+    background-size: var(--sb-grid-size);
+    color: var(--ink);
+    font-family: 'Gaegu', 'Comic Sans MS', cursive;
+    font-size: 1.3rem;
+    line-height: 1.35;
   }
 
-  .wipe__stage {
-    position: sticky;
-    top: 0;
+  .sb-open {
+    position: relative;
     height: 100lvh;
     overflow: clip;
-    background: #16452f;
+  }
+
+  .sb-open:focus {
+    outline: none;
+  }
+
+  .sb-open__page {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: center;
+    height: 100svh;
+    padding: 4rem var(--gutter) 2rem;
+  }
+
+  /* The toy box sits on its own paper, over the page it opens onto. */
+  .sb-box {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: none;
+    align-content: center;
+    justify-items: center;
+    gap: clamp(1rem, 3svh, 2rem);
+    padding: 3.5rem var(--gutter) calc(1rem + var(--bar));
+    background: var(--sb-paper);
+    background-image: var(--sb-grid);
+    background-size: var(--sb-grid-size);
+  }
+
+  .sb-open[data-waiting] .sb-box {
+    display: grid;
+  }
+
+  /* Gone while the rainbow covers the screen, so the wipe is what changes the page. */
+  .sb-open[data-open]:not([data-settled]) .sb-box {
+    display: grid;
+    pointer-events: none;
+    animation: cleared 1100ms steps(1, end) forwards;
+  }
+
+  @keyframes cleared {
+    to {
+      visibility: hidden;
+    }
+  }
+
+  .sb-box__word {
+    width: min(70vw, 34svh, 22rem);
+    rotate: -1.5deg;
+    border-radius: 1rem;
+  }
+
+  .sb-box__open {
+    position: relative;
+    width: min(78vw, 56svh, 32rem);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+  }
+
+  .sb-box__open svg {
+    width: 100%;
+    overflow: visible;
+    stroke: var(--ink);
+    stroke-width: 6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .sb-box__wall {
+    fill: #e8a24c;
+  }
+
+  .sb-box__plank {
+    fill: none;
+    stroke-width: 4;
+    opacity: 0.45;
+  }
+
+  .sb-box__star {
+    fill: #f7e29a;
+  }
+
+  .sb-box__lid {
+    fill: #c9772f;
+    transform-box: view-box;
+    transform-origin: 16px 142px;
+  }
+
+  .sb-box__latch {
+    fill: #f7c948;
+  }
+
+  .sb-box__crayons path {
+    transform: translateY(70px);
+  }
+
+  /* Something in there wants out. */
+  .sb-open[data-here][data-waiting] .sb-box__lid {
+    animation: rattle 2.8s ease-in-out infinite;
+  }
+
+  @keyframes rattle {
+    0%,
+    68%,
+    100% {
+      transform: none;
+    }
+
+    72% {
+      transform: rotate(3deg);
+    }
+
+    77% {
+      transform: rotate(-0.5deg);
+    }
+
+    82% {
+      transform: rotate(2deg);
+    }
+
+    88% {
+      transform: none;
+    }
+  }
+
+  .sb-open[data-open]:not([data-settled]) .sb-box__lid {
+    transform: rotate(-64deg) translate(0, -6px);
+    transition: transform 380ms cubic-bezier(0.2, 1.4, 0.4, 1);
+  }
+
+  .sb-open[data-open]:not([data-settled]) .sb-box__crayons path {
+    transform: translateY(-64px);
+    transition: transform 380ms cubic-bezier(0.2, 1.5, 0.4, 1) calc(var(--row) * 24ms);
+  }
+
+  .sb-box__tag {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    color: #6d3fb0;
+    font-family: 'Chewy', cursive;
+    font-size: clamp(2.2rem, min(7vw, 9svh), 3.6rem);
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateX(-50%) rotate(-3deg);
+  }
+
+  .sb-open[data-open] .sb-box__tag {
+    opacity: 0;
+  }
+
+  /* The rainbow pours out of the box and straight across the screen, then off the far side, in
+     transforms alone. It always plays whole, whatever the scroll is doing. */
+  .wipe {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    overflow: clip;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .sb-open[data-open]:not([data-settled]) .wipe {
+    animation: rainbow 2100ms steps(1, end) forwards;
+  }
+
+  @keyframes rainbow {
+    from {
+      visibility: visible;
+    }
+
+    to {
+      visibility: hidden;
+    }
   }
 
   .wipe__band {
+    --way: -1;
     position: absolute;
     top: calc(var(--row) * 100% / 6 - 1%);
     left: -1%;
@@ -177,7 +410,31 @@ const panels = [
     background:
       repeating-linear-gradient(97deg, rgb(255 255 255 / 9%) 0 0.35rem, transparent 0.35rem 0.9rem),
       var(--band);
+    transform: translate3d(calc(var(--way) * (100% + 34vmin)), 0, 0);
     will-change: transform;
+  }
+
+  .wipe__band:nth-child(even) {
+    --way: 1;
+  }
+
+  .sb-open[data-open]:not([data-settled]) .wipe__band {
+    animation: sweep 1700ms cubic-bezier(0.45, 0, 0.55, 1) calc(var(--row) * 70ms + 150ms) both;
+  }
+
+  @keyframes sweep {
+    from {
+      transform: translate3d(calc(var(--way) * (100% + 34vmin)), 0, 0);
+    }
+
+    42%,
+    58% {
+      transform: none;
+    }
+
+    to {
+      transform: translate3d(calc(var(--way) * -1 * (100% + 34vmin)), 0, 0);
+    }
   }
 
   .wipe__edge,
@@ -192,6 +449,13 @@ const panels = [
     width: 14vmin;
     height: 100%;
     fill: var(--band);
+  }
+
+  /* The same torn edge on the back of the band, for the way out. */
+  .wipe__edge--tail {
+    right: calc(100% - 1px);
+    left: auto;
+    scale: -1 1;
   }
 
   .wipe__crayon {
@@ -223,47 +487,26 @@ const panels = [
     scale: -1 1;
   }
 
+  .wipe__band:nth-child(even) .wipe__edge--tail {
+    right: auto;
+    left: calc(100% - 1px);
+    scale: 1 1;
+  }
+
   .wipe__band:nth-child(even) .wipe__crayon {
     right: calc(100% + 10vmin);
     left: auto;
     scale: -1 1;
   }
 
-  .wipe__paper {
-    position: absolute;
-    inset: 0;
-    background: var(--sb-paper);
-    background-image: var(--sb-grid);
-    background-size: var(--sb-grid-size);
-    will-change: transform;
-  }
-
-  .sb {
-    --ink: #2e2a45;
-    position: relative;
-    z-index: 2;
-    overflow: clip;
-    background: var(--sb-paper);
-    background-image: var(--sb-grid);
-    background-size: var(--sb-grid-size);
-    color: var(--ink);
-    font-family: 'Gaegu', 'Comic Sans MS', cursive;
-    font-size: 1.3rem;
-    line-height: 1.35;
-  }
-
   .sb__head {
     display: grid;
-    justify-items: center;
-    gap: 1rem;
-    max-width: 62rem;
-    margin: 0 auto;
-    padding: clamp(6rem, 13vw, 10rem) var(--gutter) 2.5rem;
-    text-align: center;
+    justify-items: start;
+    gap: 0.9rem;
   }
 
   .sb__word {
-    width: min(100%, 34rem);
+    width: min(100%, 26rem);
     rotate: -1.5deg;
     border-radius: 1.2rem;
   }
@@ -271,7 +514,7 @@ const panels = [
   h2 {
     color: #a0521d;
     font-family: 'Chewy', 'Comic Sans MS', cursive;
-    font-size: clamp(2.8rem, 7.4vw, 6.5rem);
+    font-size: clamp(2.6rem, min(5.2vw, 10svh), 5.5rem);
     font-weight: 400;
     line-height: 1;
     letter-spacing: 0.01em;
@@ -280,14 +523,15 @@ const panels = [
   }
 
   .sb__lede {
-    max-width: 42ch;
-    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    max-width: 34ch;
+    font-size: clamp(1.2rem, 1.7vw, 1.5rem);
   }
 
   .sb__screen {
     position: relative;
-    width: min(calc(100% - var(--gutter) * 2), 66rem);
-    margin: 1.5rem auto 3.5rem;
+    width: 100%;
+    max-width: calc((100svh - 7rem) * 1.6);
+    justify-self: center;
     padding: clamp(0.5rem, 1.2vw, 0.85rem);
     border: 3px solid var(--ink);
     border-radius: 0.5rem 0.9rem 0.6rem 1rem;
@@ -342,14 +586,27 @@ const panels = [
     }
   }
 
+  .sb-panels {
+    display: grid;
+    align-items: center;
+    height: 100lvh;
+    padding: 4rem var(--gutter) calc(2rem + var(--bar));
+  }
+
   .sb__strip {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(0.75rem, 2vw, 1.75rem);
     align-items: center;
+    justify-items: center;
     max-width: 82rem;
+    max-height: 100%;
     margin: 0 auto;
-    padding: clamp(3rem, 7vw, 5.5rem) var(--gutter) 1rem;
+  }
+
+  .sb__strip img {
+    width: auto;
+    max-height: calc(100svh - 7rem);
   }
 
   .sb__strip img:nth-child(1) {
@@ -365,17 +622,28 @@ const panels = [
     rotate: -0.75deg;
   }
 
+  /* The sand carries on below the yard, under a phone's address bar. */
+  .sb-lot {
+    height: 100lvh;
+    background: var(--sand);
+  }
+
   .sb__yard {
     position: relative;
-    height: clamp(26rem, 64svh, 36rem);
-    margin-top: 2rem;
+    height: 100svh;
     overflow: hidden;
-    background: linear-gradient(transparent calc(100% - 3.5rem), #f0cf8e calc(100% - 3.5rem));
+    background:
+      linear-gradient(transparent calc(100% - 3.5rem), var(--sand) calc(100% - 3.5rem)),
+      var(--sb-paper);
+    background-image:
+      linear-gradient(transparent calc(100% - 3.5rem), var(--sand) calc(100% - 3.5rem)),
+      var(--sb-grid);
+    background-size: auto, var(--sb-grid-size), var(--sb-grid-size);
   }
 
   .sb__yard-title {
     position: absolute;
-    top: 8%;
+    top: 14%;
     width: 100%;
     color: #6d3fb0;
     font-family: 'Chewy', cursive;
@@ -414,7 +682,7 @@ const panels = [
   .sb__cta {
     position: absolute;
     z-index: 1;
-    top: 46%;
+    top: 42%;
     left: 50%;
     padding: 0.7rem 1.5rem;
     border: 3px solid var(--ink);
@@ -435,13 +703,101 @@ const panels = [
   }
 
   @media (max-width: 760px) {
+    .sb-open__page {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      align-content: center;
+      gap: 1.25rem;
+      padding-top: 3.25rem;
+    }
+
+    .sb__head {
+      justify-items: center;
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    .sb__word {
+      width: min(70%, 16rem);
+    }
+
+    h2 {
+      font-size: clamp(2.3rem, 10.5vw, 3.4rem);
+    }
+
     .sb__strip {
       grid-template-columns: minmax(0, 1fr);
-      max-width: 28rem;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      height: 100%;
+      gap: 0.25rem;
+    }
+
+    .sb-panels {
+      padding-top: 3.25rem;
+    }
+
+    /* Three panels stepping down the page, each as tall as a third of the screen. */
+    .sb__strip img {
+      width: auto;
+      height: calc((100svh - 6rem) / 3);
+      max-height: none;
+    }
+
+    .sb__strip img:nth-child(1) {
+      justify-self: start;
     }
 
     .sb__strip img:nth-child(2) {
+      justify-self: end;
       translate: none;
+    }
+
+    .sb__strip img:nth-child(3) {
+      justify-self: start;
+    }
+  }
+
+  /* Phones on their side keep the site beside its headline. */
+  @media (max-height: 480px) {
+    .sb-open__page {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 5fr);
+      grid-template-rows: none;
+      padding-top: 2.75rem;
+      padding-bottom: 1rem;
+    }
+
+    .sb__head {
+      justify-items: start;
+      text-align: left;
+    }
+
+    .sb__word,
+    .sb__lede {
+      display: none;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+    }
+
+    .sb__strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: none;
+    }
+
+    .sb__strip img {
+      height: calc(100svh - 4.5rem);
+      width: auto;
+      justify-self: center;
+    }
+
+    .sb__strip img:nth-child(n) {
+      justify-self: center;
+    }
+
+    .sb-panels {
+      padding-top: 2.75rem;
+      padding-bottom: calc(1rem + var(--bar));
     }
   }
 
@@ -452,13 +808,25 @@ const panels = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .wipe,
     .sb__yard-title {
       display: none;
     }
 
     .sb__bubble {
       animation: none;
+    }
+
+    .sb-open {
+      height: auto;
+    }
+
+    .sb-open__page {
+      height: auto;
+      min-height: 100svh;
+    }
+
+    .sb-panels {
+      height: auto;
     }
   }
 </style>

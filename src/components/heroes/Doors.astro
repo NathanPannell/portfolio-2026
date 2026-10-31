@@ -1,0 +1,228 @@
+---
+import { worlds } from './worlds';
+
+const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
+---
+
+<div class="doors">
+  <h1>
+    Nathan Pannell builds things <span>for real people.</span>
+  </h1>
+  <ul>
+    {worlds.map(({ name, href, colour, who }, index) => (
+      <li class={`door door--${faces[index]}`} style={`--door: ${colour}; --i: ${index}`}>
+        <a href={href}>
+          <span class="door__who">{who}</span>
+          <span class="door__name">{name}</span>
+          <i class="door__knob" aria-hidden="true"></i>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .doors {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: clamp(1rem, 3svh, 2rem);
+    height: 100svh;
+    padding: 3.5rem var(--gutter) 0;
+    overflow: clip;
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  h1 {
+    max-width: 18ch;
+    font-size: min(6.4vw, 12svh);
+    font-weight: 900;
+    line-height: 0.94;
+    letter-spacing: -0.045em;
+  }
+
+  h1 span {
+    color: var(--signal);
+  }
+
+  ul {
+    display: flex;
+    gap: 0.5rem;
+    min-height: 0;
+  }
+
+  .door {
+    flex: 1 1 0;
+    min-width: 0;
+    background: #000;
+    perspective: 70rem;
+    transition: flex-grow 420ms var(--ease);
+  }
+
+  .door a {
+    position: relative;
+    background: var(--door);
+    transform-origin: 0 50%;
+    transition: transform 420ms cubic-bezier(0.5, 0, 0.75, 0);
+    display: grid;
+    align-content: end;
+    gap: 0.25rem;
+    height: 100%;
+    padding: 1.25rem 1.25rem 5.25rem;
+    color: #0e1113;
+    text-decoration: none;
+  }
+
+  /* Each door's panel is set in its world's own type. */
+  .door a::before {
+    content: '';
+    position: absolute;
+    inset: 0.65rem 0.65rem 0;
+    border: 2px solid rgb(14 17 19 / 38%);
+    border-bottom: 0;
+    pointer-events: none;
+  }
+
+  /* Clicking a door swings it open before the page moves on. */
+  .door[data-opening] a {
+    transform: rotateY(-82deg);
+  }
+
+  .door__who {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  .door__name {
+    font-size: clamp(1.6rem, min(3.1vw, 6svh), 3.1rem);
+    font-weight: 900;
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+  }
+
+  .door--offbooked .door__name {
+    font-family: 'Newsreader Variable', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .door--parkdex .door__name {
+    font-family: 'Bricolage Grotesque Variable', var(--sans);
+    font-weight: 800;
+  }
+
+  .door--sandbox .door__name {
+    font-family: 'Chewy', cursive;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .door__knob {
+    position: absolute;
+    top: 48%;
+    right: 1.5rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid #0e1113;
+    border-radius: 50%;
+    background: #fffdf8;
+    transition: transform 300ms var(--ease);
+  }
+
+  .door:has(a:focus-visible) {
+    flex-grow: 1.7;
+  }
+
+  .door a:focus-visible {
+    outline-offset: -0.5rem;
+    outline-color: #0e1113;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .door:hover {
+      flex-grow: 1.7;
+    }
+
+    .door:hover .door__knob {
+      transform: rotate(180deg) scale(1.35);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    h1 {
+      animation: doors-title 700ms var(--ease) both;
+    }
+
+    .door {
+      animation: door-up 800ms var(--ease) calc(var(--i) * 110ms + 150ms) both;
+    }
+  }
+
+  @keyframes doors-title {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  @keyframes door-up {
+    from {
+      transform: translateY(102%);
+    }
+  }
+
+  /* Phones get four long doors, one above the other. */
+  @media (max-aspect-ratio: 1/1) {
+    .doors {
+      padding-bottom: 4.25rem;
+    }
+
+    h1 {
+      font-size: min(11.5vw, 7svh);
+    }
+
+    ul {
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .door {
+      min-height: 0;
+    }
+
+    .door a {
+      align-content: center;
+      padding: 0.5rem 3rem 0.5rem 1.1rem;
+    }
+
+    .door a::before {
+      inset: 0.4rem;
+      border-bottom: 2px solid rgb(14 17 19 / 38%);
+    }
+
+    .door__name {
+      font-size: clamp(1.5rem, 7.4vw, 2.6rem);
+    }
+
+    .door__knob {
+      right: 1.1rem;
+      top: calc(50% - 0.55rem);
+    }
+  }
+
+  /* Phones on their side: the headline stays one line, and the doors stay side by side. */
+  @media (max-height: 480px) {
+    h1 {
+      max-width: none;
+      font-size: 7svh;
+    }
+
+    .door a {
+      padding-bottom: 3.25rem;
+    }
+
+    .door__name {
+      font-size: 1.3rem;
+    }
+  }
+</style>

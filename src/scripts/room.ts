@@ -1,7 +1,7 @@
-// AI Build Night's room, from above, scrubbed by scroll from doors to demos. The figures are a
-// drawing of how a night runs, not a head count.
+// AI Build Night's room, from above, played on a clock from doors to demos whenever its frame is on
+// screen. The figures are a drawing of how a night runs, not a head count.
 
-import { onProgress, reducedMotion } from './scroll';
+import { reducedMotion } from './motion';
 
 const INK = '#0e1113';
 const SIGNAL = '#ff5b23';
@@ -20,6 +20,9 @@ interface Seat {
 
 // Doors, build, get unstuck, demo: where each word takes over as the room plays out.
 const STEP_STARTS = [0, 0.2, 0.42, 0.62];
+// One night, in milliseconds, and the beat before the doors open again.
+const NIGHT = 13000;
+const BETWEEN = 1400;
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 const ease = (value: number) => value * value * (3 - 2 * value);
@@ -54,15 +57,17 @@ TABLES.forEach((table, tableIndex) => {
 });
 
 export const startRoom = () => {
-  const track = document.querySelector<HTMLElement>('[data-room]');
-  const canvas = track?.querySelector<HTMLCanvasElement>('canvas');
+  const frame = document.querySelector<HTMLElement>('[data-room]');
+  const canvas = frame?.querySelector<HTMLCanvasElement>('canvas');
   const context = canvas?.getContext('2d');
-  if (!track || !canvas || !context) return;
-  const steps = Array.from(track.querySelectorAll<HTMLElement>('[data-step]'));
+  if (!frame || !canvas || !context) return;
+  const steps = Array.from(frame.querySelectorAll<HTMLElement>('[data-step]'));
 
   let size = 0;
   let scale = 1;
   let progress = 0;
+  let playing = false;
+  let before = 0;
 
   const resize = () => {
     size = canvas.getBoundingClientRect().width;
@@ -148,13 +153,48 @@ export const startRoom = () => {
     return;
   }
 
-  onProgress(track, (next) => {
-    progress = next;
-    draw(next);
+  const play = (now: number) => {
+    if (!playing) return;
+    progress = (progress + (now - before) / NIGHT) % (1 + BETWEEN / NIGHT);
+    before = now;
+    draw(Math.min(1, progress));
+    window.requestAnimationFrame(play);
+  };
+
+  frame.addEventListener('frame:change', (event) => {
+    playing = (event as CustomEvent<boolean>).detail;
+    if (!playing) return;
+    before = performance.now();
+    window.requestAnimationFrame(play);
   });
   window.addEventListener('resize', () => {
     resize();
-    draw(progress);
+    draw(Math.min(1, progress));
   });
   draw(0);
+};
+
+/** AI Build Night's cursor is where its live site opens out from. */
+export const startCover = () => {
+  const cover = document.querySelector<HTMLElement>('[data-cover]');
+  const cursor = cover?.querySelector<HTMLElement>('[data-cursor]');
+  if (!cover?.hasAttribute('data-waiting') || !cursor) return;
+
+  const measure = () => {
+    if (!cover.hasAttribute('data-waiting')) return;
+    const box = cover.getBoundingClientRect();
+    const mark = cursor.getBoundingClientRect();
+    const sides = [mark.top - box.top, box.right - mark.right, box.bottom - mark.bottom];
+    const inset = [...sides, mark.left - box.left].map((side) => `${side.toFixed(1)}px`);
+    cover.style.setProperty('--cursor', inset.join(' '));
+  };
+  measure();
+  void document.fonts.ready.then(measure);
+  window.addEventListener('resize', measure);
+  // The strip of captures scrolls past the edge of its window, where lazy images wouldn't load.
+  cover.addEventListener('moment:open', () => {
+    cover.querySelectorAll('img').forEach((image) => {
+      image.loading = 'eager';
+    });
+  });
 };

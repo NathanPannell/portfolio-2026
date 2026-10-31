@@ -4,7 +4,7 @@ Everything under `public/media/` is a real capture, taken on 2026-10-31 unless n
 
 | Folder | Source |
 | --- | --- |
-| `build-night/` | aibuildnight.ca in production, recaptured on 2026-10-31 after its redesign. `site-loop.mp4` is a seven-second capture of its homepage scrolling to the tenets and back. `first-night-*` is a band from that page, cropped to exclude attendee photos. |
+| `build-night/` | The aibuildnight.ca home page in production, captured on 2026-10-31. `live-*` is the desktop page at 1440 wide and `live-phone-*` the phone page at 390, each cut into three pieces that stack seamlessly. The band of Night 001 photos is spliced out of both, because attendee permission is still pending. The organisers' portraits stay in: they are the organisers' own public bios. |
 | `sandbox/` | playbythesandbox.ca in production. `panel-*` are crops of its comic panels. `site-loop.mp4` plays forward then backward so it loops cleanly. |
 | `offbooked/` | Offbooked from `origin/staging` at `b5dcd6a`, run locally on a throwaway Postgres with the repo's Hamlet demo seed. `landing-*` is offbooked.com in production. The cast names are demo data. |
 | `parkdex/` | `arrival` is web.parkdex.app in production, as a guest, in a browser that blocked every write. The `@n8tewolf` on it is the owner's own handle. `planted`, `founder` and `take` are from parkdex.app in production, whose app captures use demo handles. `kip-wave` is from the same page, and the other `kip-*` poses are from `art-source/kip/` in the Parkdex repo. |
