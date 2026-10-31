@@ -93,12 +93,14 @@ const jsonLd =
         const root = document.documentElement;
         root.classList.add('js');
         // Click-to-open scenes are stages from the first paint, so the page keeps its height when
-        // the script arrives and a reload stays put. If that script never runs, they stand down.
+        // the script arrives and a reload stays put. If that script fails or stalls, they stand down.
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
           root.classList.add('stage');
-          addEventListener('load', () => {
+          const standDown = () => {
             if (!root.hasAttribute('data-moments')) root.classList.remove('stage');
-          });
+          };
+          addEventListener('load', standDown);
+          setTimeout(standDown, 6000);
         }
       }
     </script>

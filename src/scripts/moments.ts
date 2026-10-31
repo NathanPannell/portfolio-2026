@@ -1,7 +1,8 @@
 // The thing to click in each section: a rope, a key, a flag, a toy box. A `[data-moment]` scene waits
 // closed until its `[data-moment-control]` is used, and nothing behind one stays out of reach: it
 // also opens by itself after a while on screen, when the page scrolls past it, and when a link
-// inside it takes focus. If this script fails, SiteLayout stands the stages down, so nothing hides.
+// inside it takes focus. If this script fails or stalls, SiteLayout stands the stages down, so
+// nothing stays hidden.
 
 import { reducedMotion } from './motion';
 
@@ -37,8 +38,11 @@ const startPull = (handle: HTMLElement, open: () => void) => {
 
 export const startMoments = () => {
   if (reducedMotion()) return;
-  // Keeps the stages that SiteLayout set up before the first paint.
-  document.documentElement.toggleAttribute('data-moments', true);
+  // Keeps the stages SiteLayout set up before the first paint, or brings them back if this script
+  // arrived too late for them.
+  const root = document.documentElement;
+  root.toggleAttribute('data-moments', true);
+  root.classList.add('stage');
   const waiting = new Set<HTMLElement>();
   const timers = new Map<HTMLElement, number>();
 

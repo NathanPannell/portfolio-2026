@@ -52,7 +52,7 @@ Keyboard focus inside a frame lines the whole frame up, not just the focused ele
 
 ## Click moments
 
-A `[data-moment]` scene has one `[data-moment-control]`, always a real `<button>`: the key, the rope, Plant!, the toy box. The scene's closed look and layout hang off `.stage` on `<html>`, set by the inline script in `SiteLayout` before the first paint. It has to be that early: AI Build Night and Parkdex stack in plain flow without a stage, and if the page's height changed when the bundle arrived, a reload would land in the wrong place and slide back. If the bundle never runs, the `load` event finds no `data-moments` on `<html>` and removes `.stage`, so a failed script hides nothing. Under reduced motion `.stage` is never added.
+A `[data-moment]` scene has one `[data-moment-control]`, always a real `<button>`: the key, the rope, Plant!, the toy box. The scene's closed look and layout hang off `.stage` on `<html>`, set by the inline script in `SiteLayout` before the first paint. It has to be that early: AI Build Night and Parkdex stack in plain flow without a stage, and if the page's height changed when the bundle arrived, a reload would land in the wrong place and slide back. If the bundle hasn't run by the `load` event, or after six seconds, `.stage` comes off again, so a script that fails or stalls hides nothing for long, and `startMoments` puts it back if the script turns up late. `.stage` isn't added under reduced motion at load. Scripts tell where a scene stands from `data-waiting`, `data-open` and `data-settled`, which `startMoments` sets.
 
 Using the control sets `data-open` and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
 

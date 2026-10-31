@@ -871,6 +871,17 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
   }
 });
 
+test('a script that stalls stops holding the scenes closed', async ({ page }) => {
+  await page.route('**/_astro/*.js', () => {
+    // Never answered.
+  });
+  await page.goto('/', { waitUntil: 'commit' });
+  await expect(page.locator('html')).toHaveClass(/stage/);
+  await expect(page.locator('html')).not.toHaveClass(/stage/, { timeout: 8000 });
+  await page.locator('.abn-show__cta').scrollIntoViewIfNeeded();
+  await expect.poll(() => uncoveredPoints(page.locator('.abn-show__cta'))).toBeGreaterThan(0);
+});
+
 test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 

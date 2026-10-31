@@ -128,6 +128,22 @@ test('a small swipe is guided into the next frame', async ({ page, isMobile }) =
   await settlesAt(page, await topOf(page, '.abn-cover'));
 });
 
+test('a swipe held still before letting go is still guided', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'Touch is a phone journey.');
+  await page.goto('/');
+  const client = await page.context().newCDPSession(page);
+  const touch = (type: 'touchStart' | 'touchMove' | 'touchEnd', y: number) =>
+    client.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints: type === 'touchEnd' ? [] : [{ x: 200, y }],
+    });
+  await touch('touchStart', 500);
+  for (let step = 1; step <= 5; step += 1) await touch('touchMove', 500 - step * 30);
+  await page.waitForTimeout(700);
+  await touch('touchEnd', 350);
+  await settlesAt(page, await topOf(page, '.abn-cover'));
+});
+
 const heroCount = 5;
 
 test('the toggle swaps the hero, and the choice can be linked to', async ({ page }) => {

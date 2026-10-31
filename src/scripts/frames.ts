@@ -97,7 +97,11 @@ export const startFrames = () => {
   };
 
   const settle = () => {
-    if (touching || (window.visualViewport?.scale ?? 1) > 1.01) return;
+    if (touching) return;
+    if ((window.visualViewport?.scale ?? 1) > 1.01) {
+      armed = false;
+      return;
+    }
     if (armed) {
       armed = false;
       tries = 0;
@@ -136,7 +140,7 @@ export const startFrames = () => {
     },
     { passive: true },
   );
-  // Taking hold of the page, or its scrollbar, ends any trip the guide was on.
+  // Taking hold of the page ends any trip the guide was on.
   window.addEventListener(
     'pointerdown',
     () => {
