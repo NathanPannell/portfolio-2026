@@ -18,7 +18,7 @@ env:
   CI: true
 
 # Jobs left out of the standard CI bar, and why:
-# - Unit tests with coverage: the site is static Astro pages plus three small browser scripts.
+# - Unit tests with coverage: the site is one static Astro page and its browser animation scripts.
 #   The content and SEO contracts (run by `npm run build`) and the Playwright suite are its tests;
 #   there are no unit-testable modules to measure coverage against.
 # - Database: there is no database. The site is fully static.

@@ -1,0 +1,749 @@
+---
+const spots = [
+  {
+    image: 'arrival',
+    level: 'Level 1',
+    title: 'Go to a park.',
+    text: 'Get inside the boundary. Kip shows up either way.',
+    alt: 'Parkdex map of Beacon Hill Park: inside the boundary, with a flag to take',
+    flag: ['#1fa08d', '#2b2455'],
+  },
+  {
+    image: 'planted',
+    level: 'Level 2',
+    title: 'Plant your flag.',
+    text: 'One point for every hour it flies.',
+    alt: 'Parkdex flag planted screen: plus six points',
+    flag: ['#7a3fb0', '#1fa08d'],
+  },
+  {
+    image: 'founder',
+    level: 'Level 3',
+    title: 'Be the founder.',
+    text: 'Take the first photo of a park and earn points for it.',
+    alt: 'Parkdex park page for Holland Point with a Become the founder button',
+    flag: ['#f7c948', '#e0483a'],
+  },
+  {
+    image: 'take',
+    level: 'Level 4',
+    title: 'Steal it.',
+    text: 'Plant on someone else’s park and take it. Friendships may vary.',
+    alt: 'Parkdex screen: a flag being knocked over, reading Take it from at salish sky',
+    flag: ['#e0483a', '#f7c948'],
+  },
+];
+---
+
+<svg class="pk-rise" viewBox="0 0 1440 170" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 170V90C180 10 340 10 520 80s320 90 500 20 300-70 420-10v80z"></path>
+</svg>
+
+<section id="parkdex" class="pk" data-audience="rivals" aria-labelledby="pk-title">
+  <div class="pk-track" data-track data-level>
+    <div class="pk-stage">
+      <div class="pk-sun" aria-hidden="true"></div>
+      <svg
+        class="pk-hills pk-hills--far"
+        viewBox="0 0 2400 300"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d="M0 300V150C200 50 400 60 600 140s400 90 600 10 400-90 600-10 400 80 600 0v150z"></path>
+      </svg>
+      <svg
+        class="pk-hills pk-hills--near"
+        viewBox="0 0 2400 300"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d="M0 300V110C250 40 450 150 700 120s450-90 700-30 500 90 1000 10v200z"></path>
+      </svg>
+
+      <div class="pk-hud">
+        <p class="pk-hud__quest">04 / Side quest</p>
+        <p class="pk-hud__score" aria-hidden="true">
+          <i class="flagmark" style="--a: #7a3fb0; --b: #1fa08d"></i>
+          <span>
+            <b data-score>0</b> points
+          </span>
+        </p>
+      </div>
+
+      <button class="pk-plant" type="button" data-plant>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 21V3h13l-3 4.5 3 4.5H6"></path>
+        </svg>
+        <span>Plant!</span>
+      </button>
+
+      <div class="pk-strip" data-strip>
+        <div class="pk-intro">
+          <h2 id="pk-title">Capture the flag, for real parks.</h2>
+          <div class="pk-intro__card">
+            <p>
+              Go to a park, plant your flag, and steal your friends’ flags. It’s a game, and a good
+              way to learn whether people will really get off the couch for something you built.
+            </p>
+            <p class="pk-intro__go" aria-hidden="true">
+              Keep scrolling →
+            </p>
+          </div>
+        </div>
+
+        {spots.map((spot) => (
+          <article class="pk-spot" data-spot>
+            <div class="pk-spot__text">
+              <p class="pk-spot__level">{spot.level}</p>
+              <h3>{spot.title}</h3>
+              <p>{spot.text}</p>
+            </div>
+            <div class="pk-spot__ground">
+              <div
+                class="pk-pole"
+                style={`--a: ${spot.flag[0]}; --b: ${spot.flag[1]}`}
+                aria-hidden="true"
+              >
+                <i></i>
+              </div>
+              <img
+                class="pk-phone"
+                src={`/media/parkdex/${spot.image}-360.webp`}
+                srcset={`/media/parkdex/${spot.image}-360.webp 360w, /media/parkdex/${spot.image}-640.webp 640w`}
+                sizes="(max-width: 700px) 52vw, 18rem"
+                width="640"
+                height="1385"
+                loading="lazy"
+                decoding="async"
+                alt={spot.alt}
+              />
+            </div>
+          </article>
+        ))}
+
+        <div class="pk-end">
+          <p class="pk-spot__level">Quest complete</p>
+          <h3>1,000+ parks. Which one’s yours?</h3>
+          <p>Live on Google Play in Canada since October 2026.</p>
+          <div class="pk-end__links">
+            <a
+              class="pk-btn pk-btn--main"
+              href="https://play.google.com/store/apps/details?id=app.parkdex"
+            >
+              Get it on Google Play
+            </a>
+            <a class="pk-btn" href="https://parkdex.app/">
+              parkdex.app ↗
+            </a>
+            <a class="pk-btn" href="https://web.parkdex.app/">
+              Open the web app ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="pk-planted" data-planted aria-hidden="true"></div>
+
+      <div class="pk-kip" aria-hidden="true">
+        <span data-kip>KLEEP!</span>
+        <img src="/media/parkdex/kip-wave.webp" width="512" height="512" loading="lazy" alt="" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pk-rise {
+    position: relative;
+    pointer-events: none;
+    z-index: 3;
+    width: 100%;
+    height: clamp(5rem, 12vw, 11rem);
+    margin-top: calc(clamp(5rem, 12vw, 11rem) * -1);
+    fill: #cdeeff;
+  }
+
+  .pk {
+    --ink: #142620;
+    --orange: #ff5a1f;
+    --cream: #fff7e8;
+    --yellow: #ffc83d;
+    --green: #41a567;
+    --deep: #1c5a45;
+    position: relative;
+    z-index: 2;
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque Variable', var(--sans);
+  }
+
+  /* Holds still briefly at each end of the level, so the intro and the links can be read. */
+  .pk-track {
+    --go: clamp(0, (var(--p, 0) - 0.08) / 0.84, 1);
+    height: 460svh;
+  }
+
+  .pk-stage {
+    position: sticky;
+    top: 0;
+    height: 100lvh;
+    overflow: clip;
+    background: linear-gradient(#cdeeff, #eaf7ff 42%, #fff7e8 66%);
+  }
+
+  .pk-sun {
+    position: absolute;
+    top: 9%;
+    right: 9%;
+    width: clamp(6rem, 13vw, 11rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #fff1b8;
+    translate: calc(var(--go) * -22vw) calc(var(--go) * 6svh);
+  }
+
+  .pk-hills {
+    position: absolute;
+    left: 0;
+    width: 240%;
+    max-width: none;
+    bottom: 0;
+    will-change: transform;
+  }
+
+  .pk-hills--far {
+    height: 56%;
+    fill: var(--green);
+    transform: translate3d(calc(var(--go) * -46%), 0, 0);
+  }
+
+  .pk-hills--near {
+    height: 36%;
+    fill: var(--deep);
+    transform: translate3d(calc(var(--go) * -56%), 0, 0);
+  }
+
+  .pk-hud {
+    position: absolute;
+    z-index: 5;
+    top: 4rem;
+    right: var(--gutter);
+    left: var(--gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .pk-hud__quest {
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pk-hud__score {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.35rem 1rem 0.35rem 0.55rem;
+    border: 3px solid var(--ink);
+    border-radius: 99rem;
+    background: var(--cream);
+    box-shadow: 0 0.25rem 0 var(--ink);
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .pk-hud__score b {
+    font-size: 1.3rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .flagmark {
+    width: 1.9rem;
+    height: 1.3rem;
+    border: 2px solid var(--ink);
+    border-radius: 0.15rem;
+    background: linear-gradient(90deg, var(--a) 50%, var(--b) 50%);
+  }
+
+  .pk-strip {
+    position: absolute;
+    z-index: 3;
+    inset: 0 auto 0 0;
+    display: flex;
+    align-items: stretch;
+    width: max-content;
+    height: 100%;
+    transform: translate3d(calc(var(--go) * var(--travel, 0px) * -1), 0, 0);
+    will-change: transform;
+  }
+
+  .pk-intro {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    width: min(74vw, 54rem);
+    padding: 7rem var(--gutter) 2rem;
+  }
+
+  .pk-intro__card {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 30rem;
+    padding: 0.9rem 1.1rem;
+    border: 3px solid var(--ink);
+    border-radius: 1.2rem;
+    background: var(--cream);
+    box-shadow: 0 0.3rem 0 var(--ink);
+  }
+
+  h2 {
+    font-size: clamp(3rem, 7.4vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+  }
+
+  .pk-intro p {
+    max-width: 40ch;
+    font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+    line-height: 1.35;
+    font-weight: 500;
+  }
+
+  .pk-intro .pk-intro__go {
+    font-weight: 800;
+    color: var(--orange);
+    animation: nudge 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes nudge {
+    to {
+      translate: 0.6rem 0;
+    }
+  }
+
+  .pk-spot {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) auto;
+    gap: 1.5rem;
+    align-items: end;
+    padding: 7rem 3vw calc(3.5rem + 100lvh - 100svh);
+  }
+
+  .pk-spot__text {
+    align-self: center;
+    padding: 0.9rem 1.1rem;
+    border: 3px solid var(--ink);
+    border-radius: 1.2rem;
+    background: var(--cream);
+    box-shadow: 0 0.3rem 0 var(--ink);
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .pk-spot__level {
+    color: #b13a0d;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .pk-spot__ground {
+    position: relative;
+  }
+
+  .pk-phone {
+    position: relative;
+    width: auto;
+    height: min(66svh, 37rem);
+    max-width: none;
+    border: 0.45rem solid var(--ink);
+    border-radius: 2.1rem;
+    box-shadow: 0.55rem 0.55rem 0 var(--ink);
+    transform: translateY(1.5rem) rotate(2deg);
+    transition: transform 500ms cubic-bezier(0.2, 1.6, 0.4, 1);
+  }
+
+  .pk-spot[data-reached] .pk-phone {
+    transform: none;
+  }
+
+  .pk-pole {
+    position: absolute;
+    z-index: -1;
+    right: -3.2rem;
+    bottom: 0;
+    width: 0.55rem;
+    height: 72%;
+    border: 2px solid var(--ink);
+    border-radius: 0.3rem;
+    background: var(--cream);
+    transform: translateY(70%);
+    transition: transform 500ms cubic-bezier(0.2, 1.5, 0.4, 1) 120ms;
+  }
+
+  .pk-spot[data-reached] .pk-pole {
+    transform: none;
+  }
+
+  .pk-pole i {
+    position: absolute;
+    top: 0.2rem;
+    left: 100%;
+    width: 4rem;
+    height: 2.7rem;
+    border: 3px solid var(--ink);
+    background: linear-gradient(90deg, var(--a) 50%, var(--b) 50%);
+    transform-origin: 0 50%;
+    animation: wave 1.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes wave {
+    to {
+      transform: skewY(-7deg) scaleX(0.94);
+    }
+  }
+
+  .pk-end {
+    display: grid;
+    align-content: start;
+    gap: 0.7rem;
+    width: min(100vw, 46rem);
+    padding: 7rem var(--gutter) 2rem 5vw;
+  }
+
+  .pk-end h3 {
+    font-size: clamp(2.6rem, 6vw, 5.5rem);
+    letter-spacing: -0.04em;
+  }
+
+  .pk-end > p:not(.pk-spot__level) {
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+
+  .pk-end__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+  }
+
+  .pk-btn {
+    display: inline-block;
+    padding: 0.7rem 1.1rem;
+    border: 3px solid var(--ink);
+    border-radius: 99rem;
+    background: var(--cream);
+    box-shadow: 0 0.3rem 0 var(--ink);
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    transition:
+      transform 120ms,
+      box-shadow 120ms;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pk-btn:hover {
+      transform: translateY(0.15rem);
+      box-shadow: 0 0.15rem 0 var(--ink);
+    }
+  }
+
+  .pk-btn--main {
+    background: var(--orange);
+  }
+
+  .pk-planted {
+    position: absolute;
+    z-index: 2;
+    inset: auto 0 0 0;
+    height: 0;
+  }
+
+  :global(.pk-mark) {
+    position: absolute;
+    bottom: 0;
+    width: 3.2rem;
+    height: 5.2rem;
+    border-left: 0.32rem solid #142620;
+    animation: sprout 420ms cubic-bezier(0.2, 1.6, 0.4, 1);
+    transform-origin: 0 100%;
+  }
+
+  :global(.pk-mark)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3rem;
+    height: 2rem;
+    border: 2px solid #142620;
+    background: var(--flag);
+  }
+
+  :global(.pk-points) {
+    position: absolute;
+    z-index: 6;
+    left: 50%;
+    bottom: 9.5rem;
+    color: #fff1b8;
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    -webkit-text-stroke: 2px #142620;
+    pointer-events: none;
+    animation: rise 900ms ease-out forwards;
+  }
+
+  @keyframes sprout {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  @keyframes rise {
+    to {
+      opacity: 0;
+      transform: translateY(-5rem) scale(1.25);
+    }
+  }
+
+  .pk-kip {
+    position: absolute;
+    z-index: 5;
+    right: var(--gutter);
+    bottom: calc(0.25rem + 100lvh - 100svh);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    pointer-events: none;
+  }
+
+  .pk-kip span {
+    padding: 0.3rem 0.8rem;
+    border: 3px solid var(--ink);
+    border-radius: 0.9rem;
+    background: var(--cream);
+    box-shadow: 0 0.2rem 0 var(--ink);
+    font-weight: 800;
+  }
+
+  .pk-kip img {
+    width: clamp(4.5rem, 8vw, 7rem);
+  }
+
+  .pk-plant {
+    position: absolute;
+    z-index: 6;
+    bottom: calc(1rem + 100lvh - 100svh);
+    left: 50%;
+    display: grid;
+    justify-items: center;
+    width: 5.6rem;
+    height: 5.6rem;
+    padding: 0.8rem 0 0;
+    border: 4px solid var(--ink);
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 4px var(--cream);
+    color: var(--cream);
+    transform: translateX(-50%);
+    transition: transform 100ms;
+  }
+
+  /* The level is over, and the links need the room. */
+  .pk-stage[data-done] .pk-plant {
+    visibility: hidden;
+  }
+
+  .pk-plant:active {
+    transform: translateX(-50%) scale(0.92);
+  }
+
+  .pk-plant svg {
+    width: 2.2rem;
+    height: 2.2rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .pk-plant span {
+    margin-top: -0.2rem;
+    padding: 0 0.5rem;
+    border: 2px solid var(--ink);
+    border-radius: 99rem;
+    background: var(--yellow);
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 760px) {
+    .pk-intro {
+      width: 100vw;
+    }
+
+    .pk-spot {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      justify-items: center;
+      width: 100vw;
+      padding: 6.75rem 1rem calc(2.5rem + 100lvh - 100svh);
+    }
+
+    .pk-spot__text {
+      width: min(100%, 22rem);
+      padding: 0.6rem 0.85rem;
+      font-size: 0.98rem;
+    }
+
+    .pk-phone {
+      height: min(calc(100svh - 18.5rem), 30rem);
+      border-width: 0.3rem;
+      border-radius: 1.5rem;
+      box-shadow: 0.35rem 0.35rem 0 var(--ink);
+    }
+
+    .pk-pole {
+      right: -2.3rem;
+      height: 60%;
+    }
+
+    .pk-pole i {
+      width: 2.8rem;
+      height: 1.9rem;
+    }
+
+    .pk-end {
+      width: 100vw;
+      padding: 7rem 1.15rem 2rem;
+    }
+
+    .pk-kip span {
+      display: none;
+    }
+
+    .pk-kip img {
+      width: 4rem;
+    }
+
+    .pk-plant {
+      width: 4.6rem;
+      height: 4.6rem;
+      padding-top: 0.55rem;
+    }
+
+    .pk-plant svg {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+  }
+
+  /* Phones on their side: the level keeps its phones and loses the controls that would cover them. */
+  @media (max-height: 480px) {
+    .pk-plant,
+    .pk-kip {
+      display: none;
+    }
+
+    .pk-intro,
+    .pk-end {
+      gap: 0.4rem;
+      padding-top: 4.25rem;
+    }
+
+    .pk-intro__card {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .pk-intro__go {
+      display: none;
+    }
+
+    h2,
+    .pk-end h3 {
+      font-size: 2.1rem;
+    }
+
+    .pk-spot {
+      padding-top: 4rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .pk-track {
+      height: auto !important;
+    }
+
+    .pk-stage {
+      position: relative;
+      height: auto;
+      background: #cdeeff;
+    }
+
+    .pk-sun,
+    .pk-hills,
+    .pk-hud__score,
+    .pk-kip,
+    .pk-plant,
+    .pk-planted,
+    .pk-intro__go {
+      display: none;
+    }
+
+    .pk-hud {
+      position: static;
+      padding: 5rem var(--gutter) 0;
+    }
+
+    .pk-strip {
+      position: static;
+      display: grid;
+      width: 100%;
+      height: auto;
+      transform: none;
+    }
+
+    .pk-intro,
+    .pk-end,
+    .pk-spot {
+      width: 100%;
+      padding-block: 1.5rem;
+    }
+
+    .pk-phone,
+    .pk-pole {
+      transform: none;
+      height: min(70svh, 34rem);
+    }
+
+    .pk-pole {
+      height: 72%;
+    }
+
+    .pk-pole i {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,870 @@
+---
+import '@fontsource-variable/newsreader/wght.css';
+import '@fontsource-variable/newsreader/wght-italic.css';
+
+const lines = [
+  ['MACBETH', 'I have done the deed. Didst thou not hear a noise?'],
+  ['LADY MACBETH', 'I heard the owl scream and the crickets cry. Did not you speak?'],
+  ['MACBETH', 'When?'],
+  ['LADY MACBETH', 'Now.'],
+  ['MACBETH', 'As I descended?'],
+  ['LADY MACBETH', 'Ay.'],
+];
+const phones = [
+  { name: 'record', alt: 'Offbooked recording screen: an actor records a line of Hamlet' },
+  { name: 'play', alt: 'Offbooked run-through: the actor’s own lines are highlighted' },
+  { name: 'cast', alt: 'Offbooked cast list: how many lines each part has recorded' },
+];
+---
+
+<section id="offbooked" class="ob" data-audience="casts" aria-labelledby="ob-title">
+  <div class="ob-reveal" data-track data-focus-at="0.9" data-collage>
+    <div class="ob-stage">
+      <div class="collage">
+        <div class="slab" data-depth="-6"></div>
+        <div class="halftone" data-depth="14" aria-hidden="true"></div>
+
+        <p class="kicker" data-depth="-8">
+          03 / The one I’d bet on
+        </p>
+        <h2 id="ob-title" data-depth="-10">
+          Run lines with <em>your cast,</em> not a robot.
+        </h2>
+
+        <div class="script" data-depth="10" aria-hidden="true">
+          <p class="script__scene">Act 1, Scene 2</p>
+          <p>
+            <b>HORATIO</b> Hail to your lordship!
+          </p>
+          <p>
+            <b>HAMLET</b> I am glad to see you well: Horatio, or I do forget myself.
+          </p>
+          <p class="script__mine">
+            <b>HORATIO</b> The same, my lord, and your poor servant ever.
+          </p>
+          <p>
+            <b>HAMLET</b> Sir, my good friend; I’ll change that name with you.
+          </p>
+          <p class="script__mine">
+            <b>HORATIO</b> A truant disposition, good my lord.
+          </p>
+        </div>
+
+        {phones.map(({ name, alt }, index) => (
+          <figure class={`handset handset--${index + 1}`} data-depth={String(18 + index * 12)}>
+            <img
+              src={`/media/offbooked/${name}-360.webp`}
+              srcset={`/media/offbooked/${name}-360.webp 360w, /media/offbooked/${name}-640.webp 640w`}
+              sizes="(max-width: 700px) 42vw, 22vw"
+              width="640"
+              height="1385"
+              loading="lazy"
+              decoding="async"
+              alt={alt}
+            />
+          </figure>
+        ))}
+
+        <svg class="stamp" viewBox="0 0 200 200" data-depth="26" aria-hidden="true">
+          <defs>
+            <path id="stamp-ring" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1 -148 0"></path>
+          </defs>
+          <circle cx="100" cy="100" r="98"></circle>
+          <text>
+            <textPath href="#stamp-ring">PUBLIC BETA · FREE FOR NOW · PUBLIC BETA ·</textPath>
+          </text>
+          <text class="stamp__mid" x="100" y="112" text-anchor="middle">
+            ★
+          </text>
+        </svg>
+
+        <p class="tape" data-depth="16">
+          Cast needs no account
+        </p>
+
+        <a class="ticket" href="https://offbooked.com/" data-depth="-12">
+          <span class="ticket__small">Admit the whole cast</span>
+          <span class="ticket__big">
+            offbooked.com <span aria-hidden="true">↗</span>
+          </span>
+        </a>
+
+        <p class="marquee" aria-hidden="true">
+          <span>
+            One link · Everyone records on their phone · The whole cast rehearses · One link ·
+            Everyone records on their phone · The whole cast rehearses · One link · Everyone records
+            on their phone · The whole cast rehearses ·
+          </span>
+        </p>
+      </div>
+
+      <div class="drape drape--left" aria-hidden="true"></div>
+      <div class="drape drape--right" aria-hidden="true"></div>
+      <div class="billing" aria-hidden="true">
+        <span>Now playing</span>
+        <strong>Offbooked</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="ob-test">
+    <header data-reveal>
+      <p class="ob-test__label">Rule one of the rehearsal room</p>
+      <h3>The two-actor test.</h3>
+      <p>
+        Every feature has to work for both of these people, with no extra taps. A feature already
+        got pulled for failing it: nobody with their screen off can answer a prompt.
+      </p>
+    </header>
+    <div class="ob-test__pair">
+      <article class="night" data-reveal>
+        <div class="wave" aria-hidden="true">
+          {Array.from({ length: 22 }, (_, i) => (
+            <i style={`--i: ${i}`}></i>
+          ))}
+        </div>
+        <h4>On the bus, screen off.</h4>
+        <p>Hears every scene in the voices of the people they’ll be on stage with.</p>
+      </article>
+      <article class="lamp" data-reveal style="--reveal-delay: 120ms">
+        <p class="lamp__quote">
+          <span>HORATIO</span>
+          <mark>The same, my lord, and your poor servant ever.</mark>
+        </p>
+        <h4>In bed, screen on.</h4>
+        <p>Reads along, with their own lines under the highlighter.</p>
+      </article>
+    </div>
+  </div>
+
+  <div class="ob-run">
+    <div class="ob-run__lines" data-lines>
+      <p class="ob-test__label">Macbeth 2.2, from the Offbooked demo</p>
+      {lines.map(([who, text]) => (
+        <p class="line" data-line>
+          <span>{who}</span>
+          <q>{text}</q>
+        </p>
+      ))}
+    </div>
+    <div class="ob-run__close" data-reveal>
+      <p class="proof">Used by casts in British Columbia and Nova Scotia for real productions.</p>
+      <p>
+        A director uploads a script and shares one link. Actors open it in their phone’s browser and
+        record. No store, no install, no account. Free during the public beta.
+      </p>
+      <a href="https://offbooked.com/">
+        <span>Try it at offbooked.com</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ob {
+    --paper: #f3ecdd;
+    --ink: #1d1c1a;
+    --red: #a8382a;
+    --red-deep: #6f1f17;
+    --marker: #f3d98b;
+    position: relative;
+    z-index: 2;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Newsreader Variable', Georgia, serif;
+  }
+
+  .ob-reveal {
+    height: 300svh;
+  }
+
+  .ob-stage {
+    --u: min(1vw, 1.62svh);
+    --ease-open: calc(var(--p, 1) * var(--p, 1) * (3 - 2 * var(--p, 1)));
+    --open: clamp(0, calc((var(--p, 1) - 0.08) * 1.7), 1);
+    position: sticky;
+    top: 0;
+    height: 100lvh;
+    overflow: clip;
+    background: var(--paper);
+  }
+
+  .collage {
+    position: absolute;
+    inset: 0;
+    background-color: var(--paper);
+    background-image: radial-gradient(rgb(29 28 26 / 7%) 0.5px, transparent 0.6px);
+    background-size: 5px 5px;
+  }
+
+  [data-depth] {
+    --move: calc(var(--mx, 0) * var(--d, 0) * 1px);
+    --lift: calc(var(--my, 0) * var(--d, 0) * 1px);
+    translate: var(--move) var(--lift);
+  }
+
+  .slab {
+    position: absolute;
+    inset: -2% 37% -2% -2%;
+    background: var(--red);
+    clip-path: polygon(
+      0 0,
+      99% 0,
+      97% 7%,
+      100% 13%,
+      96% 21%,
+      99% 30%,
+      95% 38%,
+      98% 46%,
+      94% 55%,
+      98% 63%,
+      95% 71%,
+      99% 80%,
+      96% 89%,
+      99% 100%,
+      0 100%
+    );
+  }
+
+  .halftone {
+    position: absolute;
+    top: 8%;
+    right: 3%;
+    width: calc(var(--u) * 42);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(var(--red) 34%, transparent 36%) 0 0 / 0.75rem 0.75rem;
+    opacity: 0.55;
+  }
+
+  .kicker {
+    position: absolute;
+    top: calc(var(--u) * 7);
+    left: calc(var(--gutter) + 1.5vw);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    position: absolute;
+    top: calc(var(--u) * 10);
+    left: calc(var(--gutter) + 1.5vw);
+    width: calc(var(--u) * 43);
+    color: var(--paper);
+    font-size: calc(var(--u) * 8.4);
+    font-weight: 500;
+    line-height: 0.93;
+    letter-spacing: -0.035em;
+  }
+
+  h2 em {
+    display: inline-block;
+    padding: 0 0.1em 0.04em;
+    background: var(--marker);
+    color: var(--red-deep);
+    font-weight: 500;
+    rotate: -1.5deg;
+  }
+
+  .script {
+    position: absolute;
+    top: 7%;
+    right: 24%;
+    width: calc(var(--u) * 27);
+    padding: calc(var(--u) * 2);
+    background: #fffdf7;
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 22%);
+    font-size: calc(var(--u) * 1.25);
+    line-height: 1.32;
+    rotate: 5deg;
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% 92%,
+      96% 95%,
+      90% 92%,
+      80% 97%,
+      70% 94%,
+      58% 99%,
+      44% 95%,
+      30% 98%,
+      16% 94%,
+      6% 98%,
+      0 94%
+    );
+  }
+
+  .script p {
+    margin-bottom: 0.65em;
+  }
+
+  .script b {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .script__scene {
+    font-style: italic;
+    font-size: 1.3em;
+  }
+
+  .script__mine {
+    padding: 0.25em 0.45em;
+    background: var(--marker);
+  }
+
+  .handset {
+    position: absolute;
+    width: calc(var(--u) * 19.5);
+    padding: calc(var(--u) * 0.55);
+    border-radius: calc(var(--u) * 3);
+    background: #161514;
+    box-shadow: 0 1.5rem 3rem rgb(29 16 12 / 42%);
+    scale: calc(0.9 + var(--open) * 0.1);
+  }
+
+  .handset img {
+    border-radius: calc(var(--u) * 2.5);
+  }
+
+  .handset--1 {
+    z-index: 3;
+    top: 16%;
+    right: 26%;
+    rotate: -7deg;
+  }
+
+  .handset--2 {
+    z-index: 4;
+    top: 11%;
+    right: 12%;
+    rotate: 3deg;
+  }
+
+  .handset--3 {
+    z-index: 2;
+    top: 24%;
+    right: -3%;
+    rotate: 9deg;
+  }
+
+  .stamp {
+    position: absolute;
+    z-index: 6;
+    bottom: 13%;
+    right: 41%;
+    width: calc(var(--u) * 13);
+    animation: turn 18s linear infinite;
+  }
+
+  .stamp circle {
+    fill: var(--marker);
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .stamp text {
+    fill: var(--ink);
+    font-family: var(--mono);
+    font-size: 15.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .stamp .stamp__mid {
+    font-size: 44px;
+  }
+
+  @keyframes turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  .tape {
+    position: absolute;
+    z-index: 6;
+    top: 6%;
+    right: 4%;
+    padding: 0.35rem 1.1rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: clamp(0.72rem, 1vw, 0.92rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    rotate: 6deg;
+  }
+
+  .ticket {
+    position: absolute;
+    z-index: 6;
+    bottom: 13%;
+    left: calc(var(--gutter) + 1.5vw);
+    display: grid;
+    padding: 0.65rem 1.4rem 0.75rem 1.1rem;
+    background: var(--paper);
+    color: var(--ink);
+    text-decoration: none;
+    rotate: -2deg;
+    mask:
+      radial-gradient(circle 0.55rem at 100% 50%, transparent 98%, #000) right,
+      radial-gradient(circle 0.55rem at 0 50%, transparent 98%, #000) left;
+    mask-size: 51% 100%;
+    mask-repeat: no-repeat;
+    transition: rotate 180ms var(--ease);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ticket:hover {
+      rotate: 1deg;
+    }
+  }
+
+  /* The ticket's mask would clip an outline, so its focus ring is drawn inside the paper. */
+  .ticket:focus-visible {
+    outline-offset: -0.55rem;
+  }
+
+  .ticket__small {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ticket__big {
+    font-size: clamp(1.45rem, 2.6vw, 2.25rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .marquee {
+    position: absolute;
+    z-index: 7;
+    right: 0;
+    bottom: calc(100lvh - 100svh);
+    left: 0;
+    overflow: hidden;
+    padding: 0.5rem 0;
+    background: var(--marker);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .marquee span {
+    display: inline-block;
+    animation: slide 40s linear infinite;
+  }
+
+  @keyframes slide {
+    to {
+      transform: translateX(-33.33%);
+    }
+  }
+
+  /* Velvet: folds bunch up at the wings as the drapes open. */
+  .drape {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    bottom: 0;
+    width: 51%;
+    background:
+      linear-gradient(transparent 92%, #d8a93c 92%, #d8a93c 93%, transparent 93%),
+      linear-gradient(rgb(0 0 0 / 18%), transparent 25%, transparent 70%, rgb(0 0 0 / 35%)),
+      repeating-linear-gradient(
+        90deg,
+        #5e1612 0,
+        #8d241c 3vw,
+        #b3372a 4.4vw,
+        #8d241c 6vw,
+        #5e1612 8.5vw
+      );
+    will-change: transform;
+  }
+
+  .drape--left {
+    left: 0;
+    transform-origin: 0 50%;
+    transform: scaleX(calc(1 - var(--open) * 0.95));
+  }
+
+  .drape--right {
+    right: 0;
+    transform-origin: 100% 50%;
+    transform: scaleX(calc(1 - var(--open) * 0.95));
+  }
+
+  .billing {
+    position: absolute;
+    z-index: 11;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.4rem;
+    color: #f7ecd2;
+    text-align: center;
+    opacity: calc(1 - var(--open) * 3.4);
+    pointer-events: none;
+  }
+
+  .billing span {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  .billing strong {
+    font-size: clamp(4rem, 15vw, 15rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .ob-test {
+    padding: clamp(4.5rem, 10vw, 9rem) var(--gutter);
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .ob-test header {
+    max-width: 48rem;
+    margin-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .ob-test__label {
+    margin-bottom: 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    margin-bottom: 1rem;
+    font-size: clamp(3rem, 8vw, 7.5rem);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  .ob-test header p:last-child {
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    line-height: 1.3;
+  }
+
+  .ob-test__pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  article {
+    display: grid;
+    align-content: end;
+    gap: 0.4rem;
+    min-height: clamp(20rem, 36vw, 30rem);
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  h4 {
+    margin-top: auto;
+    font-size: clamp(1.7rem, 3.4vw, 2.9rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  .night {
+    background: #0f0d0c;
+    color: #e9e2d2;
+  }
+
+  .wave {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    align-self: center;
+    height: 9rem;
+  }
+
+  .wave i {
+    flex: 1;
+    max-width: 0.6rem;
+    height: 100%;
+    border-radius: 99rem;
+    background: var(--marker);
+    transform: scaleY(0.2);
+    animation: speak 1.3s ease-in-out infinite alternate;
+    animation-delay: calc(var(--i) * -170ms);
+  }
+
+  @keyframes speak {
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  .lamp {
+    background: radial-gradient(circle at 80% 0, #ffe9b0, #f6cf7f 45%, #e2a24d);
+    color: var(--ink);
+  }
+
+  .lamp__quote {
+    align-self: center;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    line-height: 1.15;
+  }
+
+  .lamp__quote span {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+
+  mark {
+    background: var(--paper);
+    color: inherit;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding: 0 0.15em;
+  }
+
+  .ob-run {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: end;
+    padding: clamp(4.5rem, 10vw, 9rem) var(--gutter);
+  }
+
+  .line {
+    margin-bottom: 1.1rem;
+    color: rgb(29 28 26 / 28%);
+    font-size: clamp(1.8rem, 4.4vw, 4rem);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    transition: color 280ms;
+  }
+
+  .line q {
+    quotes: none;
+    background: linear-gradient(var(--marker), var(--marker)) no-repeat 0 88% / 0 0.42em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    transition: background-size 600ms var(--ease);
+  }
+
+  .line span {
+    display: block;
+    color: var(--red);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+  }
+
+  .line[data-on] {
+    color: var(--ink);
+  }
+
+  .line[data-on] q {
+    background-size: 100% 0.42em;
+  }
+
+  .ob-run__close {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .proof {
+    font-size: clamp(1.8rem, 3.2vw, 2.9rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .ob-run__close a {
+    display: inline-flex;
+    gap: 1rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 99rem;
+    background: var(--red);
+    color: #fff;
+    font-family: var(--sans);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 180ms;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ob-run__close a:hover {
+      background: var(--red-deep);
+    }
+  }
+
+  @media (max-width: 760px), (max-aspect-ratio: 1/1) {
+    .ob-stage {
+      --u: min(2.45vw, 1.14svh);
+    }
+
+    .slab {
+      inset: -2% -2% 55% -2%;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 94%,
+        90% 98%,
+        78% 93%,
+        64% 99%,
+        50% 94%,
+        36% 100%,
+        22% 94%,
+        10% 98%,
+        0 93%
+      );
+    }
+
+    .kicker {
+      top: 4.5rem;
+      left: 1.5rem;
+      font-size: 0.72rem;
+    }
+
+    h2 {
+      top: 6.2rem;
+      left: 1.5rem;
+      width: calc(100% - 3rem);
+      font-size: clamp(2.7rem, 13vw, 6.5rem);
+    }
+
+    .halftone {
+      top: auto;
+      bottom: 6%;
+      left: -14%;
+      right: auto;
+      width: 70%;
+    }
+
+    .script {
+      top: 46%;
+      right: auto;
+      left: -8%;
+      width: 44%;
+      font-size: 0.72rem;
+      rotate: -6deg;
+    }
+
+    .handset {
+      width: 44%;
+      padding: 0.3rem;
+      border-radius: 1.5rem;
+    }
+
+    .handset img {
+      border-radius: 1.25rem;
+    }
+
+    .handset--1 {
+      top: 43%;
+      right: auto;
+      left: 5%;
+    }
+
+    .handset--2 {
+      top: 40%;
+      right: 2%;
+    }
+
+    .handset--3 {
+      display: none;
+    }
+
+    .stamp {
+      top: 37%;
+      right: 2%;
+      bottom: auto;
+      width: 5.75rem;
+    }
+
+    .tape {
+      top: auto;
+      bottom: 12.5%;
+      right: -1%;
+      font-size: 0.68rem;
+    }
+
+    .ticket {
+      bottom: 3.1rem;
+      left: 1.25rem;
+    }
+
+    .ob-test__pair,
+    .ob-run {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    @media (max-width: 370px) {
+      .tape {
+        display: none;
+      }
+    }
+
+    article {
+      min-height: 19rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .ob-reveal {
+      height: auto;
+    }
+
+    .ob-stage {
+      position: relative;
+    }
+
+    .drape,
+    .billing {
+      display: none;
+    }
+
+    .stamp,
+    .marquee span {
+      animation: none;
+    }
+
+    .wave i {
+      animation: none;
+      transform: scaleY(0.55);
+    }
+
+    .line {
+      color: var(--ink);
+    }
+  }
+</style>

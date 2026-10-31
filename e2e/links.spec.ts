@@ -26,6 +26,7 @@ test('no page references a broken internal URL', async ({ page, request, baseURL
       collect('link[href]', 'href');
       collect('img[src], video[src], source[src], script[src]', 'src');
       collect('video[poster]', 'poster');
+      collect('video[data-src]', 'data-src');
       collect('meta[property="og:image"], meta[name="twitter:image"]', 'content');
       collect('meta[property="og:url"]', 'content');
       document.querySelectorAll('img[srcset], source[srcset]').forEach((element) => {

@@ -1,0 +1,348 @@
+---
+const worlds = [
+  {
+    name: 'AI Build Night',
+    host: 'aibuildnight.ca',
+    href: 'https://aibuildnight.ca/',
+    image: 'build-night',
+  },
+  {
+    name: 'Play by the Sandbox',
+    host: 'playbythesandbox.ca',
+    href: 'https://www.playbythesandbox.ca/',
+    image: 'sandbox',
+  },
+  {
+    name: 'Offbooked',
+    host: 'offbooked.com',
+    href: 'https://offbooked.com/',
+    image: 'offbooked',
+  },
+  {
+    name: 'Parkdex',
+    host: 'parkdex.app',
+    href: 'https://parkdex.app/',
+    image: 'parkdex',
+  },
+];
+const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they use.'];
+---
+
+<section id="rules" class="rules" data-track data-audience="real people" aria-label="How I work">
+  <div class="rules__stage">
+    {rules.map((rule, index) => (
+      <p style={`--n: ${index}`}>{rule}</p>
+    ))}
+  </div>
+</section>
+
+<section id="go" class="go" data-audience="you" aria-labelledby="go-title">
+  <header>
+    <h2 id="go-title">All of it is live. Go poke it.</h2>
+  </header>
+  <ol class="wash-list" data-wash-list>
+    {worlds.map(({ name, host, href, image }) => (
+      <li
+        data-wash
+        style={`--wash-small: url(/media/index/${image}-900.webp); --wash-large: url(/media/index/${image}-1800.webp)`}
+      >
+        <a href={href}>
+          <span class="wash-list__name">{name}</span>
+          <span class="wash-list__host">{host}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 18 18 6M8 6h10v10" />
+          </svg>
+        </a>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<footer class="contact" data-audience="you">
+  <p>Know someone with a problem worth solving?</p>
+  <a class="contact__mail" href="mailto:contact@nathanpannell.com">
+    contact@nathanpannell.com
+  </a>
+  <ul>
+    <li>
+      <a href="https://www.github.com/nathanpannell">GitHub</a>
+    </li>
+    <li>
+      <a href="https://www.linkedin.com/in/nathanpannell">LinkedIn</a>
+    </li>
+    <li>
+      <a href="https://www.x.com/nwpannell">X</a>
+    </li>
+  </ul>
+  <p class="contact__foot">Nathan Pannell · Victoria, BC</p>
+</footer>
+
+<style>
+  .rules {
+    position: relative;
+    z-index: 2;
+    height: 260svh;
+    background: var(--bone);
+    color: var(--ink);
+  }
+
+  .rules__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: clip;
+    display: grid;
+    align-content: center;
+    gap: clamp(0.5rem, 2svh, 1.5rem);
+  }
+
+  .rules p {
+    --drift: calc(clamp(-0.17, var(--p, 0.5) - 0.5, 0.17) - (var(--p, 0.5) - 0.5));
+    padding-inline: var(--gutter);
+    font-size: clamp(1.9rem, 8.1vw, 11rem);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+    translate: calc(var(--drift) * (var(--n) * 2 - 2.4) * 150vw) 0;
+  }
+
+  .rules p:nth-child(2) {
+    color: var(--signal);
+  }
+
+  .go {
+    position: relative;
+    z-index: 2;
+    padding: clamp(5rem, 11vw, 9rem) 0 0;
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  header {
+    padding: 0 var(--gutter) clamp(2rem, 5vw, 4rem);
+  }
+
+  h2 {
+    max-width: 14ch;
+    font-size: clamp(2.9rem, 8vw, 8rem);
+    font-weight: 900;
+    line-height: 0.93;
+    letter-spacing: -0.045em;
+  }
+
+  /* Carried over from the old homepage: the row's whole background fills with a full-colour image. */
+  .wash-list {
+    border-top: 1px solid #33383a;
+  }
+
+  .wash-list li {
+    --wash-image: var(--wash-small);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-bottom: 1px solid #33383a;
+  }
+
+  @media (min-width: 900px) {
+    .wash-list li {
+      --wash-image: var(--wash-large);
+    }
+  }
+
+  .wash-list li::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgb(0 0 0 / 66%), rgb(0 0 0 / 6%) 56%, rgb(0 0 0 / 48%)),
+      var(--wash-image) center / cover;
+    opacity: 0;
+    transform: scale(1.035);
+    transition:
+      opacity 260ms var(--ease),
+      transform 520ms var(--ease);
+  }
+
+  .wash-list a {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 1rem;
+    align-items: center;
+    min-height: clamp(7.5rem, 13vw, 12rem);
+    padding: 1.25rem var(--gutter);
+    color: var(--bone);
+    text-decoration: none;
+  }
+
+  .wash-list__name {
+    font-size: clamp(2.1rem, 6vw, 6rem);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    transition: transform 220ms var(--ease);
+  }
+
+  .wash-list__host {
+    color: #a8acaa;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    transition: color 180ms;
+  }
+
+  .wash-list svg {
+    width: 1.75rem;
+    height: 1.75rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+    transition: transform 220ms var(--ease);
+  }
+
+  .wash-list li:has(a:focus-visible)::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .wash-list li:has(a:focus-visible) .wash-list__host {
+    color: #fff;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .wash-list li:hover::before {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .wash-list li:hover .wash-list__host {
+      color: #fff;
+    }
+
+    .wash-list li:hover .wash-list__name {
+      transform: translateX(0.6rem);
+    }
+
+    .wash-list li:hover svg {
+      transform: translate(0.3rem, -0.3rem);
+    }
+  }
+
+  .wash-list li[data-active]::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .wash-list li[data-active] .wash-list__host {
+    color: #fff;
+  }
+
+  .wash-list li[data-active] .wash-list__name {
+    transform: translateX(0.25rem);
+  }
+
+  .contact {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 1rem;
+    padding: clamp(5rem, 11vw, 9rem) var(--gutter) 2rem;
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  .contact > p:first-child {
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    font-weight: 500;
+  }
+
+  .contact__mail {
+    width: fit-content;
+    max-width: 100%;
+    color: var(--signal);
+    font-size: clamp(1.15rem, 5.9vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    text-decoration: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .contact__mail:hover {
+      text-decoration: underline;
+      text-decoration-thickness: 0.06em;
+      text-underline-offset: 0.1em;
+    }
+  }
+
+  .contact ul {
+    display: flex;
+    gap: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+  }
+
+  .contact li a {
+    display: inline-block;
+    padding: 0.4rem 0;
+  }
+
+  .contact__foot {
+    margin-top: 3rem;
+    color: #8d918f;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 640px) {
+    .rules p {
+      font-size: 14.5vw;
+      white-space: normal;
+    }
+
+    .wash-list a {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.2rem 1rem;
+    }
+
+    .wash-list__name {
+      grid-column: 1;
+    }
+
+    .wash-list__host {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .wash-list svg {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .rules {
+      height: auto;
+      padding-block: 5rem;
+    }
+
+    .rules__stage {
+      position: static;
+      height: auto;
+    }
+
+    .rules p {
+      translate: none;
+      white-space: normal;
+      font-size: clamp(2.6rem, 8vw, 7rem);
+    }
+
+    .wash-list li::before {
+      transform: none;
+    }
+  }
+</style>

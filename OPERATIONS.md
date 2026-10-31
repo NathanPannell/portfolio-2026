@@ -30,7 +30,7 @@ Run `npx playwright install chromium` once before the first local e2e run.
 | Lint | `eslint --max-warnings=0 .` |
 | Types | `astro check` |
 | Build | `npm run build`: the content contract, `astro check`, `astro build`, then the generated-output SEO contract |
-| E2E | Playwright (desktop and mobile Chromium) against `astro preview` of the Build job's `dist/`: every sitemap route renders with no console errors or failed requests, the 404 page, the main navigation journeys, and a crawl that fails on any broken internal link, asset, or `#fragment` |
+| E2E | Playwright (desktop and mobile Chromium) against `astro preview` of the Build job's `dist/`: every sitemap route renders with no console errors or failed requests, every interaction, no sideways scroll at six widths, reduced motion, no JavaScript, the 404 page, and a crawl that fails on any broken internal link, asset, or `#fragment` |
 | Security | `npm audit --audit-level=high`, no committed `.env` files, and a gitleaks scan of the full git history |
 
 There is no unit-test coverage job: the site has no unit-testable modules, so the contracts and the e2e suite are its tests. There is no database job because the site has no database. The workflow says the same in a comment.
@@ -110,7 +110,7 @@ For interface changes:
 - Test the deployed staging URL with browser-use.
 - Check phone, intermediate, desktop, and wide layouts.
 - Verify keyboard focus, touch behavior, reduced motion, media height caps, and console errors where relevant.
-- If project-card interaction changes, test Destination, Back, then Scroll. Confirm no card keeps focus and centered selection resumes.
+- If a scroll scene changes, scroll it both ways on a real phone width and confirm its reduced-motion layout.
 - If device mockups change, check chassis visibility at the smallest shipped size.
 - If content changes, check the generated route and social metadata.
 
@@ -118,15 +118,13 @@ For interface changes:
 
 The content contract protects:
 
-- existing featured projects and their order
-- required legacy URLs
-- contiguous project order values
-- required project presentation fields
-- writing descriptions
-- no public drafts or underscore routes
-- expected generated static routes
-
-Additive projects and essays should not require editing a hard-coded list, except when intentionally changing the established first five project order.
+- the order of the homepage's sections
+- the outbound links that were checked against the live products
+- no Offbooked store link or price, and no Parkdex tester link
+- the image-fill interaction and its touch equivalent
+- a reduced-motion layout in every world
+- the media size budget, and that every referenced media file exists
+- that the build contains only the homepage and the 404 page
 
 ## Recovery and troubleshooting
 
@@ -134,11 +132,10 @@ Additive projects and essays should not require editing a hard-coded list, excep
 - A successful `main` deployment does not prove the live routes have updated. Check the rendered site at `www.nathanpannell.com` and confirm `nathanpannell.com` returns HTTP 308 to the `www` URL.
 - The static build may print Rollup advisory messages about Astro's internal `use astro:head-inject` directive for MDX. At the current toolchain version, these do not fail the build or affect generated routes.
 - If a deployed route appears stale, verify the branch and commit first, then wait for Cloudflare's Git build before attempting a manual deployment.
-- If the browser Back state appears stuck, inspect both `project-polaroids.ts` and `navigation-focus.ts` and test BFCache behavior rather than adding more CSS focus overrides.
 
 ## Technical SEO behavior
 
-The built HTML uses production canonicals on every intended content route. All six standalone essays have specific descriptions, image alt text, social previews, and BlogPosting structured data with an explicit author. The homepage identifies Nathan and the website with Person and WebSite structured data. The 404 output has noindex and omits canonical and og:url.
+The built homepage has one production canonical, a 1200x630 share card, and Person and WebSite structured data. The 404 output has noindex and omits canonical and og:url. Run the `site-metadata` skill's audit after every deploy: with `--allow-noindex` against staging, and without it against production.
 
 Cloudflare `_headers` excludes Pages diagnostic hosts, including per-PR Pages hosts, and the staging custom domain from indexing with host-scoped X-Robots-Tag rules. The production `www` host remains indexable. Robots.txt continues allowing crawlers so they can read those noindex responses.
 

@@ -1,16 +1,16 @@
 # Portfolio 2026 handoff
 
-Last updated: September 23, 2026.
+Last updated: October 31, 2026.
 
 This is the first file a new chat should read. It records the current working state and points to the durable sources of truth.
 
 ## Read in this order
 
-1. `CONTEXT.md` for current state, branch safety, and unfinished work.
-2. `PRODUCT.md` for audience, positioning, scope, and factual constraints.
-3. `DESIGN.md` for the visual world, responsive rules, motion, and interaction behavior.
-4. `CONTENT.md` before adding or editing projects, writing, or legacy posts.
-5. `ARCHITECTURE.md` before changing routing, layouts, shared components, or interaction scripts.
+1. `CONTEXT.md` for current state, branch safety, and settled decisions.
+2. `PRODUCT.md` for audience, positioning, and factual constraints.
+3. `DESIGN.md` for each world's look, motion, and responsive rules.
+4. `CONTENT.md` before changing copy or claims.
+5. `ARCHITECTURE.md` before changing the page structure or scripts.
 6. `OPERATIONS.md` before building, testing, deploying, or promoting staging to production.
 7. `ASSETS.md` before replacing or creating media.
 
@@ -18,84 +18,44 @@ This is the first file a new chat should read. It records the current working st
 
 - Repository: `NathanPannell/portfolio-2026`
 - Local workspace: `C:\repo\portfolio-2026-workspace`
-- Framework: Astro 7 with MDX and static output
-- Hosting target: Cloudflare Pages
-- Intended canonical URL: <https://www.nathanpannell.com>
-- Current Cloudflare production project: <https://portfolio-2026-ady.pages.dev>
-- Staging URL: <https://staging.nathanpannell.com>
-- Apex URL: <https://nathanpannell.com> redirects to `www.nathanpannell.com` with HTTP 308.
+- Framework: Astro 7, static output, no client framework
+- Hosting: Cloudflare Pages. `staging` deploys to <https://staging.nathanpannell.com>; `main` deploys to <https://www.nathanpannell.com>.
+- The apex <https://nathanpannell.com> redirects to `www` with HTTP 308.
 
-### Branches
+`staging` carries the October 2026 rebuild: one interactive page. `main` still carries the older multi-page portfolio until Nathan asks to promote. Do not update `main` without that request.
 
-- `main` is the Cloudflare production branch. At this handoff, `origin/main` is `72de61d` (`Merge pull request #3 from NathanPannell/staging`).
-- `staging` is the shared review and QA branch. At this handoff, `origin/staging` is `53e0971` (`Merge pull request #2 from NathanPannell/codex/portfolio-parkdex-web-links`).
-- Do not update `main` or production without Nathan explicitly asking to promote staging.
+`portfolio-2026.pages.dev` is unrelated to this repository. Never deploy to it or link to it.
 
-Cloudflare deploys the persistent `staging` and `main` branches through Git integration. The `www.nathanpannell.com` production domain is live on Cloudflare Pages. The apex domain remains on Vercel and responds with HTTP 308 to the `www` URL.
-
-The delivery workflow starts with a same-repository draft PR targeting `staging`, branched from the latest `origin/staging`. There are no preview deployments. The PR must pass the checks in `.github/workflows/ci.yml`, run locally, on its head commit (GitHub CI runs only for PRs and pushes to `main`): format, lint, types, the build with its content and SEO contracts, Playwright e2e against `astro preview`, dependency audit, and secret scan. See `OPERATIONS.md` for commands.
-
-After review, mark the PR ready and squash-merge it into `staging`. Cloudflare Pages deploys `staging` to `staging.nathanpannell.com`; confirm it serves the merge commit and browser-test the affected page there. For an explicitly authorized production release, open a promotion PR from the reviewed `staging` state to `main`, merge it, and verify the production custom domain.
-
-`portfolio-2026.pages.dev` is unrelated to this repository and currently identifies itself as “sujith varughese.” Never deploy to, link to, or treat that hostname as Nathan's portfolio.
-
-The workspace contains an untracked `.codex-remote-attachments/` directory owned by the user. Do not add, move, delete, or modify it.
-
-The ignored `.impeccable/` directory contains historical review material and local reference artifacts. Treat `PRODUCT.md`, `DESIGN.md`, this handoff, and the current implementation as authoritative. Old critiques and mockups are history, not active instructions.
+The workspace may contain an untracked `.codex-remote-attachments/` directory owned by the user. Do not add, move, delete, or modify it.
 
 ## What is settled
 
-- The hero uses Nathan's boat photograph and the line “I build products that make life more fun.”
-- The homepage sequence is hero, Parkdex, project Polaroids, featured writing, concise contact footer.
-- Parkdex is the lead project and the clearest expression of the portfolio's point of view.
-- Email is the primary contact route. GitHub, X, and LinkedIn are secondary.
-- Mobile navigation contains only Nathan Pannell and Email me. Do not restore a hamburger menu.
-- There is no About, résumé, work-history, RSS, Atom, dark-mode, or generic experiments section.
-- Projects appear directly on the homepage in this order: Parkdex, Doxxme, Commons, Go Fetch, Cup of Sugar.
-- Project pages lead with a project-specific artifact, concise story, stable metadata, and evidence. They do not use a generic Vancouver Island photograph as the title background.
-- Writing contains non-project essays only. Project posts are represented by project pages.
-- Older project writing remains available within the matching project page under “Read the original build notes.” Other legacy posts retain flat direct URLs.
-- Underscore-prefixed content and entries with `draft: true` must never receive public routes.
-- The dedicated Writing page is the intentional dark room. The rest of the site has no alternate theme.
-- Parkdex is presented as the mobile field app. The homepage gallery is three phone frames with field app captures copied from the Parkdex landing page. There is no laptop frame and no link to `web.parkdex.app`.
+- One page: a hero, then four worlds in the owner's order, a short set of working rules, a link index, and a contact footer.
+- AI Build Night leads. Offbooked is the one presented as a possible business. Parkdex is a labelled side quest. Play by the Sandbox is shown as a website Nathan designed.
+- The site positions Nathan as someone who builds for real people, tests with real users and builds an AI community. Avoid nature-guy framing.
+- Every world has its own fonts, colours, motion, and transition in. Do not unify them into one card template.
+- The index keeps one interaction from the old homepage: a row's whole background fills with a full-colour image. Keep hover, keyboard focus, and the touch equivalent together.
+- Old project and essay URLs redirect home through `public/_redirects`. The old content lives in git history and on production until promotion.
 
 ## Interaction behavior that must be preserved
 
-- Project cards are warm-white instant-film prints in every state. Brand colors may affect reflections or shadows, never the paper surface.
-- On touch, the card nearest the viewport center lifts, scales, and receives gloss. It keeps its resting angle and does not depend on hover.
-- Fine pointers may add bounded 3D tilt and pointer-following glare.
-- Touch taps must not leave sticky focus. Returning from a project through browser Back must clear pointer-created focus and resume centered-card selection when scrolling.
-- `pagehide` must not abort the interaction controller when `event.persisted` is true. `pageshow` resumes the controller for back-forward cache restores.
-- Homepage writing rows use the same center-selection idea with an image wash.
-- Reduced motion removes entrance animation, lift, scale, tilt, and glare without hiding information.
-- Every project image, video, and embed must stay below the visible viewport height.
-- Parkdex device frames must remain visibly matte, dark, and thick enough to read as hardware at the smallest shipped size. Do not add chrome-like gradients.
+- Every animation has a still fallback under `prefers-reduced-motion`: pinned scenes become normal flow and all text shows at once.
+- With JavaScript off, every section, heading, and link is still present.
+- No width scrolls sideways.
+- Hover effects sit behind `(hover: hover) and (pointer: fine)`. Touch gets its own equivalent.
+- Keyboard focus reaches every link, and focusing a Parkdex link scrolls the side-scrolling level to it.
+- The Plant! button hides at the end of the Parkdex level so it can't cover the links.
 
-## Current content and asset follow-ups
+## Open items
 
-- When the Parkdex landing page changes its field app captures or facts, mirror them here and update `ASSETS.md` with the new provenance.
-- Nathan may rewrite project copy later. Preserve facts, dates, collaborators, results, and links while keeping the copy short.
-- Do not invent testimonials, users, revenue, customers, or metrics.
-- Confirm Cloudflare Web Analytics configuration and verify exactly one `cdn-cgi/rum` beacon on the production `www` domain before claiming analytics is active.
-
-## Last verified state
-
-The full UI verification record at `2bfb664` is historical and predates the current branch heads. It records that revision passing:
-
-- `npm run build`, including the content contract, Astro diagnostics, and static generation
-- Astro diagnostics with zero errors, warnings, or hints
-- Impeccable's mechanical scan with no blocking findings
-- Live Cloudflare checks at 320px, 390px, standard desktop, and wide desktop sizes
-- Homepage, all project layouts, Writing, article, legacy route, and 404 journeys
-- Project destination, Back, then Scroll behavior with one centered card active and no retained focus
-- Browser console review with no runtime errors on the tested paths
+- Confirm Cloudflare Web Analytics configuration before claiming analytics is active. See `OPERATIONS.md`.
+- The AI Build Night section says Night 002's date is coming soon. Update it when the date is public.
+- Offbooked has no store listing. Link one only once it is live, and show prices only when they can be paid.
 
 ## Starting a new task safely
 
 1. Run `git status --short` and `git branch -vv` before editing.
 2. Preserve unrelated changes and the user-owned attachment directory.
-3. Create a feature branch from the latest `staging` commit and use the draft PR and CI flow in `OPERATIONS.md`. Do not work directly on `main`.
-4. Read the documentation relevant to the requested surface.
-5. For UI work, compare the deployed URL before editing and verify the affected journey on deployed staging afterward.
-6. Run the CI checks locally (`npm run format:check`, `npm run lint`, `npm run build`, `npm run test:e2e`) before pushing. Keep temporary files in `.claude/tmp/<branch>/`.
-7. Do not promote staging to `main` without explicit approval.
+3. Create a feature branch from the latest `staging` commit and use the draft PR and local gate in `OPERATIONS.md`. Do not work directly on `main`.
+4. For UI work, verify the affected journey on deployed staging afterward, at desktop and phone widths.
+5. Do not promote staging to `main` without explicit approval.

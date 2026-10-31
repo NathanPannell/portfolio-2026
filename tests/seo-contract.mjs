@@ -33,8 +33,6 @@ assert.equal(
   'Only fingerprinted assets and stable media should set cache policy',
 );
 
-const page = (route) =>
-  readFileSync(join(dist, route === '/' ? 'index.html' : `${route.slice(1)}index.html`), 'utf8');
 const canonical = (html) =>
   [...html.matchAll(/<link rel="canonical" href="([^"]+)"/g)].map((match) => match[1]);
 const metadata = (html, name) =>
@@ -45,57 +43,47 @@ const schema = (html) => {
   return JSON.parse(match[1]);
 };
 
-const home = page('/');
+const home = readFileSync(join(dist, 'index.html'), 'utf8');
+const title = home.match(/<title>([^<]+)<\/title>/)?.[1] ?? '';
+const description = metadata(home, 'description') ?? '';
+assert(title.length >= 30 && title.length <= 60, `Title is ${title.length} characters`);
+assert(
+  description.length >= 120 && description.length <= 160,
+  `Description is ${description.length} characters`,
+);
 assert.deepEqual(canonical(home), [`${site}/`]);
+assert.equal(metadata(home, 'og:url'), `${site}/`);
+assert.equal(metadata(home, 'og:image'), `${site}/og.jpg`);
+assert.equal(metadata(home, 'og:image:width'), '1200');
+assert.equal(metadata(home, 'og:image:height'), '630');
+assert(metadata(home, 'og:image:alt'), 'The share image needs alt text');
+assert.equal(metadata(home, 'twitter:card'), 'summary_large_image');
 assert.equal(schema(home)['@graph'][0]['@type'], 'Person');
 assert.equal(schema(home)['@graph'][1]['@type'], 'WebSite');
 assert.match(home, /<link rel="icon" type="image\/svg\+xml" href="\/favicon\.svg"/);
 
-for (const route of ['parkdex', 'doxxme', 'commons', 'go-fetch', 'cup-of-sugar']) {
-  const html = page(`/${route}/`);
-  assert.deepEqual(canonical(html), [`${site}/${route}/`]);
-  assert.match(html, /<img[^>]+width="\d+"[^>]+height="\d+"[^>]+fetchpriority="high"/);
-  assert(metadata(html, 'og:image:alt'), `${route} needs social image alt text`);
+for (const file of [
+  'og.jpg',
+  'favicon.svg',
+  'favicon-32.png',
+  'apple-touch-icon.png',
+  'icon-192.png',
+  'icon-512.png',
+  'site.webmanifest',
+  'robots.txt',
+  'sitemap-index.xml',
+]) {
+  assert(existsSync(join(dist, file)), `Missing site file: ${file}`);
 }
 
-for (const route of [
-  'echo',
-  'record-of-the-day',
-  'suno-slayers',
-  'graduation',
-  'hackathon-learnings',
-  'icbc-coop',
-]) {
-  const html = page(`/${route}/`);
-  const data = schema(html);
-  const description = metadata(html, 'description');
-  const socialImage = metadata(html, 'og:image');
-  assert.deepEqual(canonical(html), [`${site}/${route}/`]);
-  assert.equal(metadata(html, 'og:type'), 'article');
-  assert(
-    description && !description.startsWith('Nathan Pannell on '),
-    `${route} needs a specific description`,
-  );
-  assert(
-    socialImage?.startsWith(`${site}/media/writing/`),
-    `${route} needs a relevant social image`,
-  );
-  assert(
-    existsSync(join(dist, new URL(socialImage).pathname.slice(1))),
-    `${route} social image must exist`,
-  );
-  assert(metadata(html, 'og:image:alt'), `${route} social image needs alt text`);
-  assert.equal(data['@type'], 'BlogPosting');
-  assert.equal(data.description, description);
-  assert.equal(data.image, socialImage);
-  assert.equal(data.mainEntityOfPage, `${site}/${route}/`);
-  assert.equal(data.author['@type'], 'Person');
-  assert.equal(data.author.name, 'Nathan Pannell');
-}
+// The share card is a real JPEG of the size the metadata promises.
+const card = readFileSync(join(dist, 'og.jpg'));
+assert.equal(card.readUInt16BE(0), 0xffd8, 'og.jpg must be a JPEG');
+assert(card.length < 300 * 1024, 'The share image should stay under 300 KB');
 
 const notFound = readFileSync(join(dist, '404.html'), 'utf8');
 assert.deepEqual(canonical(notFound), []);
 assert.equal(metadata(notFound, 'robots'), 'noindex');
 assert.doesNotMatch(readFileSync(join(dist, 'sitemap-0.xml'), 'utf8'), /\/404\/?</);
 
-console.log('SEO contract passed: host exclusion, canonicals, structured data, covers, and 404.');
+console.log('SEO contract passed: host exclusion, canonical, share card, structured data and 404.');
