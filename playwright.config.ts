@@ -9,7 +9,7 @@ export default defineConfig({
   retries: 0,
   // These pages run long timed sequences in software-rendered browsers. On a many-core machine the
   // default of one per two cores starves them until frames stop for seconds at a time.
-  workers: process.env['CI'] ? undefined : 4,
+  ...(process.env['CI'] ? {} : { workers: 4 }),
   reporter: process.env['CI'] ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: `http://127.0.0.1:${port}`,
