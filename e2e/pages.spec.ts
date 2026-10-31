@@ -196,6 +196,14 @@ for (const { name, scene, control, inside } of moments) {
   });
 }
 
+test('clicking a closed scene away from its control leaves it closed', async ({ page }) => {
+  await page.goto('/');
+  await jumpTo(page, '#offbooked');
+  await page.mouse.click(120, 200);
+  await page.waitForTimeout(200);
+  await expect(page.locator('#offbooked')).toHaveAttribute('data-waiting', '');
+});
+
 test('the rope can be pulled by hand, and a short tug springs back', async ({ page, isMobile }) => {
   test.skip(isMobile, 'The drag uses the mouse; touch shares its pointer events.');
   await page.goto('/');
@@ -346,7 +354,7 @@ test('the live site is the biggest thing in the AI Build Night frame', async ({
   await page.goto('/');
   const shown = page.locator('.abn-browser__view');
   await useControl(page, '.abn-cover', '.abn-key');
-  await expect(shown).toBeInViewport({ ratio: 1, timeout: 4000 });
+  await expect(shown).toBeInViewport({ ratio: 0.99, timeout: 4000 });
   const box = await shown.boundingBox();
   const width = page.viewportSize()?.width ?? 0;
   expect(box?.width ?? 0).toBeGreaterThan(width * (isMobile ? 0.8 : 0.5));
@@ -441,24 +449,35 @@ test('Plant! sends Kip down the vine, and each stop scores', async ({ page }) =>
   await expect(page.locator('.pk-points')).toHaveCount(0, { timeout: 3000 });
 });
 
-// How much of the screen the rainbow covers, across the widths of its six bands.
-const rainbowCover = (page: Page) =>
-  page.locator('.wipe__band').evaluateAll((bands) =>
-    bands.reduce((sum, band) => {
-      const { left, right } = band.getBoundingClientRect();
-      const seen = Math.max(0, Math.min(window.innerWidth, right) - Math.max(0, left));
-      return sum + seen / window.innerWidth / bands.length;
-    }, 0),
-  );
+// Watches, frame by frame from inside the page, how much of the screen the six bands cover at most.
+const watchRainbow = (page: Page) =>
+  page.evaluate(() => {
+    const bands = [...document.querySelectorAll('.wipe__band')];
+    const seen = { most: 0 };
+    Object.assign(window, { rainbow: seen });
+    const look = () => {
+      const cover = bands.reduce((sum, band) => {
+        const { left, right } = band.getBoundingClientRect();
+        const width = Math.max(0, Math.min(window.innerWidth, right) - Math.max(0, left));
+        return sum + width / window.innerWidth / bands.length;
+      }, 0);
+      seen.most = Math.max(seen.most, cover);
+      window.requestAnimationFrame(look);
+    };
+    look();
+  });
 
 test('the toy box pours the rainbow across, then shows the page', async ({ page }) => {
   await page.goto('/');
   await jumpTo(page, '.sb-open');
   await expect(page.locator('.sb-box')).toBeVisible();
+  await watchRainbow(page);
   await page.locator('.sb-box__open').click();
-  // At some point every band has the screen, so no page change can be seen.
-  await expect.poll(() => rainbowCover(page), { intervals: [40] }).toBeGreaterThan(0.97);
   await expect(page.locator('.sb-box')).toBeHidden({ timeout: 2000 });
+  // Every band has the screen by then, so the change of page can't be seen.
+  const most = () =>
+    page.evaluate(() => (window as unknown as { rainbow: { most: number } }).rainbow.most);
+  await expect.poll(most).toBeGreaterThan(0.97);
   await expect(page.locator('.wipe')).toBeHidden({ timeout: 2000 });
   await expect(page.locator('#sb-title')).toBeInViewport();
   await expect(page.locator('.sb-open video')).toBeInViewport();

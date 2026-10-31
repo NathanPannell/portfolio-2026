@@ -604,9 +604,9 @@ const panels = [
     margin: 0 auto;
   }
 
+  /* Sized before they load: an image with no size of its own may never be seen as on screen. */
   .sb__strip img {
-    width: auto;
-    max-height: calc(100svh - 7rem);
+    width: min(100%, calc((100svh - 7rem) * 0.77));
   }
 
   .sb__strip img:nth-child(1) {
@@ -738,9 +738,7 @@ const panels = [
 
     /* Three panels stepping down the page, each as tall as a third of the screen. */
     .sb__strip img {
-      width: auto;
-      height: calc((100svh - 6rem) / 3);
-      max-height: none;
+      width: calc((100svh - 6.75rem) / 3 * 0.77);
     }
 
     .sb__strip img:nth-child(1) {
@@ -786,8 +784,7 @@ const panels = [
     }
 
     .sb__strip img {
-      height: calc(100svh - 4.5rem);
-      width: auto;
+      width: calc((100svh - 4.5rem) * 0.77);
       justify-self: center;
     }
 

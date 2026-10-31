@@ -154,6 +154,7 @@ test.describe('each hero, standing still', () => {
         await page.goto(`/?hero=${option}`);
         await expect(page.locator('h1')).toHaveCount(1);
         await expect(page.locator('h1')).toContainText('Nathan Pannell');
+        await expect(page.locator('h1')).toContainText('real people');
         const worlds = page.locator('[data-hero-slot] a[href^="#"]');
         await expect(worlds).toHaveCount(4);
         await expect(page.locator('.hero__next')).toBeInViewport({ ratio: 1 });

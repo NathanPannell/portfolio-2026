@@ -66,8 +66,9 @@ export const startMoments = () => {
     const control = scene.querySelector<HTMLElement>('[data-moment-control]');
     control?.addEventListener('click', () => open(scene));
     if (control?.hasAttribute('data-pull')) startPull(control, () => open(scene));
+    // Links only: a click anywhere in a scene can focus the scene itself.
     scene.addEventListener('focusin', (event) => {
-      if (event.target !== control) open(scene);
+      if ((event.target as HTMLElement).closest('a')) open(scene);
     });
   }
 
