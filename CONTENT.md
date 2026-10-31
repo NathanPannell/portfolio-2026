@@ -13,12 +13,13 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 | Claim | Source |
 | --- | --- |
 | AI Build Night: free, hands-on, for beginners and experienced builders, Victoria, BC. Night 001 on Oct 22, 2026 at Herald St Brew Works. Night 002 date coming soon. Co-run with Kalen Christ, Carmello Giron and Paurav H Param. | aibuildnight.ca |
-| The two tenets | `ai-build-night-site` `snippets/tenets.liquid` |
+| The two tenets | `ai-build-night-site-workspace/ops/goals.md`, in step with `snippets/tenets.liquid` on the site repo. |
+| A feature got pulled for failing the two-actor test. | Offbooked `b5dcd6a`, the revert of #100, and the owner's note on judging the player by two actors. |
 | Play by the Sandbox: January 2027, Vancouver Art Gallery, 16 creative directors, 16 brands, 30–40 creators, 3 days, hosted by Mello. | playbythesandbox.ca |
 | Offbooked: "Used by casts in British Columbia and Nova Scotia for real productions", free during the public beta, no account for actors, runs in any phone's browser. | offbooked.com |
 | Parkdex: 1,000+ parks, live on Google Play in Canada since October 2026. | Live app and Play listing |
 
-The AI Build Night room is a drawing, and says so. It is not a head count.
+The AI Build Night room is a drawing, and says so. It is not a head count. Its clock follows the live site: doors at 18:00, show-and-tell at 20:15, close at 21:00.
 
 ## Check before showing
 

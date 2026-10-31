@@ -350,7 +350,7 @@ const contours = [
 
   .abn-tenets__one,
   .abn-tenets__two {
-    font-size: clamp(2.6rem, 8.6vw, 9rem);
+    font-size: clamp(2.3rem, min(8.6vw, 12svh), 9rem);
     font-weight: 900;
     line-height: 0.93;
     letter-spacing: -0.045em;
@@ -434,10 +434,12 @@ const contours = [
       background 180ms;
   }
 
-  .abn-site__cta:hover {
-    transform: translate(-0.2rem, -0.2rem);
-    background: var(--signal);
-    color: var(--ink);
+  @media (hover: hover) and (pointer: fine) {
+    .abn-site__cta:hover {
+      transform: translate(-0.2rem, -0.2rem);
+      background: var(--signal);
+      color: var(--ink);
+    }
   }
 
   .abn-site__show {
@@ -506,6 +508,16 @@ const contours = [
       grid-template-columns: minmax(0, 1fr);
     }
 
+    .abn-site {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .abn-site__show {
+      padding-bottom: 22%;
+    }
+  }
+
+  @media (max-width: 860px) and (orientation: portrait) {
     .abn-room__stage {
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto minmax(0, 1fr);
@@ -535,17 +547,40 @@ const contours = [
     figcaption {
       margin-top: 0.7rem;
     }
+  }
 
-    .abn-site {
-      grid-template-columns: minmax(0, 1fr);
+  /* Phones on their side keep the drawing beside the clock. */
+  @media (max-height: 480px) {
+    .abn-room__stage {
+      padding-top: 3rem;
+      padding-bottom: 0.5rem;
     }
 
-    .abn-site__show {
-      padding-bottom: 22%;
+    .abn-room__clock {
+      margin: 0;
+      font-size: 3.5rem;
+    }
+
+    .abn-room__plan {
+      width: calc(100svh - 5rem);
+    }
+
+    .abn-room__copy ol {
+      min-height: 6.5rem;
+    }
+
+    figcaption {
+      display: none;
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (scripting: none) {
+    .abn-room__plan {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
     h2 i {
       animation: none;
     }

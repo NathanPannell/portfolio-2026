@@ -18,6 +18,12 @@ interface Seat {
   stageY: number;
 }
 
+// The clock reaches 21:00 just before the scene ends, so the last step gets some time on screen.
+const CLOSE_AT = 0.93;
+const minutesAt = (t: number) => Math.min(180, (t / CLOSE_AT) * 180);
+// Doors at 18:00, then show-and-tell at 20:15 and close at 21:00, as on the live site.
+const STEP_STARTS = [0, 0.1, 0.28, (135 / 180) * CLOSE_AT, CLOSE_AT];
+
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 const ease = (value: number) => value * value * (3 - 2 * value);
 const span = (t: number, start: number, end: number) => ease(clamp((t - start) / (end - start)));
@@ -89,7 +95,7 @@ export const startRoom = () => {
     context.stroke();
 
     // Stage, lit for show-and-tell.
-    const showing = span(t, 0.62, 0.7) * (1 - span(t, 0.84, 0.9));
+    const showing = span(t, 0.66, 0.7) * (1 - span(t, 0.84, 0.9));
     context.fillStyle = `rgba(255, 91, 35, ${0.14 + showing * 0.86})`;
     context.fillRect(30 * u, 5 * u, 40 * u, 8 * u);
     context.fillStyle = showing > 0.5 ? INK : HARBOUR;
@@ -110,7 +116,7 @@ export const startRoom = () => {
     seats.forEach((seat, index) => {
       const lag = seat.delay / 100;
       const arrive = span(t, 0.02 + lag, 0.2 + lag);
-      const toStage = span(t, 0.62 + lag * 0.4, 0.7 + lag * 0.4);
+      const toStage = span(t, 0.58 + lag * 0.4, 0.66 + lag * 0.4);
       const leave = span(t, 0.84 + lag * 0.5, 0.97 + lag * 0.3);
 
       // Laptops wake in a wave and each one keeps its own flicker.
@@ -135,11 +141,11 @@ export const startRoom = () => {
     });
 
     // The clock runs 18:00 to 21:00.
-    const minutes = Math.round((t * 180) / 5) * 5;
+    const minutes = Math.round(minutesAt(t) / 5) * 5;
     const hour = 18 + Math.floor(minutes / 60);
     clock.textContent = `${hour}:${String(minutes % 60).padStart(2, '0')}`;
 
-    const active = Math.min(steps.length - 1, Math.floor(t * steps.length * 0.999));
+    const active = STEP_STARTS.filter((start) => t >= start).length - 1;
     steps.forEach((step, index) => step.toggleAttribute('data-on', index === active));
   };
 

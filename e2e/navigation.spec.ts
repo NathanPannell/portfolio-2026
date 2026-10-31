@@ -56,6 +56,43 @@ test('the skip link moves keyboard focus past the header', async ({ page, isMobi
   await expect(page.locator('#main-content :focus')).toHaveCount(1);
 });
 
+test('tabbing into the curtain lands on an open stage', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  await page.goto('/');
+  await page.locator('.sb__cta').focus();
+  await page.keyboard.press('Tab');
+  const ticket = page.locator('.ticket');
+  await expect(ticket).toBeFocused();
+  await expect(ticket).toBeInViewport();
+  const onTop = await ticket.evaluate((element) => {
+    const { left, top, width, height } = element.getBoundingClientRect();
+    return element.contains(document.elementFromPoint(left + width / 2, top + height / 2));
+  });
+  expect(onTop).toBe(true);
+});
+
+test('reverse tabbing into the hero shows its chips', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  await page.goto('/');
+  await page.locator('.abn-site__cta').focus();
+  await page.keyboard.press('Shift+Tab');
+  const chip = page.locator('.hero__chips a').last();
+  await expect(chip).toBeFocused();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5);
+});
+
+test('Plant! can be reached with the keyboard', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  await page.goto('/');
+  await page.locator('.ob-run__close a').focus();
+  await page.keyboard.press('Tab');
+  const plant = page.locator('[data-plant]');
+  await expect(plant).toBeFocused();
+  await expect(plant).toBeInViewport();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.pk-mark')).toHaveCount(1);
+});
+
 test('tabbing to a Parkdex link brings it on screen', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');

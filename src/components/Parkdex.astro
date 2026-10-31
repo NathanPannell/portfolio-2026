@@ -70,6 +70,13 @@ const spots = [
         </p>
       </div>
 
+      <button class="pk-plant" type="button" data-plant>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 21V3h13l-3 4.5 3 4.5H6"></path>
+        </svg>
+        <span>Plant!</span>
+      </button>
+
       <div class="pk-strip" data-strip>
         <div class="pk-intro">
           <h2 id="pk-title">Capture the flag, for real parks.</h2>
@@ -141,13 +148,6 @@ const spots = [
         <span data-kip>KLEEP!</span>
         <img src="/media/parkdex/kip-wave.webp" width="512" height="512" loading="lazy" alt="" />
       </div>
-
-      <button class="pk-plant" type="button" data-plant>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 21V3h13l-3 4.5 3 4.5H6"></path>
-        </svg>
-        <span>Plant!</span>
-      </button>
     </div>
   </div>
 </section>
@@ -155,6 +155,7 @@ const spots = [
 <style>
   .pk-rise {
     position: relative;
+    pointer-events: none;
     z-index: 3;
     width: 100%;
     height: clamp(5rem, 12vw, 11rem);
@@ -184,7 +185,7 @@ const spots = [
   .pk-stage {
     position: sticky;
     top: 0;
-    height: 100svh;
+    height: 100lvh;
     overflow: clip;
     background: linear-gradient(#cdeeff, #eaf7ff 42%, #fff7e8 66%);
   }
@@ -332,7 +333,7 @@ const spots = [
     grid-template-columns: minmax(0, 15rem) auto;
     gap: 1.5rem;
     align-items: end;
-    padding: 7rem 3vw 3.5rem;
+    padding: 7rem 3vw calc(3.5rem + 100lvh - 100svh);
   }
 
   .pk-spot__text {
@@ -457,9 +458,11 @@ const spots = [
       box-shadow 120ms;
   }
 
-  .pk-btn:hover {
-    transform: translateY(0.15rem);
-    box-shadow: 0 0.15rem 0 var(--ink);
+  @media (hover: hover) and (pointer: fine) {
+    .pk-btn:hover {
+      transform: translateY(0.15rem);
+      box-shadow: 0 0.15rem 0 var(--ink);
+    }
   }
 
   .pk-btn--main {
@@ -525,7 +528,7 @@ const spots = [
     position: absolute;
     z-index: 5;
     right: var(--gutter);
-    bottom: 0.25rem;
+    bottom: calc(0.25rem + 100lvh - 100svh);
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -548,7 +551,7 @@ const spots = [
   .pk-plant {
     position: absolute;
     z-index: 6;
-    bottom: 1rem;
+    bottom: calc(1rem + 100lvh - 100svh);
     left: 50%;
     display: grid;
     justify-items: center;
@@ -558,7 +561,7 @@ const spots = [
     border: 4px solid var(--ink);
     border-radius: 50%;
     background: var(--orange);
-    outline: 4px solid var(--cream);
+    box-shadow: 0 0 0 4px var(--cream);
     color: var(--cream);
     transform: translateX(-50%);
     transition: transform 100ms;
@@ -604,7 +607,7 @@ const spots = [
       grid-template-rows: auto auto;
       justify-items: center;
       width: 100vw;
-      padding: 6.75rem 1rem 2.5rem;
+      padding: 6.75rem 1rem calc(2.5rem + 100lvh - 100svh);
     }
 
     .pk-spot__text {
@@ -655,9 +658,42 @@ const spots = [
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  /* Phones on their side: the level keeps its phones and loses the controls that would cover them. */
+  @media (max-height: 480px) {
+    .pk-plant,
+    .pk-kip {
+      display: none;
+    }
+
+    .pk-intro,
+    .pk-end {
+      gap: 0.4rem;
+      padding-top: 4.25rem;
+    }
+
+    .pk-intro__card {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .pk-intro__go {
+      display: none;
+    }
+
+    h2,
+    .pk-end h3 {
+      font-size: 2.1rem;
+    }
+
+    .pk-spot {
+      padding-top: 4rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
     .pk-track {
-      height: auto;
+      height: auto !important;
     }
 
     .pk-stage {

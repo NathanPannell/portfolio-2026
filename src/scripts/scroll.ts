@@ -53,6 +53,18 @@ export const startScroll = () => {
     tracks.push({ element, top: 0, span: 1, last: -1, listeners: [] });
   }
   measure();
+  // Keyboard focus inside a pinned scene jumps to the point where its links can be seen.
+  document.addEventListener('focusin', (event) => {
+    const target = event.target as HTMLElement;
+    const scene = target.closest<HTMLElement>('[data-focus-at]');
+    const track = tracks.find(({ element }) => element === scene);
+    if (!track || !target.matches(':focus-visible')) return;
+    const at = Number(track.element.dataset['focusAt']);
+    // Next frame, because the browser scrolls to the focused element after this event.
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: track.top + track.span * at, behavior: 'instant' });
+    });
+  });
   window.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', () => {
     measure();
@@ -86,6 +98,21 @@ export const startReveals = () => {
   targets.forEach((target) => observer.observe(target));
 };
 
+// Cloudflare Pages answers range requests with a plain 200, which iOS Safari refuses for video.
+// A blob plays everywhere, and the poster stays up if the fetch fails.
+const onScreen = new WeakSet<HTMLVideoElement>();
+
+const loadLoop = async (video: HTMLVideoElement) => {
+  if (!video.src && !video.hasAttribute('data-loading')) {
+    video.toggleAttribute('data-loading', true);
+    const response = await fetch(video.dataset['src'] ?? '').catch(() => undefined);
+    if (!response?.ok) return;
+    video.src = URL.createObjectURL(await response.blob());
+  }
+  // The fetch can outlast the visit, so check again before playing.
+  if (video.src && onScreen.has(video)) await video.play().catch(() => undefined);
+};
+
 /** Plays each lazy loop only while it is on screen, and never under reduced motion. */
 export const startLoops = () => {
   if (reducedMotion()) return;
@@ -94,11 +121,12 @@ export const startLoops = () => {
       for (const entry of entries) {
         const video = entry.target as HTMLVideoElement;
         if (!entry.isIntersecting) {
+          onScreen.delete(video);
           video.pause();
           continue;
         }
-        if (!video.src) video.src = video.dataset['src'] ?? '';
-        video.play().catch(() => {});
+        onScreen.add(video);
+        void loadLoop(video);
       }
     },
     { rootMargin: '200px 0px' },

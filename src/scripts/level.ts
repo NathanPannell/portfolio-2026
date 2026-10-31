@@ -71,14 +71,30 @@ export const startLevel = () => {
     kip.textContent = KIP[plants % KIP.length] ?? 'KLEEP!';
   });
 
+  // Next frame, because the browser scrolls to the focused element after the focus event.
+  const jumpTo = (at: number) => {
+    window.requestAnimationFrame(() => {
+      const top = track.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: top + at * (track.offsetHeight - window.innerHeight),
+        behavior: 'instant',
+      });
+    });
+  };
+
+  // Plant! comes before the strip in the tab order, so a keyboard user lands at the start of the level.
+  button.addEventListener('focus', () => {
+    if (!button.matches(':focus-visible')) return;
+    jumpTo(0.08);
+  });
+
   // A keyboard user tabbing into the strip should land where the focused link is on screen.
   strip.addEventListener('focusin', (event) => {
     const target = event.target as HTMLElement;
     const block = target.closest<HTMLElement>('.pk-end, .pk-spot, .pk-intro');
     if (!block || travel === 0) return;
     const wanted = 0.08 + Math.min(1, block.offsetLeft / travel) * 0.84;
-    const top = track.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: top + wanted * (track.offsetHeight - window.innerHeight) });
+    jumpTo(wanted);
   });
 
   let lastWidth = window.innerWidth;

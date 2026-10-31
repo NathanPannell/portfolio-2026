@@ -6,7 +6,7 @@ import '@fontsource/gaegu/latin-700.css';
 const crayons = ['#e2231a', '#f28b1e', '#f3cf1c', '#2fa84f', '#1f7fd6', '#8a4fd3'];
 const passes = crayons.map((colour, index) => ({
   colour,
-  d: `M-80 ${60 + index * 150} C 220 ${-20 + index * 150}, 480 ${160 + index * 150}, 1080 ${40 + index * 150}`,
+  d: `M-260 ${60 + index * 150} C 220 ${-20 + index * 150}, 480 ${160 + index * 150}, 1260 ${40 + index * 150}`,
 }));
 const panels = [
   { name: 'team', width: 900, height: 1138, alt: 'Comic panel: a director and a brand high-five' },
@@ -34,7 +34,7 @@ const counts = [
     ))}
     <path
       class="scribble__fill"
-      d="M-120 80L1120 80M1120 300L-120 300M-120 520L1120 520M1120 740L-120 740M-120 960L1120 960"
+      d="M-320 80L1320 80M1320 300L-320 300M-320 520L1320 520M1320 740L-320 740M-320 960L1320 960"
       pathLength="1"
       style="--from: 0.62; --to: 1"
     ></path>
@@ -444,8 +444,10 @@ const counts = [
     transition: transform 160ms var(--ease);
   }
 
-  .sb__cta:hover {
-    transform: translateX(-50%) rotate(1deg) scale(1.05);
+  @media (hover: hover) and (pointer: fine) {
+    .sb__cta:hover {
+      transform: translateX(-50%) rotate(1deg) scale(1.05);
+    }
   }
 
   @media (max-width: 760px) {
@@ -464,7 +466,14 @@ const counts = [
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (scripting: none) {
+    .toy,
+    .sb__yard-hint {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
     .scribble {
       display: none;
     }

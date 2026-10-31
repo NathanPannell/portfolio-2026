@@ -46,9 +46,17 @@ Crossing transitions overlap two worlds: the crayon overlay uses negative block 
 
 ## Reduced motion and no JavaScript
 
-Each component has its own `prefers-reduced-motion: reduce` block that switches its pinned scene to normal flow and shows everything at once. `startScroll` does nothing under reduced motion, so `--p` falls back to each rule's default. Canvases draw one still frame.
+Each component has one `@media (prefers-reduced-motion: reduce), (scripting: none)` block that switches its pinned scene to normal flow and shows everything at once, so both cases share a layout. `startScroll` does nothing under reduced motion, so `--p` falls back to each rule's default. Canvases draw one still frame under reduced motion and are not needed without JavaScript.
 
-`SiteLayout` adds `.js` to `<html>` with a one-line inline script. Reveal transitions and the canvas hero only apply under `.js`, so the content is visible without JavaScript.
+`SiteLayout` adds `.js` to `<html>` with a one-line inline script. Reveal transitions and the canvas hero only apply under `.js`.
+
+## Tall phone viewports
+
+Pinned stages use `100lvh`, not `100svh`, so nothing shows under them when a phone's address bar collapses. Anything pinned to the bottom of a stage adds `100lvh - 100svh` to its offset, so it stays above the bar when the bar is showing.
+
+## Keyboard focus in pinned scenes
+
+A `[data-track]` with `data-focus-at` jumps to that progress when keyboard focus enters it: the hero's chips at 0, the Offbooked ticket once the curtains are open. Parkdex handles this in `level.ts`.
 
 ## Styling strategy
 

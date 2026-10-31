@@ -57,6 +57,16 @@ export const startCrowd = async () => {
     points: new Float32Array(),
   }));
 
+  // Registered before the font wait, so a reload part-way down the hero is heard straight away.
+  let scrollProgress = 0;
+  let afterScroll = () => {};
+  onProgress(hero, (progress) => {
+    scrollProgress = progress;
+    block.toggleAttribute('data-solid', progress > 0.02);
+    hero.toggleAttribute('data-leaving', progress > 0.2);
+    afterScroll();
+  });
+
   await document.fonts.load(`900 120px ${FONT}`).catch(() => undefined);
 
   const still = reducedMotion();
@@ -165,7 +175,6 @@ export const startCrowd = async () => {
 
   let pointerX = -9999;
   let pointerY = -9999;
-  let scrollProgress = 0;
   let running = false;
   let visible = true;
   let lastSwap = performance.now();
@@ -278,10 +287,7 @@ export const startCrowd = async () => {
     chip.addEventListener('blur', release);
   });
 
-  onProgress(hero, (progress) => {
-    scrollProgress = progress;
-    setRunning(visible && progress < 0.62);
-  });
+  afterScroll = () => setRunning(visible && scrollProgress < 0.62);
   new IntersectionObserver(([entry]) => {
     visible = entry?.isIntersecting ?? false;
     setRunning(visible && scrollProgress < 0.62);
@@ -296,5 +302,5 @@ export const startCrowd = async () => {
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(resize, 150);
   });
-  setRunning(true);
+  afterScroll();
 };

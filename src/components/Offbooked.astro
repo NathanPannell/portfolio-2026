@@ -18,7 +18,7 @@ const phones = [
 ---
 
 <section id="offbooked" class="ob" data-audience="casts" aria-labelledby="ob-title">
-  <div class="ob-reveal" data-track data-collage>
+  <div class="ob-reveal" data-track data-focus-at="0.9" data-collage>
     <div class="ob-stage">
       <div class="collage">
         <div class="slab" data-depth="-6"></div>
@@ -79,7 +79,7 @@ const phones = [
         </svg>
 
         <p class="tape" data-depth="16">
-          No account needed
+          Cast needs no account
         </p>
 
         <a class="ticket" href="https://offbooked.com/" data-depth="-12">
@@ -185,7 +185,7 @@ const phones = [
     --open: clamp(0, calc((var(--p, 1) - 0.08) * 1.7), 1);
     position: sticky;
     top: 0;
-    height: 100svh;
+    height: 100lvh;
     overflow: clip;
     background: var(--paper);
   }
@@ -422,8 +422,15 @@ const phones = [
     transition: rotate 180ms var(--ease);
   }
 
-  .ticket:hover {
-    rotate: 1deg;
+  @media (hover: hover) and (pointer: fine) {
+    .ticket:hover {
+      rotate: 1deg;
+    }
+  }
+
+  /* The ticket's mask would clip an outline, so its focus ring is drawn inside the paper. */
+  .ticket:focus-visible {
+    outline-offset: -0.55rem;
   }
 
   .ticket__small {
@@ -444,7 +451,7 @@ const phones = [
     position: absolute;
     z-index: 7;
     right: 0;
-    bottom: 0;
+    bottom: calc(100lvh - 100svh);
     left: 0;
     overflow: hidden;
     padding: 0.5rem 0;
@@ -714,8 +721,10 @@ const phones = [
     transition: background 180ms;
   }
 
-  .ob-run__close a:hover {
-    background: var(--red-deep);
+  @media (hover: hover) and (pointer: fine) {
+    .ob-run__close a:hover {
+      background: var(--red-deep);
+    }
   }
 
   @media (max-width: 760px), (max-aspect-ratio: 1/1) {
@@ -830,7 +839,7 @@ const phones = [
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
     .ob-reveal {
       height: auto;
     }

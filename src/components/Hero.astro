@@ -31,7 +31,7 @@ const audiences = [
 ];
 ---
 
-<section class="hero" data-hero data-track data-audience="real people">
+<section class="hero" data-hero data-track data-focus-at="0" data-audience="real people">
   <div class="hero__stage">
     <canvas class="hero__crowd" data-crowd aria-hidden="true"></canvas>
 
@@ -81,9 +81,9 @@ const audiences = [
   .hero__stage {
     position: sticky;
     top: 0;
-    height: 100svh;
+    height: 100lvh;
     overflow: clip;
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
   }
 
   .hero__crowd {
@@ -136,7 +136,7 @@ const audiences = [
   .hero__foot {
     position: absolute;
     right: var(--gutter);
-    bottom: clamp(1.25rem, 5svh, 2.75rem);
+    bottom: calc(clamp(1.25rem, 5svh, 2.75rem) + 100lvh - 100svh);
     left: var(--gutter);
     display: flex;
     flex-wrap: wrap;
@@ -189,13 +189,22 @@ const audiences = [
   .hero__block {
     position: absolute;
     right: var(--gutter);
-    bottom: clamp(1.4rem, 5.2svh, 3rem);
+    bottom: calc(clamp(1.4rem, 5.2svh, 3rem) + 100lvh - 100svh);
     width: 2vmax;
     height: 3.2vmax;
     background: var(--signal);
     transform-origin: 50% 50%;
     transform: scale(calc(1 + max(0, var(--p, 0) - 0.42) * 190));
     animation: blink 1.1s steps(2, jump-none) infinite;
+  }
+
+  /* Once it starts growing it is a surface, and a blinking surface would strobe the screen. */
+  .hero__block[data-solid] {
+    animation: none;
+  }
+
+  .hero[data-leaving] .hero__foot {
+    pointer-events: none;
   }
 
   @keyframes blink {
@@ -219,7 +228,7 @@ const audiences = [
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
     .hero {
       height: auto;
     }

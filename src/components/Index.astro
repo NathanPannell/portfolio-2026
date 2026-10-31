@@ -271,10 +271,12 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
     text-decoration: none;
   }
 
-  .contact__mail:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 0.06em;
-    text-underline-offset: 0.1em;
+  @media (hover: hover) and (pointer: fine) {
+    .contact__mail:hover {
+      text-decoration: underline;
+      text-decoration-thickness: 0.06em;
+      text-underline-offset: 0.1em;
+    }
   }
 
   .contact ul {
@@ -322,7 +324,7 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
     .rules {
       height: auto;
       padding-block: 5rem;
