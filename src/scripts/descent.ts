@@ -37,13 +37,12 @@ export const startDescent = () => {
   const award = (points: number) => {
     score += points;
     scoreLabel.textContent = String(score);
-    // A jump past the scene still scores, but nobody is there to see the pop.
-    if (track.hasAttribute('data-resting')) return;
     const pop = document.createElement('span');
     pop.className = 'pk-points';
     pop.textContent = `+${points}`;
     pop.style.translate = `${Math.round(Math.random() * 60 - 30)}px 0`;
-    pop.addEventListener('animationend', () => pop.remove());
+    // On a timer, because a scene's animations rest while it is off screen.
+    window.setTimeout(() => pop.remove(), 900);
     stageFront.append(pop);
   };
 
@@ -101,12 +100,12 @@ export const startDescent = () => {
     kip.textContent = KIP[plants % KIP.length] ?? 'KLEEP!';
   });
 
-  // Safari can leave a pinned button off screen when it takes keyboard focus.
+  // Safari can leave a pinned button off screen when it takes keyboard focus. Clicks focus it too,
+  // and must not move the page out from under the pointer.
   button.addEventListener('focus', () => {
-    const { top, bottom } = track.getBoundingClientRect();
-    if (top > 0 || bottom < window.innerHeight) {
-      window.scrollTo({ top: top + window.scrollY, behavior: 'instant' });
-    }
+    if (!button.matches(':focus-visible')) return;
+    const { top } = track.getBoundingClientRect();
+    if (top > 0) window.scrollTo({ top: top + window.scrollY, behavior: 'instant' });
   });
 
   onProgress(track, onFrame);

@@ -81,8 +81,14 @@ export const startScroll = () => {
 };
 
 export const startReveals = () => {
-  document.documentElement.classList.add('reveals');
   const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+  // Anything already on screen after a reload stays as it is, rather than vanishing to reveal again.
+  for (const target of targets) {
+    if (target.getBoundingClientRect().top < window.innerHeight) {
+      target.toggleAttribute('data-in', true);
+    }
+  }
+  document.documentElement.classList.add('reveals');
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {

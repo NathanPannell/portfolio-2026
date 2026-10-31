@@ -69,6 +69,9 @@ assert.match(index, /\.wash-list li::before/);
 assert.match(index, /\.wash-list li\[data-active\]::before/);
 assert(existsSync(join(root, 'src', 'scripts', 'wash.ts')), 'The touch fill script must remain');
 
+// A phone's address bar is what this offset is for, and test browsers can't show the difference.
+assert.match(offbooked, /--bar: calc\(100lvh - 100svh\)/);
+
 // The owner cut these, and they stay cut.
 assert.doesNotMatch(offbooked, /two.actor/i, 'The two-actor test is gone');
 assert.doesNotMatch(markup, /The one I’d bet on|got pulled for failing/, 'Unapproved public lines');

@@ -227,6 +227,20 @@ test('an address bar never puts the marquee over the ticket', async ({ page }) =
     const ticket = page.locator('.ticket');
     await expect(ticket).toHaveAttribute('data-on', '');
     await expect.poll(() => uncoveredPoints(ticket), `${width}x${height}`).toBe(9);
+    // The marquee itself stands clear of the bar.
+    await expect
+      .poll(
+        () =>
+          page.locator('.marquee').evaluate((element) => {
+            const stage = element.closest('[data-stage]') as HTMLElement;
+            const gap =
+              stage.getBoundingClientRect().bottom - element.getBoundingClientRect().bottom;
+            return Math.round(gap);
+          }),
+        `${width}x${height}`,
+      )
+      .toBe(bar);
+    if (width === 390) await expect.poll(() => uncoveredPoints(page.locator('.tape'))).toBe(9);
   }
 });
 
@@ -234,6 +248,7 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
   for (const [width, height] of [
     [320, 640],
     [390, 844],
+    [568, 320],
     [667, 375],
     [760, 760],
     [844, 390],
@@ -304,6 +319,22 @@ test('Kip rides the vine down, scores each stop, and plants flags', async ({ pag
   await expect(page.locator('.pk-end h3')).toBeInViewport();
   // The button steps aside so it can't sit on top of the links.
   await expect(page.locator('[data-plant]')).toBeHidden();
+});
+
+test('clicking Plant! near the top of the trip leaves the page where it is', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-descent]').evaluate((element) => {
+    const { top } = element.getBoundingClientRect();
+    window.scrollTo({ top: top + window.scrollY - 40, behavior: 'instant' });
+  });
+  await page.waitForTimeout(100);
+  const before = await page.evaluate(() => window.scrollY);
+  // A raw click, because locator clicks scroll the page first.
+  const box = await page.locator('[data-plant]').boundingBox();
+  if (!box) throw new Error('Plant! has no box');
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page.locator('[data-score]')).toHaveText('6');
+  expect(await page.evaluate(() => window.scrollY)).toBe(before);
 });
 
 test('foreground leaves stay off the sky and the ground', async ({ page }) => {
@@ -459,11 +490,8 @@ test('the wipe joins Parkdex and Sandbox with nothing showing through', async ({
   expect(seam.ground).toBe('#16452f');
 });
 
-const settledToy = async (page: Page) => {
-  const yard = page.locator('[data-yard]');
-  await yard.scrollIntoViewIfNeeded();
-  const toy = page.locator('[data-toy]').first();
-  await expect
+const toySettles = (page: Page, toy: Locator) =>
+  expect
     .poll(async () => {
       const first = await toy.boundingBox();
       await page.waitForTimeout(150);
@@ -471,6 +499,12 @@ const settledToy = async (page: Page) => {
       return first && second && Math.abs(first.y - second.y) < 0.5 && second.y > 0;
     })
     .toBe(true);
+
+const settledToy = async (page: Page) => {
+  const yard = page.locator('[data-yard]');
+  await yard.scrollIntoViewIfNeeded();
+  const toy = page.locator('[data-toy]').first();
+  await toySettles(page, toy);
   const box = await toy.boundingBox();
   if (!box) throw new Error('The toy has no box');
   return { toy, box };
@@ -510,15 +544,26 @@ test('a finger can drag a toy, and swiping elsewhere still scrolls', async ({ pa
   await touch('touchStart', x, y);
   await touch('touchMove', x + 40, y - 30);
   await touch('touchMove', x + 80, y - 60);
-  const held = await toy.boundingBox();
+  await expect.poll(async () => (await toy.boundingBox())?.x ?? 0).toBeGreaterThan(box.x + 50);
   await touch('touchEnd', x + 80, y - 60);
-  expect(held?.x ?? 0).toBeGreaterThan(box.x + 50);
   expect(await page.evaluate(() => window.scrollY)).toBe(before);
 
-  const hero = 40;
-  await touch('touchStart', 200, 500 + hero);
-  for (let step = 1; step <= 6; step += 1) await touch('touchMove', 200, 500 + hero - step * 40);
-  await touch('touchEnd', 200, 260);
+  // Toys capture their own gestures, so the swipe has to start clear of every one of them.
+  await toySettles(page, toy);
+  const start = await page.evaluate(() => {
+    const height = window.innerHeight;
+    for (let top = height - 60; top > height / 2; top -= 20) {
+      for (let left = 40; left < window.innerWidth; left += 40) {
+        if (!document.elementFromPoint(left, top)?.closest('[data-toy]')) return { left, top };
+      }
+    }
+    throw new Error('Nowhere clear of the toys');
+  });
+  await touch('touchStart', start.left, start.top);
+  for (let step = 1; step <= 6; step += 1) {
+    await touch('touchMove', start.left, start.top - step * 40);
+  }
+  await touch('touchEnd', start.left, start.top - 240);
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 100);
 });
 
@@ -560,16 +605,17 @@ test('on touch, the row nearest the middle of the screen fills', async ({ page, 
   expect(opacity).toBeGreaterThan(0);
 });
 
-test('no width scrolls sideways or cuts text off', async ({ page }) => {
-  for (const width of [320, 390, 768, 1024, 1440, 1920]) {
+// One test per width: the walk down this page is long enough to need its own time budget.
+for (const width of [320, 390, 768, 1024, 1440, 1920]) {
+  test(`${width}px doesn't scroll sideways or cut text off`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
     await walkThePage(page);
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-    expect(await horizontalOverflow(page), `${width}px`).toBeLessThanOrEqual(0);
-    expect(await clippedText(page), `${width}px`).toEqual([]);
-  }
-});
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
+    expect(await clippedText(page)).toEqual([]);
+  });
+}
 
 test('the tenets fit on short laptop screens', async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 650 });
