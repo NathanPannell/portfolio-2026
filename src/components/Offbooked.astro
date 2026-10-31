@@ -2,36 +2,56 @@
 import '@fontsource-variable/newsreader/wght.css';
 import '@fontsource-variable/newsreader/wght-italic.css';
 
-const lines = [
-  ['MACBETH', 'I have done the deed. Didst thou not hear a noise?'],
-  ['LADY MACBETH', 'I heard the owl scream and the crickets cry. Did not you speak?'],
-  ['MACBETH', 'When?'],
-  ['LADY MACBETH', 'Now.'],
-  ['MACBETH', 'As I descended?'],
-  ['LADY MACBETH', 'Ay.'],
-];
+// Each phone flips through screens on its own beat.
 const phones = [
-  { name: 'record', alt: 'Offbooked recording screen: an actor records a line of Hamlet' },
-  { name: 'play', alt: 'Offbooked run-through: the actor’s own lines are highlighted' },
-  { name: 'cast', alt: 'Offbooked cast list: how many lines each part has recorded' },
+  {
+    at: 0.48,
+    screens: [
+      ['record', 'Offbooked recording screen: an actor records a line of Hamlet'],
+      ['cast', 'Offbooked cast list: how many lines each part has recorded'],
+      ['home', 'Offbooked home screen in the phone’s browser'],
+    ],
+  },
+  {
+    at: 0.52,
+    screens: [
+      ['play', 'Offbooked run-through: the actor’s own lines are highlighted'],
+      ['landing', 'The Offbooked landing page on a phone'],
+      ['record', 'Offbooked recording screen: an actor records a line of Hamlet'],
+    ],
+  },
+  {
+    at: 0.56,
+    screens: [
+      ['cast', 'Offbooked cast list: how many lines each part has recorded'],
+      ['home', 'Offbooked home screen in the phone’s browser'],
+      ['play', 'Offbooked run-through: the actor’s own lines are highlighted'],
+    ],
+  },
+];
+const bubbles = [
+  ['bubble--one', 'Line?'],
+  ['bubble--two', 'Again!'],
+  ['bubble--three', 'Places!'],
 ];
 ---
 
 <section id="offbooked" class="ob" data-audience="casts" aria-labelledby="ob-title">
-  <div class="ob-reveal" data-track data-focus-at="0.9" data-collage>
-    <div class="ob-stage">
+  <div class="ob-reveal" data-track data-focus-at="0.9" data-collage data-loops>
+    <div class="ob-stage" data-stage>
       <div class="collage">
-        <div class="slab" data-depth="-6"></div>
-        <div class="halftone" data-depth="14" aria-hidden="true"></div>
+        <i class="beam beam--left" aria-hidden="true"></i>
+        <i class="beam beam--right" aria-hidden="true"></i>
+        <div class="slab" data-at="0.27" data-depth="-6"></div>
+        <div class="halftone" data-at="0.27" data-depth="14" aria-hidden="true"></div>
 
-        <p class="kicker" data-depth="-8">
-          03 / The one I’d bet on
-        </p>
         <h2 id="ob-title" data-depth="-10">
-          Run lines with <em>your cast,</em> not a robot.
+          <span data-at="0.31">Run lines with</span>
+          <em data-at="0.36">your cast,</em>
+          <span data-at="0.41">not a robot.</span>
         </h2>
 
-        <div class="script" data-depth="10" aria-hidden="true">
+        <div class="script" data-at="0.45" data-depth="10" aria-hidden="true">
           <p class="script__scene">Act 1, Scene 2</p>
           <p>
             <b>HORATIO</b> Hail to your lordship!
@@ -50,22 +70,41 @@ const phones = [
           </p>
         </div>
 
-        {phones.map(({ name, alt }, index) => (
-          <figure class={`handset handset--${index + 1}`} data-depth={String(18 + index * 12)}>
-            <img
-              src={`/media/offbooked/${name}-360.webp`}
-              srcset={`/media/offbooked/${name}-360.webp 360w, /media/offbooked/${name}-640.webp 640w`}
-              sizes="(max-width: 700px) 42vw, 22vw"
-              width="640"
-              height="1385"
-              loading="lazy"
-              decoding="async"
-              alt={alt}
-            />
+        {phones.map(({ at, screens }, index) => (
+          <figure
+            class={`handset handset--${index + 1}`}
+            data-at={String(at)}
+            data-depth={String(18 + index * 12)}
+          >
+            {screens.map(([name, alt], screen) => (
+              <img
+                style={`--screen: ${screen}`}
+                src={`/media/offbooked/${name}-360.webp`}
+                srcset={`/media/offbooked/${name}-360.webp 360w, /media/offbooked/${name}-640.webp 640w`}
+                sizes="(max-width: 700px) 42vw, 22vw"
+                width="640"
+                height="1385"
+                loading="lazy"
+                decoding="async"
+                alt={screen === 0 ? alt : ''}
+              />
+            ))}
           </figure>
         ))}
 
-        <svg class="stamp" viewBox="0 0 200 200" data-depth="26" aria-hidden="true">
+        <div class="voices" data-at="0.6" data-depth="20" aria-hidden="true">
+          {Array.from({ length: 18 }, (_, i) => (
+            <i style={`--i: ${i}`} />
+          ))}
+        </div>
+
+        {bubbles.map(([name, text]) => (
+          <p class={`bubble ${name}`} data-at="0.6" aria-hidden="true">
+            <span>{text}</span>
+          </p>
+        ))}
+
+        <svg class="stamp" viewBox="0 0 200 200" data-at="0.64" data-depth="26" aria-hidden="true">
           <defs>
             <path id="stamp-ring" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1 -148 0"></path>
           </defs>
@@ -78,18 +117,18 @@ const phones = [
           </text>
         </svg>
 
-        <p class="tape" data-depth="16">
+        <p class="tape" data-at="0.68" data-depth="16">
           Cast needs no account
         </p>
 
-        <a class="ticket" href="https://offbooked.com/" data-depth="-12">
+        <a class="ticket" href="https://offbooked.com/" data-at="0.72" data-depth="-12">
           <span class="ticket__small">Admit the whole cast</span>
           <span class="ticket__big">
             offbooked.com <span aria-hidden="true">↗</span>
           </span>
         </a>
 
-        <p class="marquee" aria-hidden="true">
+        <p class="marquee" data-at="0.24" aria-hidden="true">
           <span>
             One link · Everyone records on their phone · The whole cast rehearses · One link ·
             Everyone records on their phone · The whole cast rehearses · One link · Everyone records
@@ -106,59 +145,6 @@ const phones = [
       </div>
     </div>
   </div>
-
-  <div class="ob-test">
-    <header data-reveal>
-      <p class="ob-test__label">Rule one of the rehearsal room</p>
-      <h3>The two-actor test.</h3>
-      <p>
-        Every feature has to work for both of these people, with no extra taps. A feature already
-        got pulled for failing it: nobody with their screen off can answer a prompt.
-      </p>
-    </header>
-    <div class="ob-test__pair">
-      <article class="night" data-reveal>
-        <div class="wave" aria-hidden="true">
-          {Array.from({ length: 22 }, (_, i) => (
-            <i style={`--i: ${i}`}></i>
-          ))}
-        </div>
-        <h4>On the bus, screen off.</h4>
-        <p>Hears every scene in the voices of the people they’ll be on stage with.</p>
-      </article>
-      <article class="lamp" data-reveal style="--reveal-delay: 120ms">
-        <p class="lamp__quote">
-          <span>HORATIO</span>
-          <mark>The same, my lord, and your poor servant ever.</mark>
-        </p>
-        <h4>In bed, screen on.</h4>
-        <p>Reads along, with their own lines under the highlighter.</p>
-      </article>
-    </div>
-  </div>
-
-  <div class="ob-run">
-    <div class="ob-run__lines" data-lines>
-      <p class="ob-test__label">Macbeth 2.2, from the Offbooked demo</p>
-      {lines.map(([who, text]) => (
-        <p class="line" data-line>
-          <span>{who}</span>
-          <q>{text}</q>
-        </p>
-      ))}
-    </div>
-    <div class="ob-run__close" data-reveal>
-      <p class="proof">Used by casts in British Columbia and Nova Scotia for real productions.</p>
-      <p>
-        A director uploads a script and shares one link. Actors open it in their phone’s browser and
-        record. No store, no install, no account. Free during the public beta.
-      </p>
-      <a href="https://offbooked.com/">
-        <span>Try it at offbooked.com</span>
-        <span aria-hidden="true">↗</span>
-      </a>
-    </div>
-  </div>
 </section>
 
 <style>
@@ -168,6 +154,7 @@ const phones = [
     --red: #a8382a;
     --red-deep: #6f1f17;
     --marker: #f3d98b;
+    --spring: cubic-bezier(0.2, 1.5, 0.35, 1);
     position: relative;
     z-index: 2;
     background: var(--paper);
@@ -176,13 +163,17 @@ const phones = [
   }
 
   .ob-reveal {
-    height: 300svh;
+    height: 620lvh;
   }
 
   .ob-stage {
     --u: min(1vw, 1.62svh);
-    --ease-open: calc(var(--p, 1) * var(--p, 1) * (3 - 2 * var(--p, 1)));
-    --open: clamp(0, calc((var(--p, 1) - 0.08) * 1.7), 1);
+    /* Opens in the first quarter of the track; everything after that is the ad assembling. */
+    --open: clamp(0, calc((var(--p, 1) - 0.03) * 4.5), 1);
+    /* Runs once the ad is up, so the finished page keeps moving under the scroll. */
+    --late: clamp(0, calc((var(--p, 1) - 0.72) * 3.6), 1);
+    /* What a phone's address bar hides at the bottom of this taller-than-the-bar stage. */
+    --bar: calc(100lvh - 100svh);
     position: sticky;
     top: 0;
     height: 100lvh;
@@ -200,8 +191,100 @@ const phones = [
 
   [data-depth] {
     --move: calc(var(--mx, 0) * var(--d, 0) * 1px);
-    --lift: calc(var(--my, 0) * var(--d, 0) * 1px);
+    --lift: calc(var(--my, 0) * var(--d, 0) * 1px + var(--late, 0) * var(--drift, 0px));
     translate: var(--move) var(--lift);
+  }
+
+  /* Off stage until scroll calls each piece on, and only once the script that does so is running. */
+  @media (prefers-reduced-motion: no-preference) {
+    .ob-stage[data-sprung] [data-at] {
+      transition:
+        transform 620ms var(--spring),
+        opacity 200ms;
+    }
+
+    .ob-stage[data-ready] .slab:not([data-on]) {
+      transform: translate3d(-104%, 0, 0);
+    }
+
+    .ob-stage[data-ready] .halftone:not([data-on]) {
+      transform: scale(0);
+    }
+
+    .ob-stage[data-ready] h2 [data-at]:not([data-on]) {
+      opacity: 0;
+      transform: translate3d(-3rem, 0, 0) rotate(-4deg);
+    }
+
+    .ob-stage[data-ready] .script:not([data-on]) {
+      transform: translate3d(0, -130%, 0) rotate(-22deg);
+    }
+
+    .ob-stage[data-ready] .handset:not([data-on]) {
+      transform: translate3d(0, 130lvh, 0) rotate(14deg);
+    }
+
+    .ob-stage[data-ready] .voices:not([data-on]) {
+      opacity: 0;
+      transform: scaleY(0);
+    }
+
+    .ob-stage[data-ready] .stamp:not([data-on]) {
+      opacity: 0;
+      transform: scale(3.4);
+    }
+
+    .ob-stage[data-ready] .tape:not([data-on]) {
+      opacity: 0;
+      transform: translate3d(5rem, -2rem, 0) rotate(30deg);
+    }
+
+    .ob-stage[data-ready] .ticket:not([data-on]) {
+      opacity: 0;
+      transform: translate3d(0, 140%, 0) rotate(-14deg);
+    }
+
+    .ob-stage[data-ready] .marquee:not([data-on]) {
+      transform: translate3d(0, 100%, 0);
+    }
+
+    .ob-stage[data-ready] .bubble:not([data-on]) {
+      opacity: 0;
+    }
+  }
+
+  /* Two follow spots hunting across the set. */
+  .beam {
+    position: absolute;
+    z-index: 8;
+    top: -12%;
+    width: 34vmax;
+    height: 150lvh;
+    background: linear-gradient(rgb(255 243 200 / 34%), rgb(255 243 200 / 4%));
+    clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+    pointer-events: none;
+    transform-origin: 50% 0;
+    opacity: var(--open);
+  }
+
+  .beam--left {
+    left: 8%;
+    animation: hunt 7s ease-in-out infinite alternate;
+  }
+
+  .beam--right {
+    right: 4%;
+    animation: hunt 9s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes hunt {
+    from {
+      transform: rotate(-20deg);
+    }
+
+    to {
+      transform: rotate(24deg);
+    }
   }
 
   .slab {
@@ -236,22 +319,12 @@ const phones = [
     border-radius: 50%;
     background: radial-gradient(var(--red) 34%, transparent 36%) 0 0 / 0.75rem 0.75rem;
     opacity: 0.55;
-  }
-
-  .kicker {
-    position: absolute;
-    top: calc(var(--u) * 7);
-    left: calc(var(--gutter) + 1.5vw);
-    color: var(--paper);
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    rotate: calc(var(--late) * 40deg);
   }
 
   h2 {
     position: absolute;
-    top: calc(var(--u) * 10);
+    top: calc(var(--u) * 9);
     left: calc(var(--gutter) + 1.5vw);
     width: calc(var(--u) * 43);
     color: var(--paper);
@@ -261,8 +334,13 @@ const phones = [
     letter-spacing: -0.035em;
   }
 
+  h2 span,
   h2 em {
-    display: inline-block;
+    display: block;
+    width: fit-content;
+  }
+
+  h2 em {
     padding: 0 0.1em 0.04em;
     background: var(--marker);
     color: var(--red-deep);
@@ -280,7 +358,7 @@ const phones = [
     box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 22%);
     font-size: calc(var(--u) * 1.25);
     line-height: 1.32;
-    rotate: 5deg;
+    rotate: calc(5deg - var(--late) * 9deg);
     clip-path: polygon(
       0 0,
       100% 0,
@@ -311,27 +389,66 @@ const phones = [
   }
 
   .script__scene {
-    font-style: italic;
     font-size: 1.3em;
+    font-style: italic;
   }
 
+  /* The highlighter keeps going over the actor's own lines. */
   .script__mine {
     padding: 0.25em 0.45em;
-    background: var(--marker);
+    background: linear-gradient(var(--marker), var(--marker)) no-repeat 0 0 / 100% 100%;
+    animation: highlight 4.4s var(--ease) infinite;
+  }
+
+  .script__mine:last-child {
+    animation-delay: -2.2s;
+  }
+
+  @keyframes highlight {
+    0% {
+      background-size: 0 100%;
+    }
+
+    35%,
+    100% {
+      background-size: 100% 100%;
+    }
   }
 
   .handset {
     position: absolute;
     width: calc(var(--u) * 19.5);
+    aspect-ratio: 640 / 1385;
+    box-sizing: content-box;
     padding: calc(var(--u) * 0.55);
     border-radius: calc(var(--u) * 3);
     background: #161514;
     box-shadow: 0 1.5rem 3rem rgb(29 16 12 / 42%);
-    scale: calc(0.9 + var(--open) * 0.1);
   }
 
+  /* Screens stack, and each one takes a turn on top. */
   .handset img {
+    position: absolute;
+    width: calc(100% - var(--u) * 1.1);
     border-radius: calc(var(--u) * 2.5);
+    animation: screen 9s steps(1, end) infinite;
+    animation-delay: calc(var(--screen) * 3s - 9s);
+  }
+
+  .handset img:first-child {
+    animation-name: none;
+  }
+
+  @keyframes screen {
+    0%,
+    33.3% {
+      opacity: 1;
+    }
+
+    33.4%,
+    100% {
+      opacity: 0;
+    }
   }
 
   .handset--1 {
@@ -339,6 +456,7 @@ const phones = [
     top: 16%;
     right: 26%;
     rotate: -7deg;
+    --drift: -5lvh;
   }
 
   .handset--2 {
@@ -346,6 +464,7 @@ const phones = [
     top: 11%;
     right: 12%;
     rotate: 3deg;
+    --drift: 5lvh;
   }
 
   .handset--3 {
@@ -353,12 +472,100 @@ const phones = [
     top: 24%;
     right: -3%;
     rotate: 9deg;
+    --drift: -8lvh;
+  }
+
+  /* Everyone's voices, in the run-through. */
+  .voices {
+    position: absolute;
+    z-index: 5;
+    bottom: 22%;
+    left: calc(var(--gutter) + 1.5vw);
+    display: flex;
+    gap: 0.28rem;
+    align-items: center;
+    width: calc(var(--u) * 30);
+    height: calc(var(--u) * 8);
+    transform-origin: 50% 100%;
+  }
+
+  .voices i {
+    flex: 1;
+    height: 100%;
+    border-radius: 99rem;
+    background: var(--marker);
+    transform: scaleY(0.2);
+    animation: speak 1.1s ease-in-out infinite alternate;
+    animation-delay: calc(var(--i) * -170ms);
+  }
+
+  @keyframes speak {
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  .bubble {
+    position: absolute;
+    z-index: 7;
+    pointer-events: none;
+  }
+
+  .bubble span {
+    display: block;
+    padding: 0.25em 0.75em;
+    border: 3px solid var(--ink);
+    border-radius: 1.2em 1.2em 1.2em 0.2em;
+    background: #fff;
+    font-size: clamp(1.1rem, 2.2vw, 2rem);
+    font-style: italic;
+    font-weight: 500;
+    animation: pop 7.5s var(--spring) infinite;
+  }
+
+  .bubble--one {
+    top: 12%;
+    right: 37%;
+  }
+
+  .bubble--two {
+    top: 50%;
+    right: 3%;
+  }
+
+  .bubble--two span {
+    animation-delay: -2.5s;
+  }
+
+  .bubble--three {
+    top: 74%;
+    right: 34%;
+  }
+
+  .bubble--three span {
+    animation-delay: -5s;
+  }
+
+  @keyframes pop {
+    0%,
+    100% {
+      transform: scale(0) rotate(-12deg);
+    }
+
+    6%,
+    26% {
+      transform: none;
+    }
+
+    33% {
+      transform: scale(0) rotate(8deg);
+    }
   }
 
   .stamp {
     position: absolute;
     z-index: 6;
-    bottom: 13%;
+    bottom: calc(13% + var(--bar));
     right: 41%;
     width: calc(var(--u) * 13);
     animation: turn 18s linear infinite;
@@ -401,12 +608,20 @@ const phones = [
     letter-spacing: 0.08em;
     text-transform: uppercase;
     rotate: 6deg;
+    transform-origin: 100% 0;
+    animation: flutter 2.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes flutter {
+    to {
+      rotate: 3deg;
+    }
   }
 
   .ticket {
     position: absolute;
     z-index: 6;
-    bottom: 13%;
+    bottom: calc(11% + var(--bar));
     left: calc(var(--gutter) + 1.5vw);
     display: grid;
     padding: 0.65rem 1.4rem 0.75rem 1.1rem;
@@ -419,12 +634,18 @@ const phones = [
       radial-gradient(circle 0.55rem at 0 50%, transparent 98%, #000) left;
     mask-size: 51% 100%;
     mask-repeat: no-repeat;
-    transition: rotate 180ms var(--ease);
+    animation: admit 3.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes admit {
+    to {
+      rotate: 1.5deg;
+    }
   }
 
   @media (hover: hover) and (pointer: fine) {
     .ticket:hover {
-      rotate: 1deg;
+      animation-play-state: paused;
     }
   }
 
@@ -451,7 +672,7 @@ const phones = [
     position: absolute;
     z-index: 7;
     right: 0;
-    bottom: calc(100lvh - 100svh);
+    bottom: var(--bar);
     left: 0;
     overflow: hidden;
     padding: 0.5rem 0;
@@ -475,7 +696,8 @@ const phones = [
     }
   }
 
-  /* Velvet: folds bunch up at the wings as the drapes open. */
+  /* Velvet: folds bunch up at the wings as the drapes open. The scalloped hem and fringe come down
+     over the last world like a house curtain. */
   .drape {
     position: absolute;
     z-index: 10;
@@ -537,197 +759,7 @@ const phones = [
     letter-spacing: -0.04em;
   }
 
-  .ob-test {
-    padding: clamp(4.5rem, 10vw, 9rem) var(--gutter);
-    background: var(--red);
-    color: var(--paper);
-  }
-
-  .ob-test header {
-    max-width: 48rem;
-    margin-bottom: clamp(2rem, 5vw, 4rem);
-  }
-
-  .ob-test__label {
-    margin-bottom: 0.8rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  h3 {
-    margin-bottom: 1rem;
-    font-size: clamp(3rem, 8vw, 7.5rem);
-    font-weight: 500;
-    line-height: 0.95;
-    letter-spacing: -0.035em;
-  }
-
-  .ob-test header p:last-child {
-    font-size: clamp(1.2rem, 2vw, 1.6rem);
-    line-height: 1.3;
-  }
-
-  .ob-test__pair {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(0.75rem, 2vw, 1.5rem);
-  }
-
-  article {
-    display: grid;
-    align-content: end;
-    gap: 0.4rem;
-    min-height: clamp(20rem, 36vw, 30rem);
-    padding: clamp(1.25rem, 3vw, 2.25rem);
-    font-size: 1.2rem;
-    line-height: 1.3;
-  }
-
-  h4 {
-    margin-top: auto;
-    font-size: clamp(1.7rem, 3.4vw, 2.9rem);
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: -0.025em;
-  }
-
-  .night {
-    background: #0f0d0c;
-    color: #e9e2d2;
-  }
-
-  .wave {
-    display: flex;
-    gap: 0.35rem;
-    align-items: center;
-    align-self: center;
-    height: 9rem;
-  }
-
-  .wave i {
-    flex: 1;
-    max-width: 0.6rem;
-    height: 100%;
-    border-radius: 99rem;
-    background: var(--marker);
-    transform: scaleY(0.2);
-    animation: speak 1.3s ease-in-out infinite alternate;
-    animation-delay: calc(var(--i) * -170ms);
-  }
-
-  @keyframes speak {
-    to {
-      transform: scaleY(1);
-    }
-  }
-
-  .lamp {
-    background: radial-gradient(circle at 80% 0, #ffe9b0, #f6cf7f 45%, #e2a24d);
-    color: var(--ink);
-  }
-
-  .lamp__quote {
-    align-self: center;
-    font-size: clamp(1.5rem, 3vw, 2.4rem);
-    line-height: 1.15;
-  }
-
-  .lamp__quote span {
-    display: block;
-    margin-bottom: 0.25rem;
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-  }
-
-  mark {
-    background: var(--paper);
-    color: inherit;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-    padding: 0 0.15em;
-  }
-
-  .ob-run {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: clamp(2rem, 6vw, 6rem);
-    align-items: end;
-    padding: clamp(4.5rem, 10vw, 9rem) var(--gutter);
-  }
-
-  .line {
-    margin-bottom: 1.1rem;
-    color: rgb(29 28 26 / 28%);
-    font-size: clamp(1.8rem, 4.4vw, 4rem);
-    font-weight: 500;
-    line-height: 1.04;
-    letter-spacing: -0.025em;
-    transition: color 280ms;
-  }
-
-  .line q {
-    quotes: none;
-    background: linear-gradient(var(--marker), var(--marker)) no-repeat 0 88% / 0 0.42em;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-    transition: background-size 600ms var(--ease);
-  }
-
-  .line span {
-    display: block;
-    color: var(--red);
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-  }
-
-  .line[data-on] {
-    color: var(--ink);
-  }
-
-  .line[data-on] q {
-    background-size: 100% 0.42em;
-  }
-
-  .ob-run__close {
-    display: grid;
-    gap: 1.1rem;
-    justify-items: start;
-    font-size: 1.2rem;
-    line-height: 1.35;
-  }
-
-  .proof {
-    font-size: clamp(1.8rem, 3.2vw, 2.9rem);
-    font-style: italic;
-    font-weight: 500;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-  }
-
-  .ob-run__close a {
-    display: inline-flex;
-    gap: 1rem;
-    padding: 0.85rem 1.4rem;
-    border-radius: 99rem;
-    background: var(--red);
-    color: #fff;
-    font-family: var(--sans);
-    font-weight: 700;
-    text-decoration: none;
-    transition: background 180ms;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .ob-run__close a:hover {
-      background: var(--red-deep);
-    }
-  }
-
-  @media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  @media (max-aspect-ratio: 5/6) {
     .ob-stage {
       --u: min(2.45vw, 1.14svh);
     }
@@ -749,14 +781,8 @@ const phones = [
       );
     }
 
-    .kicker {
-      top: 4.5rem;
-      left: 1.5rem;
-      font-size: 0.72rem;
-    }
-
     h2 {
-      top: 6.2rem;
+      top: 5.2rem;
       left: 1.5rem;
       width: calc(100% - 3rem);
       font-size: clamp(2.7rem, 13vw, 6.5rem);
@@ -764,9 +790,9 @@ const phones = [
 
     .halftone {
       top: auto;
+      right: auto;
       bottom: 6%;
       left: -14%;
-      right: auto;
       width: 70%;
     }
 
@@ -776,16 +802,17 @@ const phones = [
       left: -8%;
       width: 44%;
       font-size: 0.72rem;
-      rotate: -6deg;
+      rotate: calc(-6deg + var(--late) * 8deg);
     }
 
     .handset {
-      width: 44%;
+      width: calc(44% - 0.6rem);
       padding: 0.3rem;
       border-radius: 1.5rem;
     }
 
     .handset img {
+      width: calc(100% - 0.6rem);
       border-radius: 1.25rem;
     }
 
@@ -804,6 +831,30 @@ const phones = [
       display: none;
     }
 
+    .voices {
+      z-index: 5;
+      bottom: calc(8.5rem + var(--bar));
+      left: 1.25rem;
+      width: 42%;
+      height: 2.2rem;
+      gap: 0.18rem;
+    }
+
+    .bubble--one {
+      top: 38%;
+      right: auto;
+      left: 4%;
+    }
+
+    .bubble--two {
+      top: 62%;
+      right: 2%;
+    }
+
+    .bubble--three {
+      display: none;
+    }
+
     .stamp {
       top: 37%;
       right: 2%;
@@ -813,29 +864,56 @@ const phones = [
 
     .tape {
       top: auto;
-      bottom: 12.5%;
       right: -1%;
+      bottom: calc(5.5rem + var(--bar));
       font-size: 0.68rem;
     }
 
     .ticket {
-      bottom: 3.1rem;
+      bottom: calc(3.1rem + var(--bar));
       left: 1.25rem;
+      background: var(--marker);
     }
 
-    .ob-test__pair,
-    .ob-run {
-      grid-template-columns: minmax(0, 1fr);
+    .beam {
+      opacity: calc(var(--open) * 0.55);
     }
 
-    @media (max-width: 370px) {
+    @media (max-width: 380px) {
       .tape {
         display: none;
       }
     }
 
-    article {
-      min-height: 19rem;
+    @media (max-height: 700px) {
+      .bubble--two {
+        display: none;
+      }
+    }
+  }
+
+  /* Phones on their side: too short for the waveform and the bubbles next to the headline. */
+  @media (max-height: 480px) {
+    .voices,
+    .bubble {
+      display: none;
+    }
+
+    .tape {
+      top: 3.25rem;
+      bottom: auto;
+    }
+  }
+
+  /* An address bar lifts the ticket further than the bar shrinks the headline, so on short wide
+     screens the headline is also sized to end above wherever the ticket has got to. */
+  @media (max-height: 480px) and (min-aspect-ratio: 5/6) {
+    .ob-stage {
+      --u: min(1vw, 1.62svh, calc((100svh - 11lvh - 7.15rem) / 31.5));
+    }
+
+    h2 {
+      top: max(calc(var(--u) * 9), 2.4rem);
     }
   }
 
@@ -849,22 +927,28 @@ const phones = [
     }
 
     .drape,
-    .billing {
+    .billing,
+    .beam,
+    .bubble {
       display: none;
     }
 
     .stamp,
-    .marquee span {
+    .marquee span,
+    .script__mine,
+    .tape,
+    .ticket,
+    .handset img {
       animation: none;
     }
 
-    .wave i {
+    .handset img:not(:first-child) {
+      display: none;
+    }
+
+    .voices i {
       animation: none;
       transform: scaleY(0.55);
-    }
-
-    .line {
-      color: var(--ink);
     }
   }
 </style>

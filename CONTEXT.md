@@ -31,7 +31,7 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 ## What is settled
 
 - One page: a hero, then four worlds in the owner's order, a short set of working rules, a link index, and a contact footer.
-- AI Build Night leads. Offbooked is the one presented as a possible business. Parkdex is a labelled side quest. Play by the Sandbox is shown as a website Nathan designed.
+- AI Build Night leads. Offbooked is the one presented as a possible business. Parkdex is the playful one. Play by the Sandbox, shown as a website Nathan designed, closes the set before the index.
 - The site positions Nathan as someone who builds for real people, tests with real users and builds an AI community. Avoid nature-guy framing.
 - Every world has its own fonts, colours, motion, and transition in. Do not unify them into one card template.
 - The index keeps one interaction from the old homepage: a row's whole background fills with a full-colour image. Keep hover, keyboard focus, and the touch equivalent together.
@@ -43,13 +43,15 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 - With JavaScript off, every section, heading, and link is still present.
 - No width scrolls sideways.
 - Hover effects sit behind `(hover: hover) and (pointer: fine)`. Touch gets its own equivalent.
-- Keyboard focus reaches every link, and focusing a Parkdex link scrolls the side-scrolling level to it.
-- The Plant! button hides at the end of the Parkdex level so it can't cover the links.
+- Keyboard focus reaches every link.
+- The Plant! button hides at the end of the Parkdex trip so it can't cover the links.
+- The crayon wipe plays in full at any scroll speed, in both directions.
 
 ## Open items
 
 - Confirm Cloudflare Web Analytics configuration before claiming analytics is active. See `OPERATIONS.md`.
-- The AI Build Night section says Night 002's date is coming soon. Update it when the date is public.
+- The AI Build Night section says Night 002 is next. Add the date when it is public.
+- Night 001 photos can come onto the site once attendee permission is cleared.
 - Offbooked has no store listing. Link one only once it is live, and show prices only when they can be paid.
 
 ## Starting a new task safely

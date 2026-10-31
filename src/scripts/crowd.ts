@@ -6,7 +6,6 @@ import { onProgress, reducedMotion } from './scroll';
 interface Word {
   text: string;
   colour: string;
-  caption: string;
   points: Float32Array;
 }
 
@@ -45,15 +44,13 @@ export const startCrowd = async () => {
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   const canvas = hero?.querySelector<HTMLCanvasElement>('[data-crowd]');
   const block = hero?.querySelector<HTMLElement>('[data-block]');
-  const caption = hero?.querySelector<HTMLElement>('[data-caption]');
   const context = canvas?.getContext('2d');
-  if (!hero || !canvas || !block || !caption || !context) return;
+  if (!hero || !canvas || !block || !context) return;
 
   const chips = Array.from(hero.querySelectorAll<HTMLElement>('[data-word]'));
   const words: Word[] = chips.map((chip) => ({
     text: chip.dataset['word'] ?? '',
     colour: chip.dataset['colour'] ?? '#ffffff',
-    caption: chip.dataset['caption'] ?? '',
     points: new Float32Array(),
   }));
 
@@ -112,7 +109,6 @@ export const startCrowd = async () => {
   const showWord = (index: number) => {
     current = (index + words.length) % words.length;
     assign(current);
-    caption.textContent = words[current]?.caption ?? '';
     chips.forEach((chip, i) => chip.toggleAttribute('data-current', i === current));
   };
 
@@ -287,10 +283,16 @@ export const startCrowd = async () => {
     chip.addEventListener('blur', release);
   });
 
-  afterScroll = () => setRunning(visible && scrollProgress < 0.62);
+  // Past the funnel the canvas is cleared, so a jump down the page can't leave a word behind.
+  const settle = () => {
+    const crowded = scrollProgress < 0.62;
+    setRunning(visible && crowded);
+    if (!crowded) context.clearRect(0, 0, canvas.width, canvas.height);
+  };
+  afterScroll = settle;
   new IntersectionObserver(([entry]) => {
     visible = entry?.isIntersecting ?? false;
-    setRunning(visible && scrollProgress < 0.62);
+    settle();
   }).observe(hero);
 
   let resizeTimer = 0;
@@ -302,5 +304,5 @@ export const startCrowd = async () => {
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(resize, 150);
   });
-  afterScroll();
+  settle();
 };

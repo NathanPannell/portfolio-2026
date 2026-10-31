@@ -4,7 +4,7 @@ All copy lives in the Astro components under `src/components/`. There are no con
 
 ## Voice
 
-First person, short, specific and a little funny. Name a real person or situation instead of an adjective. Avoid hype words, and avoid nature-guy framing in the hero and overall voice.
+First person, short, specific and a little funny. As few words as a section can get away with: the owner wants a fun thing to scroll through, with links out to the rest. Avoid hype words, and avoid nature-guy framing in the hero and overall voice.
 
 ## Claims
 
@@ -12,14 +12,13 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 
 | Claim | Source |
 | --- | --- |
-| AI Build Night: free, hands-on, for beginners and experienced builders, Victoria, BC. Night 001 on Oct 22, 2026 at Herald St Brew Works. Night 002 date coming soon. Co-run with Kalen Christ, Carmello Giron and Paurav H Param. | aibuildnight.ca |
-| The two tenets | `ai-build-night-site-workspace/ops/goals.md`, in step with `snippets/tenets.liquid` on the site repo. |
-| A feature got pulled for failing the two-actor test. | Offbooked `b5dcd6a`, the revert of #100, and the owner's note on judging the player by two actors. |
-| Play by the Sandbox: January 2027, Vancouver Art Gallery, 16 creative directors, 16 brands, 30–40 creators, 3 days, hosted by Mello. | playbythesandbox.ca |
-| Offbooked: "Used by casts in British Columbia and Nova Scotia for real productions", free during the public beta, no account for actors, runs in any phone's browser. | offbooked.com |
-| Parkdex: 1,000+ parks, live on Google Play in Canada since October 2026. | Live app and Play listing |
+| AI Build Night: "Stop reading about AI. Start building with it.", a free night in Victoria, BC. Night 001 filled up, and Night 002 is next. | aibuildnight.ca home and Past nights pages, checked 2026-10-31 |
+| The two tenets | Public on aibuildnight.ca. `ai-build-night-site-workspace/ops/goals.md` is the source. |
+| Play by the Sandbox: Mello's event at the Vancouver Art Gallery. | playbythesandbox.ca |
+| Offbooked: public beta, free for now, no account for the cast. | offbooked.com |
+| Parkdex: 1,000+ parks. | Live app and Play listing |
 
-The AI Build Night room is a drawing, and says so. It is not a head count. Its clock follows the live site: doors at 18:00, show-and-tell at 20:15, close at 21:00.
+The AI Build Night room is a drawing of how a night runs, not a head count. It shows no times: the live home page no longer publishes a schedule.
 
 ## Check before showing
 
@@ -30,3 +29,5 @@ The AI Build Night room is a drawing, and says so. It is not a head count. Its c
 ## Privacy
 
 Don't publish anything from the AI Build Night ops folders or job-search material, such as attendee names or personal contact info. Don't show other players' handles from the live Parkdex leaderboard.
+
+Night 001 photos are on aibuildnight.ca, but attendee permission is still pending (`ops/goals.md`), so don't copy them here until the owner clears it.

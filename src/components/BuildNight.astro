@@ -1,11 +1,5 @@
 ---
-const steps = [
-  ['Doors.', 'Free, and open to anyone. Any role or background can be a builder.'],
-  ['Pick a track.', 'Try an optional challenge, or bring your own project.'],
-  ['Build.', 'Laptops open. Paurav and I wander around getting people unstuck.'],
-  ['Show-and-tell.', 'Optional, and encouraged. Show what you made, finished or not.'],
-  ['Close.', 'Bring a laptop. Leave with something.'],
-];
+const steps = ['Doors.', 'Build.', 'Get unstuck.', 'Demo.'];
 const contours = [
   'M-50 120C180 40 320 210 520 130S830 30 1050 150',
   'M-50 210C150 150 300 310 520 220S860 110 1050 250',
@@ -18,8 +12,7 @@ const contours = [
 ---
 
 <section id="ai-build-night" class="abn" data-audience="builders" aria-labelledby="abn-title">
-  <div class="abn-open">
-    <p class="label">01 / The main thing right now</p>
+  <div class="abn-open" data-loops>
     <h2 id="abn-title">
       AI Build
       <span>
@@ -27,17 +20,13 @@ const contours = [
       </span>
     </h2>
     <div class="abn-open__body">
-      <p class="abn-open__line">Come curious. Build something.</p>
-      <p>
-        A free, hands-on evening in Victoria, BC, for beginners and experienced AI builders. I
-        co-run it with Kalen Christ, Carmello Giron and Paurav H Param, and I designed and built its
-        website.
-      </p>
+      <p class="abn-open__line">Stop reading about AI. Start building with it.</p>
+      <p>A free night in Victoria, BC. I co-run it and built the site.</p>
     </div>
   </div>
 
   <div class="abn-room" data-track data-room>
-    <div class="abn-room__stage">
+    <div class="abn-room__stage" data-stage>
       <svg
         class="abn-room__contours"
         viewBox="0 0 1000 900"
@@ -48,63 +37,40 @@ const contours = [
           <path d={d} pathLength="1" />
         ))}
       </svg>
-      <div class="abn-room__copy">
-        <p class="label">A night, from above</p>
-        <p class="abn-room__clock" data-clock>
-          18:00
-        </p>
-        <ol>
-          {steps.map(([title, text]) => (
-            <li data-step>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
+      <ol class="abn-room__copy">
+        {steps.map((step) => (
+          <li data-step>{step}</li>
+        ))}
+      </ol>
       <figure class="abn-room__plan">
         <canvas
           role="img"
           aria-label="A top-down drawing of a room filling with people and laptops"
         ></canvas>
-        <figcaption>Drawn, not counted.</figcaption>
       </figure>
     </div>
   </div>
 
   <div class="abn-tenets" data-track>
-    <div class="abn-tenets__stage">
-      <p class="label">Two tenets</p>
+    <div class="abn-tenets__stage" data-stage>
       <p class="abn-tenets__one">The next unicorn can come from Vancouver Island.</p>
       <p class="abn-tenets__two">We share what we learn.</p>
-      <p class="abn-tenets__note">
-        AI is moving too fast for anyone to keep up alone. We stay ahead as a community.
-      </p>
     </div>
   </div>
 
   <div class="abn-site">
     <div class="abn-site__copy" data-reveal>
-      <p class="label">The website</p>
-      <h3>A site that reports what happened, and skips the hype.</h3>
-      <p>
-        Heavy headlines, Salish Sea contour lines and one orange cursor. The tools anyone can use on
-        the night orbit the headline, because the point is that you pick one and start.
-      </p>
-      <dl>
-        <div>
-          <dt>001</dt>
-          <dd>Oct 22, 2026 · Herald St Brew Works</dd>
-        </div>
-        <div>
-          <dt>002</dt>
-          <dd>Date coming soon · Victoria, BC</dd>
-        </div>
-      </dl>
-      <a class="abn-site__cta" href="https://aibuildnight.ca/">
-        <span>aibuildnight.ca</span>
-        <span aria-hidden="true">↗</span>
-      </a>
+      <h3>Night 001 filled up. Night 002 is next.</h3>
+      <div class="abn-site__links">
+        <a class="abn-site__cta" href="https://aibuildnight.ca/">
+          <span>aibuildnight.ca</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a class="abn-site__recap" href="https://aibuildnight.ca/pages/past-nights">
+          <span>Read the recap</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
     </div>
 
     <div class="abn-site__show">
@@ -124,7 +90,7 @@ const contours = [
           loop
           playsinline
           preload="none"
-          aria-label="The AI Build Night homepage, with AI tools orbiting its headline"
+          aria-label="The AI Build Night homepage: Stop reading about AI. Start building with it."
         ></video>
       </figure>
       <img
@@ -139,18 +105,19 @@ const contours = [
         decoding="async"
         alt="The AI Build Night homepage on a phone"
       />
-      <figure class="abn-hosts" data-reveal style="--reveal-turn: 5deg">
-        <img
-          src="/media/build-night/hosts-480.webp"
-          srcset="/media/build-night/hosts-480.webp 480w, /media/build-night/hosts-800.webp 800w"
-          sizes="(max-width: 700px) 42vw, 17rem"
-          width="800"
-          height="1227"
-          loading="lazy"
-          decoding="async"
-          alt="A Polaroid of the four hosts: Kalen Christ, Nathan Pannell, Carmello Giron and Paurav H Param"
-        />
-      </figure>
+      <img
+        class="abn-card"
+        data-reveal
+        style="--reveal-turn: 5deg"
+        src="/media/build-night/first-night-480.webp"
+        srcset="/media/build-night/first-night-480.webp 480w, /media/build-night/first-night-900.webp 900w"
+        sizes="(max-width: 700px) 60vw, 26rem"
+        width="900"
+        height="238"
+        loading="lazy"
+        decoding="async"
+        alt="The Night 001 band on the AI Build Night homepage"
+      />
     </div>
   </div>
 </section>
@@ -168,13 +135,6 @@ const contours = [
     font-family: var(--sans);
   }
 
-  .label {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
   .abn-open {
     min-height: 100svh;
     display: grid;
@@ -186,7 +146,6 @@ const contours = [
   h2 {
     font-size: clamp(5rem, 21vw, 21rem);
     font-weight: 900;
-    font-stretch: 100%;
     line-height: 0.82;
     letter-spacing: -0.055em;
   }
@@ -212,9 +171,9 @@ const contours = [
 
   .abn-open__body {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    align-items: end;
     gap: 1rem 3rem;
-    max-width: 68rem;
     font-size: clamp(1.05rem, 1.5vw, 1.3rem);
     font-weight: 500;
     line-height: 1.35;
@@ -261,54 +220,30 @@ const contours = [
     stroke-dashoffset: calc(1 - min(1, var(--p, 1) * 1.6));
   }
 
+  /* The words swap in place, at a size that fills the side of the room. */
   .abn-room__copy {
     position: relative;
     z-index: 1;
-  }
-
-  .abn-room__clock {
-    margin: 0.5rem 0 1rem;
-    font-size: clamp(4.5rem, 12vw, 11.5rem);
-    font-weight: 900;
-    font-variant-numeric: tabular-nums;
-    line-height: 0.9;
-    letter-spacing: -0.05em;
-    color: var(--ink);
-  }
-
-  .abn-room__copy ol {
-    position: relative;
-    min-height: 8.5rem;
+    display: grid;
   }
 
   .abn-room__copy li {
-    position: absolute;
-    inset: 0 auto auto 0;
-    max-width: 30ch;
+    grid-area: 1 / 1;
+    font-size: clamp(3.2rem, 9.4vw, 9.5rem);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.05em;
     opacity: 0;
-    transform: translateY(0.6rem);
+    transform: translateY(1.2rem) scale(0.96);
+    transform-origin: 0 100%;
     transition:
-      opacity 240ms,
-      transform 300ms var(--ease);
+      opacity 200ms,
+      transform 340ms var(--ease);
   }
 
   .abn-room__copy li[data-on] {
     opacity: 1;
     transform: none;
-  }
-
-  .abn-room__copy h3 {
-    font-size: clamp(1.5rem, 2.8vw, 2.5rem);
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-  }
-
-  .abn-room__copy li p {
-    margin-top: 0.35rem;
-    color: var(--harbour);
-    font-size: 1.1rem;
-    line-height: 1.35;
   }
 
   .abn-room__plan {
@@ -323,16 +258,8 @@ const contours = [
     box-shadow: 0.6rem 0.6rem 0 var(--ink);
   }
 
-  figcaption {
-    margin-top: 1rem;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--harbour);
-    text-align: right;
-  }
-
   .abn-tenets {
-    height: 240svh;
+    height: 220svh;
     background: var(--ink);
   }
 
@@ -366,13 +293,6 @@ const contours = [
     clip-path: inset(0 calc(100% - min(1, max(0, var(--p, 1) - 0.42) * 2.4) * 100%) 0 0);
   }
 
-  .abn-tenets__note {
-    max-width: 38ch;
-    color: #cfd6d3;
-    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-    opacity: calc((var(--p, 1) - 0.72) * 5);
-  }
-
   .abn-site {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -390,33 +310,18 @@ const contours = [
     letter-spacing: -0.04em;
   }
 
-  .abn-site__copy > p:not(.label) {
-    max-width: 44ch;
-    color: #15363e;
-  }
-
-  dl {
-    margin: 1.75rem 0;
-    border-top: 2px solid var(--ink);
-  }
-
-  dl div {
+  .abn-site__links {
     display: flex;
-    gap: 1.25rem;
-    align-items: baseline;
-    padding: 0.7rem 0;
-    border-bottom: 1px solid var(--ink);
+    flex-wrap: wrap;
+    gap: 0.6rem 1.25rem;
+    align-items: center;
   }
 
-  dt {
-    font-weight: 900;
-    font-size: 1.5rem;
-    letter-spacing: -0.03em;
-  }
-
-  dd {
-    margin: 0;
-    font-size: 0.98rem;
+  .abn-site__recap {
+    display: inline-flex;
+    gap: 0.5rem;
+    font-weight: 700;
+    text-underline-offset: 0.2em;
   }
 
   .abn-site__cta {
@@ -494,13 +399,14 @@ const contours = [
     box-shadow: 0.5rem 0.5rem 0 var(--ink);
   }
 
-  .abn-hosts {
+  .abn-card {
     position: absolute;
-    bottom: -3%;
+    bottom: 2%;
     left: -3%;
-    width: 30%;
-    rotate: -5deg;
-    filter: drop-shadow(0.4rem 0.6rem 0.8rem rgb(0 0 0 / 28%));
+    width: 58%;
+    border: 2px solid var(--ink);
+    box-shadow: 0.4rem 0.4rem 0 var(--ink);
+    rotate: -2deg;
   }
 
   @media (max-width: 860px) {
@@ -531,46 +437,28 @@ const contours = [
       width: 100%;
     }
 
-    .abn-room__clock {
-      margin: 0.15rem 0 0.4rem;
-      font-size: clamp(3.5rem, 18vw, 6rem);
-    }
-
-    .abn-room__copy ol {
-      min-height: 6.6rem;
+    .abn-room__copy li {
+      font-size: clamp(2.8rem, 14.5vw, 5rem);
     }
 
     .abn-room__plan {
-      width: min(100%, calc(100svh - 21rem));
-    }
-
-    figcaption {
-      margin-top: 0.7rem;
+      width: min(100%, calc(100svh - 14rem));
     }
   }
 
-  /* Phones on their side keep the drawing beside the clock. */
+  /* Phones on their side keep the drawing beside the word. */
   @media (max-height: 480px) {
     .abn-room__stage {
       padding-top: 3rem;
       padding-bottom: 0.5rem;
     }
 
-    .abn-room__clock {
-      margin: 0;
-      font-size: 3.5rem;
+    .abn-room__copy li {
+      font-size: 3rem;
     }
 
     .abn-room__plan {
       width: calc(100svh - 5rem);
-    }
-
-    .abn-room__copy ol {
-      min-height: 6.5rem;
-    }
-
-    figcaption {
-      display: none;
     }
   }
 
@@ -597,28 +485,15 @@ const contours = [
       min-height: 100svh;
     }
 
-    .abn-room__copy ol {
-      min-height: 0;
-    }
-
     .abn-room__copy li {
-      position: static;
-      margin-bottom: 1rem;
+      grid-area: auto;
       opacity: 1;
       transform: none;
-    }
-
-    .abn-room__clock {
-      display: none;
     }
 
     .abn-tenets__one,
     .abn-tenets__two {
       clip-path: none;
-    }
-
-    .abn-tenets__note {
-      opacity: 1;
     }
   }
 </style>

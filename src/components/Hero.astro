@@ -1,38 +1,14 @@
 ---
 const audiences = [
-  {
-    word: 'BUILDERS',
-    label: 'Builders',
-    href: '#ai-build-night',
-    colour: '#ff5b23',
-    caption: 'First-timers and old hands, in one room, with laptops open.',
-  },
-  {
-    word: 'CREATORS',
-    label: 'Creators',
-    href: '#play-by-the-sandbox',
-    colour: '#f7c948',
-    caption: 'Sixteen brands, three days, one runway at the Vancouver Art Gallery.',
-  },
-  {
-    word: 'CASTS',
-    label: 'Casts',
-    href: '#offbooked',
-    colour: '#f3e2b6',
-    caption: 'Actors running lines on the bus, in each other’s voices.',
-  },
-  {
-    word: 'RIVALS',
-    label: 'Rivals',
-    href: '#parkdex',
-    colour: '#7be0ae',
-    caption: 'Whoever just stole your flag.',
-  },
+  { word: 'BUILDERS', label: 'Builders', href: '#ai-build-night', colour: '#ff5b23' },
+  { word: 'CASTS', label: 'Casts', href: '#offbooked', colour: '#f3e2b6' },
+  { word: 'RIVALS', label: 'Rivals', href: '#parkdex', colour: '#7be0ae' },
+  { word: 'CREATORS', label: 'Creators', href: '#play-by-the-sandbox', colour: '#f7c948' },
 ];
 ---
 
-<section class="hero" data-hero data-track data-focus-at="0" data-audience="real people">
-  <div class="hero__stage">
+<section class="hero" data-hero data-track data-loops data-focus-at="0" data-audience="real people">
+  <div class="hero__stage" data-stage>
     <canvas class="hero__crowd" data-crowd aria-hidden="true"></canvas>
 
     <div class="hero__copy">
@@ -47,9 +23,6 @@ const audiences = [
     </div>
 
     <div class="hero__foot">
-      <p class="hero__caption" data-caption>
-        {audiences[0]?.caption}
-      </p>
       <ul class="hero__chips">
         {audiences.map((audience) => (
           <li>
@@ -57,7 +30,6 @@ const audiences = [
               href={audience.href}
               data-word={audience.word}
               data-colour={audience.colour}
-              data-caption={audience.caption}
               style={`--chip: ${audience.colour}`}
             >
               {audience.label}
@@ -114,7 +86,6 @@ const audiences = [
   h1 {
     font-size: clamp(2.7rem, 7.6vw, 6.75rem);
     font-weight: 800;
-    font-stretch: 100%;
     line-height: 1;
     letter-spacing: -0.04em;
   }
@@ -144,17 +115,6 @@ const audiences = [
     justify-content: space-between;
     gap: 1rem 2.5rem;
     opacity: calc(1 - var(--p, 0) * 5);
-  }
-
-  .hero__caption {
-    flex: 1 1 18rem;
-    max-width: 30ch;
-    min-height: 3em;
-    color: #e7e6e0;
-    font-size: clamp(1.15rem, 1.9vw, 1.6rem);
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.015em;
   }
 
   .hero__chips {

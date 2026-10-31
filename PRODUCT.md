@@ -10,7 +10,7 @@ People who might work with Nathan, join AI Build Night, or try one of the produc
 
 ## Positioning
 
-The line is "I build for real people." Each section names the people it is for. The hero spells them out: builders, creators, casts, rivals.
+The line is "I build for real people." Each section names the people it is for. The hero spells them out: builders, casts, rivals, creators.
 
 Move away from "outdoorsy nature app builder". Parkdex stays on the site as a game, not as the identity.
 
@@ -18,7 +18,7 @@ Move away from "outdoorsy nature app builder". Parkdex stays on the site as a ga
 
 1. **AI Build Night** is the main thing right now.
 2. **Offbooked** could really become a business. Give it the biggest set piece.
-3. **Parkdex** is fun. Label it a side quest and let it be playful.
+3. **Parkdex** is fun. Let it be playful.
 4. **Play by the Sandbox** is a website Nathan designed for Mello's event.
 
 ## Scope

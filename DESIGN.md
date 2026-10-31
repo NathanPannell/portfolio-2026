@@ -11,10 +11,10 @@ Inspiration: cut-out collage and sticker posters on Dribbble, for the Offbooked 
 | World | Type | Colour | Signature motion | Way in |
 | --- | --- | --- | --- | --- |
 | Hero | Archivo, JetBrains Mono | Ink, each audience's colour | Canvas crowd, pointer repels it | Page load |
-| AI Build Night | Archivo, JetBrains Mono | Signal orange, bone, sea glass, harbour | Room scrubbed from 18:00 to 21:00, tenets wipe in | Hero block fills the screen |
-| Play by the Sandbox | Chewy, Gaegu | Cream, crayon rainbow, pastels | Throwable toys, bobbing bubble | Crayon strokes |
-| Offbooked | Newsreader, JetBrains Mono | Oxblood, paper, highlighter | Curtains bunch open, collage parallax, line highlights | Curtain |
-| Parkdex | Bricolage Grotesque | Sky, greens, orange, ink outlines | Vertical scroll pans a side-scroller, points, Plant! | Sky rises over the paper |
+| AI Build Night | Archivo, JetBrains Mono | Signal orange, bone, sea glass, harbour | Room scrubbed from doors to demos, tenets wipe in | Hero block fills the screen |
+| Offbooked | Newsreader, JetBrains Mono | Oxblood, paper, highlighter | Curtains bunch open, then the ad slams on stage piece by piece: follow spots, flipping phones, voices, stamp, ticket | Curtain |
+| Parkdex | Bricolage Grotesque | Sky, greens, orange, ink outlines | Kip rides a vine from the sky down through the forest, points, Plant! | Clouds rise over the paper |
+| Play by the Sandbox | Chewy, Gaegu | Cream, crayon rainbow, pastels | Throwable toys, bobbing bubble | Crayons colour in the screen, then the paper rises |
 | Index | Archivo | Ink, bone, signal | Rules sweep in, rows fill with an image | Hard cut |
 
 Each world follows its product's real brand. Check the product before changing its colours or fonts: AI Build Night's are in its `DESIGN-BRIEF.md`.
@@ -27,3 +27,4 @@ Each world follows its product's real brand. Check the product before changing i
 - Text over a busy image needs a scrim or a card. Check every row of the index with its fill on.
 - Leave room for touch: toys capture their own gestures, and the page must still scroll everywhere else.
 - Reduced motion is a designed layout, not motion turned off.
+- Keep words few. The site is something to scroll through and poke at, and links out do the explaining.

@@ -110,9 +110,17 @@ button {
   transform: none;
 }
 
-/* Reveals are opt-in for scripted pages, so the content stays visible without JavaScript. */
+/* A scene's looping parts rest while it is off screen. See startRests. */
+[data-resting],
+[data-resting] *,
+[data-resting] *::before,
+[data-resting] *::after {
+  animation-play-state: paused !important;
+}
+
+/* Reveals are opt-in: startReveals switches them on, so content stays visible if no script runs. */
 @media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] {
+  .reveals [data-reveal] {
     opacity: 0;
     transform: translateY(1.5rem) rotate(var(--reveal-turn, 0deg));
     transition:
@@ -120,7 +128,7 @@ button {
       transform 900ms var(--ease) var(--reveal-delay, 0ms);
   }
 
-  .js [data-reveal][data-in] {
+  .reveals [data-reveal][data-in] {
     opacity: 1;
     transform: none;
   }
@@ -137,7 +145,6 @@ button {
 .not-found h1 {
   font-size: clamp(3rem, 14vw, 11rem);
   font-weight: 900;
-  font-stretch: 112%;
   line-height: 0.92;
   letter-spacing: -0.04em;
 }

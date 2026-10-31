@@ -96,11 +96,13 @@ The current production site is live at `www.nathanpannell.com`. Staging is the s
 
 ## Analytics
 
-Cloudflare Web Analytics is intended, but its active configuration and beacon count are unverified in this handoff. Verify exactly one `cdn-cgi/rum` request on the production `www` domain before claiming analytics is active.
+Use Cloudflare Web Analytics through Pages, which injects the beacon into the HTML at deploy time. As of 2026-10-31 it is off on both projects: no beacon on either domain, and no Web Analytics site on the account. The Cloudflare API token on the owner's machine can read Web Analytics but can't create a site, so turning it on is a dashboard step.
 
-- Do not add a second analytics beacon to the source.
+To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflare dashboard > Workers & Pages > the project > Metrics > Web Analytics > Enable. It takes effect from the project's next deployment.
+
+- Do not add an analytics beacon to the source. `tests/content-contract.mjs` fails if one appears.
 - Do not add `Cache-Control: no-transform` to HTML responses.
-- Enable or confirm Web Analytics in Cloudflare and verify exactly one `cdn-cgi/rum` request on the production custom domain.
+- After enabling, verify exactly one beacon on the custom domain before claiming analytics is active: one `static.cloudflareinsights.com/beacon.min.js` script and one `cdn-cgi/rum` request.
 
 ## Required UI verification
 
@@ -121,6 +123,7 @@ The content contract protects:
 - the order of the homepage's sections
 - the outbound links that were checked against the live products
 - no Offbooked store link or price, and no Parkdex tester link
+- no analytics beacon in the source, and no return of the lines the owner cut
 - the image-fill interaction and its touch equivalent
 - a reduced-motion layout in every world
 - the media size budget, and that every referenced media file exists

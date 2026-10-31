@@ -1,30 +1,31 @@
-// Offbooked's collage: layers shift at their own depth under the pointer, and the run-through lines
-// light up one at a time as they cross the middle of the screen.
+// Offbooked's ad. Once the curtains are open the pieces slam on stage in turn: scroll decides when,
+// CSS springs decide how, so a fast scroll still gets the full bounce. Scrolling back takes them
+// off again. Layers shift at their own depth under the pointer.
 
-import { reducedMotion } from './scroll';
+import { onProgress, reducedMotion } from './scroll';
 
 export const startCollage = () => {
-  const collage = document.querySelector<HTMLElement>('[data-collage]');
-  const run = document.querySelector<HTMLElement>('[data-lines]');
-  if (run) {
-    const lines = run.querySelectorAll<HTMLElement>('[data-line]');
-    if (reducedMotion()) {
-      lines.forEach((line) => line.toggleAttribute('data-on', true));
-    } else {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) entry.target.toggleAttribute('data-on', true);
-          }
-        },
-        { rootMargin: '-45% 0px -35% 0px' },
-      );
-      lines.forEach((line) => observer.observe(line));
-    }
-  }
+  const track = document.querySelector<HTMLElement>('[data-collage]');
+  if (!track || reducedMotion()) return;
+  const stage = track.querySelector<HTMLElement>('[data-stage]');
+  const pieces = Array.from(track.querySelectorAll<HTMLElement>('[data-at]')).map((piece) => ({
+    piece,
+    at: Number(piece.dataset['at']),
+  }));
+  let ready = false;
+  onProgress(track, (progress) => {
+    for (const { piece, at } of pieces) piece.toggleAttribute('data-on', progress >= at);
+    if (ready) return;
+    ready = true;
+    // Only now can pieces wait off stage: until this runs, nothing could bring them back. The
+    // springs join two frames later, so a reload mid-scene doesn't play pieces leaving.
+    stage?.toggleAttribute('data-ready', true);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => stage?.toggleAttribute('data-sprung', true));
+    });
+  });
 
-  if (!collage || reducedMotion()) return;
-  collage.querySelectorAll<HTMLElement>('[data-depth]').forEach((layer) => {
+  track.querySelectorAll<HTMLElement>('[data-depth]').forEach((layer) => {
     layer.style.setProperty('--d', layer.dataset['depth'] ?? '0');
   });
 
@@ -32,7 +33,7 @@ export const startCollage = () => {
   let frame = 0;
   let x = 0;
   let y = 0;
-  collage.addEventListener(
+  track.addEventListener(
     'pointermove',
     (event) => {
       x = event.clientX / window.innerWidth - 0.5;
@@ -40,8 +41,8 @@ export const startCollage = () => {
       if (frame) return;
       frame = window.requestAnimationFrame(() => {
         frame = 0;
-        collage.style.setProperty('--mx', x.toFixed(3));
-        collage.style.setProperty('--my', y.toFixed(3));
+        track.style.setProperty('--mx', x.toFixed(3));
+        track.style.setProperty('--my', y.toFixed(3));
       });
     },
     { passive: true },

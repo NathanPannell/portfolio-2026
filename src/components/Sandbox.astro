@@ -4,46 +4,38 @@ import '@fontsource/gaegu/latin-400.css';
 import '@fontsource/gaegu/latin-700.css';
 
 const crayons = ['#e2231a', '#f28b1e', '#f3cf1c', '#2fa84f', '#1f7fd6', '#8a4fd3'];
-const passes = crayons.map((colour, index) => ({
-  colour,
-  d: `M-260 ${60 + index * 150} C 220 ${-20 + index * 150}, 480 ${160 + index * 150}, 1260 ${40 + index * 150}`,
-}));
 const panels = [
   { name: 'team', width: 900, height: 1138, alt: 'Comic panel: a director and a brand high-five' },
   { name: 'make', width: 900, height: 1071, alt: 'Comic panel: filming an ad on set' },
   { name: 'show', width: 900, height: 1167, alt: 'Comic panel: a crowd watching a big screen' },
 ];
-const counts = [
-  ['16', 'creative directors'],
-  ['16', 'brands'],
-  ['30–40', 'creators on camera'],
-  ['3', 'days to make it'],
-  ['+1', 'big night'],
-];
 ---
 
-<div class="scribble" data-track aria-hidden="true">
-  <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
-    {passes.map(({ colour, d }, index) => (
-      <path
-        d={d}
-        stroke={colour}
-        pathLength="1"
-        style={`--from: ${index * 0.11}; --to: ${0.3 + index * 0.11}`}
-      />
+<div class="wipe" data-track data-wipe aria-hidden="true">
+  <div class="wipe__stage" data-stage>
+    {crayons.map((colour, index) => (
+      <div class="wipe__band" data-band style={`--band: ${colour}; --row: ${index}`}>
+        <svg class="wipe__edge" viewBox="0 0 120 100" preserveAspectRatio="none">
+          <path d="M0 0H52L88 8 60 17l48 9-42 9 54 11-50 10 44 10-52 9 46 9-44 8H0z" />
+        </svg>
+        <svg class="wipe__crayon" viewBox="0 0 200 60">
+          <path class="wipe__wax" d="M0 8h150l50 22-50 22H0z" />
+          <path class="wipe__label" d="M24 8h96v44H24z" />
+        </svg>
+      </div>
     ))}
-    <path
-      class="scribble__fill"
-      d="M-320 80L1320 80M1320 300L-320 300M-320 520L1320 520M1320 740L-320 740M-320 960L1320 960"
-      pathLength="1"
-      style="--from: 0.62; --to: 1"
-    ></path>
-  </svg>
+    <div class="wipe__paper" data-paper></div>
+  </div>
 </div>
 
-<section id="play-by-the-sandbox" class="sb" data-audience="creators" aria-labelledby="sb-title">
+<section
+  id="play-by-the-sandbox"
+  class="sb"
+  data-audience="creators"
+  data-loops
+  aria-labelledby="sb-title"
+>
   <header class="sb__head">
-    <p class="sb__label">02 · a website that plays back</p>
     <img
       class="sb__word"
       src="/media/sandbox/wordmark-800.webp"
@@ -57,9 +49,7 @@ const counts = [
     />
     <h2 id="sb-title">I made an ad showdown look like a toy box.</h2>
     <p class="sb__lede">
-      Play by the Sandbox is Mello’s public creative event at the Vancouver Art Gallery. I designed
-      and built its website, a tiny pixel town instead of a sponsor deck, with application forms for
-      brands and creators tucked inside.
+      Mello’s event at the Vancouver Art Gallery. I designed and built the site.
     </p>
   </header>
 
@@ -82,15 +72,6 @@ const counts = [
     </span>
   </figure>
 
-  <ul class="sb__counts">
-    {counts.map(([number, label], index) => (
-      <li data-reveal style={`--reveal-delay: ${index * 70}ms; --tilt: ${(index % 3) * 2 - 2}deg`}>
-        <strong>{number}</strong>
-        <span>{label}</span>
-      </li>
-    ))}
-  </ul>
-
   <div class="sb__strip">
     {panels.map(({ name, width, height, alt }, index) => (
       <img
@@ -110,7 +91,6 @@ const counts = [
 
   <div class="sb__yard" data-yard>
     <p class="sb__yard-title">grab a toy</p>
-    <p class="sb__yard-hint">(go on. throw it.)</p>
 
     <div class="toy" data-toy>
       <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -162,52 +142,110 @@ const counts = [
 </section>
 
 <style>
-  /* Lays over the end of one world and the start of the next, so the crayon covers the swap. */
-  .scribble {
-    position: relative;
-    z-index: 3;
-    height: 200svh;
-    margin-block: -100svh;
-    pointer-events: none;
-    opacity: calc((1 - var(--p, 1)) * 14);
+  .wipe,
+  .sb {
+    --sb-paper: #fff7ec;
+    --sb-grid:
+      linear-gradient(rgb(46 42 69 / 5%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(46 42 69 / 5%) 1px, transparent 1px);
+    --sb-grid-size: 2rem 2rem;
   }
 
-  .scribble svg {
+  /* Its own pinned stage, starting on Parkdex's ground colour and ending on Sandbox's paper, so it
+     looks the same at any scroll speed and nothing from either world can show through. */
+  .wipe {
+    position: relative;
+    z-index: 2;
+    height: 260lvh;
+    background: var(--sb-paper);
+  }
+
+  .wipe__stage {
     position: sticky;
     top: 0;
-    width: 100%;
-    height: 100svh;
-    overflow: visible;
+    height: 100lvh;
+    overflow: clip;
+    background: #16452f;
   }
 
-  .scribble path {
-    fill: none;
-    stroke-width: 200;
-    stroke-linecap: round;
+  .wipe__band {
+    position: absolute;
+    top: calc(var(--row) * 100% / 6 - 1%);
+    left: -1%;
+    width: 102%;
+    height: calc(100% / 6 + 3%);
+    background:
+      repeating-linear-gradient(97deg, rgb(255 255 255 / 9%) 0 0.35rem, transparent 0.35rem 0.9rem),
+      var(--band);
+    will-change: transform;
+  }
+
+  .wipe__edge,
+  .wipe__crayon {
+    position: absolute;
+    max-width: none;
+  }
+
+  .wipe__edge {
+    top: 0;
+    left: calc(100% - 1px);
+    width: 14vmin;
+    height: 100%;
+    fill: var(--band);
+  }
+
+  .wipe__crayon {
+    top: 50%;
+    left: calc(100% + 10vmin);
+    width: 20vmin;
+    height: 6vmin;
+    translate: 0 -50%;
+    rotate: 6deg;
+  }
+
+  .wipe__wax {
+    fill: var(--band);
+    stroke: #2e2a45;
+    stroke-width: 4;
     stroke-linejoin: round;
-    vector-effect: none;
-    stroke-dasharray: 1;
-    stroke-dashoffset: calc(
-      1 - clamp(0, (var(--p, 1) - var(--from)) / (var(--to) - var(--from)), 1)
-    );
   }
 
-  .scribble__fill {
-    stroke: #fff7ec;
-    stroke-width: 260 !important;
+  .wipe__label {
+    fill: rgb(255 255 255 / 30%);
+    stroke: #2e2a45;
+    stroke-width: 3;
+  }
+
+  /* Bands that come in from the right run the other way. */
+  .wipe__band:nth-child(even) .wipe__edge {
+    right: calc(100% - 1px);
+    left: auto;
+    scale: -1 1;
+  }
+
+  .wipe__band:nth-child(even) .wipe__crayon {
+    right: calc(100% + 10vmin);
+    left: auto;
+    scale: -1 1;
+  }
+
+  .wipe__paper {
+    position: absolute;
+    inset: 0;
+    background: var(--sb-paper);
+    background-image: var(--sb-grid);
+    background-size: var(--sb-grid-size);
+    will-change: transform;
   }
 
   .sb {
     --ink: #2e2a45;
-    --cream: #fff7ec;
     position: relative;
     z-index: 2;
     overflow: clip;
-    background: var(--cream);
-    background-image:
-      linear-gradient(rgb(46 42 69 / 5%) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(46 42 69 / 5%) 1px, transparent 1px);
-    background-size: 2rem 2rem;
+    background: var(--sb-paper);
+    background-image: var(--sb-grid);
+    background-size: var(--sb-grid-size);
     color: var(--ink);
     font-family: 'Gaegu', 'Comic Sans MS', cursive;
     font-size: 1.3rem;
@@ -222,11 +260,6 @@ const counts = [
     margin: 0 auto;
     padding: clamp(6rem, 13vw, 10rem) var(--gutter) 2.5rem;
     text-align: center;
-  }
-
-  .sb__label {
-    font-size: 1.25rem;
-    font-weight: 700;
   }
 
   .sb__word {
@@ -309,48 +342,6 @@ const counts = [
     }
   }
 
-  .sb__counts {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.9rem;
-    padding: 0 var(--gutter);
-  }
-
-  .sb__counts li {
-    display: grid;
-    justify-items: center;
-    min-width: 8.5rem;
-    padding: 0.55rem 1rem;
-    border: 3px solid var(--ink);
-    border-radius: 1rem 0.7rem 1.1rem 0.8rem;
-    background: #f7e29a;
-    rotate: var(--tilt);
-    line-height: 1.05;
-  }
-
-  .sb__counts li:nth-child(2) {
-    background: #b9d6f2;
-  }
-
-  .sb__counts li:nth-child(3) {
-    background: #bfe6c8;
-  }
-
-  .sb__counts li:nth-child(4) {
-    background: #f4b6c6;
-  }
-
-  .sb__counts li:nth-child(5) {
-    background: #d7b7f0;
-  }
-
-  .sb__counts strong {
-    font-family: 'Chewy', cursive;
-    font-size: 2.5rem;
-    font-weight: 400;
-  }
-
   .sb__strip {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -390,13 +381,6 @@ const counts = [
     font-family: 'Chewy', cursive;
     font-size: clamp(3rem, 9vw, 6.5rem);
     line-height: 1;
-    text-align: center;
-  }
-
-  .sb__yard-hint {
-    position: absolute;
-    top: calc(8% + clamp(3.4rem, 9.6vw, 7rem));
-    width: 100%;
     text-align: center;
   }
 
@@ -459,22 +443,17 @@ const counts = [
     .sb__strip img:nth-child(2) {
       translate: none;
     }
-
-    .sb__counts li {
-      min-width: 7rem;
-      flex: 1 1 7rem;
-    }
   }
 
   @media (scripting: none) {
-    .toy,
-    .sb__yard-hint {
+    .toy {
       display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .scribble {
+    .wipe,
+    .sb__yard-title {
       display: none;
     }
 

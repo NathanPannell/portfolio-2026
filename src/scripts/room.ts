@@ -1,4 +1,4 @@
-// AI Build Night's room, from above, scrubbed by scroll from doors to close. The figures are a
+// AI Build Night's room, from above, scrubbed by scroll from doors to demos. The figures are a
 // drawing of how a night runs, not a head count.
 
 import { onProgress, reducedMotion } from './scroll';
@@ -18,11 +18,8 @@ interface Seat {
   stageY: number;
 }
 
-// The clock reaches 21:00 just before the scene ends, so the last step gets some time on screen.
-const CLOSE_AT = 0.93;
-const minutesAt = (t: number) => Math.min(180, (t / CLOSE_AT) * 180);
-// Doors at 18:00, then show-and-tell at 20:15 and close at 21:00, as on the live site.
-const STEP_STARTS = [0, 0.1, 0.28, (135 / 180) * CLOSE_AT, CLOSE_AT];
+// Doors, build, get unstuck, demo: where each word takes over as the room plays out.
+const STEP_STARTS = [0, 0.2, 0.42, 0.62];
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 const ease = (value: number) => value * value * (3 - 2 * value);
@@ -59,9 +56,8 @@ TABLES.forEach((table, tableIndex) => {
 export const startRoom = () => {
   const track = document.querySelector<HTMLElement>('[data-room]');
   const canvas = track?.querySelector<HTMLCanvasElement>('canvas');
-  const clock = track?.querySelector<HTMLElement>('[data-clock]');
   const context = canvas?.getContext('2d');
-  if (!track || !canvas || !clock || !context) return;
+  if (!track || !canvas || !context) return;
   const steps = Array.from(track.querySelectorAll<HTMLElement>('[data-step]'));
 
   let size = 0;
@@ -94,7 +90,7 @@ export const startRoom = () => {
     context.lineTo(20 * u, 99 * u);
     context.stroke();
 
-    // Stage, lit for show-and-tell.
+    // Stage, lit for the demos.
     const showing = span(t, 0.66, 0.7) * (1 - span(t, 0.84, 0.9));
     context.fillStyle = `rgba(255, 91, 35, ${0.14 + showing * 0.86})`;
     context.fillRect(30 * u, 5 * u, 40 * u, 8 * u);
@@ -102,7 +98,7 @@ export const startRoom = () => {
     context.font = `600 ${Math.max(8, u * 2)}px "JetBrains Mono Variable", monospace`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText('SHOW-AND-TELL', 50 * u, 9.2 * u);
+    context.fillText('DEMOS', 50 * u, 9.2 * u);
 
     // Tables.
     context.fillStyle = GLASS;
@@ -139,11 +135,6 @@ export const startRoom = () => {
       context.fillStyle = INK;
       context.fillRect((x - 1.1) * u, (y - 1.1) * u, 2.2 * u, 2.2 * u);
     });
-
-    // The clock runs 18:00 to 21:00.
-    const minutes = Math.round(minutesAt(t) / 5) * 5;
-    const hour = 18 + Math.floor(minutes / 60);
-    clock.textContent = `${hour}:${String(minutes % 60).padStart(2, '0')}`;
 
     const active = STEP_STARTS.filter((start) => t >= start).length - 1;
     steps.forEach((step, index) => step.toggleAttribute('data-on', index === active));

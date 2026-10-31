@@ -20,8 +20,10 @@ const measure = () => {
   const scrollY = window.scrollY;
   for (const track of tracks) {
     const rect = track.element.getBoundingClientRect();
+    // A pinned stage lets go when its own bottom meets the track's, whatever the address bar is doing.
+    const stage = track.element.querySelector<HTMLElement>('[data-stage]');
     track.top = rect.top + scrollY;
-    track.span = Math.max(1, rect.height - window.innerHeight);
+    track.span = Math.max(1, rect.height - (stage?.offsetHeight ?? window.innerHeight));
     track.last = -1;
   }
 };
@@ -70,21 +72,23 @@ export const startScroll = () => {
     measure();
     schedule();
   });
-  window.addEventListener('load', () => {
+  // Late fonts and images move everything below them, so the tracks follow the page's height.
+  new ResizeObserver(() => {
     measure();
     schedule();
-  });
-  schedule();
-};
-
-/** Re-reads every track, for scripts that change the page's height. */
-export const remeasure = () => {
-  measure();
+  }).observe(document.body);
   schedule();
 };
 
 export const startReveals = () => {
   const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+  // Anything already on screen after a reload stays as it is, rather than vanishing to reveal again.
+  for (const target of targets) {
+    if (target.getBoundingClientRect().top < window.innerHeight) {
+      target.toggleAttribute('data-in', true);
+    }
+  }
+  document.documentElement.classList.add('reveals');
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -96,6 +100,16 @@ export const startReveals = () => {
     { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
   );
   targets.forEach((target) => observer.observe(target));
+};
+
+/** Pauses the looping CSS inside each `[data-loops]` scene while it is off screen. */
+export const startRests = () => {
+  if (reducedMotion()) return;
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries)
+      entry.target.toggleAttribute('data-resting', !entry.isIntersecting);
+  });
+  document.querySelectorAll('[data-loops]').forEach((scene) => observer.observe(scene));
 };
 
 // Cloudflare Pages answers range requests with a plain 200, which iOS Safari refuses for video.
