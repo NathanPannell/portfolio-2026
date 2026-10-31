@@ -555,13 +555,27 @@ test('a finger can drag a toy, and swiping elsewhere still scrolls', async ({ pa
   await touch('touchEnd', x + 80, y - 60);
   expect(await page.evaluate(() => window.scrollY)).toBe(before);
 
-  // Toys capture their own gestures, so the swipe starts on the yard itself, clear of all of them.
-  await toySettles(page, toy);
+  // Toys capture their own gestures, and a thrown one keeps sliding along the floor, so wait for
+  // them all to stop. The swipe then starts high on the yard itself, well clear of the floor.
+  const toyPositions = () =>
+    page.locator('[data-toy]').evaluateAll((toys) =>
+      toys.map((element) => {
+        const { x, y } = element.getBoundingClientRect();
+        return `${Math.round(x)},${Math.round(y)}`;
+      }),
+    );
+  await expect
+    .poll(async () => {
+      const first = await toyPositions();
+      await page.waitForTimeout(250);
+      return first.join() === (await toyPositions()).join();
+    })
+    .toBe(true);
   const start = await page.evaluate(() => {
     const yard = document.querySelector('[data-yard]')?.getBoundingClientRect();
     if (!yard) throw new Error('No yard');
     const lowest = Math.min(yard.bottom, window.innerHeight) - 40;
-    for (let top = lowest; top > Math.max(yard.top, 280); top -= 20) {
+    for (let top = Math.max(yard.top + 20, 280); top < lowest; top += 20) {
       for (let left = 40; left < window.innerWidth; left += 40) {
         const hit = document.elementFromPoint(left, top);
         if (hit?.closest('[data-yard]') && !hit.closest('[data-toy], a')) return { left, top };
