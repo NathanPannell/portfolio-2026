@@ -95,6 +95,16 @@ export const startReveals = () => {
   targets.forEach((target) => observer.observe(target));
 };
 
+/** Pauses the looping CSS inside each `[data-loops]` scene while it is off screen. */
+export const startRests = () => {
+  if (reducedMotion()) return;
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries)
+      entry.target.toggleAttribute('data-resting', !entry.isIntersecting);
+  });
+  document.querySelectorAll('[data-loops]').forEach((scene) => observer.observe(scene));
+};
+
 // Cloudflare Pages answers range requests with a plain 200, which iOS Safari refuses for video.
 // A blob plays everywhere, and the poster stays up if the fetch fails.
 const onScreen = new WeakSet<HTMLVideoElement>();

@@ -28,7 +28,13 @@ const panels = [
   </div>
 </div>
 
-<section id="play-by-the-sandbox" class="sb" data-audience="creators" aria-labelledby="sb-title">
+<section
+  id="play-by-the-sandbox"
+  class="sb"
+  data-audience="creators"
+  data-loops
+  aria-labelledby="sb-title"
+>
   <header class="sb__head">
     <img
       class="sb__word"
@@ -446,7 +452,8 @@ const panels = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .wipe {
+    .wipe,
+    .sb__yard-title {
       display: none;
     }
 

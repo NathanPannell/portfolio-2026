@@ -37,7 +37,7 @@ const bubbles = [
 ---
 
 <section id="offbooked" class="ob" data-audience="casts" aria-labelledby="ob-title">
-  <div class="ob-reveal" data-track data-focus-at="0.9" data-collage>
+  <div class="ob-reveal" data-track data-focus-at="0.9" data-collage data-loops>
     <div class="ob-stage" data-stage>
       <div class="collage">
         <i class="beam beam--left" aria-hidden="true"></i>
@@ -172,6 +172,8 @@ const bubbles = [
     --open: clamp(0, calc((var(--p, 1) - 0.03) * 4.5), 1);
     /* Runs once the ad is up, so the finished page keeps moving under the scroll. */
     --late: clamp(0, calc((var(--p, 1) - 0.72) * 3.6), 1);
+    /* What a phone's address bar hides at the bottom of this taller-than-the-bar stage. */
+    --bar: calc(100lvh - 100svh);
     position: sticky;
     top: 0;
     height: 100lvh;
@@ -189,64 +191,64 @@ const bubbles = [
 
   [data-depth] {
     --move: calc(var(--mx, 0) * var(--d, 0) * 1px);
-    --lift: calc(var(--my, 0) * var(--d, 0) * 1px);
+    --lift: calc(var(--my, 0) * var(--d, 0) * 1px + var(--late, 0) * var(--drift, 0px));
     translate: var(--move) var(--lift);
   }
 
-  /* Off stage until scroll calls each piece on, and only where a script is there to call it. */
+  /* Off stage until scroll calls each piece on, and only once the script that does so is running. */
   @media (prefers-reduced-motion: no-preference) {
-    :global(.js) .ob [data-at] {
+    .ob-stage[data-ready] [data-at] {
       transition:
         transform 620ms var(--spring),
         opacity 200ms;
     }
 
-    :global(.js) .slab:not([data-on]) {
+    .ob-stage[data-ready] .slab:not([data-on]) {
       transform: translate3d(-104%, 0, 0);
     }
 
-    :global(.js) .halftone:not([data-on]) {
+    .ob-stage[data-ready] .halftone:not([data-on]) {
       transform: scale(0);
     }
 
-    :global(.js) h2 [data-at]:not([data-on]) {
+    .ob-stage[data-ready] h2 [data-at]:not([data-on]) {
       opacity: 0;
       transform: translate3d(-3rem, 0, 0) rotate(-4deg);
     }
 
-    :global(.js) .script:not([data-on]) {
+    .ob-stage[data-ready] .script:not([data-on]) {
       transform: translate3d(0, -130%, 0) rotate(-22deg);
     }
 
-    :global(.js) .handset:not([data-on]) {
+    .ob-stage[data-ready] .handset:not([data-on]) {
       transform: translate3d(0, 130lvh, 0) rotate(14deg);
     }
 
-    :global(.js) .voices:not([data-on]) {
+    .ob-stage[data-ready] .voices:not([data-on]) {
       opacity: 0;
       transform: scaleY(0);
     }
 
-    :global(.js) .stamp:not([data-on]) {
+    .ob-stage[data-ready] .stamp:not([data-on]) {
       opacity: 0;
       transform: scale(3.4);
     }
 
-    :global(.js) .tape:not([data-on]) {
+    .ob-stage[data-ready] .tape:not([data-on]) {
       opacity: 0;
       transform: translate3d(5rem, -2rem, 0) rotate(30deg);
     }
 
-    :global(.js) .ticket:not([data-on]) {
+    .ob-stage[data-ready] .ticket:not([data-on]) {
       opacity: 0;
       transform: translate3d(0, 140%, 0) rotate(-14deg);
     }
 
-    :global(.js) .marquee:not([data-on]) {
+    .ob-stage[data-ready] .marquee:not([data-on]) {
       transform: translate3d(0, 100%, 0);
     }
 
-    :global(.js) .bubble:not([data-on]) {
+    .ob-stage[data-ready] .bubble:not([data-on]) {
       opacity: 0;
     }
   }
@@ -454,7 +456,7 @@ const bubbles = [
     top: 16%;
     right: 26%;
     rotate: -7deg;
-    margin-top: calc(var(--late) * -5lvh);
+    --drift: -5lvh;
   }
 
   .handset--2 {
@@ -462,7 +464,7 @@ const bubbles = [
     top: 11%;
     right: 12%;
     rotate: 3deg;
-    margin-top: calc(var(--late) * 5lvh);
+    --drift: 5lvh;
   }
 
   .handset--3 {
@@ -470,7 +472,7 @@ const bubbles = [
     top: 24%;
     right: -3%;
     rotate: 9deg;
-    margin-top: calc(var(--late) * -8lvh);
+    --drift: -8lvh;
   }
 
   /* Everyone's voices, in the run-through. */
@@ -566,12 +568,7 @@ const bubbles = [
     bottom: 13%;
     right: 41%;
     width: calc(var(--u) * 13);
-  }
-
-  .stamp circle,
-  .stamp text {
     animation: turn 18s linear infinite;
-    transform-origin: 100px 100px;
   }
 
   .stamp circle {
@@ -675,7 +672,7 @@ const bubbles = [
     position: absolute;
     z-index: 7;
     right: 0;
-    bottom: calc(100lvh - 100svh);
+    bottom: var(--bar);
     left: 0;
     overflow: hidden;
     padding: 0.5rem 0;
@@ -697,12 +694,6 @@ const bubbles = [
     to {
       transform: translateX(-33.33%);
     }
-  }
-
-  /* Looping parts rest while the stage is off screen. */
-  .ob-stage:not([data-live]) *,
-  .ob-stage:not([data-live]) *::before {
-    animation-play-state: paused !important;
   }
 
   /* Velvet: folds bunch up at the wings as the drapes open. The scalloped hem and fringe come down
@@ -768,7 +759,7 @@ const bubbles = [
     letter-spacing: -0.04em;
   }
 
-  @media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  @media (max-aspect-ratio: 1/1) {
     .ob-stage {
       --u: min(2.45vw, 1.14svh);
     }
@@ -842,7 +833,7 @@ const bubbles = [
 
     .voices {
       z-index: 5;
-      bottom: 13.5%;
+      bottom: calc(8.5rem + var(--bar));
       left: 1.25rem;
       width: 42%;
       height: 2.2rem;
@@ -874,12 +865,12 @@ const bubbles = [
     .tape {
       top: auto;
       right: -1%;
-      bottom: 12.5%;
+      bottom: calc(5.5rem + var(--bar));
       font-size: 0.68rem;
     }
 
     .ticket {
-      bottom: 3.1rem;
+      bottom: calc(3.1rem + var(--bar));
       left: 1.25rem;
       background: var(--marker);
     }
@@ -892,6 +883,14 @@ const bubbles = [
       .tape {
         display: none;
       }
+    }
+  }
+
+  /* Phones on their side: too short for the waveform and the bubbles next to the headline. */
+  @media (max-height: 480px) {
+    .voices,
+    .bubble {
+      display: none;
     }
   }
 
@@ -911,8 +910,7 @@ const bubbles = [
       display: none;
     }
 
-    .stamp circle,
-    .stamp text,
+    .stamp,
     .marquee span,
     .script__mine,
     .tape,

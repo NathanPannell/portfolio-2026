@@ -62,6 +62,7 @@ export const startDescent = () => {
     for (const { element, speed } of layers) {
       // Each layer is two tiles tall and wraps, so a long trip never needs a huge image.
       const tile = element.offsetHeight / 2;
+      if (tile === 0) continue;
       const offset = ((Math.max(0, travelled) * speed) % tile) * -1;
       element.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
     }

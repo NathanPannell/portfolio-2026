@@ -16,6 +16,15 @@ for (const [label, id] of [
   });
 }
 
+for (const id of ['offbooked', 'parkdex', 'play-by-the-sandbox']) {
+  test(`arriving at #${id} lands on that world`, async ({ page }) => {
+    await page.goto(`/#${id}`);
+    await expect
+      .poll(() => page.locator(`#${id}`).evaluate((e) => Math.abs(e.getBoundingClientRect().top)))
+      .toBeLessThan(120);
+  });
+}
+
 test('the audience label follows the scroll', async ({ page }) => {
   await page.goto('/');
   const label = page.locator('[data-for]');

@@ -52,11 +52,13 @@ assert.doesNotMatch(offbooked, /apps\.apple\.com|play\.google\.com|testflight/i)
 assert.doesNotMatch(offbooked, /C\$\d|\$\d/, 'No Offbooked price until payments ship');
 
 // Cloudflare injects the analytics beacon once the Pages setting is on, so the source never adds one.
-assert.doesNotMatch(
-  markup,
-  /cloudflareinsights|data-cf-beacon/,
-  'No analytics beacon in the source',
-);
+for (const path of sources) {
+  assert.doesNotMatch(
+    readFileSync(path, 'utf8'),
+    /cloudflareinsights|data-cf-beacon/,
+    `No analytics beacon in the source: ${relative(root, path)}`,
+  );
+}
 
 // Parkdex must link the public listing, not the retired tester group.
 assert.doesNotMatch(markup, /play\.google\.com\/apps\/testing/);

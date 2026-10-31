@@ -41,7 +41,9 @@ A scene is a tall `[data-track]` element with a `position: sticky` stage inside 
 
 Avoid `overflow: hidden` on an ancestor of a sticky stage. Use `overflow: clip`.
 
-Offbooked mixes two kinds of motion. Scroll decides when a `[data-at]` piece comes on stage, and a CSS spring decides how, so a fast scroll still gets the full bounce. Looping parts pause while the stage is off screen.
+Offbooked mixes two kinds of motion. Scroll decides when a `[data-at]` piece comes on stage, and a CSS spring decides how, so a fast scroll still gets the full bounce. Pieces only wait off stage once `collage.ts` has set `data-ready`, so a failed script can't hide the ad.
+
+A `[data-loops]` scene has its looping CSS paused while it is off screen (`startRests`), which stops a page's worth of idle animations from recalculating style every frame.
 
 Parkdex isn't pinned. The route is ordinary page content, so scrolling and tabbing work as they do anywhere else. Two sticky layers take no height of their own and sit behind and in front of it. Kip holds still on screen and follows the vine's curve as it slides past. Forest layers are two tiles tall and wrap, so a long trip never needs a huge image.
 
@@ -55,7 +57,7 @@ Each component has one `@media (prefers-reduced-motion: reduce), (scripting: non
 
 ## Tall phone viewports
 
-Pinned stages use `100lvh`, not `100svh`, so nothing shows under them when a phone's address bar collapses. Anything pinned to the bottom of a stage adds `100lvh - 100svh` to its offset, so it stays above the bar when the bar is showing.
+Pinned stages that sit on a different colour from what follows use `100lvh`, not `100svh`, so nothing shows under them when a phone's address bar collapses. The AI Build Night and rules stages stay on `100svh` because their tracks match their backgrounds. Anything pinned to the bottom of a `100lvh` stage adds `100lvh - 100svh` to its offset, so it stays above the bar when the bar is showing. Offbooked names that offset `--bar`, and a test stands in a fake bar through it, because test browsers have none.
 
 ## Keyboard focus in pinned scenes
 

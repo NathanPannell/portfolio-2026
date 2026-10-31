@@ -1,7 +1,6 @@
 // Offbooked's ad. Once the curtains are open the pieces slam on stage in turn: scroll decides when,
 // CSS springs decide how, so a fast scroll still gets the full bounce. Scrolling back takes them
-// off again. Layers shift at their own depth under the pointer, and the looping parts rest while
-// the stage is out of view.
+// off again. Layers shift at their own depth under the pointer.
 
 import { onProgress, reducedMotion } from './scroll';
 
@@ -15,15 +14,13 @@ export const startCollage = () => {
   }));
   onProgress(track, (progress) => {
     for (const { piece, at } of pieces) piece.toggleAttribute('data-on', progress >= at);
+    // Only now can pieces wait off stage: until this runs, nothing could bring them back.
+    stage?.toggleAttribute('data-ready', true);
   });
 
   track.querySelectorAll<HTMLElement>('[data-depth]').forEach((layer) => {
     layer.style.setProperty('--d', layer.dataset['depth'] ?? '0');
   });
-
-  new IntersectionObserver(([entry]) => {
-    stage?.toggleAttribute('data-live', entry?.isIntersecting ?? false);
-  }).observe(track);
 
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   let frame = 0;

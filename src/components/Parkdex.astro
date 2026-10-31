@@ -32,7 +32,7 @@ const stops = [
 </svg>
 
 <section id="parkdex" class="pk" data-audience="rivals" aria-labelledby="pk-title">
-  <div class="pk-trip" data-track data-descent>
+  <div class="pk-trip" data-track data-descent data-loops>
     <div class="pk-back" aria-hidden="true">
       <div class="pk-layer pk-layer--far" data-layer="0.12"></div>
       <div class="pk-layer pk-layer--mid" data-layer="0.3"></div>
@@ -709,6 +709,21 @@ const stops = [
     }
   }
 
+  /* Short of room at the edge of the screen, the flags fly in over their phones. */
+  @media (max-width: 1000px) {
+    .pk-stop:nth-of-type(even) .pk-pole i {
+      right: 100%;
+      left: auto;
+      transform-origin: 100% 50%;
+    }
+
+    .pk-stop:nth-of-type(odd) .pk-pole i {
+      right: auto;
+      left: 100%;
+      transform-origin: 0 50%;
+    }
+  }
+
   /* On a phone the vine runs down the left, and the stops hang beside it. */
   @media (max-width: 760px) {
     .pk-route {
@@ -720,9 +735,17 @@ const stops = [
       padding-left: 32%;
     }
 
-    /* The vine has this side, so only the far edge keeps its leaves. */
+    /* Fewer big moving layers for a phone to hold in memory: the mid trees carry the depth here, and
+       the vine has this side, so only the far edge keeps its leaves. */
+    .pk-layer--far,
     .pk-layer--near::before {
       display: none;
+    }
+
+    .pk-layer--near {
+      right: 0;
+      left: auto;
+      width: 4rem;
     }
 
     h2 {
@@ -769,8 +792,10 @@ const stops = [
       grid-row: auto;
     }
 
+    /* Sized from whichever runs out first, the space beside the vine or the screen's height. */
     .pk-hang img {
-      height: min(62svh, 30rem);
+      width: min(70vw - 1.75rem, 62svh * 0.4624, 13.9rem);
+      height: auto;
       border-width: 0.3rem;
       border-radius: 1.5rem;
       box-shadow: 0.35rem 0.35rem 0 var(--ink);

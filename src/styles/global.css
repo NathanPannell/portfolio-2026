@@ -110,6 +110,14 @@ button {
   transform: none;
 }
 
+/* A scene's looping parts rest while it is off screen. See startRests. */
+[data-resting],
+[data-resting] *,
+[data-resting] *::before,
+[data-resting] *::after {
+  animation-play-state: paused !important;
+}
+
 /* Reveals are opt-in for scripted pages, so the content stays visible without JavaScript. */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {

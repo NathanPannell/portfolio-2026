@@ -123,6 +123,7 @@ The content contract protects:
 - the order of the homepage's sections
 - the outbound links that were checked against the live products
 - no Offbooked store link or price, and no Parkdex tester link
+- no analytics beacon in the source, and no return of the lines the owner cut
 - the image-fill interaction and its touch equivalent
 - a reduced-motion layout in every world
 - the media size budget, and that every referenced media file exists
