@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 
 for (const [label, id] of [
   ['Builders', 'ai-build-night'],
-  ['Creators', 'play-by-the-sandbox'],
   ['Casts', 'offbooked'],
   ['Rivals', 'parkdex'],
+  ['Creators', 'play-by-the-sandbox'],
 ] as const) {
   test(`the ${label} chip jumps to its world`, async ({ page }) => {
     await page.goto('/');
@@ -59,7 +59,7 @@ test('the skip link moves keyboard focus past the header', async ({ page, isMobi
 test('tabbing into the curtain lands on an open stage', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
-  await page.locator('.sb__cta').focus();
+  await page.locator('.abn-site__recap').focus();
   await page.keyboard.press('Tab');
   const ticket = page.locator('.ticket');
   await expect(ticket).toBeFocused();
@@ -84,7 +84,7 @@ test('reverse tabbing into the hero shows its chips', async ({ page, isMobile })
 test('Plant! can be reached with the keyboard', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
-  await page.locator('.ob-run__close a').focus();
+  await page.locator('.ticket').focus();
   await page.keyboard.press('Tab');
   const plant = page.locator('[data-plant]');
   await expect(plant).toBeFocused();

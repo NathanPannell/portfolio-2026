@@ -50,7 +50,7 @@ const clippedText = (page: Page) =>
     ]
       .filter(
         (element) =>
-          !element.closest('[aria-hidden="true"], .pk-strip, .rules__stage, .tape, .marquee') &&
+          !element.closest('[aria-hidden="true"], .rules__stage, .tape, .marquee') &&
           element.getClientRects().length > 0,
       )
       .filter((element) => {
@@ -99,7 +99,7 @@ for (const route of sitemapRoutes()) {
 test('every world has its heading and its links', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  for (const id of ['abn-title', 'sb-title', 'ob-title', 'pk-title', 'go-title']) {
+  for (const id of ['abn-title', 'ob-title', 'pk-title', 'sb-title', 'go-title']) {
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }
   const hrefs = await page
@@ -107,6 +107,7 @@ test('every world has its heading and its links', async ({ page }) => {
     .evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''));
   for (const url of [
     'https://aibuildnight.ca/',
+    'https://aibuildnight.ca/pages/past-nights',
     'https://www.playbythesandbox.ca/',
     'https://offbooked.com/',
     'https://parkdex.app/',
@@ -135,28 +136,50 @@ test('the crowd draws into the hero', async ({ page }) => {
     .toBeGreaterThan(1000);
 });
 
-test('scrolling opens the curtains on the Offbooked collage', async ({ page }) => {
+const jumpInto = (page: Page, selector: string, progress: number) =>
+  page.locator(selector).evaluate((element, at) => {
+    const rect = element.getBoundingClientRect();
+    const stage = element.querySelector<HTMLElement>('[data-stage]');
+    const span = rect.height - (stage?.offsetHeight ?? window.innerHeight);
+    window.scrollTo({ top: rect.top + window.scrollY + span * at, behavior: 'instant' });
+  }, progress);
+
+test('scrolling opens the curtains, then brings the Offbooked ad on stage', async ({ page }) => {
   await page.goto('/');
   const drape = page.locator('.drape--left');
   const covered = () =>
     drape.evaluate((element) => element.getBoundingClientRect().width / window.innerWidth);
-  const reveal = page.locator('.ob-reveal');
-  await reveal.evaluate((element) => {
-    window.scrollTo({
-      top: element.getBoundingClientRect().top + window.scrollY,
-      behavior: 'instant',
-    });
-  });
+  const onStage = page.locator('[data-collage] [data-at][data-on]');
+  await jumpInto(page, '[data-collage]', 0);
   await expect.poll(covered).toBeGreaterThan(0.45);
-  await reveal.evaluate((element) => {
-    const rect = element.getBoundingClientRect();
-    window.scrollTo({
-      top: rect.top + window.scrollY + rect.height - window.innerHeight,
-      behavior: 'instant',
-    });
-  });
+  await expect(onStage).toHaveCount(0);
+  await jumpInto(page, '[data-collage]', 0.26);
   await expect.poll(covered).toBeLessThan(0.05);
+  await expect(page.locator('.ticket')).not.toHaveAttribute('data-on', '');
+  await jumpInto(page, '[data-collage]', 1);
+  await expect(onStage).toHaveCount(await page.locator('[data-collage] [data-at]').count());
   await expect(page.locator('.ticket')).toBeInViewport();
+  await expect(page.locator('[data-collage] [data-stage]')).toHaveAttribute('data-live', '');
+  // Scrolling back takes the pieces off again.
+  await jumpInto(page, '[data-collage]', 0.1);
+  await expect(onStage).toHaveCount(0);
+});
+
+test('the Offbooked phones keep changing screens', async ({ page }) => {
+  await page.goto('/');
+  await jumpInto(page, '[data-collage]', 1);
+  const handset = page.locator('.handset--1');
+  const running = () =>
+    handset.evaluate((element) =>
+      element
+        .getAnimations({ subtree: true })
+        .some((animation) => animation.playState === 'running'),
+    );
+  await expect.poll(running).toBe(true);
+  // Out of view, the loops rest.
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(page.locator('[data-collage] [data-stage]')).not.toHaveAttribute('data-live', '');
+  await expect.poll(running).toBe(false);
 });
 
 test('the hero block stops blinking once it starts to grow', async ({ page }) => {
@@ -171,50 +194,144 @@ test('the hero block stops blinking once it starts to grow', async ({ page }) =>
   await expect.poll(blinking).toBe(0);
 });
 
-test('the Offbooked close button is clickable edge to edge', async ({ page }) => {
+test('the Offbooked ticket can be clicked once it lands', async ({ page }) => {
   await page.goto('/');
-  const link = page.locator('.ob-run__close a');
-  await link.scrollIntoViewIfNeeded();
-  const misses = await link.evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    // The pill has round ends, so sample along its straight edges and its middle.
-    const inset = box.height / 2;
-    const points = [
-      [box.left + inset, box.top + 2],
-      [box.right - inset, box.top + 2],
-      [box.left + box.width / 2, box.top + box.height / 2],
-      [box.left + inset, box.bottom - 2],
-      [box.right - inset, box.bottom - 2],
-    ] as const;
-    return points.filter(([x, y]) => !element.contains(document.elementFromPoint(x, y))).length;
-  });
-  expect(misses).toBe(0);
+  await jumpInto(page, '[data-collage]', 1);
+  const ticket = page.locator('.ticket');
+  await expect(ticket).toHaveAttribute('data-on', '');
+  await expect
+    .poll(() =>
+      ticket.evaluate((element) => {
+        const { left, top, width, height } = element.getBoundingClientRect();
+        return element.contains(document.elementFromPoint(left + width / 2, top + height / 2));
+      }),
+    )
+    .toBe(true);
 });
 
-test('the Parkdex level pans sideways, scores, and plants flags', async ({ page }) => {
+test('Kip rides the vine down, scores each stop, and plants flags', async ({ page }) => {
   await page.goto('/');
-  const track = page.locator('[data-level]');
-  await track.evaluate((element) => {
-    window.scrollTo({
-      top: element.getBoundingClientRect().top + window.scrollY,
-      behavior: 'instant',
-    });
-  });
+  await jumpInto(page, '[data-descent]', 0);
   await expect(page.locator('#pk-title')).toBeInViewport();
+  const score = page.locator('[data-score]');
+  await expect(score).toHaveText('0');
   await page.locator('[data-plant]').click();
-  await expect(page.locator('[data-score]')).toHaveText('6');
+  await expect(score).toHaveText('6');
   await expect(page.locator('.pk-mark')).toHaveCount(1);
-  await track.evaluate((element) => {
-    const rect = element.getBoundingClientRect();
-    window.scrollTo({
-      top: rect.top + window.scrollY + rect.height - window.innerHeight,
-      behavior: 'instant',
+
+  const stops = page.locator('[data-stop]');
+  await expect(stops).toHaveCount(4);
+  for (const [index, stop] of (await stops.all()).entries()) {
+    await stop.evaluate((element) => {
+      const { top, height } = element.getBoundingClientRect();
+      window.scrollTo({
+        top: top + window.scrollY + height / 2 - window.innerHeight / 2,
+        behavior: 'instant',
+      });
     });
-  });
+    await expect(stop.locator('img')).toBeInViewport();
+    await expect(stop).toHaveAttribute('data-reached', '');
+    await expect(score).toHaveText(String(6 + (index + 1) * 12));
+    // Kip stays on screen the whole way down.
+    const rider = await page.locator('[data-rider]').boundingBox();
+    expect(rider?.x ?? -999).toBeGreaterThanOrEqual(-8);
+    expect((rider?.x ?? 0) + (rider?.width ?? 9999)).toBeLessThanOrEqual(
+      (page.viewportSize()?.width ?? 0) + 8,
+    );
+  }
+
+  await jumpInto(page, '[data-descent]', 1);
   await expect(page.locator('.pk-end h3')).toBeInViewport();
-  await expect(page.locator('[data-score]')).toHaveText('54');
   // The button steps aside so it can't sit on top of the links.
   await expect(page.locator('[data-plant]')).toBeHidden();
+});
+
+test('foreground leaves stay off the sky and the ground', async ({ page }) => {
+  await page.goto('/');
+  const front = page.locator('[data-front]');
+  await jumpInto(page, '[data-descent]', 0);
+  await expect(front).not.toHaveAttribute('data-forest', '');
+  await page.locator('[data-stop]').nth(1).scrollIntoViewIfNeeded();
+  await expect(front).toHaveAttribute('data-forest', '');
+  await jumpInto(page, '[data-descent]', 1);
+  await expect(front).not.toHaveAttribute('data-forest', '');
+});
+
+// How far the wipe has got: the share of Sandbox's paper that has risen onto the stage.
+const paperRisen = (page: Page) =>
+  page.locator('[data-paper]').evaluate((element) => {
+    const { top, height } = element.getBoundingClientRect();
+    const stage = element.parentElement?.getBoundingClientRect();
+    return 1 - Math.max(0, top - (stage?.top ?? 0)) / height;
+  });
+
+test('the crayon wipe follows the scroll in both directions', async ({ page }) => {
+  await page.goto('/');
+  const band = page.locator('[data-band]').first();
+  const bandLeft = () => band.evaluate((element) => element.getBoundingClientRect().left);
+  const offScreen = -(page.viewportSize()?.width ?? 0);
+  await jumpInto(page, '[data-wipe]', 0);
+  await expect.poll(bandLeft).toBeLessThan(offScreen);
+  await expect.poll(() => paperRisen(page)).toBeLessThan(0.02);
+  await jumpInto(page, '[data-wipe]', 0.5);
+  await expect.poll(bandLeft).toBeGreaterThan(-50);
+  await expect.poll(() => paperRisen(page)).toBeLessThan(0.02);
+  await jumpInto(page, '[data-wipe]', 1);
+  await expect.poll(() => paperRisen(page)).toBeGreaterThan(0.995);
+  // Back up, it rolls back the same way.
+  await jumpInto(page, '[data-wipe]', 0);
+  await expect.poll(() => paperRisen(page)).toBeLessThan(0.02);
+  await expect.poll(bandLeft).toBeLessThan(offScreen);
+});
+
+test('a single jump through the wipe still plays it, frame by frame', async ({ page }) => {
+  await page.goto('/');
+  await jumpInto(page, '[data-wipe]', 0);
+  await expect.poll(() => paperRisen(page)).toBeLessThan(0.02);
+  const frames = await page.locator('[data-paper]').evaluate(async (element) => {
+    const seen: number[] = [];
+    const stage = element.parentElement as HTMLElement;
+    const track = stage.parentElement as HTMLElement;
+    const rect = track.getBoundingClientRect();
+    window.scrollTo({
+      top: rect.top + window.scrollY + rect.height - stage.offsetHeight,
+      behavior: 'instant',
+    });
+    for (let frame = 0; frame < 60; frame += 1) {
+      await new Promise((resolve) => window.requestAnimationFrame(resolve));
+      seen.push(element.getBoundingClientRect().top - stage.getBoundingClientRect().top);
+    }
+    return seen;
+  });
+  // Copying the scroll position would give one or two values; playing gives a run of them.
+  expect(new Set(frames.map((top) => Math.round(top))).size).toBeGreaterThan(5);
+  // It only ever rises.
+  for (let frame = 1; frame < frames.length; frame += 1) {
+    expect(frames[frame] ?? 0).toBeLessThanOrEqual((frames[frame - 1] ?? 0) + 0.5);
+  }
+  expect(frames.at(-1) ?? 999).toBeLessThan(2);
+});
+
+test('the wipe joins Parkdex and Sandbox with nothing showing through', async ({ page }) => {
+  await page.goto('/');
+  await jumpInto(page, '[data-wipe]', 1);
+  await expect.poll(() => paperRisen(page)).toBeGreaterThan(0.995);
+  const seam = await page.locator('.wipe__stage').evaluate((stage) => {
+    const sandbox = document.querySelector('#play-by-the-sandbox') as HTMLElement;
+    const ground = document.querySelector('[data-ground]') as HTMLElement;
+    const paper = stage.querySelector('[data-paper]') as HTMLElement;
+    return {
+      gap: sandbox.getBoundingClientRect().top - stage.getBoundingClientRect().bottom,
+      paper: getComputedStyle(paper).backgroundColor,
+      sandbox: getComputedStyle(sandbox).backgroundColor,
+      opening: getComputedStyle(stage).backgroundColor,
+      ground: getComputedStyle(ground).getPropertyValue('--floor').trim(),
+    };
+  });
+  expect(Math.abs(seam.gap)).toBeLessThanOrEqual(1);
+  expect(seam.paper).toBe(seam.sandbox);
+  expect(seam.opening).toBe('rgb(22, 69, 47)');
+  expect(seam.ground).toBe('#16452f');
 });
 
 const settledToy = async (page: Page) => {
@@ -332,10 +449,10 @@ test('no width scrolls sideways or cuts text off', async ({ page }) => {
 test('the tenets fit on short laptop screens', async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 650 });
   await page.goto('/');
-  const note = page.locator('.abn-tenets__note');
+  const second = page.locator('.abn-tenets__two');
   await expect
     .poll(() =>
-      note.evaluate((element) => {
+      second.evaluate((element) => {
         const stage = element.parentElement as HTMLElement;
         return stage.scrollHeight - stage.clientHeight;
       }),
@@ -363,11 +480,11 @@ test.describe('reduced motion', () => {
     await expect(page.locator('.drape')).toHaveCount(2);
     await expect(page.locator('.drape').first()).toBeHidden();
     await expect(page.locator('.pk-plant')).toBeHidden();
-    // The side-scroller becomes a plain stack, and nothing is left waiting for a scroll position.
-    expect(await page.locator('.pk-strip').evaluate((e) => getComputedStyle(e).display)).toBe(
-      'grid',
-    );
+    await expect(page.locator('.wipe')).toBeHidden();
+    // The route is plain page content, so nothing is left waiting for a scroll position.
+    await expect(page.locator('[data-rider]')).toBeHidden();
     await expect(page.locator('.pk-end h3')).toBeVisible();
+    await expect(page.locator('.ticket')).toHaveCSS('opacity', '1');
     for (const step of await page.locator('.abn-room__copy li').all()) {
       expect(await opacityOf(step)).toBe(1);
     }
@@ -404,14 +521,10 @@ test.describe('without JavaScript', () => {
     for (const step of await page.locator('.abn-room__copy li').all()) {
       expect(await opacityOf(step)).toBe(1);
     }
-    // Nothing is parked out of reach in a strip that only scripts can pan.
-    for (const link of await page.locator('.pk-end a').all()) {
-      const box = await link.boundingBox();
-      expect((box?.x ?? 9999) + (box?.width ?? 0)).toBeLessThanOrEqual(
-        page.viewportSize()?.width ?? 0,
-      );
-    }
+    for (const link of await page.locator('.pk-end a').all()) await expect(link).toBeVisible();
+    await expect(page.locator('.ticket')).toBeVisible();
     await expect(page.locator('.drape').first()).toBeHidden();
+    await expect(page.locator('.wipe')).toBeHidden();
   });
 });
 

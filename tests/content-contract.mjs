@@ -21,10 +21,10 @@ const markup = sources
   .join('\n');
 
 // Every world on the homepage, in the order the owner ranked them.
-const worlds = ['ai-build-night', 'play-by-the-sandbox', 'offbooked', 'parkdex'];
+const worlds = ['ai-build-night', 'offbooked', 'parkdex', 'play-by-the-sandbox'];
 let lastIndex = -1;
 const page = readFileSync(join(root, 'src', 'pages', 'index.astro'), 'utf8');
-for (const component of ['<Hero', '<BuildNight', '<Sandbox', '<Offbooked', '<Parkdex', '<Index']) {
+for (const component of ['<Hero', '<BuildNight', '<Offbooked', '<Parkdex', '<Sandbox', '<Index']) {
   const index = page.indexOf(component);
   assert(index > lastIndex, `${component} must stay in its place on the homepage`);
   lastIndex = index;
@@ -36,6 +36,7 @@ for (const id of worlds) {
 // The links that matter. Each of these was checked by hand against the live product.
 for (const url of [
   'https://aibuildnight.ca/',
+  'https://aibuildnight.ca/pages/past-nights',
   'https://www.playbythesandbox.ca/',
   'https://offbooked.com/',
   'https://parkdex.app/',
@@ -50,6 +51,13 @@ const offbooked = readFileSync(join(root, 'src', 'components', 'Offbooked.astro'
 assert.doesNotMatch(offbooked, /apps\.apple\.com|play\.google\.com|testflight/i);
 assert.doesNotMatch(offbooked, /C\$\d|\$\d/, 'No Offbooked price until payments ship');
 
+// Cloudflare injects the analytics beacon once the Pages setting is on, so the source never adds one.
+assert.doesNotMatch(
+  markup,
+  /cloudflareinsights|data-cf-beacon/,
+  'No analytics beacon in the source',
+);
+
 // Parkdex must link the public listing, not the retired tester group.
 assert.doesNotMatch(markup, /play\.google\.com\/apps\/testing/);
 
@@ -58,6 +66,10 @@ const index = readFileSync(join(root, 'src', 'components', 'Index.astro'), 'utf8
 assert.match(index, /\.wash-list li::before/);
 assert.match(index, /\.wash-list li\[data-active\]::before/);
 assert(existsSync(join(root, 'src', 'scripts', 'wash.ts')), 'The touch fill script must remain');
+
+// The owner cut these, and they stay cut.
+assert.doesNotMatch(offbooked, /two.actor/i, 'The two-actor test is gone');
+assert.doesNotMatch(markup, /The one I’d bet on|got pulled for failing/, 'Unapproved public lines');
 
 // Every world honours reduced motion with its own still layout.
 for (const component of ['Hero', 'BuildNight', 'Sandbox', 'Offbooked', 'Parkdex', 'Index']) {

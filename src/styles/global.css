@@ -137,7 +137,6 @@ button {
 .not-found h1 {
   font-size: clamp(3rem, 14vw, 11rem);
   font-weight: 900;
-  font-stretch: 112%;
   line-height: 0.92;
   letter-spacing: -0.04em;
 }

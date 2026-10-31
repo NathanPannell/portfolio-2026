@@ -4,13 +4,13 @@ Everything under `public/media/` is a real capture, taken on 2026-10-31 unless n
 
 | Folder | Source |
 | --- | --- |
-| `build-night/` | aibuildnight.ca in production. `hosts-*` is the Polaroid published on that site. `site-loop.mp4` is a seven-second capture of its homepage. |
-| `sandbox/` | playbythesandbox.ca in production. `panel-*` and `headcount-*` are crops of its comic panels and headcount card. `site-loop.mp4` plays forward then backward so it loops cleanly. |
+| `build-night/` | aibuildnight.ca in production, recaptured on 2026-10-31 after its redesign. `site-loop.mp4` is a seven-second capture of its homepage scrolling to the tenets and back. `first-night-*` is a band from that page, cropped to exclude attendee photos. |
+| `sandbox/` | playbythesandbox.ca in production. `panel-*` are crops of its comic panels. `site-loop.mp4` plays forward then backward so it loops cleanly. |
 | `offbooked/` | Offbooked from `origin/staging` at `b5dcd6a`, run locally on a throwaway Postgres with the repo's Hamlet demo seed. `landing-*` is offbooked.com in production. The cast names are demo data. |
-| `parkdex/` | `arrival` and `map` are web.parkdex.app in production, as a guest, in a browser that blocked every write. `planted`, `founder`, `take` and `kip-wave` are from parkdex.app in production, whose app captures use demo handles. |
+| `parkdex/` | `arrival` is web.parkdex.app in production, as a guest, in a browser that blocked every write. `planted`, `founder` and `take` are from parkdex.app in production, whose app captures use demo handles. `kip-wave` is from the same page, and the other `kip-*` poses are from `art-source/kip/` in the Parkdex repo. |
 | `index/` | Full-colour fills composed from the captures above and the parkdex.app homepage. |
 
-`og.jpg` and the icons in `public/` are generated for this site.
+`og.jpg` and the icons in `public/` are generated for this site. `src/art/parkdex/` holds the hand-built SVG forest and vine, which are illustration rather than captures.
 
 ## Replacing media
 

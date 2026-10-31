@@ -20,8 +20,10 @@ const measure = () => {
   const scrollY = window.scrollY;
   for (const track of tracks) {
     const rect = track.element.getBoundingClientRect();
+    // A pinned stage lets go when its own bottom meets the track's, whatever the address bar is doing.
+    const stage = track.element.querySelector<HTMLElement>('[data-stage]');
     track.top = rect.top + scrollY;
-    track.span = Math.max(1, rect.height - window.innerHeight);
+    track.span = Math.max(1, rect.height - (stage?.offsetHeight ?? window.innerHeight));
     track.last = -1;
   }
 };
@@ -70,16 +72,11 @@ export const startScroll = () => {
     measure();
     schedule();
   });
-  window.addEventListener('load', () => {
+  // Late fonts and images move everything below them, so the tracks follow the page's height.
+  new ResizeObserver(() => {
     measure();
     schedule();
-  });
-  schedule();
-};
-
-/** Re-reads every track, for scripts that change the page's height. */
-export const remeasure = () => {
-  measure();
+  }).observe(document.body);
   schedule();
 };
 

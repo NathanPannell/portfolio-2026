@@ -16,9 +16,9 @@ import Sandbox from '../components/Sandbox.astro';
     <div id="top"></div>
     <Hero />
     <BuildNight />
-    <Sandbox />
     <Offbooked />
     <Parkdex />
+    <Sandbox />
     <Index />
   </main>
 </SiteLayout>
@@ -26,19 +26,21 @@ import Sandbox from '../components/Sandbox.astro';
 <script>
   import { startCollage } from '../scripts/collage';
   import { startCrowd } from '../scripts/crowd';
-  import { startLevel } from '../scripts/level';
+  import { startDescent } from '../scripts/descent';
   import { startRoom } from '../scripts/room';
   import { startLoops, startReveals, startScroll } from '../scripts/scroll';
   import { startToys } from '../scripts/toys';
   import { startWash } from '../scripts/wash';
+  import { startWipe } from '../scripts/wipe';
 
   startScroll();
   startReveals();
   startLoops();
   startRoom();
-  startLevel();
+  startDescent();
   startCollage();
   startToys();
+  startWipe();
   startWash();
   void startCrowd();
 </script>

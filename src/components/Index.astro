@@ -7,12 +7,6 @@ const worlds = [
     image: 'build-night',
   },
   {
-    name: 'Play by the Sandbox',
-    host: 'playbythesandbox.ca',
-    href: 'https://www.playbythesandbox.ca/',
-    image: 'sandbox',
-  },
-  {
     name: 'Offbooked',
     host: 'offbooked.com',
     href: 'https://offbooked.com/',
@@ -24,12 +18,18 @@ const worlds = [
     href: 'https://parkdex.app/',
     image: 'parkdex',
   },
+  {
+    name: 'Play by the Sandbox',
+    host: 'playbythesandbox.ca',
+    href: 'https://www.playbythesandbox.ca/',
+    image: 'sandbox',
+  },
 ];
 const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they use.'];
 ---
 
 <section id="rules" class="rules" data-track data-audience="real people" aria-label="How I work">
-  <div class="rules__stage">
+  <div class="rules__stage" data-stage>
     {rules.map((rule, index) => (
       <p style={`--n: ${index}`}>{rule}</p>
     ))}
@@ -81,7 +81,7 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
   .rules {
     position: relative;
     z-index: 2;
-    height: 260svh;
+    height: 200svh;
     background: var(--bone);
     color: var(--ink);
   }
