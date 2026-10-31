@@ -101,6 +101,14 @@ export const startDescent = () => {
     kip.textContent = KIP[plants % KIP.length] ?? 'KLEEP!';
   });
 
+  // Safari can leave a pinned button off screen when it takes keyboard focus.
+  button.addEventListener('focus', () => {
+    const { top, bottom } = track.getBoundingClientRect();
+    if (top > 0 || bottom < window.innerHeight) {
+      window.scrollTo({ top: top + window.scrollY, behavior: 'instant' });
+    }
+  });
+
   onProgress(track, onFrame);
   window.addEventListener('resize', onFrame);
   onFrame();
