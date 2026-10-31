@@ -21,6 +21,9 @@ html {
   font-family: var(--sans);
   -webkit-text-size-adjust: 100%;
   overflow-x: clip;
+  /* Frames don't change height, so there's nothing to anchor against, and when a scene opens during
+     a smooth scroll, anchoring can cut that scroll short. */
+  overflow-anchor: none;
 }
 
 body {

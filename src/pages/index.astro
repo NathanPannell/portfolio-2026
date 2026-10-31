@@ -25,23 +25,35 @@ import Sandbox from '../components/Sandbox.astro';
 
 <script>
   import { startCollage } from '../scripts/collage';
-  import { startCrowd } from '../scripts/crowd';
-  import { startDescent } from '../scripts/descent';
-  import { startRoom } from '../scripts/room';
-  import { startLoops, startRests, startReveals, startScroll } from '../scripts/scroll';
+  import { startFrames } from '../scripts/frames';
+  import { startHeroes } from '../scripts/heroes';
+  import { startMoments } from '../scripts/moments';
+  import { startLoops, startRests, startReveals } from '../scripts/motion';
+  import { startRide } from '../scripts/ride';
+  import { startCover, startRoom } from '../scripts/room';
   import { startToys } from '../scripts/toys';
   import { startWash } from '../scripts/wash';
-  import { startWipe } from '../scripts/wipe';
 
-  startScroll();
-  startReveals();
-  startLoops();
-  startRests();
-  startRoom();
-  startDescent();
-  startCollage();
-  startToys();
-  startWipe();
-  startWash();
-  void startCrowd();
+  // Scenes close first, so everything after finds them in the state they will open from. One of
+  // these failing leaves the others running.
+  for (const start of [
+    startHeroes,
+    startMoments,
+    startReveals,
+    startLoops,
+    startRests,
+    startRoom,
+    startCover,
+    startRide,
+    startCollage,
+    startToys,
+    startWash,
+    startFrames,
+  ]) {
+    try {
+      start();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 </script>

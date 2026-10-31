@@ -12,7 +12,7 @@ New contributors and new agent sessions should read [CONTEXT.md](./CONTEXT.md) f
 | [PRODUCT.md](./PRODUCT.md) | Audience, positioning, scope, facts, and product principles. |
 | [DESIGN.md](./DESIGN.md) | The concept, each world's look, and motion rules. |
 | [CONTENT.md](./CONTENT.md) | Voice, the source of every claim, and what to check before showing it. |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Code map, scroll scenes, fallbacks, SEO, and security. |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Code map, frames, click moments, fallbacks, SEO, and security. |
 | [OPERATIONS.md](./OPERATIONS.md) | Local commands, validation, Cloudflare deployment, and production promotion. |
 | [ASSETS.md](./ASSETS.md) | Media provenance and replacement notes. |
 

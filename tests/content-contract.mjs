@@ -63,6 +63,35 @@ for (const path of sources) {
 // Parkdex must link the public listing, not the retired tester group.
 assert.doesNotMatch(markup, /play\.google\.com\/apps\/testing/);
 
+// Frames, not pinned scroll: nothing is scrubbed, and the guide never relies on CSS snapping, which
+// can strand a page on iOS Safari.
+for (const path of sources) {
+  const source = readFileSync(path, 'utf8');
+  const name = relative(root, path);
+  assert.doesNotMatch(source, /position: sticky|data-track/, `No pinned scenes: ${name}`);
+  assert.doesNotMatch(source, /scroll-snap/, `No CSS snapping: ${name}`);
+}
+
+// Every section has its own thing to click, and it stays reachable by keyboard: a real button.
+for (const [component, control] of [
+  ['BuildNight', 'abn-key'],
+  ['Offbooked', 'rope'],
+  ['Parkdex', 'pk-plant'],
+  ['Sandbox', 'sb-box__open'],
+]) {
+  const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
+  assert.match(source, /\bdata-moment(?!-)/, `${component} needs a click moment`);
+  assert.match(
+    source,
+    new RegExp(`<button\\s+class="${control}"[^>]*data-moment-control`),
+    `${component}'s control must be a button`,
+  );
+}
+
+// The hero toggle is a review tool and never reaches production.
+const heroes = readFileSync(join(root, 'src', 'scripts', 'heroes.ts'), 'utf8');
+assert.doesNotMatch(/REVIEW_HOSTS = \[(.*)\]/.exec(heroes)?.[1] ?? 'www.', /www\./);
+
 // The kept interaction: a row fills with a full-colour image, with a touch equivalent.
 const index = readFileSync(join(root, 'src', 'components', 'Index.astro'), 'utf8');
 assert.match(index, /\.wash-list li::before/);

@@ -39,6 +39,8 @@ Never weaken the gate to get green: no new test skips or deleted tests, no `cont
 
 GitHub returns HTTP 403 for branch protection and rulesets on this private repository, with a message requiring GitHub Pro or a public repository. Until rulesets are available, the gate is enforced by the delivery rule: never merge a PR to `main` with a CI check failing, pending, or missing on the head commit, or a PR to `staging` without every local check passing on it.
 
+Run the E2E job at the configured worker count. More than about four software-rendered browsers on one machine starve each other, frames stop for seconds at a time, and timed tests fail for reasons that have nothing to do with the site.
+
 ## Branch and deployment model
 
 | Branch | Purpose | Destination |
@@ -104,6 +106,18 @@ To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflar
 - Do not add `Cache-Control: no-transform` to HTML responses.
 - After enabling, verify exactly one beacon on the custom domain before claiming analytics is active: one `static.cloudflareinsights.com/beacon.min.js` script and one `cdn-cgi/rum` request.
 
+## Choosing a hero
+
+Five hero options are on staging. Toggle them with the pill at the bottom of the hero, or link straight to one with `?hero=1` to `?hero=5`: Poster, Doors, Sentence, Name badge, Departures. The toggle only appears on `staging.nathanpannell.com` and local builds.
+
+To settle on one:
+
+1. In `src/components/Hero.astro`, render the chosen component directly in the section, and remove `data-hero-slot`, the `<template>`s, the imports of the others and the toggle's markup and styles.
+2. Delete the other components from `src/components/heroes/`, and `heroes` from `worlds.ts`.
+3. In `src/scripts/heroes.ts`, keep only the chosen hero's script, if it has one, and call it from `index.astro`. Delete the rest. Poster and Doors have no script beyond the door swing.
+4. Remove the toggle's tests in `e2e/frames.spec.ts`, and the toggle check in `tests/content-contract.mjs`.
+5. If Doors is not the one, update the door tests in `e2e/navigation.spec.ts` to the chosen hero's links.
+
 ## Required UI verification
 
 For interface changes:
@@ -112,7 +126,7 @@ For interface changes:
 - Test the deployed staging URL with browser-use.
 - Check phone, intermediate, desktop, and wide layouts.
 - Verify keyboard focus, touch behavior, reduced motion, media height caps, and console errors where relevant.
-- If a scroll scene changes, scroll it both ways on a real phone width and confirm its reduced-motion layout.
+- If a frame or click moment changes, go through it both ways on a real phone width, once clicking and once just scrolling past, and confirm its reduced-motion layout.
 - If device mockups change, check chassis visibility at the smallest shipped size.
 - If content changes, check the generated route and social metadata.
 

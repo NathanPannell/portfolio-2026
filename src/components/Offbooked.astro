@@ -2,10 +2,13 @@
 import '@fontsource-variable/newsreader/wght.css';
 import '@fontsource-variable/newsreader/wght-italic.css';
 
+// When each piece lands after the curtains start to open, in seconds.
+const CURTAINS = 1;
+
 // Each phone flips through screens on its own beat.
 const phones = [
   {
-    at: 0.48,
+    at: 2.1,
     screens: [
       ['record', 'Offbooked recording screen: an actor records a line of Hamlet'],
       ['cast', 'Offbooked cast list: how many lines each part has recorded'],
@@ -13,7 +16,7 @@ const phones = [
     ],
   },
   {
-    at: 0.52,
+    at: 2.3,
     screens: [
       ['play', 'Offbooked run-through: the actor’s own lines are highlighted'],
       ['landing', 'The Offbooked landing page on a phone'],
@@ -21,7 +24,7 @@ const phones = [
     ],
   },
   {
-    at: 0.56,
+    at: 2.5,
     screens: [
       ['cast', 'Offbooked cast list: how many lines each part has recorded'],
       ['home', 'Offbooked home screen in the phone’s browser'],
@@ -36,113 +39,160 @@ const bubbles = [
 ];
 ---
 
-<section id="offbooked" class="ob" data-audience="casts" aria-labelledby="ob-title">
-  <div class="ob-reveal" data-track data-focus-at="0.9" data-collage data-loops>
-    <div class="ob-stage" data-stage>
-      <div class="collage">
-        <i class="beam beam--left" aria-hidden="true"></i>
-        <i class="beam beam--right" aria-hidden="true"></i>
-        <div class="slab" data-at="0.27" data-depth="-6"></div>
-        <div class="halftone" data-at="0.27" data-depth="14" aria-hidden="true"></div>
+<section
+  id="offbooked"
+  class="ob"
+  data-audience="casts"
+  data-frame
+  data-moment
+  data-collage
+  data-loops
+  tabindex="-1"
+  aria-labelledby="ob-title"
+>
+  <div class="ob-stage">
+    <button
+      class="rope"
+      type="button"
+      data-moment-control
+      data-pull
+      aria-expanded="false"
+      aria-label="Pull the rope to open the curtains"
+    >
+      <i class="rope__cord"></i>
+      <svg class="rope__tassel" viewBox="0 0 60 130" aria-hidden="true">
+        <circle cx="30" cy="18" r="16"></circle>
+        <path d="M18 32h24l10 84H8z"></path>
+        <path class="rope__strand" d="M20 44l-5 68M30 44v70M40 44l5 68"></path>
+      </svg>
+      <span class="rope__tag" aria-hidden="true">
+        Pull
+      </span>
+    </button>
 
-        <h2 id="ob-title" data-depth="-10">
-          <span data-at="0.31">Run lines with</span>
-          <em data-at="0.36">your cast,</em>
-          <span data-at="0.41">not a robot.</span>
-        </h2>
+    <div class="collage">
+      <i class="beam beam--left" aria-hidden="true"></i>
+      <i class="beam beam--right" aria-hidden="true"></i>
+      <div class="slab" style={`--at: ${CURTAINS}s`} data-at data-depth="-6"></div>
+      <div
+        class="halftone"
+        style={`--at: ${CURTAINS}s`}
+        data-at
+        data-depth="14"
+        aria-hidden="true"
+      ></div>
 
-        <div class="script" data-at="0.45" data-depth="10" aria-hidden="true">
-          <p class="script__scene">Act 1, Scene 2</p>
-          <p>
-            <b>HORATIO</b> Hail to your lordship!
-          </p>
-          <p>
-            <b>HAMLET</b> I am glad to see you well: Horatio, or I do forget myself.
-          </p>
-          <p class="script__mine">
-            <b>HORATIO</b> The same, my lord, and your poor servant ever.
-          </p>
-          <p>
-            <b>HAMLET</b> Sir, my good friend; I’ll change that name with you.
-          </p>
-          <p class="script__mine">
-            <b>HORATIO</b> A truant disposition, good my lord.
-          </p>
-        </div>
+      <h2 id="ob-title" data-depth="-10">
+        <span style="--at: 1.2s" data-at>
+          Run lines with
+        </span>
+        <em style="--at: 1.45s" data-at>
+          your cast,
+        </em>
+        <span style="--at: 1.7s" data-at>
+          not a robot.
+        </span>
+      </h2>
 
-        {phones.map(({ at, screens }, index) => (
-          <figure
-            class={`handset handset--${index + 1}`}
-            data-at={String(at)}
-            data-depth={String(18 + index * 12)}
-          >
-            {screens.map(([name, alt], screen) => (
-              <img
-                style={`--screen: ${screen}`}
-                src={`/media/offbooked/${name}-360.webp`}
-                srcset={`/media/offbooked/${name}-360.webp 360w, /media/offbooked/${name}-640.webp 640w`}
-                sizes="(max-width: 700px) 42vw, 22vw"
-                width="640"
-                height="1385"
-                loading="lazy"
-                decoding="async"
-                alt={screen === 0 ? alt : ''}
-              />
-            ))}
-          </figure>
-        ))}
+      <div class="script" style="--at: 1.9s" data-at data-depth="10" aria-hidden="true">
+        <p class="script__scene">Act 1, Scene 2</p>
+        <p>
+          <b>HORATIO</b> Hail to your lordship!
+        </p>
+        <p>
+          <b>HAMLET</b> I am glad to see you well: Horatio, or I do forget myself.
+        </p>
+        <p class="script__mine">
+          <b>HORATIO</b> The same, my lord, and your poor servant ever.
+        </p>
+        <p>
+          <b>HAMLET</b> Sir, my good friend; I’ll change that name with you.
+        </p>
+        <p class="script__mine">
+          <b>HORATIO</b> A truant disposition, good my lord.
+        </p>
+      </div>
 
-        <div class="voices" data-at="0.6" data-depth="20" aria-hidden="true">
-          {Array.from({ length: 18 }, (_, i) => (
-            <i style={`--i: ${i}`} />
+      {phones.map(({ at, screens }, index) => (
+        <figure
+          class={`handset handset--${index + 1}`}
+          style={`--at: ${at}s`}
+          data-at
+          data-depth={String(18 + index * 12)}
+        >
+          {screens.map(([name, alt], screen) => (
+            <img
+              style={`--screen: ${screen}`}
+              src={`/media/offbooked/${name}-360.webp`}
+              srcset={`/media/offbooked/${name}-360.webp 360w, /media/offbooked/${name}-640.webp 640w`}
+              sizes="(max-width: 700px) 42vw, 22vw"
+              width="640"
+              height="1385"
+              loading="lazy"
+              decoding="async"
+              alt={screen === 0 ? alt : ''}
+            />
           ))}
-        </div>
+        </figure>
+      ))}
 
-        {bubbles.map(([name, text]) => (
-          <p class={`bubble ${name}`} data-at="0.6" aria-hidden="true">
-            <span>{text}</span>
-          </p>
+      <div class="voices" style="--at: 2.8s" data-at data-depth="20" aria-hidden="true">
+        {Array.from({ length: 18 }, (_, i) => (
+          <i style={`--i: ${i}`} />
         ))}
-
-        <svg class="stamp" viewBox="0 0 200 200" data-at="0.64" data-depth="26" aria-hidden="true">
-          <defs>
-            <path id="stamp-ring" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1 -148 0"></path>
-          </defs>
-          <circle cx="100" cy="100" r="98"></circle>
-          <text>
-            <textPath href="#stamp-ring">PUBLIC BETA · FREE FOR NOW · PUBLIC BETA ·</textPath>
-          </text>
-          <text class="stamp__mid" x="100" y="112" text-anchor="middle">
-            ★
-          </text>
-        </svg>
-
-        <p class="tape" data-at="0.68" data-depth="16">
-          Cast needs no account
-        </p>
-
-        <a class="ticket" href="https://offbooked.com/" data-at="0.72" data-depth="-12">
-          <span class="ticket__small">Admit the whole cast</span>
-          <span class="ticket__big">
-            offbooked.com <span aria-hidden="true">↗</span>
-          </span>
-        </a>
-
-        <p class="marquee" data-at="0.24" aria-hidden="true">
-          <span>
-            One link · Everyone records on their phone · The whole cast rehearses · One link ·
-            Everyone records on their phone · The whole cast rehearses · One link · Everyone records
-            on their phone · The whole cast rehearses ·
-          </span>
-        </p>
       </div>
 
-      <div class="drape drape--left" aria-hidden="true"></div>
-      <div class="drape drape--right" aria-hidden="true"></div>
-      <div class="billing" aria-hidden="true">
-        <span>Now playing</span>
-        <strong>Offbooked</strong>
-      </div>
+      {bubbles.map(([name, text]) => (
+        <p class={`bubble ${name}`} style="--at: 2.8s" data-at aria-hidden="true">
+          <span>{text}</span>
+        </p>
+      ))}
+
+      <svg
+        class="stamp"
+        viewBox="0 0 200 200"
+        style="--at: 3s"
+        data-at
+        data-depth="26"
+        aria-hidden="true"
+      >
+        <defs>
+          <path id="stamp-ring" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1 -148 0"></path>
+        </defs>
+        <circle cx="100" cy="100" r="98"></circle>
+        <text>
+          <textPath href="#stamp-ring">PUBLIC BETA · FREE FOR NOW · PUBLIC BETA ·</textPath>
+        </text>
+        <text class="stamp__mid" x="100" y="112" text-anchor="middle">
+          ★
+        </text>
+      </svg>
+
+      <p class="tape" style="--at: 3.2s" data-at data-depth="16">
+        Cast needs no account
+      </p>
+
+      <a class="ticket" href="https://offbooked.com/" style="--at: 3.4s" data-at data-depth="-12">
+        <span class="ticket__small">Admit the whole cast</span>
+        <span class="ticket__big">
+          offbooked.com <span aria-hidden="true">↗</span>
+        </span>
+      </a>
+
+      <p class="marquee" style="--at: 0.9s" data-at aria-hidden="true">
+        <span>
+          One link · Everyone records on their phone · The whole cast rehearses · One link ·
+          Everyone records on their phone · The whole cast rehearses · One link · Everyone records
+          on their phone · The whole cast rehearses ·
+        </span>
+      </p>
+    </div>
+
+    <div class="drape drape--left" aria-hidden="true"></div>
+    <div class="drape drape--right" aria-hidden="true"></div>
+    <div class="billing" aria-hidden="true">
+      <span>Now playing</span>
+      <strong>Offbooked</strong>
     </div>
   </div>
 </section>
@@ -162,20 +212,15 @@ const bubbles = [
     font-family: 'Newsreader Variable', Georgia, serif;
   }
 
-  .ob-reveal {
-    height: 620lvh;
+  .ob:focus {
+    outline: none;
   }
 
   .ob-stage {
     --u: min(1vw, 1.62svh);
-    /* Opens in the first quarter of the track; everything after that is the ad assembling. */
-    --open: clamp(0, calc((var(--p, 1) - 0.03) * 4.5), 1);
-    /* Runs once the ad is up, so the finished page keeps moving under the scroll. */
-    --late: clamp(0, calc((var(--p, 1) - 0.72) * 3.6), 1);
     /* What a phone's address bar hides at the bottom of this taller-than-the-bar stage. */
     --bar: calc(100lvh - 100svh);
-    position: sticky;
-    top: 0;
+    position: relative;
     height: 100lvh;
     overflow: clip;
     background: var(--paper);
@@ -191,66 +236,64 @@ const bubbles = [
 
   [data-depth] {
     --move: calc(var(--mx, 0) * var(--d, 0) * 1px);
-    --lift: calc(var(--my, 0) * var(--d, 0) * 1px + var(--late, 0) * var(--drift, 0px));
+    --lift: calc(var(--my, 0) * var(--d, 0) * 1px);
     translate: var(--move) var(--lift);
   }
 
-  /* Off stage until scroll calls each piece on, and only once the script that does so is running. */
-  @media (prefers-reduced-motion: no-preference) {
-    .ob-stage[data-sprung] [data-at] {
-      transition:
-        transform 620ms var(--spring),
-        opacity 200ms;
-    }
+  /* Off stage while the curtains are shut. Each piece then lands at its own --at. */
+  .ob[data-open]:not([data-settled]) [data-at] {
+    transition:
+      transform 620ms var(--spring) var(--at),
+      opacity 200ms var(--at);
+  }
 
-    .ob-stage[data-ready] .slab:not([data-on]) {
-      transform: translate3d(-104%, 0, 0);
-    }
+  :global(.stage) .ob:not([data-open]) .slab {
+    transform: translate3d(-104%, 0, 0);
+  }
 
-    .ob-stage[data-ready] .halftone:not([data-on]) {
-      transform: scale(0);
-    }
+  :global(.stage) .ob:not([data-open]) .halftone {
+    transform: scale(0);
+  }
 
-    .ob-stage[data-ready] h2 [data-at]:not([data-on]) {
-      opacity: 0;
-      transform: translate3d(-3rem, 0, 0) rotate(-4deg);
-    }
+  :global(.stage) .ob:not([data-open]) h2 [data-at] {
+    opacity: 0;
+    transform: translate3d(-3rem, 0, 0) rotate(-4deg);
+  }
 
-    .ob-stage[data-ready] .script:not([data-on]) {
-      transform: translate3d(0, -130%, 0) rotate(-22deg);
-    }
+  :global(.stage) .ob:not([data-open]) .script {
+    transform: translate3d(0, -130%, 0) rotate(-22deg);
+  }
 
-    .ob-stage[data-ready] .handset:not([data-on]) {
-      transform: translate3d(0, 130lvh, 0) rotate(14deg);
-    }
+  :global(.stage) .ob:not([data-open]) .handset {
+    transform: translate3d(0, 130lvh, 0) rotate(14deg);
+  }
 
-    .ob-stage[data-ready] .voices:not([data-on]) {
-      opacity: 0;
-      transform: scaleY(0);
-    }
+  :global(.stage) .ob:not([data-open]) .voices {
+    opacity: 0;
+    transform: scaleY(0);
+  }
 
-    .ob-stage[data-ready] .stamp:not([data-on]) {
-      opacity: 0;
-      transform: scale(3.4);
-    }
+  :global(.stage) .ob:not([data-open]) .stamp {
+    opacity: 0;
+    transform: scale(3.4);
+  }
 
-    .ob-stage[data-ready] .tape:not([data-on]) {
-      opacity: 0;
-      transform: translate3d(5rem, -2rem, 0) rotate(30deg);
-    }
+  :global(.stage) .ob:not([data-open]) .tape {
+    opacity: 0;
+    transform: translate3d(5rem, -2rem, 0) rotate(30deg);
+  }
 
-    .ob-stage[data-ready] .ticket:not([data-on]) {
-      opacity: 0;
-      transform: translate3d(0, 140%, 0) rotate(-14deg);
-    }
+  :global(.stage) .ob:not([data-open]) .ticket {
+    opacity: 0;
+    transform: translate3d(0, 140%, 0) rotate(-14deg);
+  }
 
-    .ob-stage[data-ready] .marquee:not([data-on]) {
-      transform: translate3d(0, 100%, 0);
-    }
+  :global(.stage) .ob:not([data-open]) .marquee {
+    transform: translate3d(0, 100%, 0);
+  }
 
-    .ob-stage[data-ready] .bubble:not([data-on]) {
-      opacity: 0;
-    }
+  :global(.stage) .ob:not([data-open]) .bubble {
+    opacity: 0;
   }
 
   /* Two follow spots hunting across the set. */
@@ -264,7 +307,11 @@ const bubbles = [
     clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
     pointer-events: none;
     transform-origin: 50% 0;
-    opacity: var(--open);
+    transition: opacity 900ms 900ms;
+  }
+
+  :global(.stage) .ob:not([data-open]) .beam {
+    opacity: 0;
   }
 
   .beam--left {
@@ -319,7 +366,7 @@ const bubbles = [
     border-radius: 50%;
     background: radial-gradient(var(--red) 34%, transparent 36%) 0 0 / 0.75rem 0.75rem;
     opacity: 0.55;
-    rotate: calc(var(--late) * 40deg);
+    animation: turn 60s linear infinite;
   }
 
   h2 {
@@ -358,7 +405,8 @@ const bubbles = [
     box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 22%);
     font-size: calc(var(--u) * 1.25);
     line-height: 1.32;
-    rotate: calc(5deg - var(--late) * 9deg);
+    rotate: 5deg;
+    animation: script-sway 8s ease-in-out infinite alternate;
     clip-path: polygon(
       0 0,
       100% 0,
@@ -374,6 +422,12 @@ const bubbles = [
       6% 98%,
       0 94%
     );
+  }
+
+  @keyframes script-sway {
+    to {
+      rotate: 2deg;
+    }
   }
 
   .script p {
@@ -456,7 +510,7 @@ const bubbles = [
     top: 16%;
     right: 26%;
     rotate: -7deg;
-    --drift: -5lvh;
+    animation: tilt-one 6s ease-in-out infinite alternate;
   }
 
   .handset--2 {
@@ -464,7 +518,7 @@ const bubbles = [
     top: 11%;
     right: 12%;
     rotate: 3deg;
-    --drift: 5lvh;
+    animation: tilt-two 7s ease-in-out infinite alternate;
   }
 
   .handset--3 {
@@ -472,7 +526,25 @@ const bubbles = [
     top: 24%;
     right: -3%;
     rotate: 9deg;
-    --drift: -8lvh;
+    animation: tilt-three 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes tilt-one {
+    to {
+      rotate: -4deg;
+    }
+  }
+
+  @keyframes tilt-two {
+    to {
+      rotate: 0deg;
+    }
+  }
+
+  @keyframes tilt-three {
+    to {
+      rotate: 6deg;
+    }
   }
 
   /* Everyone's voices, in the run-through. */
@@ -704,6 +776,7 @@ const bubbles = [
     top: 0;
     bottom: 0;
     width: 51%;
+    transform: scaleX(0.05);
     background:
       linear-gradient(transparent 92%, #d8a93c 92%, #d8a93c 93%, transparent 93%),
       linear-gradient(rgb(0 0 0 / 18%), transparent 25%, transparent 70%, rgb(0 0 0 / 35%)),
@@ -721,13 +794,19 @@ const bubbles = [
   .drape--left {
     left: 0;
     transform-origin: 0 50%;
-    transform: scaleX(calc(1 - var(--open) * 0.95));
   }
 
   .drape--right {
     right: 0;
     transform-origin: 100% 50%;
-    transform: scaleX(calc(1 - var(--open) * 0.95));
+  }
+
+  :global(.stage) .ob:not([data-open]) .drape {
+    transform: none;
+  }
+
+  .ob[data-open]:not([data-settled]) .drape {
+    transition: transform 1200ms cubic-bezier(0.65, 0, 0.2, 1) 120ms;
   }
 
   .billing {
@@ -740,8 +819,13 @@ const bubbles = [
     gap: 0.4rem;
     color: #f7ecd2;
     text-align: center;
-    opacity: calc(1 - var(--open) * 3.4);
+    opacity: 0;
     pointer-events: none;
+    transition: opacity 280ms;
+  }
+
+  :global(.stage) .ob:not([data-open]) .billing {
+    opacity: 1;
   }
 
   .billing span {
@@ -757,6 +841,127 @@ const bubbles = [
     font-weight: 500;
     line-height: 0.95;
     letter-spacing: -0.04em;
+  }
+
+  /* The pulley: a tassel to grab, on a cord up to the top of the frame. Only the tassel is the
+     button, because it can't scroll the page: a swipe on the cord still does. */
+  .rope {
+    --pull: 0px;
+    position: absolute;
+    z-index: 12;
+    top: calc(min(66svh, 34rem) - 8.2rem);
+    right: clamp(1rem, 11vw, 11rem);
+    display: none;
+    width: 4.5rem;
+    height: 8.2rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #f7ecd2;
+    cursor: grab;
+    transform: translateY(var(--pull));
+    touch-action: none;
+    user-select: none;
+  }
+
+  .rope:active {
+    cursor: grabbing;
+  }
+
+  :global(.stage) .ob:not([data-open]) .rope {
+    display: block;
+  }
+
+  /* Used once. It runs on down and is hauled back up with the curtains. */
+  .ob[data-open]:not([data-settled]) .rope {
+    display: block;
+    pointer-events: none;
+    animation: haul 1000ms var(--ease) forwards;
+  }
+
+  @keyframes haul {
+    30% {
+      transform: translateY(calc(var(--pull) + 5rem));
+    }
+
+    100% {
+      visibility: hidden;
+      transform: translateY(-100lvh);
+    }
+  }
+
+  .rope__cord {
+    position: absolute;
+    bottom: calc(100% - 0.7rem);
+    left: calc(50% - 0.3rem);
+    width: 0.6rem;
+    height: 120lvh;
+    background: repeating-linear-gradient(
+      -38deg,
+      #f0cf7a 0,
+      #f0cf7a 0.28rem,
+      #a8791f 0.28rem,
+      #a8791f 0.5rem
+    );
+    box-shadow: 0.2rem 0 0.5rem rgb(0 0 0 / 35%);
+    pointer-events: none;
+  }
+
+  .rope__tassel {
+    position: absolute;
+    top: 0;
+    left: calc(50% - 1.75rem);
+    width: 3.5rem;
+    height: auto;
+    fill: #e2b64c;
+    stroke: #6f4a0b;
+    stroke-width: 3;
+    stroke-linejoin: round;
+    filter: drop-shadow(0.2rem 0.4rem 0.4rem rgb(0 0 0 / 40%));
+  }
+
+  .rope__strand {
+    fill: none;
+  }
+
+  .rope__tag {
+    position: absolute;
+    top: 5.25rem;
+    left: calc(50% + 1.6rem);
+    padding: 0.1rem 0.6rem;
+    background: #f7ecd2;
+    color: var(--red-deep);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    rotate: 6deg;
+  }
+
+  /* The rope gives a tug now and then, so it reads as something to grab. */
+  :global(.stage) .ob[data-here]:not([data-open]) .rope {
+    animation: tug 2.6s ease-in-out infinite;
+  }
+
+  @keyframes tug {
+    0%,
+    62%,
+    100% {
+      translate: 0 0;
+    }
+
+    72% {
+      translate: 0 0.9rem;
+    }
+
+    84% {
+      translate: 0 -0.2rem;
+    }
+  }
+
+  .rope:focus-visible {
+    outline-offset: -0.25rem;
   }
 
   @media (max-aspect-ratio: 5/6) {
@@ -802,7 +1007,7 @@ const bubbles = [
       left: -8%;
       width: 44%;
       font-size: 0.72rem;
-      rotate: calc(-6deg + var(--late) * 8deg);
+      rotate: -6deg;
     }
 
     .handset {
@@ -876,7 +1081,19 @@ const bubbles = [
     }
 
     .beam {
-      opacity: calc(var(--open) * 0.55);
+      opacity: 0.55;
+    }
+
+    /* Short enough to hang clear of the title. */
+    .rope {
+      top: calc(40svh - 8.2rem);
+      right: 0.5rem;
+    }
+
+    .rope__tag {
+      right: calc(50% + 1.6rem);
+      left: auto;
+      rotate: -6deg;
     }
 
     @media (max-width: 380px) {
@@ -918,14 +1135,6 @@ const bubbles = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .ob-reveal {
-      height: auto;
-    }
-
-    .ob-stage {
-      position: relative;
-    }
-
     .drape,
     .billing,
     .beam,
@@ -933,6 +1142,9 @@ const bubbles = [
       display: none;
     }
 
+    .halftone,
+    .script,
+    .handset,
     .stamp,
     .marquee span,
     .script__mine,

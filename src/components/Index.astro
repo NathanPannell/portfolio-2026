@@ -28,15 +28,13 @@ const worlds = [
 const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they use.'];
 ---
 
-<section id="rules" class="rules" data-track data-audience="real people" aria-label="How I work">
-  <div class="rules__stage" data-stage>
-    {rules.map((rule, index) => (
-      <p style={`--n: ${index}`}>{rule}</p>
-    ))}
-  </div>
+<section id="rules" class="rules" data-frame data-audience="real people" aria-label="How I work">
+  {rules.map((rule, index) => (
+    <p style={`--n: ${index}`}>{rule}</p>
+  ))}
 </section>
 
-<section id="go" class="go" data-audience="you" aria-labelledby="go-title">
+<section id="go" class="go" data-frame data-audience="you" aria-labelledby="go-title">
   <header>
     <h2 id="go-title">All of it is live. Go poke it.</h2>
   </header>
@@ -80,40 +78,41 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
 <style>
   .rules {
     position: relative;
-    z-index: 2;
-    height: 200svh;
+    display: grid;
+    align-content: center;
+    gap: clamp(0.5rem, 2svh, 1.5rem);
+    min-height: 100lvh;
+    overflow: clip;
     background: var(--bone);
     color: var(--ink);
   }
 
-  .rules__stage {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: clip;
-    display: grid;
-    align-content: center;
-    gap: clamp(0.5rem, 2svh, 1.5rem);
-  }
-
   .rules p {
-    --drift: calc(clamp(-0.17, var(--p, 0.5) - 0.5, 0.17) - (var(--p, 0.5) - 0.5));
     padding-inline: var(--gutter);
     font-size: clamp(1.9rem, 8.1vw, 11rem);
     font-weight: 900;
     line-height: 0.98;
     letter-spacing: -0.05em;
     white-space: nowrap;
-    translate: calc(var(--drift) * (var(--n) * 2 - 2.4) * 150vw) 0;
   }
 
   .rules p:nth-child(2) {
     color: var(--signal);
   }
 
+  /* The three lines slam in from alternate sides when the frame arrives. */
+  @media (prefers-reduced-motion: no-preference) {
+    .rules p {
+      transition: translate 900ms var(--ease) calc(var(--n) * 260ms + 150ms);
+    }
+
+    :global(.reveals) .rules:not([data-played]) p {
+      translate: calc((var(--n) * 2 - 1.5) * -120vw) 0;
+    }
+  }
+
   .go {
     position: relative;
-    z-index: 2;
     padding: clamp(5rem, 11vw, 9rem) 0 0;
     background: var(--ink);
     color: var(--bone);
@@ -247,7 +246,6 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
 
   .contact {
     position: relative;
-    z-index: 2;
     display: grid;
     gap: 1rem;
     padding: clamp(5rem, 11vw, 9rem) var(--gutter) 2rem;
@@ -298,12 +296,15 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
     font-size: 0.78rem;
   }
 
-  @media (max-width: 640px) {
+  /* Narrow phones wrap each rule. On their side, the rules stay one line each so all three fit. */
+  @media (max-width: 640px) and (min-height: 481px) {
     .rules p {
       font-size: 14.5vw;
       white-space: normal;
     }
+  }
 
+  @media (max-width: 640px) {
     .wash-list a {
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 0.2rem 1rem;
@@ -325,22 +326,6 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .rules {
-      height: auto;
-      padding-block: 5rem;
-    }
-
-    .rules__stage {
-      position: static;
-      height: auto;
-    }
-
-    .rules p {
-      translate: none;
-      white-space: normal;
-      font-size: clamp(2.6rem, 8vw, 7rem);
-    }
-
     .wash-list li::before {
       transform: none;
     }

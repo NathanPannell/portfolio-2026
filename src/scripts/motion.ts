@@ -1,0 +1,77 @@
+// Shared motion plumbing: reveals, resting loops and lazy video.
+
+export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+export const startReveals = () => {
+  const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+  // Anything already on screen after a reload stays as it is, rather than vanishing to reveal again.
+  for (const target of targets) {
+    if (target.getBoundingClientRect().top < window.innerHeight) {
+      target.toggleAttribute('data-in', true);
+    }
+  }
+  document.documentElement.classList.add('reveals');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.toggleAttribute('data-in', true);
+        observer.unobserve(entry.target);
+      }
+    },
+    { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+  );
+  targets.forEach((target) => observer.observe(target));
+};
+
+/** Pauses the looping CSS inside each `[data-loops]` scene while it is off screen. */
+export const startRests = () => {
+  if (reducedMotion()) return;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries)
+        entry.target.toggleAttribute('data-resting', !entry.isIntersecting);
+    },
+    // Frames butt up against each other, and one that only touches the screen isn't on it.
+    { rootMargin: '-1px 0px' },
+  );
+  document.querySelectorAll('[data-loops]').forEach((scene) => observer.observe(scene));
+};
+
+// Cloudflare Pages answers range requests with a plain 200, which iOS Safari refuses for video.
+// A blob plays everywhere, and the poster stays up if the fetch fails.
+const onScreen = new WeakSet<HTMLVideoElement>();
+
+const loadLoop = async (video: HTMLVideoElement) => {
+  if (!video.src && !video.hasAttribute('data-loading')) {
+    video.toggleAttribute('data-loading', true);
+    const response = await fetch(video.dataset['src'] ?? '').catch(() => undefined);
+    if (!response?.ok) return;
+    video.src = URL.createObjectURL(await response.blob());
+  }
+  // The fetch can outlast the visit, so check again before playing.
+  if (video.src && onScreen.has(video)) await video.play().catch(() => undefined);
+};
+
+/** Plays each lazy loop only while it is on screen, and never under reduced motion. */
+export const startLoops = () => {
+  if (reducedMotion()) return;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const video = entry.target as HTMLVideoElement;
+        if (!entry.isIntersecting) {
+          onScreen.delete(video);
+          video.pause();
+          continue;
+        }
+        onScreen.add(video);
+        void loadLoop(video);
+      }
+    },
+    { rootMargin: '200px 0px' },
+  );
+  document
+    .querySelectorAll<HTMLVideoElement>('video[data-src]')
+    .forEach((video) => observer.observe(video));
+};

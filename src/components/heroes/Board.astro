@@ -1,0 +1,214 @@
+---
+import { worlds } from './worlds';
+
+const cells = (text: string) => [...text.toUpperCase()];
+const heading = ['Builds things', 'for real people'];
+---
+
+<div class="board" data-board>
+  <h1 class="sr-only">Nathan Pannell builds things for real people.</h1>
+  <div class="board__lines" aria-hidden="true">
+    <p class="board__line board__line--name">
+      {['Nathan', 'Pannell'].map((word) => (
+        <span class="board__word">
+          {cells(word).map((character) => (
+            <span class="flap" data-flap={character}>
+              {character}
+            </span>
+          ))}
+        </span>
+      ))}
+    </p>
+    <p class="board__line board__line--what">
+      {heading
+        .join(' ')
+        .split(' ')
+        .map((word) => (
+          <span class="board__word">
+            {cells(word).map((character) => (
+              <span class="flap" data-flap={character}>
+                {character}
+              </span>
+            ))}
+          </span>
+        ))}
+    </p>
+  </div>
+  <ul class="board__rows">
+    {worlds.map(({ name, href, status, colour }) => (
+      <li>
+        <a href={href} aria-label={`${name}: ${status}`} style={`--c: ${colour}`} data-board-row>
+          <span class="board__mark" aria-hidden="true"></span>
+          <span class="board__name" aria-hidden="true">
+            {name.split(' ').map((word) => (
+              <span class="board__word">
+                {cells(word).map((character) => (
+                  <span class="flap" data-flap={character}>
+                    {character}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </span>
+          <span class="board__status" aria-hidden="true">
+            {status.split(' ').map((word) => (
+              <span class="board__word">
+                {cells(word).map((character) => (
+                  <span class="flap" data-flap={character}>
+                    {character}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .board {
+    --room: calc(100vw - var(--gutter) * 2);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: clamp(0.75rem, 3svh, 2rem);
+    height: 100svh;
+    overflow: clip;
+    padding: 3.5rem var(--gutter) 5rem;
+    background: #101214;
+    color: #f4efe0;
+  }
+
+  .board__lines {
+    display: grid;
+    gap: clamp(0.5rem, 2svh, 1rem);
+  }
+
+  .board__line,
+  .board__name,
+  .board__status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em 0.55em;
+  }
+
+  .board__word {
+    display: flex;
+    gap: 2px;
+  }
+
+  /* Each cell is one flap, with the hinge drawn across its middle. */
+  .flap {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 0.92em;
+    height: 1.28em;
+    border-radius: 0.09em;
+    background: linear-gradient(#2a2e31 49%, #0b0c0d 49%, #0b0c0d 51%, #24282a 51%);
+    font-family: var(--mono);
+    font-weight: 700;
+    line-height: 1;
+    transform-origin: 50% 50%;
+  }
+
+  .flap[data-turn='a'] {
+    animation: flap-a 90ms linear;
+  }
+
+  .flap[data-turn='b'] {
+    animation: flap-b 90ms linear;
+  }
+
+  @keyframes flap-a {
+    from {
+      transform: scaleY(0.25);
+    }
+  }
+
+  @keyframes flap-b {
+    from {
+      transform: scaleY(0.25);
+    }
+  }
+
+  .board__line--name {
+    font-size: min(calc(var(--room) / 14.6), 12svh);
+  }
+
+  .board__line--what {
+    color: var(--signal);
+    font-size: min(calc(var(--room) / 29.5), 6.5svh);
+  }
+
+  .board__rows {
+    display: grid;
+    align-content: center;
+    gap: clamp(0.25rem, 1svh, 0.6rem);
+    min-height: 0;
+  }
+
+  .board__rows a {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.3em 0;
+    font-size: min(calc(var(--room) / 39), 4.6svh);
+    text-decoration: none;
+  }
+
+  .board__mark {
+    flex: none;
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 0.5em var(--c);
+  }
+
+  .board__name {
+    flex: 1;
+    flex-wrap: nowrap;
+  }
+
+  .board__status {
+    flex-wrap: nowrap;
+    color: var(--c);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .board__rows a:hover .flap {
+      background: linear-gradient(#3a3f43 49%, #0b0c0d 49%, #0b0c0d 51%, #33383b 51%);
+    }
+  }
+
+  /* Phones: the name stacks, and the board drops its status column. */
+  @media (max-aspect-ratio: 1/1) {
+    .board__line--name {
+      font-size: calc(var(--room) / 7.4);
+    }
+
+    .board__line--what {
+      font-size: calc(var(--room) / 16.2);
+    }
+
+    .board__rows {
+      gap: 0.5rem;
+    }
+
+    .board__rows a {
+      justify-content: start;
+      font-size: calc(var(--room) / 14.5);
+    }
+
+    .board__name {
+      flex-wrap: wrap;
+    }
+
+    .board__status {
+      display: none;
+    }
+  }
+</style>
