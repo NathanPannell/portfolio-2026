@@ -163,7 +163,7 @@ const stops = [
     font-family: 'Bricolage Grotesque Variable', var(--sans);
   }
 
-  /* With no script the trip is plain page content, top to bottom. The script makes it a stage. */
+  /* Without a stage the trip is plain page content, top to bottom. */
   .pk-trip {
     position: relative;
     background: var(--forest);
@@ -173,8 +173,7 @@ const stops = [
     outline: none;
   }
 
-  .pk-trip[data-waiting],
-  .pk-trip[data-open] {
+  :global(.stage) .pk-trip {
     height: 100lvh;
     overflow: clip;
   }
@@ -187,8 +186,7 @@ const stops = [
     display: none;
   }
 
-  .pk-trip[data-waiting] .pk-back,
-  .pk-trip[data-open] .pk-back {
+  :global(.stage) .pk-trip .pk-back {
     position: absolute;
     inset: 0;
     display: block;
@@ -274,8 +272,7 @@ const stops = [
     --vine-width: clamp(14rem, 23vw, 21.5rem);
   }
 
-  .pk-trip[data-waiting] .pk-world,
-  .pk-trip[data-open] .pk-world {
+  :global(.stage) .pk-trip .pk-world {
     position: absolute;
     inset: 0 0 auto;
     will-change: transform;
@@ -357,8 +354,7 @@ const stops = [
     padding: 4.5rem var(--gutter) 1.5rem;
   }
 
-  .pk-trip[data-waiting] .pk-forest,
-  .pk-trip[data-open] .pk-forest {
+  :global(.stage) .pk-trip .pk-forest {
     height: 100lvh;
     padding-bottom: calc(1.5rem + var(--bar));
   }
@@ -384,8 +380,7 @@ const stops = [
   }
 
   /* The phones drop in on the vine one by one, once Kip has landed. */
-  .pk-trip:not([data-landed])[data-waiting] .pk-stop,
-  .pk-trip:not([data-landed])[data-open] .pk-stop {
+  :global(.stage) .pk-trip:not([data-landed]) .pk-stop {
     visibility: hidden;
     transform: translate3d(0, -110lvh, 0) rotate(6deg);
   }
@@ -456,8 +451,7 @@ const stops = [
     transform-origin: 50% 100%;
   }
 
-  .pk-trip:not([data-landed])[data-waiting] .pk-pole,
-  .pk-trip:not([data-landed])[data-open] .pk-pole {
+  :global(.stage) .pk-trip:not([data-landed]) .pk-pole {
     transform: scaleY(0);
   }
 
@@ -561,8 +555,7 @@ const stops = [
     background: var(--orange);
   }
 
-  .pk-trip[data-waiting] .pk-score,
-  .pk-trip[data-open] .pk-score {
+  :global(.stage) .pk-trip .pk-score {
     position: absolute;
     z-index: 4;
     top: 3.4rem;
@@ -603,8 +596,7 @@ const stops = [
     transition: opacity 240ms;
   }
 
-  .pk-trip[data-waiting] .pk-rider,
-  .pk-trip[data-open] .pk-rider {
+  :global(.stage) .pk-trip .pk-rider {
     display: block;
   }
 
@@ -659,7 +651,7 @@ const stops = [
       box-shadow 100ms;
   }
 
-  .pk-trip[data-waiting] .pk-plant {
+  :global(.stage) .pk-trip:not([data-open]) .pk-plant {
     display: grid;
     animation: beckon 2.2s ease-in-out infinite;
   }
@@ -821,8 +813,7 @@ const stops = [
       padding: 5.5rem 0.75rem 1rem;
     }
 
-    .pk-trip[data-waiting] .pk-forest,
-    .pk-trip[data-open] .pk-forest {
+    :global(.stage) .pk-trip .pk-forest {
       padding-bottom: calc(1rem + var(--bar));
     }
 
@@ -869,8 +860,7 @@ const stops = [
       display: none;
     }
 
-    .pk-trip[data-waiting] .pk-score,
-    .pk-trip[data-open] .pk-score {
+    :global(.stage) .pk-trip .pk-score {
       top: 2.9rem;
     }
 

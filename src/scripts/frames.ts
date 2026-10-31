@@ -120,7 +120,7 @@ export const startFrames = () => {
     heading = undefined;
     window.clearTimeout(disarm);
     disarm = window.setTimeout(() => {
-      if (!scrolled) armed = false;
+      if (!scrolled && !touching) armed = false;
     }, DISARM);
   };
 
@@ -133,6 +133,14 @@ export const startFrames = () => {
     'wheel',
     (event) => {
       if (!event.ctrlKey && event.deltaY !== 0) arm();
+    },
+    { passive: true },
+  );
+  // Taking hold of the page, or its scrollbar, ends any trip the guide was on.
+  window.addEventListener(
+    'pointerdown',
+    () => {
+      heading = undefined;
     },
     { passive: true },
   );

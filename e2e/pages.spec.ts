@@ -515,6 +515,47 @@ test('a reload part-way down comes back with everything above it open', async ({
   await expect(page.locator('.sb-panels')).toBeInViewport();
 });
 
+for (const scene of ['#offbooked', '.pk-ground', '#rules']) {
+  test(`a reload at ${scene} stays exactly where it was`, async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => {
+      window.history.scrollRestoration = 'auto';
+    });
+    await jumpTo(page, scene);
+    const top = await page.evaluate(() => window.scrollY);
+    await page.waitForTimeout(300);
+    await page.addInitScript(() => {
+      const seen: number[] = [];
+      Object.assign(window, { scrollTrail: seen });
+      const look = () => {
+        seen.push(Math.round(window.scrollY));
+        window.requestAnimationFrame(look);
+      };
+      look();
+    });
+    await page.reload();
+    await page.waitForTimeout(700);
+    const trail = await page.evaluate(
+      () => (window as unknown as { scrollTrail: number[] }).scrollTrail,
+    );
+    // Once it has been restored, it goes nowhere.
+    const places = new Set(trail.filter((y) => y > 0));
+    expect([...places]).toEqual([Math.round(top)]);
+  });
+}
+
+test('a reload at the top of a closed scene leaves it closed', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    window.history.scrollRestoration = 'auto';
+  });
+  await jumpTo(page, '#offbooked');
+  await page.waitForTimeout(300);
+  await page.reload();
+  await expect(page.locator('#offbooked')).toHaveAttribute('data-waiting', '');
+  await expect(page.locator('.rope')).toBeInViewport();
+});
+
 test('every scene rests its loops while it is off screen', async ({ page }) => {
   await page.goto('/');
   const scenes = page.locator('[data-loops]');

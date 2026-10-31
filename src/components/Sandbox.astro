@@ -251,7 +251,7 @@ const panels = [
     background-size: var(--sb-grid-size);
   }
 
-  .sb-open[data-waiting] .sb-box {
+  :global(.stage) .sb-open:not([data-open]) .sb-box {
     display: grid;
   }
 
@@ -321,7 +321,7 @@ const panels = [
   }
 
   /* Something in there wants out. */
-  .sb-open[data-here][data-waiting] .sb-box__lid {
+  :global(.stage) .sb-open[data-here]:not([data-open]) .sb-box__lid {
     animation: rattle 2.8s ease-in-out infinite;
   }
 

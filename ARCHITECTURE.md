@@ -52,20 +52,20 @@ Keyboard focus inside a frame lines the whole frame up, not just the focused ele
 
 ## Click moments
 
-A `[data-moment]` scene has one `[data-moment-control]`, always a real `<button>`: the key, the rope, Plant!, the toy box. The default markup and CSS are the open scene. `moments.ts` sets `data-waiting` to close it, which is why a script that fails to load hides nothing, and the control only displays under `data-waiting`.
+A `[data-moment]` scene has one `[data-moment-control]`, always a real `<button>`: the key, the rope, Plant!, the toy box. The scene's closed look and layout hang off `.stage` on `<html>`, set by the inline script in `SiteLayout` before the first paint. It has to be that early: AI Build Night and Parkdex stack in plain flow without a stage, and if the page's height changed when the bundle arrived, a reload would land in the wrong place and slide back. If the bundle never runs, the `load` event finds no `data-moments` on `<html>` and removes `.stage`, so a failed script hides nothing. Under reduced motion `.stage` is never added.
 
-Using the control swaps `data-waiting` for `data-open` and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
+Using the control sets `data-open` and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
 
 Nothing behind a moment depends on the click. A scene also opens:
 
 - after `AUTO_OPEN` milliseconds on screen,
 - when the page scrolls past it,
 - when a link inside it takes keyboard focus, which is why closed content is covered up, not `hidden`,
-- already open, as `data-open data-settled`, if it was above the viewport when the page loaded. `data-settled` skips the transitions, so a reload doesn't replay anything.
+- as `data-open data-settled` if it is off screen at the time, whether on a reload or a jump down the page. `data-settled` skips the transitions, so nothing replays, and resting loops can't leave a sequence half done.
 
 AI Build Night's site opens from the block cursor: `startCover` measures the cursor and clips the panel to it. The panel is painted the cursor's colour rather than hidden, so its links can still take focus.
 
-Parkdex's ride is a timed `requestAnimationFrame` tween rather than CSS, because Kip has to follow the vine's curve at whatever width the screen is. Without a script the trip is plain flow. It only becomes a stage under `data-waiting` or `data-open`.
+Parkdex's ride is a timed `requestAnimationFrame` tween rather than CSS, because Kip has to follow the vine's curve at whatever width the screen is.
 
 The rainbow is two CSS animations: the bands cross by `transform` alone, and the toy box disappears while they cover the screen. It plays whole whatever the scroll does. Don't go back to drawing it with `stroke-dashoffset`: a dash restarts on every subpath.
 
@@ -77,9 +77,9 @@ All five heroes are built. The default is rendered in place, and the others sit 
 
 ## Reduced motion and no JavaScript
 
-Each component has a `@media (prefers-reduced-motion: reduce), (scripting: none)` block for a still, complete layout, so both cases share it. Under reduced motion `startMoments` and the guide do nothing, so every scene is simply open and a scroll stops where it stops. Canvases draw one still frame and are not needed without JavaScript.
+Each component has a `@media (prefers-reduced-motion: reduce), (scripting: none)` block for a still, complete layout, so both cases share it. Under reduced motion there is no `.stage` and the guide does nothing, so every scene is simply open and a scroll stops where it stops. Canvases draw one still frame and are not needed without JavaScript.
 
-`SiteLayout` adds `.js` to `<html>` with a one-line inline script. Reveals, including the timed tenets and rules, wait for `startReveals` to add `.reveals`, so a script that fails to load leaves content visible.
+Reveals, including the timed tenets and rules, wait for `startReveals` to add `.reveals`, so a script that fails to load leaves content visible.
 
 ## Tall phone viewports
 

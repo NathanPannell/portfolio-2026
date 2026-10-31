@@ -160,15 +160,14 @@ const phone = [2142, 2142, 2142];
     font-family: var(--sans);
   }
 
-  /* The cover: an orange wall, a cursor, and one key. With no script the cover and the live site
-     simply stack. The script makes them a stage, with the site inside the cursor. */
+  /* The cover: an orange wall, a cursor, and one key. On a stage the live site waits inside the
+     cursor. Without one, the cover and the site simply stack. */
   .abn-cover {
     position: relative;
     overflow: clip;
   }
 
-  .abn-cover[data-waiting],
-  .abn-cover[data-open] {
+  :global(.stage) .abn-cover {
     height: 100lvh;
   }
 
@@ -185,8 +184,7 @@ const phone = [2142, 2142, 2142];
     padding: clamp(4.5rem, 11svh, 7rem) var(--gutter) var(--gutter);
   }
 
-  .abn-cover[data-waiting] .abn-cover__type,
-  .abn-cover[data-open] .abn-cover__type {
+  :global(.stage) .abn-cover .abn-cover__type {
     position: absolute;
     inset: 0 0 auto;
     height: 100svh;
@@ -245,7 +243,7 @@ const phone = [2142, 2142, 2142];
     transition: padding 90ms;
   }
 
-  .abn-cover[data-waiting] .abn-key {
+  :global(.stage) .abn-cover:not([data-open]) .abn-key {
     display: block;
   }
 
@@ -282,7 +280,7 @@ const phone = [2142, 2142, 2142];
   }
 
   /* The key dips by itself every few seconds, so it reads as something to press. */
-  .abn-cover[data-here][data-waiting] .abn-key__cap {
+  :global(.stage) .abn-cover[data-here]:not([data-open]) .abn-key__cap {
     animation: dip 3.4s ease-in-out infinite;
   }
 
@@ -314,15 +312,14 @@ const phone = [2142, 2142, 2142];
     clip-path: inset(0);
   }
 
-  .abn-cover[data-waiting] .abn-show,
-  .abn-cover[data-open] .abn-show {
+  :global(.stage) .abn-cover .abn-show {
     position: absolute;
     inset: 0;
     height: 100lvh;
     min-height: 0;
   }
 
-  .abn-cover[data-waiting] .abn-show {
+  :global(.stage) .abn-cover:not([data-open]) .abn-show {
     clip-path: inset(var(--cursor, 100% 0 0 0));
   }
 
@@ -339,7 +336,7 @@ const phone = [2142, 2142, 2142];
     transition: opacity 300ms;
   }
 
-  .abn-cover[data-waiting] .abn-show::after {
+  :global(.stage) .abn-cover:not([data-open]) .abn-show::after {
     opacity: 1;
     animation: cursor-paint 1.1s steps(2, jump-none) infinite;
   }
@@ -523,7 +520,7 @@ const phone = [2142, 2142, 2142];
     }
   }
 
-  .abn-cover[data-waiting] .abn-strip {
+  :global(.stage) .abn-cover:not([data-open]) .abn-strip {
     animation-play-state: paused;
   }
 
@@ -552,16 +549,16 @@ const phone = [2142, 2142, 2142];
     transition: transform 700ms var(--ease) var(--wait, 700ms);
   }
 
-  .abn-cover[data-waiting] .abn-browser {
+  :global(.stage) .abn-cover:not([data-open]) .abn-browser {
     transform: translateY(6rem) scale(0.94);
   }
 
-  .abn-cover[data-waiting] .abn-phone {
+  :global(.stage) .abn-cover:not([data-open]) .abn-phone {
     --wait: 950ms;
     transform: translateY(120%) rotate(8deg);
   }
 
-  .abn-cover[data-waiting] .abn-show__copy {
+  :global(.stage) .abn-cover:not([data-open]) .abn-show__copy {
     --wait: 800ms;
     transform: translateX(-3rem);
   }
