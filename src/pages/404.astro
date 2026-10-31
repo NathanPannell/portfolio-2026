@@ -1,5 +1,4 @@
 ---
-import SiteHeader from '../components/SiteHeader.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 ---
 
@@ -7,33 +6,10 @@ import SiteLayout from '../layouts/SiteLayout.astro';
   title="Page not found | Nathan Pannell"
   description="That page could not be found."
   noindex
-  pageClass="not-found-page"
 >
-  <SiteHeader />
-  <main id="main-content" class="not-found-main">
-    <section class="not-found" aria-labelledby="not-found-title">
-      <div class="not-found__marker" aria-hidden="true">
-        <strong>404</strong>
-        <span>Nothing at this marker.</span>
-      </div>
-      <div class="not-found__copy">
-        <h1 id="not-found-title">Lost the trail.</h1>
-        <p>This page isn’t here. The projects and field notes still are.</p>
-        <nav class="not-found__actions" aria-label="Useful destinations">
-          <a href="/">
-            <span>Home</span>
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="/parkdex/">
-            <span>Parkdex</span>
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="/#writing">
-            <span>Writing</span>
-            <span aria-hidden="true">→</span>
-          </a>
-        </nav>
-      </div>
-    </section>
+  <main id="main-content" class="not-found">
+    <h1>Nobody here.</h1>
+    <p>This page isn’t real, and I only build for real people.</p>
+    <a href="/">Back to the site</a>
   </main>
 </SiteLayout>

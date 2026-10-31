@@ -4,11 +4,6 @@ import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const contentRoot = join(root, 'src', 'content');
-
-const requiredProjects = ['parkdex', 'doxxme', 'commons', 'go-fetch', 'cup-of-sugar'];
-
-const requiredLegacy = ['cup-of-sugar', 'echo', 'go-fetch', 'record-of-the-day', 'suno-slayers'];
 
 function filesUnder(directory) {
   if (!existsSync(directory)) return [];
@@ -19,175 +14,90 @@ function filesUnder(directory) {
   });
 }
 
-function contentFiles(directory) {
-  return filesUnder(directory).filter((path) => ['.md', '.mdx'].includes(extname(path)));
+const sources = filesUnder(join(root, 'src'));
+const markup = sources
+  .filter((path) => extname(path) === '.astro')
+  .map((path) => readFileSync(path, 'utf8'))
+  .join('\n');
+
+// Every world on the homepage, in the order the owner ranked them.
+const worlds = ['ai-build-night', 'play-by-the-sandbox', 'offbooked', 'parkdex'];
+let lastIndex = -1;
+const page = readFileSync(join(root, 'src', 'pages', 'index.astro'), 'utf8');
+for (const component of ['<Hero', '<BuildNight', '<Sandbox', '<Offbooked', '<Parkdex', '<Index']) {
+  const index = page.indexOf(component);
+  assert(index > lastIndex, `${component} must stay in its place on the homepage`);
+  lastIndex = index;
+}
+for (const id of worlds) {
+  assert(markup.includes(`id="${id}"`), `The homepage needs a #${id} section`);
 }
 
-function parseFrontmatter(path) {
-  const source = readFileSync(path, 'utf8');
-  const match = source.match(/^---\s*\r?\n([\s\S]*?)\r?\n---(?:\s*\r?\n|$)/);
-  assert(match, `${relative(root, path)} must begin with YAML frontmatter`);
-
-  const values = new Map();
-  for (const line of match[1].split(/\r?\n/)) {
-    const field = line.match(/^([A-Za-z][\w-]*):\s*(.*?)\s*$/);
-    if (field) values.set(field[1], field[2].replace(/^['"]|['"]$/g, ''));
-  }
-  return values;
-}
-
-function slugFor(path, directory) {
-  return relative(directory, path)
-    .split(sep)
-    .join('/')
-    .replace(/\.(md|mdx)$/u, '')
-    .replace(/\/index$/u, '');
-}
-
-function isUnderscorePath(slug) {
-  return slug.split('/').some((segment) => segment.startsWith('_'));
-}
-
-function collectionEntries(collection) {
-  const directory = join(contentRoot, collection);
-  return contentFiles(directory).map((path) => ({
-    path,
-    slug: slugFor(path, directory),
-    data: parseFrontmatter(path),
-  }));
-}
-
-function publicEntries(collection) {
-  return collectionEntries(collection).filter(
-    ({ slug, data }) => !isUnderscorePath(slug) && data.get('draft') !== 'true',
-  );
-}
-
-function assertIncludes(actual, required, label) {
-  const actualSet = new Set(actual);
-  for (const slug of required) {
-    assert(actualSet.has(slug), `${label} must retain /${slug}/`);
-  }
-}
-
-const projects = publicEntries('projects');
-const writing = publicEntries('writing');
-const legacy = publicEntries('legacy');
-
-assert(
-  projects.length >= requiredProjects.length,
-  'The featured project collection cannot lose existing work',
-);
-assert(writing.length > 0, 'At least one published writing entry is required');
-assertIncludes(
-  projects.map(({ slug }) => slug),
-  requiredProjects,
-  'Featured projects',
-);
-assertIncludes(
-  legacy.map(({ slug }) => slug),
-  requiredLegacy,
-  'Legacy posts',
-);
-
-const orderedProjects = projects
-  .map(({ slug, data }) => ({ slug, order: Number(data.get('order')) }))
-  .sort((a, b) => a.order - b.order);
-assert.deepEqual(
-  orderedProjects.map(({ order }) => order),
-  orderedProjects.map((_, index) => index + 1),
-  'Featured project order values must be unique and contiguous',
-);
-assert.deepEqual(
-  orderedProjects.slice(0, requiredProjects.length).map(({ slug }) => slug),
-  requiredProjects,
-  'Existing featured projects must remain in their established order',
-);
-
-const flatSlugs = [...writing, ...legacy].map(({ slug }) => slug);
-
-// Homepage selection is editorial and independent of the preserved route order.
-for (const [label, entries] of [
-  ['projects', projects],
-  ['writing', [...writing, ...legacy]],
+// The links that matter. Each of these was checked by hand against the live product.
+for (const url of [
+  'https://aibuildnight.ca/',
+  'https://www.playbythesandbox.ca/',
+  'https://offbooked.com/',
+  'https://parkdex.app/',
+  'https://web.parkdex.app/',
+  'https://play.google.com/store/apps/details?id=app.parkdex',
 ]) {
-  const selected = entries.filter(({ data }) => data.has('homeOrder'));
-  const positions = selected.map(({ data }) => Number(data.get('homeOrder'))).sort((a, b) => a - b);
-  assert.deepEqual(
-    positions,
-    [1, 2, 3],
-    `Homepage ${label} must have exactly three unique ordered selections`,
+  assert(markup.includes(url), `Missing outbound link: ${url}`);
+}
+
+// Offbooked is not on any store yet, and nothing can be bought. Neither may be implied.
+const offbooked = readFileSync(join(root, 'src', 'components', 'Offbooked.astro'), 'utf8');
+assert.doesNotMatch(offbooked, /apps\.apple\.com|play\.google\.com|testflight/i);
+assert.doesNotMatch(offbooked, /C\$\d|\$\d/, 'No Offbooked price until payments ship');
+
+// Parkdex must link the public listing, not the retired tester group.
+assert.doesNotMatch(markup, /play\.google\.com\/apps\/testing/);
+
+// The kept interaction: a row fills with a full-colour image, with a touch equivalent.
+const index = readFileSync(join(root, 'src', 'components', 'Index.astro'), 'utf8');
+assert.match(index, /\.wash-list li::before/);
+assert.match(index, /\.wash-list li\[data-active\]::before/);
+assert(existsSync(join(root, 'src', 'scripts', 'wash.ts')), 'The touch fill script must remain');
+
+// Every world honours reduced motion with its own still layout.
+for (const component of ['Hero', 'BuildNight', 'Sandbox', 'Offbooked', 'Parkdex', 'Index']) {
+  const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
+  assert.match(
+    source,
+    /prefers-reduced-motion: reduce/,
+    `${component} needs a reduced-motion layout`,
   );
-  if (label === 'projects') {
-    for (const { slug, data } of selected) {
-      assert(data.get('cardImageAlt'), `${slug} needs descriptive homepage image text`);
-      assert(
-        existsSync(join(root, 'public', data.get('cardImage'))),
-        `${slug} homepage photograph must exist`,
-      );
-    }
-  }
-}
-assert.equal(new Set(flatSlugs).size, flatSlugs.length, 'Flat article slugs must be unique');
-assertIncludes(flatSlugs, requiredLegacy, 'Required flat article slugs');
-
-for (const { slug, data } of projects) {
-  for (const field of [
-    'title',
-    'tagline',
-    'cardCaption',
-    'summary',
-    'projectType',
-    'displayDate',
-    'cover',
-    'coverAlt',
-    'highlights',
-  ]) {
-    assert(data.has(field), `${slug} is missing required project frontmatter: ${field}`);
-  }
 }
 
-for (const { slug, data } of writing) {
-  assert(data.get('description'), `${slug} needs a useful description`);
+// Media exists and stays within a budget that keeps a heavy page loading quickly.
+const budgets = { '.webp': 130 * 1024, '.mp4': 1.5 * 1024 * 1024 };
+const media = filesUnder(join(root, 'public', 'media'));
+assert(media.length > 0, 'The media folder must not be empty');
+for (const path of media) {
+  const extension = extname(path);
+  const budget = budgets[extension];
+  assert(budget, `${relative(root, path)} is not an allowed media format`);
+  assert(statSync(path).size <= budget, `${relative(root, path)} is over its size budget`);
 }
 
-for (const entry of [...projects, ...writing, ...legacy]) {
-  assert.notEqual(entry.data.get('draft'), 'true', `${entry.slug} must not publish as a draft`);
-  assert(!isUnderscorePath(entry.slug), `${entry.slug} must not expose an underscore path`);
+const referenced = new Set();
+for (const path of sources) {
+  const source = readFileSync(path, 'utf8');
+  for (const match of source.matchAll(/\/media\/[\w./-]+\.(?:webp|mp4)/g)) referenced.add(match[0]);
+}
+for (const reference of referenced) {
+  assert(existsSync(join(root, 'public', reference)), `Missing media file: ${reference}`);
 }
 
 const dist = join(root, 'dist');
 if (existsSync(dist) && statSync(dist).isDirectory()) {
-  const expectedRoutes = [
-    ...new Set([
-      'index.html',
-      ...projects.map(({ slug }) => `${slug}/index.html`),
-      ...flatSlugs.map((slug) => `${slug}/index.html`),
-    ]),
-  ];
-
-  for (const route of expectedRoutes) {
-    assert(existsSync(join(dist, ...route.split('/'))), `Missing generated route: /${route}`);
-  }
-
-  const generatedHtml = filesUnder(dist)
+  const html = filesUnder(dist)
     .filter((path) => extname(path) === '.html')
-    .map((path) => relative(dist, path).split(sep).join('/'));
-  for (const route of generatedHtml) {
-    assert(!isUnderscorePath(route), `Generated route exposes an underscore path: /${route}`);
-  }
-
-  for (const collection of ['projects', 'writing', 'legacy']) {
-    const hiddenEntries = collectionEntries(collection).filter(
-      ({ slug, data }) => isUnderscorePath(slug) || data.get('draft') === 'true',
-    );
-    for (const { slug } of hiddenEntries) {
-      const route = `${slug}/index.html`;
-      assert(!existsSync(join(dist, ...route.split('/'))), `Draft route was generated: /${route}`);
-    }
-  }
+    .map((path) => relative(dist, path).split(sep).join('/'))
+    .sort();
+  assert.deepEqual(html, ['404.html', 'index.html'], 'This is a one-page site plus a 404 page');
 }
 
 console.log(
-  `Content contract passed: ${projects.length} featured projects, ${flatSlugs.length} flat articles, no public drafts.`,
+  `Content contract passed: ${worlds.length} worlds, ${media.length} media files in budget.`,
 );

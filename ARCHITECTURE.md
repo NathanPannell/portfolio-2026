@@ -2,114 +2,73 @@
 
 ## Runtime model
 
-This is a fully static Astro site. There is no server runtime, database, authentication layer, Pages Function, or Astro Cloudflare adapter.
-
-Build flow:
-
-```text
-Astro content collections
-        ↓
-src/lib/content.ts
-        ↓
-homepage and flat-route generation
-        ↓
-shared layouts and components
-        ↓
-static HTML, CSS, JavaScript, images, and sitemap in dist/
-        ↓
-Cloudflare Pages
-```
+This is a fully static Astro site with one homepage and a 404 page. There is no server runtime, database, authentication layer, Pages Function, client framework, or Astro Cloudflare adapter. Motion is CSS first; about 14 KB of plain TypeScript handles what CSS can't.
 
 ## Important files
 
 | File | Responsibility |
 | --- | --- |
-| `astro.config.ts` | Canonical site origin, trailing slashes, MDX, sitemap, and syntax highlighting. |
-| `src/content.config.ts` | Project, writing, legacy, collaborator, highlight, link, and media schemas. |
-| `src/lib/content.ts` | Publication filtering and collection sorting. |
-| `src/pages/index.astro` | Homepage sequence and data-driven project and writing previews. |
-| `src/pages/[...slug].astro` | Shared flat route generator for projects, writing, and legacy posts. |
+| `astro.config.ts` | Canonical site origin, trailing slashes, and sitemap. |
+| `src/pages/index.astro` | Section order and the one script entry that starts every behaviour. |
 | `src/pages/404.astro` | Static recovery page. |
-| `src/layouts/SiteLayout.astro` | Document shell, metadata, fonts, global styles, and shared scripts. |
-| `src/layouts/ProjectLayout.astro` | Project artifact, actions, evidence, media, narrative, collaborators, and footer. |
-| `src/layouts/ArticleLayout.astro` | Long-form article header, body, and footer actions. |
-| `src/components/SiteHeader.astro` | Shared name plus email masthead. |
-| `src/components/SiteFooter.astro` | Shared concise contact and social footer. |
-| `src/styles/global.css` | Tokens, all shared layouts, device mockups, Polaroids, responsive behavior, and reduced motion. |
-| `src/scripts/project-polaroids.ts` | Applies mobile-only viewport-centred focus to project cards and homepage writing rows; preserves BFCache-safe listener cleanup. |
-| `src/scripts/section-reveal.ts` | Expands and collapses the homepage project and Writing lists without removing their no-JavaScript fallback. |
-| `src/scripts/navigation-focus.ts` | Clears pointer-created link focus after browser Back while retaining keyboard focus behavior. |
-| `tests/content-contract.mjs` | Publishing invariants, required legacy routes, project ordering, drafts, and generated-route checks. |
-| `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonicals, structured data, covers, and the 404 page. |
-| `e2e/` | Playwright suite run against `astro preview` of `dist/`: every sitemap route, the main navigation journeys, and a crawl for broken internal links, assets, and fragments. |
-| `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`): format, lint, types, build, e2e, dependency audit, and secret scan. |
+| `src/layouts/SiteLayout.astro` | Document shell, metadata, JSON-LD, shared fonts, and global styles. |
+| `src/styles/global.css` | Shell only: reset, tokens, skip link, reveal transitions, 404. |
+| `src/components/Chrome.astro` | Fixed name link and the "for ___" label that follows the scroll. |
+| `src/components/Hero.astro` | Hero stage. The orange block grows from the wordmark cursor to fill the screen. |
+| `src/components/BuildNight.astro` | AI Build Night: wordmark opener, room scrub, tenets, website showcase. |
+| `src/components/Sandbox.astro` | The crayon transition and Play by the Sandbox. |
+| `src/components/Offbooked.astro` | Curtain reveal, collage, two-actor test, run-through lines, close. |
+| `src/components/Parkdex.astro` | Side-scrolling level, HUD, Plant! button. |
+| `src/components/Index.astro` | Working rules, the image-fill index, contact footer. |
+| `src/scripts/scroll.ts` | One scroll listener: sets `--p` on every `[data-track]`, plus reveals and lazy video loops. |
+| `src/scripts/crowd.ts` | Hero canvas: squares spell each audience, react to pointer and touch, funnel into the block. |
+| `src/scripts/room.ts` | AI Build Night room canvas, scrubbed by scroll from 18:00 to 21:00. |
+| `src/scripts/toys.ts` | Throwable toys with a small physics loop that sleeps when everything settles. |
+| `src/scripts/collage.ts` | Offbooked pointer parallax and the run-through line highlight. |
+| `src/scripts/level.ts` | Parkdex strip measurement, scoring, Plant!, and keyboard focus scrolling. |
+| `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
+| `tests/content-contract.mjs` | Section order, required links, claims guards, reduced-motion coverage, media budget. |
+| `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonical, share card, JSON-LD, 404. |
+| `e2e/` | Playwright against `astro preview`: rendering, every interaction, six widths, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
+| `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`). |
 | `public/_headers` | Cloudflare security and caching headers. |
+| `public/_redirects` | Old project and essay URLs. |
 
-## Page composition
+## How scroll scenes work
 
-### Homepage
+A scene is a tall `[data-track]` element with a `position: sticky`, `100svh` stage inside it. `scroll.ts` writes the element's progress to `--p` (0 to 1), and CSS derives everything from it. Canvas and scoring code subscribe with `onProgress`.
 
-1. Full-viewport boat-photo hero
-2. Parkdex story and matte device composition
-3. Tactile project Polaroid collection
-4. Expandable writing list with pointer-hover and keyboard-focus image washes
-5. Shared concise contact footer
+Avoid `overflow: hidden` on an ancestor of a sticky stage. Use `overflow: clip`.
 
-Projects and writing are loaded through `src/lib/content.ts`. Do not restore parallel data objects for titles, covers, or alt text in the page component.
+The Parkdex track sets its own height from the width of its strip, so one pixel of scroll moves the level about one pixel, with a short hold at each end.
 
-### Project routes
+Crossing transitions overlap two worlds: the crayon overlay uses negative block margins so it covers the end of one section and the start of the next.
 
-The flat route generator prefers a project when a project and legacy post share the same slug. The project body renders first. Legacy content, when present, is rendered inside a collapsed disclosure.
+## Reduced motion and no JavaScript
 
-The opening artifact comes from project frontmatter. The `media` array becomes the dark evidence stage. The body is MDX so future entries can use components if necessary, but ordinary Markdown is preferred.
+Each component has its own `prefers-reduced-motion: reduce` block that switches its pinned scene to normal flow and shows everything at once. `startScroll` does nothing under reduced motion, so `--p` falls back to each rule's default. Canvases draw one still frame.
 
-### Writing and legacy routes
-
-Writing and standalone legacy entries use `ArticleLayout`, retain flat root-level URLs, and appear together in the expandable homepage Writing list.
-
-## Interaction lifecycle
-
-`project-polaroids.ts` schedules one animation-frame update for the homepage project deck and writing preview. At 720px and below, it assigns `data-active` to the card and writing row nearest the viewport centre while each section is visible. It clears those states outside their sections and above the mobile breakpoint.
-
-- Project-card lift and slight rotation are CSS hover states gated behind `(hover: hover) and (pointer: fine)`.
-- Keyboard focus receives the same physical elevation without depending on pointer position.
-- Touch pointer-up clears link focus before navigation can leave a sticky return state.
-- `pagehide` keeps listeners alive when the page enters the back-forward cache and aborts them only for a real unload.
-- Desktop scrolling never assigns a synthetic active state to a card or writing row.
-- Mobile scrolling assigns one active card and one active writing row only while their containing sections are visible.
-
-`navigation-focus.ts` records only pointer-initiated navigation. On a BFCache or back-forward restore, it blurs a restored anchor if the user originally followed it with a pointer. Keyboard focus is not cleared.
-
-Do not add hover behavior outside fine-pointer feature queries or restore viewport-centred selection.
+`SiteLayout` adds `.js` to `<html>` with a one-line inline script. Reveal transitions and the canvas hero only apply under `.js`, so the content is visible without JavaScript.
 
 ## Styling strategy
 
-The site intentionally uses one global stylesheet because its visual system is shared and composition-heavy.
+Component-scoped `<style>` blocks, one per world, so a world's look can't leak into another. Shared tokens live in `global.css`. Keep hover behaviour inside fine-pointer feature queries.
 
-The primary breakpoints are:
-
-- `980px`: complex grids become one or two columns.
-- `720px`: phone composition, one-line masthead, raised and cropped photo hero, two-print story bridge, stacked project cards, and edge-to-edge project media.
-
-Important responsive checks are still required around 320px, 390px, tablet widths, standard desktop, and wide desktop. CSS breakpoints are not a substitute for rendered testing.
+Check 320px, 390px, tablet, standard desktop, wide desktop, and a short laptop height. Fluid units in the Offbooked collage are based on `--u`, the smaller of a width and a height unit, so the collage fits both.
 
 ## SEO, metadata, and security
 
 - Canonical origin: `https://www.nathanpannell.com`
-- `SiteLayout` owns titles, descriptions, Open Graph metadata, and shared assets.
-- Astro Sitemap generates `sitemap-index.xml`.
-- `public/robots.txt` points to the production sitemap.
+- `SiteLayout` owns the title, description, Open Graph, Twitter, and JSON-LD.
+- The share card is `public/og.jpg`, 1200x630. Icons and `site.webmanifest` are in `public/`.
+- Astro Sitemap generates `sitemap-index.xml`, and `public/robots.txt` points to it.
 - `public/_headers` sets HSTS, MIME sniffing protection, frame denial, referrer policy, permissions policy, and immutable caching for hashed Astro assets.
 - Do not add `Cache-Control: no-transform` to HTML because it blocks Cloudflare Web Analytics injection.
 
 ## Deliberate absences
 
 - No client framework or hydration layer
+- No animation library
 - No CMS
-- No feed generation
-- No theme toggle
-- No project filter or carousel
 - No contact form
 - No analytics script in source
-
-These are product decisions, not missing implementation.

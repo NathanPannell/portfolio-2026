@@ -1,278 +1,44 @@
 ---
+import '@fontsource-variable/bricolage-grotesque/wght.css';
 import SiteLayout from '../layouts/SiteLayout.astro';
-import SiteHeader from '../components/SiteHeader.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import { getLegacyPosts, getProjects, getPublishedWriting } from '../lib/content';
-
-const [projects, currentWriting, legacyWriting] = await Promise.all([
-  getProjects(),
-  getPublishedWriting(),
-  getLegacyPosts(),
-]);
-const projectIds = new Set(projects.map((project) => project.id));
-const featuredProjects = projects
-  .filter((project) => project.data.homeOrder !== undefined)
-  .sort(
-    (a, b) =>
-      (a.data.homeOrder ?? Number.POSITIVE_INFINITY) -
-      (b.data.homeOrder ?? Number.POSITIVE_INFINITY),
-  );
-const archivedProjects = projects
-  .filter((project) => project.data.homeOrder === undefined)
-  .sort((a, b) => a.data.order - b.data.order);
-const writingEntries = [...currentWriting, ...legacyWriting]
-  .filter((entry) => !projectIds.has(entry.id))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const featuredWriting = writingEntries
-  .filter((entry) => entry.data.homeOrder !== undefined)
-  .sort(
-    (a, b) =>
-      (a.data.homeOrder ?? Number.POSITIVE_INFINITY) -
-      (b.data.homeOrder ?? Number.POSITIVE_INFINITY),
-  );
-const archivedWriting = writingEntries.filter((entry) => entry.data.homeOrder === undefined);
-
-const essayDates = new Intl.DateTimeFormat('en-CA', {
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-
-const essayVisual = (essay: (typeof writingEntries)[number]) =>
-  essay.data.image ?? '/media/plates/writing-print.webp';
+import BuildNight from '../components/BuildNight.astro';
+import Chrome from '../components/Chrome.astro';
+import Hero from '../components/Hero.astro';
+import Index from '../components/Index.astro';
+import Offbooked from '../components/Offbooked.astro';
+import Parkdex from '../components/Parkdex.astro';
+import Sandbox from '../components/Sandbox.astro';
 ---
 
 <SiteLayout>
+  <Chrome />
   <main id="main-content">
-    <section class="hero" aria-labelledby="hero-title">
-      <img
-        class="hero__photo"
-        src="/media/hero/nathan-on-boat-wide.webp"
-        alt="Nathan Pannell smiling on a sailboat off Vancouver Island"
-        width="1896"
-        height="830"
-        fetchpriority="high"
-      />
-      <SiteHeader tone="dark" overlay />
-      <div class="hero__copy">
-        <h1 id="hero-title" class="hero__title">
-          <span>
-            I build upbeat apps <br />
-            that get people
-          </span>{' '}
-          <em>into the real world.</em>
-        </h1>
-        <p class="hero__subcopy">I’m in Victoria, building Parkdex.</p>
-      </div>
-    </section>
-
-    <section id="parkdex" class="parkdex-story section-shell" aria-labelledby="parkdex-title">
-      <div class="parkdex-story__copy">
-        <h2 id="parkdex-title">Vancouver Island needed a Pokédex.</h2>
-        <p class="parkdex-story__lede">
-          I made Parkdex to get myself out to every park on Vancouver Island.
-        </p>
-        <p>
-          Parkdex maps 122 national, provincial, and regional parks on an offline map. Pick a park,
-          see the badge and the drive, then step inside the boundary to check in and claim it. There
-          are 20 badges to collect, from common to legendary.
-        </p>
-        <div class="button-row">
-          <a class="button button--primary" href="https://parkdex.app">
-            Join the beta
-          </a>
-          <a class="text-link" href="/parkdex/">
-            Read the build story
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M5 15 15 5M7 5h8v8" />
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      <div class="parkdex-story__gallery" aria-label="Parkdex app screens">
-        <div class="parkdex-frame parkdex-frame--pick">
-          <div class="parkdex-frame__screen">
-            <img
-              src="/media/parkdex/field-park-sheet.webp"
-              alt="Parkdex park sheet for Gonzales Hill Regional Park showing its badge, 5 km road distance, 12 minute drive and a Let’s go button"
-              loading="lazy"
-              width="780"
-              height="1688"
-            />
-          </div>
-          <img
-            class="parkdex-frame__asset"
-            src="/media/parkdex/phone-frame.webp"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            width="1252"
-            height="2604"
-          />
-        </div>
-        <div class="parkdex-frame parkdex-frame--map">
-          <div class="parkdex-frame__screen">
-            <img
-              src="/media/parkdex/field-map.webp"
-              alt="Parkdex map of Victoria with a Gonzales Hill badge pin, a 0 of 20 badges counter and nearby badges"
-              loading="lazy"
-              width="780"
-              height="1688"
-            />
-          </div>
-          <img
-            class="parkdex-frame__asset"
-            src="/media/parkdex/phone-frame.webp"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            width="1252"
-            height="2604"
-          />
-        </div>
-        <div class="parkdex-frame parkdex-frame--claim">
-          <div class="parkdex-frame__screen">
-            <img
-              src="/media/parkdex/field-claimed.webp"
-              alt="Parkdex badge claimed screen for Gonzales Hill, badge 1 of 20, with a Share it button"
-              loading="lazy"
-              width="780"
-              height="1688"
-            />
-          </div>
-          <img
-            class="parkdex-frame__asset"
-            src="/media/parkdex/phone-frame.webp"
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            width="1252"
-            height="2604"
-          />
-        </div>
-        <p class="parkdex-story__caption">
-          Parkdex, 2026 · Map © Protomaps and OpenStreetMap contributors.
-        </p>
-      </div>
-    </section>
-
-    <section id="projects" class="projects section-shell" aria-labelledby="projects-title">
-      <div class="section-heading">
-        <h2 id="projects-title">A few things I’ve built.</h2>
-        <p>From an island-wide park tracker to a six-hour hackathon build.</p>
-      </div>
-
-      <div id="project-deck" class="project-deck">
-        {featuredProjects.map((project) => {
-          const cardImage = project.data.cardImage ?? project.data.cover;
-          const cardImageAlt = project.data.cardImageAlt ?? project.data.coverAlt;
-          return (
-            <a
-              class:list={['project-polaroid', `project-polaroid--${project.id}`]}
-              data-polaroid
-              href={`/${project.id}/`}
-              style={`--project-accent:${project.data.accent}`}
-            >
-              <span class="project-polaroid__image">
-                <img src={cardImage} alt={cardImageAlt} loading="lazy" width="1000" height="750" />
-              </span>
-              <span class="project-polaroid__caption">
-                <span class="project-polaroid__heading">
-                  <strong>{project.data.title}</strong>
-                  <span class="project-polaroid__meta">{project.data.displayDate}</span>
-                </span>
-                <span class="project-polaroid__story">{project.data.cardCaption}</span>
-              </span>
-            </a>
-          );
-        })}
-      </div>
-      {archivedProjects.length > 0 && (
-        <details class="project-deck-archive">
-          <summary class="section-reveal">
-            <span>More projects</span>
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M4 7.5 10 13l6-5.5" />
-            </svg>
-          </summary>
-          <div class="project-deck-archive__list">
-            {archivedProjects.map((project) => (
-              <a class="project-deck-archive__item" href={`/${project.id}/`}>
-                <span>
-                  <strong>{project.data.title}</strong>
-                  <span>{project.data.cardCaption}</span>
-                </span>
-                <time>{project.data.displayDate}</time>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M5 12h13M13 6l6 6-6 6" />
-                </svg>
-              </a>
-            ))}
-          </div>
-        </details>
-      )}
-    </section>
-
-    <section id="writing" class="writing-preview section-shell" aria-labelledby="writing-title">
-      <div class="writing-preview__intro">
-        <h2 id="writing-title">Projects, mistakes, and what stuck.</h2>
-        <p>Notes from building, breaking, and taking the long way around.</p>
-      </div>
-      <div class="writing-preview__list">
-        <ol id="essay-list" class="essay-list">
-          {featuredWriting.map((essay) => {
-            const visual = essayVisual(essay);
-            return (
-              <li data-essay-item style={`--essay-image: url(${visual})`}>
-                <a href={`/${essay.id}/`}>
-                  <span class="essay-list__title">{essay.data.title}</span>
-                  <time datetime={essay.data.pubDate.toISOString()}>
-                    {essayDates.format(essay.data.pubDate)}
-                  </time>
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 12h13M13 6l6 6-6 6" />
-                  </svg>
-                </a>
-              </li>
-            );
-          })}
-        </ol>
-        {archivedWriting.length > 0 && (
-          <details class="writing-archive">
-            <summary class="section-reveal">
-              <span>All writing</span>
-              <svg viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M4 7.5 10 13l6-5.5" />
-              </svg>
-            </summary>
-            <ol class="essay-list writing-archive__list">
-              {archivedWriting.map((essay) => {
-                const visual = essayVisual(essay);
-                return (
-                  <li style={`--essay-image: url(${visual})`}>
-                    <a href={`/${essay.id}/`}>
-                      <span class="essay-list__title">{essay.data.title}</span>
-                      <time datetime={essay.data.pubDate.toISOString()}>
-                        {essayDates.format(essay.data.pubDate)}
-                      </time>
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M5 12h13M13 6l6 6-6 6" />
-                      </svg>
-                    </a>
-                  </li>
-                );
-              })}
-            </ol>
-          </details>
-        )}
-      </div>
-    </section>
-
-    <SiteFooter />
+    <div id="top"></div>
+    <Hero />
+    <BuildNight />
+    <Sandbox />
+    <Offbooked />
+    <Parkdex />
+    <Index />
   </main>
-
-  <script>
-    import '../scripts/project-polaroids';
-  </script>
 </SiteLayout>
+
+<script>
+  import { startCollage } from '../scripts/collage';
+  import { startCrowd } from '../scripts/crowd';
+  import { startLevel } from '../scripts/level';
+  import { startRoom } from '../scripts/room';
+  import { startLoops, startReveals, startScroll } from '../scripts/scroll';
+  import { startToys } from '../scripts/toys';
+  import { startWash } from '../scripts/wash';
+
+  startScroll();
+  startReveals();
+  startLoops();
+  startRoom();
+  startLevel();
+  startCollage();
+  startToys();
+  startWash();
+  void startCrowd();
+</script>

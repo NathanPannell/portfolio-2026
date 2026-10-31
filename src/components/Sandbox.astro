@@ -1,0 +1,476 @@
+---
+import '@fontsource/chewy/latin-400.css';
+import '@fontsource/gaegu/latin-400.css';
+import '@fontsource/gaegu/latin-700.css';
+
+const crayons = ['#e2231a', '#f28b1e', '#f3cf1c', '#2fa84f', '#1f7fd6', '#8a4fd3'];
+const passes = crayons.map((colour, index) => ({
+  colour,
+  d: `M-80 ${60 + index * 150} C 220 ${-20 + index * 150}, 480 ${160 + index * 150}, 1080 ${40 + index * 150}`,
+}));
+const panels = [
+  { name: 'team', width: 900, height: 1138, alt: 'Comic panel: a director and a brand high-five' },
+  { name: 'make', width: 900, height: 1071, alt: 'Comic panel: filming an ad on set' },
+  { name: 'show', width: 900, height: 1167, alt: 'Comic panel: a crowd watching a big screen' },
+];
+const counts = [
+  ['16', 'creative directors'],
+  ['16', 'brands'],
+  ['30–40', 'creators on camera'],
+  ['3', 'days to make it'],
+  ['+1', 'big night'],
+];
+---
+
+<div class="scribble" data-track aria-hidden="true">
+  <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+    {passes.map(({ colour, d }, index) => (
+      <path
+        d={d}
+        stroke={colour}
+        pathLength="1"
+        style={`--from: ${index * 0.11}; --to: ${0.3 + index * 0.11}`}
+      />
+    ))}
+    <path
+      class="scribble__fill"
+      d="M-120 80L1120 80M1120 300L-120 300M-120 520L1120 520M1120 740L-120 740M-120 960L1120 960"
+      pathLength="1"
+      style="--from: 0.62; --to: 1"
+    ></path>
+  </svg>
+</div>
+
+<section id="play-by-the-sandbox" class="sb" data-audience="creators" aria-labelledby="sb-title">
+  <header class="sb__head">
+    <p class="sb__label">02 · a website that plays back</p>
+    <img
+      class="sb__word"
+      src="/media/sandbox/wordmark-800.webp"
+      srcset="/media/sandbox/wordmark-480.webp 480w, /media/sandbox/wordmark-800.webp 800w"
+      sizes="(max-width: 700px) 86vw, 34rem"
+      width="800"
+      height="225"
+      loading="lazy"
+      decoding="async"
+      alt="Play by the Sandbox, January 2027, Vancouver Art Gallery"
+    />
+    <h2 id="sb-title">I made an ad showdown look like a toy box.</h2>
+    <p class="sb__lede">
+      Play by the Sandbox is Mello’s public creative event at the Vancouver Art Gallery. I designed
+      and built its website, a tiny pixel town instead of a sponsor deck, with application forms for
+      brands and creators tucked inside.
+    </p>
+  </header>
+
+  <figure class="sb__screen" data-reveal style="--reveal-turn: -3deg">
+    <span class="sb__tape sb__tape--left" aria-hidden="true"></span>
+    <span class="sb__tape sb__tape--right" aria-hidden="true"></span>
+    <video
+      data-src="/media/sandbox/site-loop.mp4"
+      poster="/media/sandbox/site-800.webp"
+      width="1120"
+      height="700"
+      muted
+      loop
+      playsinline
+      preload="none"
+      aria-label="The Play by the Sandbox homepage: a pixel-art Vancouver Art Gallery with a marquee sign"
+    ></video>
+    <span class="sb__bubble" aria-hidden="true">
+      premiere night!
+    </span>
+  </figure>
+
+  <ul class="sb__counts">
+    {counts.map(([number, label], index) => (
+      <li data-reveal style={`--reveal-delay: ${index * 70}ms; --tilt: ${(index % 3) * 2 - 2}deg`}>
+        <strong>{number}</strong>
+        <span>{label}</span>
+      </li>
+    ))}
+  </ul>
+
+  <div class="sb__strip">
+    {panels.map(({ name, width, height, alt }, index) => (
+      <img
+        data-reveal
+        style={`--reveal-delay: ${index * 90}ms; --reveal-turn: ${index * 2 - 2}deg`}
+        src={`/media/sandbox/panel-${name}-480.webp`}
+        srcset={`/media/sandbox/panel-${name}-480.webp 480w, /media/sandbox/panel-${name}-900.webp 900w`}
+        sizes="(max-width: 700px) 82vw, 30vw"
+        width={width}
+        height={height}
+        loading="lazy"
+        decoding="async"
+        alt={alt}
+      />
+    ))}
+  </div>
+
+  <div class="sb__yard" data-yard>
+    <p class="sb__yard-title">grab a toy</p>
+    <p class="sb__yard-hint">(go on. throw it.)</p>
+
+    <div class="toy" data-toy>
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M18 34h64l-9 58H27z" fill="#f4b6c6"></path>
+        <path d="M18 34h64l-9 58H27zM26 34C28 4 72 4 74 34" fill="none"></path>
+        <path d="m50 50 5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f7e29a"></path>
+      </svg>
+      <span class="sr-only">Bucket</span>
+    </div>
+    <div class="toy" data-toy>
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="42" fill="#b9d6f2"></circle>
+        <path
+          d="M8 50c14-14 70-14 84 0M50 8c-16 22-16 62 0 84M50 8c16 22 16 62 0 84"
+          fill="none"
+        ></path>
+        <circle cx="50" cy="50" r="42" fill="none"></circle>
+      </svg>
+      <span class="sr-only">Beach ball</span>
+    </div>
+    <div class="toy" data-toy>
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M44 8h12v46H44z" fill="#d7b7f0"></path>
+        <path d="M28 54h44l-6 26c-3 12-29 12-32 0z" fill="#bfe6c8"></path>
+      </svg>
+      <span class="sr-only">Spade</span>
+    </div>
+    <div class="toy" data-toy>
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path
+          d="M22 62c0-22 16-26 26-26 4-22 34-18 30 4-2 8-8 10-8 10 16 2 26-2 28-6 4 26-22 42-46 42S22 78 22 62z"
+          fill="#f7e29a"
+        ></path>
+        <circle cx="66" cy="28" r="3.5" fill="#2e2a45"></circle>
+        <path d="M78 34l14 2-13 7" fill="#f28b1e"></path>
+      </svg>
+      <span class="sr-only">Rubber duck</span>
+    </div>
+    <div class="toy" data-toy>
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path d="m50 6 13 28 31 4-23 21 6 31-27-15-27 15 6-31L6 38l31-4z" fill="#f3b48a"></path>
+      </svg>
+      <span class="sr-only">Star</span>
+    </div>
+    <a class="sb__cta" href="https://www.playbythesandbox.ca/">
+      I wanna play <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  /* Lays over the end of one world and the start of the next, so the crayon covers the swap. */
+  .scribble {
+    position: relative;
+    z-index: 3;
+    height: 200svh;
+    margin-block: -100svh;
+    pointer-events: none;
+    opacity: calc((1 - var(--p, 1)) * 14);
+  }
+
+  .scribble svg {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100svh;
+    overflow: visible;
+  }
+
+  .scribble path {
+    fill: none;
+    stroke-width: 200;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: none;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(
+      1 - clamp(0, (var(--p, 1) - var(--from)) / (var(--to) - var(--from)), 1)
+    );
+  }
+
+  .scribble__fill {
+    stroke: #fff7ec;
+    stroke-width: 260 !important;
+  }
+
+  .sb {
+    --ink: #2e2a45;
+    --cream: #fff7ec;
+    position: relative;
+    z-index: 2;
+    overflow: clip;
+    background: var(--cream);
+    background-image:
+      linear-gradient(rgb(46 42 69 / 5%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(46 42 69 / 5%) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+    color: var(--ink);
+    font-family: 'Gaegu', 'Comic Sans MS', cursive;
+    font-size: 1.3rem;
+    line-height: 1.35;
+  }
+
+  .sb__head {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: clamp(6rem, 13vw, 10rem) var(--gutter) 2.5rem;
+    text-align: center;
+  }
+
+  .sb__label {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .sb__word {
+    width: min(100%, 34rem);
+    rotate: -1.5deg;
+    border-radius: 1.2rem;
+  }
+
+  h2 {
+    color: #a0521d;
+    font-family: 'Chewy', 'Comic Sans MS', cursive;
+    font-size: clamp(2.8rem, 7.4vw, 6.5rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    text-shadow: 0.05em 0.05em 0 rgb(160 82 29 / 22%);
+    text-wrap: balance;
+  }
+
+  .sb__lede {
+    max-width: 42ch;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+  }
+
+  .sb__screen {
+    position: relative;
+    width: min(calc(100% - var(--gutter) * 2), 66rem);
+    margin: 1.5rem auto 3.5rem;
+    padding: clamp(0.5rem, 1.2vw, 0.85rem);
+    border: 3px solid var(--ink);
+    border-radius: 0.5rem 0.9rem 0.6rem 1rem;
+    background: #fffdf8;
+    box-shadow: 0.55rem 0.6rem 0 rgb(46 42 69 / 22%);
+    rotate: -1.4deg;
+  }
+
+  .sb__screen video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 8 / 5;
+    object-fit: cover;
+    background: #cdb7d9;
+  }
+
+  .sb__tape {
+    position: absolute;
+    z-index: 1;
+    top: -0.8rem;
+    width: 7rem;
+    height: 1.7rem;
+    background: rgb(247 226 154 / 85%);
+  }
+
+  .sb__tape--left {
+    left: 8%;
+    rotate: -6deg;
+  }
+
+  .sb__tape--right {
+    right: 8%;
+    rotate: 5deg;
+  }
+
+  .sb__bubble {
+    position: absolute;
+    right: 5%;
+    bottom: -1.1rem;
+    padding: 0.35rem 0.9rem;
+    border: 3px solid var(--ink);
+    border-radius: 1.1rem;
+    background: #fffdf8;
+    font-weight: 700;
+    rotate: 3deg;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    50% {
+      translate: 0 -0.45rem;
+    }
+  }
+
+  .sb__counts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.9rem;
+    padding: 0 var(--gutter);
+  }
+
+  .sb__counts li {
+    display: grid;
+    justify-items: center;
+    min-width: 8.5rem;
+    padding: 0.55rem 1rem;
+    border: 3px solid var(--ink);
+    border-radius: 1rem 0.7rem 1.1rem 0.8rem;
+    background: #f7e29a;
+    rotate: var(--tilt);
+    line-height: 1.05;
+  }
+
+  .sb__counts li:nth-child(2) {
+    background: #b9d6f2;
+  }
+
+  .sb__counts li:nth-child(3) {
+    background: #bfe6c8;
+  }
+
+  .sb__counts li:nth-child(4) {
+    background: #f4b6c6;
+  }
+
+  .sb__counts li:nth-child(5) {
+    background: #d7b7f0;
+  }
+
+  .sb__counts strong {
+    font-family: 'Chewy', cursive;
+    font-size: 2.5rem;
+    font-weight: 400;
+  }
+
+  .sb__strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.75rem);
+    align-items: center;
+    max-width: 82rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 5.5rem) var(--gutter) 1rem;
+  }
+
+  .sb__strip img:nth-child(1) {
+    rotate: -1.5deg;
+  }
+
+  .sb__strip img:nth-child(2) {
+    translate: 0 1.25rem;
+    rotate: 1deg;
+  }
+
+  .sb__strip img:nth-child(3) {
+    rotate: -0.75deg;
+  }
+
+  .sb__yard {
+    position: relative;
+    height: clamp(26rem, 64svh, 36rem);
+    margin-top: 2rem;
+    overflow: hidden;
+    background: linear-gradient(transparent calc(100% - 3.5rem), #f0cf8e calc(100% - 3.5rem));
+  }
+
+  .sb__yard-title {
+    position: absolute;
+    top: 8%;
+    width: 100%;
+    color: #6d3fb0;
+    font-family: 'Chewy', cursive;
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    line-height: 1;
+    text-align: center;
+  }
+
+  .sb__yard-hint {
+    position: absolute;
+    top: calc(8% + clamp(3.4rem, 9.6vw, 7rem));
+    width: 100%;
+    text-align: center;
+  }
+
+  .toy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: clamp(4.5rem, 10vw, 7.5rem);
+    height: clamp(4.5rem, 10vw, 7.5rem);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    will-change: transform;
+  }
+
+  .toy:active {
+    cursor: grabbing;
+  }
+
+  .toy svg {
+    width: 100%;
+    height: 100%;
+    stroke: var(--ink);
+    stroke-width: 4;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+
+  .sb__cta {
+    position: absolute;
+    z-index: 1;
+    top: 46%;
+    left: 50%;
+    padding: 0.7rem 1.5rem;
+    border: 3px solid var(--ink);
+    background: #f7e29a;
+    box-shadow: 0.25rem 0.3rem 0 var(--ink);
+    font-size: 1.6rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+    transform: translateX(-50%) rotate(-2deg);
+    transition: transform 160ms var(--ease);
+  }
+
+  .sb__cta:hover {
+    transform: translateX(-50%) rotate(1deg) scale(1.05);
+  }
+
+  @media (max-width: 760px) {
+    .sb__strip {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 28rem;
+    }
+
+    .sb__strip img:nth-child(2) {
+      translate: none;
+    }
+
+    .sb__counts li {
+      min-width: 7rem;
+      flex: 1 1 7rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scribble {
+      display: none;
+    }
+
+    .sb__bubble {
+      animation: none;
+    }
+  }
+</style>

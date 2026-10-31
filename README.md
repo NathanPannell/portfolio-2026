@@ -1,6 +1,6 @@
 # Nathan Pannell portfolio
 
-Static Astro portfolio for [www.nathanpannell.com](https://www.nathanpannell.com), deployed through Cloudflare Pages. The production custom domain serves the current portfolio. The apex domain redirects to `www` with HTTP 308.
+A one-page interactive Astro portfolio for [www.nathanpannell.com](https://www.nathanpannell.com), deployed through Cloudflare Pages. The production custom domain serves the current portfolio. The apex domain redirects to `www` with HTTP 308.
 
 ## Start here
 
@@ -10,9 +10,9 @@ New contributors and new agent sessions should read [CONTEXT.md](./CONTEXT.md) f
 | --- | --- |
 | [CONTEXT.md](./CONTEXT.md) | Current branch state, settled decisions, preserved behavior, and unfinished work. |
 | [PRODUCT.md](./PRODUCT.md) | Audience, positioning, scope, facts, and product principles. |
-| [DESIGN.md](./DESIGN.md) | Visual system, responsive behavior, components, and motion. |
-| [CONTENT.md](./CONTENT.md) | Content collections, frontmatter, copy rules, drafts, and routing. |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Code map, data flow, routes, scripts, CSS, SEO, and security. |
+| [DESIGN.md](./DESIGN.md) | The concept, each world's look, and motion rules. |
+| [CONTENT.md](./CONTENT.md) | Voice, the source of every claim, and what to check before showing it. |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Code map, scroll scenes, fallbacks, SEO, and security. |
 | [OPERATIONS.md](./OPERATIONS.md) | Local commands, validation, Cloudflare deployment, and production promotion. |
 | [ASSETS.md](./ASSETS.md) | Media provenance and replacement notes. |
 
