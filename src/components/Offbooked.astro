@@ -197,7 +197,7 @@ const bubbles = [
 
   /* Off stage until scroll calls each piece on, and only once the script that does so is running. */
   @media (prefers-reduced-motion: no-preference) {
-    .ob-stage[data-ready] [data-at] {
+    .ob-stage[data-sprung] [data-at] {
       transition:
         transform 620ms var(--spring),
         opacity 200ms;
@@ -565,7 +565,7 @@ const bubbles = [
   .stamp {
     position: absolute;
     z-index: 6;
-    bottom: 13%;
+    bottom: calc(13% + var(--bar));
     right: 41%;
     width: calc(var(--u) * 13);
     animation: turn 18s linear infinite;
@@ -621,7 +621,7 @@ const bubbles = [
   .ticket {
     position: absolute;
     z-index: 6;
-    bottom: 11%;
+    bottom: calc(11% + var(--bar));
     left: calc(var(--gutter) + 1.5vw);
     display: grid;
     padding: 0.65rem 1.4rem 0.75rem 1.1rem;
@@ -759,7 +759,7 @@ const bubbles = [
     letter-spacing: -0.04em;
   }
 
-  @media (max-aspect-ratio: 1/1) {
+  @media (max-aspect-ratio: 5/6) {
     .ob-stage {
       --u: min(2.45vw, 1.14svh);
     }
@@ -879,8 +879,14 @@ const bubbles = [
       opacity: calc(var(--open) * 0.55);
     }
 
-    @media (max-width: 370px) {
+    @media (max-width: 380px) {
       .tape {
+        display: none;
+      }
+    }
+
+    @media (max-height: 700px) {
+      .bubble--two {
         display: none;
       }
     }
@@ -891,6 +897,10 @@ const bubbles = [
     .voices,
     .bubble {
       display: none;
+    }
+
+    .tape {
+      top: 3.25rem;
     }
   }
 

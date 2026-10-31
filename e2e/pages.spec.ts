@@ -212,16 +212,22 @@ test('the Offbooked ticket can be clicked once it lands', async ({ page }) => {
   await expect.poll(() => uncoveredPoints(ticket)).toBe(9);
 });
 
-test('an address bar never puts the marquee over the ticket', async ({ page, isMobile }) => {
-  test.skip(!isMobile, 'Address bars are a phone problem.');
-  await page.goto('/');
-  // Test browsers have no bar, so stand in for one the height of iOS Safari's.
-  await page.addStyleTag({ content: '.ob-stage { --bar: 86px; }' });
-  await jumpInto(page, '[data-collage]', 1);
-  const ticket = page.locator('.ticket');
-  await expect(ticket).toHaveAttribute('data-on', '');
-  await expect.poll(() => uncoveredPoints(ticket)).toBe(9);
-  await expect.poll(() => uncoveredPoints(page.locator('.tape'))).toBe(9);
+test('an address bar never puts the marquee over the ticket', async ({ page }) => {
+  // Test browsers have no bar, so stand in for one. The doubled class beats the scoped rule.
+  for (const [width, height, bar] of [
+    [390, 844, 86],
+    [412, 915, 56],
+    [844, 390, 56],
+    [667, 375, 76],
+  ] as const) {
+    await page.setViewportSize({ width, height });
+    await page.goto('/');
+    await page.addStyleTag({ content: `.ob-stage.ob-stage { --bar: ${bar}px; }` });
+    await jumpInto(page, '[data-collage]', 1);
+    const ticket = page.locator('.ticket');
+    await expect(ticket).toHaveAttribute('data-on', '');
+    await expect.poll(() => uncoveredPoints(ticket), `${width}x${height}`).toBe(9);
+  }
 });
 
 test('the finished ad keeps its headline and ticket clear at every size', async ({ page }) => {
@@ -229,7 +235,9 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
     [320, 640],
     [390, 844],
     [667, 375],
+    [760, 760],
     [844, 390],
+    [860, 860],
     [1024, 768],
     [1440, 900],
     [1920, 1080],
@@ -388,6 +396,45 @@ test('a reload part-way through a scene comes back in the right state', async ({
   await page.reload();
   await expect(page.locator('.ticket')).toHaveAttribute('data-on', '');
   await expect(page.locator('.ticket')).toBeInViewport();
+});
+
+test('a reload mid-scene does not play pieces leaving the stage', async ({ page }) => {
+  await page.goto('/');
+  await jumpInto(page, '[data-collage]', 0.3);
+  await expect(page.locator('.ob-stage')).toHaveAttribute('data-sprung', '');
+  // Watch the ticket, which isn't due yet, from the first frame after the page takes over.
+  await page.addInitScript(() => {
+    const seen: number[] = [];
+    Object.assign(window, { ticketOpacity: seen });
+    const watch = () => {
+      const stage = document.querySelector('.ob-stage');
+      const ticket = document.querySelector('.ticket');
+      if (ticket && stage?.hasAttribute('data-ready')) {
+        seen.push(Number(getComputedStyle(ticket).opacity));
+      }
+      window.requestAnimationFrame(watch);
+    };
+    window.requestAnimationFrame(watch);
+  });
+  await page.reload();
+  await expect(page.locator('.ob-stage')).toHaveAttribute('data-sprung', '');
+  await page.waitForTimeout(200);
+  const seen = await page.evaluate(
+    () => (window as unknown as { ticketOpacity: number[] }).ticketOpacity,
+  );
+  expect(seen.length).toBeGreaterThan(0);
+  expect(Math.max(...seen)).toBe(0);
+});
+
+test('every scene rests its loops while it is off screen', async ({ page }) => {
+  await page.goto('/');
+  const scenes = page.locator('[data-loops]');
+  await expect(scenes).toHaveCount(5);
+  await expect(page.locator('[data-loops]:not([data-resting])')).toHaveCount(1);
+  await expect(page.locator('[data-hero]')).not.toHaveAttribute('data-resting', '');
+  await jumpInto(page, '[data-descent]', 0.5);
+  await expect(page.locator('[data-descent]')).not.toHaveAttribute('data-resting', '');
+  await expect(page.locator('[data-loops]:not([data-resting])')).toHaveCount(1);
 });
 
 test('the wipe joins Parkdex and Sandbox with nothing showing through', async ({ page }) => {
@@ -598,6 +645,9 @@ test('without the page script, the Offbooked ad is still all there', async ({ pa
     expect(await opacityOf(part)).toBe(1);
   }
   expect(await opacityOf(page.locator('.ticket'))).toBe(1);
+  for (const reveal of await page.locator('[data-reveal]').all()) {
+    expect(await opacityOf(reveal)).toBe(1);
+  }
 });
 
 test.describe('without JavaScript', () => {

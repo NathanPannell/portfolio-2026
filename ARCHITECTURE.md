@@ -41,7 +41,7 @@ A scene is a tall `[data-track]` element with a `position: sticky` stage inside 
 
 Avoid `overflow: hidden` on an ancestor of a sticky stage. Use `overflow: clip`.
 
-Offbooked mixes two kinds of motion. Scroll decides when a `[data-at]` piece comes on stage, and a CSS spring decides how, so a fast scroll still gets the full bounce. Pieces only wait off stage once `collage.ts` has set `data-ready`, so a failed script can't hide the ad.
+Offbooked mixes two kinds of motion. Scroll decides when a `[data-at]` piece comes on stage, and a CSS spring decides how, so a fast scroll still gets the full bounce. Pieces only wait off stage once `collage.ts` has set `data-ready`, so a failed script can't hide the ad, and the springs join two frames later (`data-sprung`), so a reload doesn't play pieces leaving.
 
 A `[data-loops]` scene has its looping CSS paused while it is off screen (`startRests`), which stops a page's worth of idle animations from recalculating style every frame.
 
@@ -53,7 +53,7 @@ The crayon wipe has its own pinned stage rather than overlapping its neighbours.
 
 Each component has one `@media (prefers-reduced-motion: reduce), (scripting: none)` block that switches its pinned scene to normal flow and shows everything at once, so both cases share a layout. `startScroll` does nothing under reduced motion, so `--p` falls back to each rule's default. Canvases draw one still frame under reduced motion and are not needed without JavaScript. The wipe is hidden in both cases.
 
-`SiteLayout` adds `.js` to `<html>` with a one-line inline script. Reveal transitions, Offbooked's off-stage states and the canvas hero only apply under `.js`.
+`SiteLayout` adds `.js` to `<html>` with a one-line inline script. The canvas hero only applies under `.js`. Reveals and Offbooked's off-stage states wait for their scripts to switch them on, so a script that fails to load leaves content visible.
 
 ## Tall phone viewports
 

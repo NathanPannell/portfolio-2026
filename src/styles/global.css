@@ -118,9 +118,9 @@ button {
   animation-play-state: paused !important;
 }
 
-/* Reveals are opt-in for scripted pages, so the content stays visible without JavaScript. */
+/* Reveals are opt-in: startReveals switches them on, so content stays visible if no script runs. */
 @media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] {
+  .reveals [data-reveal] {
     opacity: 0;
     transform: translateY(1.5rem) rotate(var(--reveal-turn, 0deg));
     transition:
@@ -128,7 +128,7 @@ button {
       transform 900ms var(--ease) var(--reveal-delay, 0ms);
   }
 
-  .js [data-reveal][data-in] {
+  .reveals [data-reveal][data-in] {
     opacity: 1;
     transform: none;
   }

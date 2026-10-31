@@ -12,10 +12,17 @@ export const startCollage = () => {
     piece,
     at: Number(piece.dataset['at']),
   }));
+  let ready = false;
   onProgress(track, (progress) => {
     for (const { piece, at } of pieces) piece.toggleAttribute('data-on', progress >= at);
-    // Only now can pieces wait off stage: until this runs, nothing could bring them back.
+    if (ready) return;
+    ready = true;
+    // Only now can pieces wait off stage: until this runs, nothing could bring them back. The
+    // springs join two frames later, so a reload mid-scene doesn't play pieces leaving.
     stage?.toggleAttribute('data-ready', true);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => stage?.toggleAttribute('data-sprung', true));
+    });
   });
 
   track.querySelectorAll<HTMLElement>('[data-depth]').forEach((layer) => {

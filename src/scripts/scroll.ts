@@ -81,6 +81,7 @@ export const startScroll = () => {
 };
 
 export const startReveals = () => {
+  document.documentElement.classList.add('reveals');
   const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
   const observer = new IntersectionObserver(
     (entries) => {

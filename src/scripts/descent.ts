@@ -37,6 +37,8 @@ export const startDescent = () => {
   const award = (points: number) => {
     score += points;
     scoreLabel.textContent = String(score);
+    // A jump past the scene still scores, but nobody is there to see the pop.
+    if (track.hasAttribute('data-resting')) return;
     const pop = document.createElement('span');
     pop.className = 'pk-points';
     pop.textContent = `+${points}`;
