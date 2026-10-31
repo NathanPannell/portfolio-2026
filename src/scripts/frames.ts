@@ -96,7 +96,7 @@ export const startFrames = () => {
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
-  const settle = () => {
+  const act = () => {
     if (touching) return;
     if ((window.visualViewport?.scale ?? 1) > 1.01) {
       armed = false;
@@ -114,6 +114,17 @@ export const startFrames = () => {
       if (short && tries < 3) go(heading);
       else heading = undefined;
     }
+  };
+
+  // A busy page can run this timer in the middle of a scroll, so look again across two frames.
+  const settle = () => {
+    const y = window.scrollY;
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        if (window.scrollY === y) act();
+        else wait();
+      });
+    });
   };
 
   // Any new input from the visitor outranks where the guide was going. Input that moved nothing,

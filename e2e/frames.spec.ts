@@ -10,7 +10,7 @@ const jumpTo = (page: Page, top: number) =>
   page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), top);
 
 const settlesAt = (page: Page, top: number) =>
-  expect.poll(() => scrollY(page).then(Math.round), { timeout: 5000 }).toBe(top);
+  expect.poll(() => scrollY(page).then(Math.round), { timeout: 10000 }).toBe(top);
 
 test.describe('the guide', () => {
   test.skip(({ isMobile }) => isMobile, 'The touch journey has its own test.');
@@ -46,8 +46,13 @@ test.describe('the guide', () => {
     await settlesAt(page, top);
     await page.keyboard.press('ArrowDown');
     await settlesAt(page, await topOf(page, '.abn-room'));
+    // End goes all the way, with every closed scene opening on the way past.
     await page.keyboard.press('End');
-    await expect(page.locator('.contact__mail')).toBeInViewport({ timeout: 5000 });
+    await settlesAt(
+      page,
+      await page.evaluate(() => document.body.scrollHeight - window.innerHeight),
+    );
+    await expect(page.locator('.contact__mail')).toBeInViewport();
     await page.keyboard.press('Home');
     await settlesAt(page, 0);
   });

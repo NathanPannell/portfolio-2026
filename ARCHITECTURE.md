@@ -46,6 +46,8 @@ The page is a stack of `[data-frame]` elements in ordinary document flow. Nothin
 - **Arrival.** The one frame crossing the middle of the screen gets `data-here`, and keeps `data-played` once it has been there. Timed CSS hangs off those. Scripts listen for `frame:change`.
 - **The guide.** Once a wheel, touch or key scroll has come to rest (`SETTLE` milliseconds with no scroll events), a page left between two frames is sent on to the next one in the direction it was travelling, or back if it only moved a few pixels. This is the only thing it does. It never listens to cancel a scroll, so wheel, trackpad, touch and keys stay native, and a continuous scroll passes straight through. Frames taller than the screen scroll freely until their end comes on screen, which is why the index works. Anchors, Tab and find-in-page aren't wheel, touch or key scrolls, so they stay where they land. The guide is off under reduced motion, and it waits while a finger is down or the page is pinch-zoomed.
 
+Scroll anchoring is off on the page, because frames don't change height, and a scene opening during a smooth scroll could otherwise cut that scroll short.
+
 There is deliberately no CSS scroll snapping. `proximity` undoes a single wheel notch by snapping back to the frame it left, and `mandatory` can strand content in anything taller than the screen. It is also the least predictable part of iOS Safari, alongside the address bar. A smooth `scrollTo` after the page stops avoids all of that. If something interrupts one, the guide tries again, up to three times.
 
 Keyboard focus inside a frame lines the whole frame up, not just the focused element. Tall frames are left to the browser.

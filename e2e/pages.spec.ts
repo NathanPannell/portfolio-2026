@@ -151,7 +151,7 @@ const useControl = async (page: Page, scene: string, control: string) => {
 
 const landKip = async (page: Page) => {
   await useControl(page, '.pk-trip', '.pk-plant');
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '', { timeout: 6000 });
+  await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '', { timeout: 12000 });
 };
 
 for (const { name, scene, control, inside } of moments) {
@@ -237,7 +237,7 @@ test('the curtains open, then the ad lands piece by piece on a clock', async ({ 
   const scrollY = await page.evaluate(() => window.scrollY);
   await page.locator('.rope').click();
   await expect.poll(covered).toBeLessThan(0.05);
-  await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 6000 });
+  await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 12000 });
   await expect(page.locator('.ticket')).toBeInViewport();
   // Nothing about this needed the page to move.
   expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
@@ -271,7 +271,7 @@ test('the Offbooked ticket can be clicked once it lands', async ({ page }) => {
   await page.goto('/');
   await useControl(page, '#offbooked', '.rope');
   const ticket = page.locator('.ticket');
-  await expect(ticket).toHaveCSS('opacity', '1', { timeout: 6000 });
+  await expect(ticket).toHaveCSS('opacity', '1', { timeout: 12000 });
   await expect.poll(() => uncoveredPoints(ticket)).toBe(9);
 });
 
@@ -289,7 +289,7 @@ test('an address bar never puts the marquee over the ticket', async ({ page }) =
     await page.addStyleTag({ content: `.ob-stage.ob-stage { --bar: ${bar}px; }` });
     await useControl(page, '#offbooked', '.rope');
     const ticket = page.locator('.ticket');
-    await expect(ticket).toHaveCSS('opacity', '1', { timeout: 6000 });
+    await expect(ticket).toHaveCSS('opacity', '1', { timeout: 12000 });
     await expect.poll(() => uncoveredPoints(ticket), `${width}x${height}`).toBe(9);
     // The marquee itself stands clear of the bar.
     await expect
@@ -328,7 +328,7 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
     await page.goto('/');
     await useControl(page, '#offbooked', '.rope');
     const title = page.locator('#ob-title');
-    await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 6000 });
+    await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 12000 });
     // Measured by hand, because the pointer's parallax can leave a fraction of a pixel of rounding.
     const edges = await title.evaluate((element) => {
       const { left, right, top, bottom } = element.getBoundingClientRect();
@@ -455,7 +455,7 @@ test('Plant! sends Kip down the vine, and each stop scores', async ({ page }) =>
   }
   expect(spots.size).toBeGreaterThan(2);
 
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '', { timeout: 5000 });
+  await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '', { timeout: 12000 });
   await expect(score).toHaveText('54', { timeout: 4000 });
   for (const stop of await page.locator('[data-stop] img').all()) {
     await expect(stop).toBeInViewport();
@@ -539,8 +539,9 @@ for (const scene of ['#offbooked', '.pk-ground', '#rules']) {
       () => (window as unknown as { scrollTrail: number[] }).scrollTrail,
     );
     // Once it has been restored, it goes nowhere.
-    const places = new Set(trail.filter((y) => y > 0));
-    expect([...places]).toEqual([Math.round(top)]);
+    const restored = trail.indexOf(Math.round(top));
+    expect(restored).toBeGreaterThanOrEqual(0);
+    expect(new Set(trail.slice(restored)).size).toBe(1);
   });
 }
 

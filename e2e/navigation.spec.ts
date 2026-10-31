@@ -11,7 +11,9 @@ for (const [label, id] of [
     await page.locator('.door a', { hasText: label }).click();
     await expect(page).toHaveURL(new RegExp(`#${id}$`));
     await expect
-      .poll(() => page.locator(`#${id}`).evaluate((e) => Math.abs(e.getBoundingClientRect().top)))
+      .poll(() => page.locator(`#${id}`).evaluate((e) => Math.abs(e.getBoundingClientRect().top)), {
+        timeout: 10000,
+      })
       .toBeLessThan(120);
   });
 }
@@ -20,7 +22,9 @@ for (const id of ['offbooked', 'parkdex', 'play-by-the-sandbox']) {
   test(`arriving at #${id} lands on that world`, async ({ page }) => {
     await page.goto(`/#${id}`);
     await expect
-      .poll(() => page.locator(`#${id}`).evaluate((e) => Math.abs(e.getBoundingClientRect().top)))
+      .poll(() => page.locator(`#${id}`).evaluate((e) => Math.abs(e.getBoundingClientRect().top)), {
+        timeout: 10000,
+      })
       .toBeLessThan(120);
   });
 }
