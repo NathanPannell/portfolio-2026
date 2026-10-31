@@ -70,6 +70,27 @@ test.describe('the guide', () => {
     expect(await scrollY(page)).toBe(top + 140);
   });
 
+  test('a link used while the guide is travelling wins', async ({ page }) => {
+    await page.goto('/');
+    await page.mouse.move(700, 450);
+    await page.mouse.wheel(0, 120);
+    await expect.poll(() => scrollY(page)).toBeGreaterThan(200);
+    await page.locator('.chrome__name').click();
+    await settlesAt(page, 0);
+    await page.waitForTimeout(700);
+    expect(await scrollY(page)).toBe(0);
+  });
+
+  test('a key that moved nothing does not guide the next scroll', async ({ page }) => {
+    await page.goto('/');
+    await page.keyboard.press('Home');
+    await page.waitForTimeout(500);
+    const top = (await topOf(page, '.abn-room')) + 200;
+    await jumpTo(page, top);
+    await page.waitForTimeout(700);
+    expect(await scrollY(page)).toBe(top);
+  });
+
   test('zooming with the wheel is left alone', async ({ page }) => {
     await page.goto('/');
     await jumpTo(page, 300);
@@ -239,6 +260,25 @@ test('the board flaps to its final words', async ({ page }) => {
   const flaps = page.locator('.board__line--name .flap');
   const name = () => flaps.evaluateAll((cells) => cells.map((c) => c.textContent).join(''));
   await expect.poll(name, { timeout: 4000 }).toBe('NATHANPANNELL');
+});
+
+test('a door works the second time too', async ({ page }) => {
+  await page.goto('/');
+  const door = page.locator('.door a').nth(2);
+  await door.click();
+  await expect(page).toHaveURL(/#parkdex$/);
+  await settlesAt(page, await topOf(page, '#parkdex'));
+  await jumpTo(page, 0);
+  await door.click();
+  await settlesAt(page, await topOf(page, '#parkdex'));
+});
+
+test('pressing the hero already showing leaves it running', async ({ page }) => {
+  await page.goto('/?hero=3');
+  const clause = page.locator('[data-clause]');
+  await expect(clause).toHaveText('a night for builders.', { timeout: 6000 });
+  await page.locator('[data-hero-pick="sentence"]').click();
+  await expect(clause).toHaveText('rehearsals for casts.', { timeout: 6000 });
 });
 
 test('a door swings open before the page moves on', async ({ page, isMobile }) => {

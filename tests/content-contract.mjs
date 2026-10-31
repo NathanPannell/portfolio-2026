@@ -80,7 +80,7 @@ for (const [component, control] of [
   ['Sandbox', 'sb-box__open'],
 ]) {
   const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
-  assert.match(source, /data-moment\b/, `${component} needs a click moment`);
+  assert.match(source, /\bdata-moment(?!-)/, `${component} needs a click moment`);
   assert.match(
     source,
     new RegExp(`<button\\s+class="${control}"[^>]*data-moment-control`),

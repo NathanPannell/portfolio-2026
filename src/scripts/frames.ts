@@ -11,6 +11,8 @@ const SETTLE = 160;
 const NUDGE = 14;
 // Close enough to a frame's edge to already be there.
 const ALIGNED = 3;
+// How long after a wheel turn or key press a scroll has to start, to count as theirs.
+const DISARM = 400;
 
 const SCROLL_KEYS = new Set([' ', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End']);
 
@@ -62,17 +64,24 @@ export const startFrames = () => {
   let down = true;
   let lastY = window.scrollY;
   let timer = 0;
-  // Where the page was sent, until it gets there. Anything can interrupt a smooth scroll, and an
-  // address bar moving on iOS is one of them.
+  let scrolled = false;
+  let disarm = 0;
+  let tabbed = false;
+  // Where the page was sent from and to, until it gets there. Anything can interrupt a smooth
+  // scroll, and an address bar moving on iOS is one of them.
   let heading: number | undefined;
+  let from = 0;
   let tries = 0;
 
-  // Keyboard focus inside a frame brings the whole frame up, not just the focused element.
+  // Tabbing into a frame brings the whole frame up, not just the focused element. Only Tab: focus
+  // also moves when a control opens its scene, and that must not pull at a scroll in progress.
   document.addEventListener('focusin', (event) => {
+    if (!tabbed) return;
+    tabbed = false;
     const target = event.target as HTMLElement;
     const frame = target.closest<HTMLElement>('[data-frame]');
     const full = frames[0]?.offsetHeight ?? window.innerHeight;
-    if (!frame || frame.offsetHeight > full + ALIGNED || !target.matches(':focus-visible')) return;
+    if (!frame || frame.offsetHeight > full + ALIGNED) return;
     // Next frame, because the browser scrolls to the focused element after this event.
     window.requestAnimationFrame(() => {
       const top = frame.getBoundingClientRect().top + window.scrollY;
@@ -82,6 +91,7 @@ export const startFrames = () => {
 
   const go = (top: number) => {
     heading = top;
+    from = window.scrollY;
     tries += 1;
     window.scrollTo({ top, behavior: 'smooth' });
   };
@@ -94,15 +104,24 @@ export const startFrames = () => {
       const top = restingPlace(frames, window.scrollY, down);
       if (top !== undefined) go(top);
     } else if (heading !== undefined) {
-      if (Math.abs(window.scrollY - heading) > ALIGNED && tries < 3) go(heading);
+      // Stopped short of it is an interruption. Anywhere else, something else moved the page.
+      const y = window.scrollY;
+      const short = (y - from) * (y - heading) < 0 && Math.abs(y - heading) > ALIGNED;
+      if (short && tries < 3) go(heading);
       else heading = undefined;
     }
   };
 
-  // Any new input from the visitor outranks where the guide was going.
+  // Any new input from the visitor outranks where the guide was going. Input that moved nothing,
+  // like Home at the top of the page, must not stay armed for the next scroll that isn't theirs.
   const arm = () => {
     armed = true;
+    scrolled = false;
     heading = undefined;
+    window.clearTimeout(disarm);
+    disarm = window.setTimeout(() => {
+      if (!scrolled) armed = false;
+    }, DISARM);
   };
 
   const wait = () => {
@@ -119,6 +138,7 @@ export const startFrames = () => {
   );
   window.addEventListener('keydown', (event) => {
     if (SCROLL_KEYS.has(event.key)) arm();
+    tabbed = event.key === 'Tab';
   });
   window.addEventListener(
     'touchstart',
@@ -144,6 +164,7 @@ export const startFrames = () => {
       const y = window.scrollY;
       if (y !== lastY) down = y > lastY;
       lastY = y;
+      scrolled = true;
       wait();
     },
     { passive: true },

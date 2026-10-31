@@ -117,7 +117,8 @@ const startDoors = (root: HTMLElement): Stop => {
       door?.toggleAttribute('data-opening', true);
       timers.push(
         window.setTimeout(() => {
-          window.location.hash = link.hash;
+          // Not location.hash, which does nothing if the page is already at that address.
+          window.location.href = link.href;
           door?.removeAttribute('data-opening');
         }, DOOR_SWING),
       );
@@ -204,9 +205,11 @@ export const startHeroes = () => {
     return;
   }
 
+  let playing = '';
   const show = (id: string, remember: boolean) => {
     const option = options.get(id);
-    if (!option) return;
+    if (!option || id === playing) return;
+    playing = id;
     if (slot.dataset['heroShown'] !== id) {
       stop();
       slot.replaceChildren(option.cloneNode(true));

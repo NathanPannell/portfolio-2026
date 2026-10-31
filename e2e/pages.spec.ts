@@ -204,7 +204,10 @@ test('clicking a closed scene away from its control leaves it closed', async ({ 
   await expect(page.locator('#offbooked')).toHaveAttribute('data-waiting', '');
 });
 
-test('the rope can be pulled by hand, and a short tug springs back', async ({ page, isMobile }) => {
+test('pulling the rope far enough opens the curtains before it is let go', async ({
+  page,
+  isMobile,
+}) => {
   test.skip(isMobile, 'The drag uses the mouse; touch shares its pointer events.');
   await page.goto('/');
   await jumpTo(page, '#offbooked');
@@ -326,7 +329,14 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
     await useControl(page, '#offbooked', '.rope');
     const title = page.locator('#ob-title');
     await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 6000 });
-    await expect(title).toBeInViewport({ ratio: 1 });
+    // Measured by hand, because the pointer's parallax can leave a fraction of a pixel of rounding.
+    const edges = await title.evaluate((element) => {
+      const { left, right, top, bottom } = element.getBoundingClientRect();
+      return { left, top, right: window.innerWidth - right, bottom: window.innerHeight - bottom };
+    });
+    for (const [edge, gap] of Object.entries(edges)) {
+      expect(gap, `${edge} at ${width}x${height}`).toBeGreaterThanOrEqual(-1);
+    }
     await expect
       .poll(() =>
         title.evaluate((element) => {
@@ -354,7 +364,7 @@ test('the live site is the biggest thing in the AI Build Night frame', async ({
   await page.goto('/');
   const shown = page.locator('.abn-browser__view');
   await useControl(page, '.abn-cover', '.abn-key');
-  await expect(shown).toBeInViewport({ ratio: 0.99, timeout: 4000 });
+  await expect(shown).toBeInViewport({ ratio: 1, timeout: 4000 });
   const box = await shown.boundingBox();
   const width = page.viewportSize()?.width ?? 0;
   expect(box?.width ?? 0).toBeGreaterThan(width * (isMobile ? 0.8 : 0.5));
@@ -434,8 +444,13 @@ test('Plant! sends Kip down the vine, and each stop scores', async ({ page }) =>
   const spots = new Set<number>();
   const rider = page.locator('[data-rider]');
   await expect(page.locator('.pk-trip')).toHaveAttribute('data-riding', '');
+  const screenWidth = page.viewportSize()?.width ?? 0;
   for (let sample = 0; sample < 8; sample += 1) {
-    spots.add(Math.round((await rider.boundingBox())?.x ?? 0));
+    const box = await rider.boundingBox();
+    spots.add(Math.round(box?.x ?? 0));
+    // On screen the whole way down.
+    expect(box?.x ?? -999).toBeGreaterThanOrEqual(-8);
+    expect((box?.x ?? 0) + (box?.width ?? 9999)).toBeLessThanOrEqual(screenWidth + 8);
     await page.waitForTimeout(180);
   }
   expect(spots.size).toBeGreaterThan(2);
@@ -491,9 +506,12 @@ test('a reload part-way down comes back with everything above it open', async ({
   await jumpTo(page, '.sb-panels');
   await expect(page.locator('.pk-trip')).toHaveAttribute('data-open', '');
   await page.reload();
+  // Settled, not replayed: the scene is already finished, and the score didn't count up.
+  await expect(page.locator('.pk-trip')).toHaveAttribute('data-settled', '');
   await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '');
   await expect(page.locator('[data-score]')).toHaveText('54');
-  await expect(page.locator('.sb-open')).toHaveAttribute('data-open', '');
+  await expect(page.locator('.pk-points')).toHaveCount(0);
+  await expect(page.locator('.sb-open')).toHaveAttribute('data-settled', '');
   await expect(page.locator('.sb-panels')).toBeInViewport();
 });
 
@@ -780,7 +798,8 @@ test.describe('reduced motion', () => {
       await page.goto(`/?hero=${option}`);
       await page.waitForTimeout(300);
       const first = await page.locator('[data-hero-slot]').innerHTML();
-      await page.waitForTimeout(600);
+      // Longer than the sentence takes to start changing.
+      await page.waitForTimeout(3000);
       expect(await page.locator('[data-hero-slot]').innerHTML()).toBe(first);
     });
   }
@@ -798,6 +817,14 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
   await expect(page.locator('.abn-show__cta')).toBeVisible();
   await expect(page.locator('[data-stop] img').first()).toBeVisible();
   await expect(page.locator('#sb-title')).toBeVisible();
+  // Visible isn't enough: the cover's headline stays clear of the site that follows it, and the
+  // room's words are a list instead of a pile.
+  await page.locator('#abn-title').scrollIntoViewIfNeeded();
+  await expect.poll(() => uncoveredPoints(page.locator('#abn-title'))).toBeGreaterThan(0);
+  const words = await page
+    .locator('.abn-room__copy li')
+    .evaluateAll((items) => items.map((item) => Math.round(item.getBoundingClientRect().top)));
+  expect(new Set(words).size).toBe(4);
   for (const reveal of await page.locator('[data-reveal]').all()) {
     expect(await opacityOf(reveal)).toBe(1);
   }

@@ -45,9 +45,13 @@ export const startMoments = () => {
     window.clearTimeout(timers.get(scene));
     const control = scene.querySelector<HTMLElement>('[data-moment-control]');
     const focused = control === document.activeElement;
+    const { top, bottom } = scene.getBoundingClientRect();
+    // Nobody is there to see it, and looping scenes rest off screen, which would hold it half done.
+    if (bottom <= 0 || top >= window.innerHeight) scene.toggleAttribute('data-settled', true);
     scene.removeAttribute('data-waiting');
     scene.toggleAttribute('data-open', true);
     control?.setAttribute('aria-expanded', 'true');
+    if (control) control.tabIndex = -1;
     // The control is about to leave, so the next Tab carries on from inside the scene.
     if (focused) scene.focus({ preventScroll: true });
     scene.dispatchEvent(new CustomEvent('moment:open'));

@@ -112,6 +112,7 @@ let letter = 0;
     inset: 0;
     background: var(--flood);
     opacity: 0;
+    pointer-events: none;
     transition: opacity 240ms var(--ease);
   }
 
@@ -131,11 +132,12 @@ let letter = 0;
     }
 
     .poster__line {
-      animation: line-in 700ms var(--ease) 650ms both;
+      animation: line-in 700ms var(--ease) 650ms backwards;
     }
 
     .poster__worlds {
-      animation: line-in 700ms var(--ease) 850ms both;
+      /* Backwards only: a held transform would trap the flood inside this strip. */
+      animation: line-in 700ms var(--ease) 850ms backwards;
     }
   }
 

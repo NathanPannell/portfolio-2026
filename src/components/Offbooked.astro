@@ -843,21 +843,23 @@ const bubbles = [
     letter-spacing: -0.04em;
   }
 
-  /* The pulley: a cord from the top of the frame with a tassel to grab. */
+  /* The pulley: a tassel to grab, on a cord up to the top of the frame. Only the tassel is the
+     button, because it can't scroll the page: a swipe on the cord still does. */
   .rope {
     --pull: 0px;
     position: absolute;
     z-index: 12;
-    top: 0;
+    top: calc(min(66svh, 34rem) - 8.2rem);
     right: clamp(1rem, 11vw, 11rem);
     display: none;
-    width: 6rem;
-    height: min(66svh, 34rem);
+    width: 4.5rem;
+    height: 8.2rem;
     padding: 0;
     border: 0;
     background: none;
     color: #f7ecd2;
     cursor: grab;
+    transform: translateY(var(--pull));
     touch-action: none;
     user-select: none;
   }
@@ -879,22 +881,21 @@ const bubbles = [
 
   @keyframes haul {
     30% {
-      transform: translateY(5rem);
+      transform: translateY(calc(var(--pull) + 5rem));
     }
 
     100% {
       visibility: hidden;
-      transform: translateY(-120%);
+      transform: translateY(-100lvh);
     }
   }
 
   .rope__cord {
     position: absolute;
-    top: 0;
+    bottom: calc(100% - 0.7rem);
     left: calc(50% - 0.3rem);
     width: 0.6rem;
-    height: calc(100% - 7.5rem + var(--pull));
-    border-radius: 0 0 0.2rem 0.2rem;
+    height: 120lvh;
     background: repeating-linear-gradient(
       -38deg,
       #f0cf7a 0,
@@ -903,11 +904,12 @@ const bubbles = [
       #a8791f 0.5rem
     );
     box-shadow: 0.2rem 0 0.5rem rgb(0 0 0 / 35%);
+    pointer-events: none;
   }
 
   .rope__tassel {
     position: absolute;
-    top: calc(100% - 8.2rem + var(--pull));
+    top: 0;
     left: calc(50% - 1.75rem);
     width: 3.5rem;
     height: auto;
@@ -916,7 +918,6 @@ const bubbles = [
     stroke-width: 3;
     stroke-linejoin: round;
     filter: drop-shadow(0.2rem 0.4rem 0.4rem rgb(0 0 0 / 40%));
-    transform-origin: 50% 0;
   }
 
   .rope__strand {
@@ -925,7 +926,7 @@ const bubbles = [
 
   .rope__tag {
     position: absolute;
-    top: calc(100% - 3.25rem + var(--pull));
+    top: 5.25rem;
     left: calc(50% + 1.6rem);
     padding: 0.1rem 0.6rem;
     background: #f7ecd2;
@@ -939,7 +940,7 @@ const bubbles = [
   }
 
   /* The rope gives a tug now and then, so it reads as something to grab. */
-  .ob[data-here][data-waiting] .rope__tassel {
+  .ob[data-here][data-waiting] .rope {
     animation: tug 2.6s ease-in-out infinite;
   }
 
@@ -947,15 +948,15 @@ const bubbles = [
     0%,
     62%,
     100% {
-      transform: none;
+      translate: 0 0;
     }
 
     72% {
-      transform: translateY(0.9rem);
+      translate: 0 0.9rem;
     }
 
     84% {
-      transform: translateY(-0.2rem);
+      translate: 0 -0.2rem;
     }
   }
 
@@ -1085,8 +1086,8 @@ const bubbles = [
 
     /* Short enough to hang clear of the title. */
     .rope {
+      top: calc(40svh - 8.2rem);
       right: 0.5rem;
-      height: 40svh;
     }
 
     .rope__tag {

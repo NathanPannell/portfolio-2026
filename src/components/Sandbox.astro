@@ -804,6 +804,13 @@ const panels = [
     }
   }
 
+  /* These toys hold still, so a swipe that starts on one should scroll like any other. */
+  @media (prefers-reduced-motion: reduce) {
+    .toy {
+      touch-action: auto;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce), (scripting: none) {
     .sb__yard-title {
       display: none;

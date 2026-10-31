@@ -110,6 +110,16 @@ test('Plant! can be reached with the keyboard', async ({ page, isMobile }) => {
   await expect(page.locator('.pk-mark')).toHaveCount(1);
 });
 
+test('a scroll past a focused control is not pulled back', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  await page.goto('/');
+  await page.locator('.abn-key').focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.contact__mail')).toBeInViewport({ timeout: 5000 });
+  await page.waitForTimeout(800);
+  await expect(page.locator('.contact__mail')).toBeInViewport();
+});
+
 test('tabbing to a Parkdex link brings it on screen', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');

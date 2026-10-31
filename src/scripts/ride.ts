@@ -96,6 +96,11 @@ export const startRide = () => {
   };
 
   const plant = () => {
+    if (trip.hasAttribute('data-settled')) {
+      score = PLANT_POINTS;
+      land(true);
+      return;
+    }
     award(PLANT_POINTS);
     const mark = document.createElement('i');
     mark.className = 'pk-mark';

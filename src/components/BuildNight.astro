@@ -160,11 +160,16 @@ const phone = [2142, 2142, 2142];
     font-family: var(--sans);
   }
 
-  /* The cover: an orange wall, a cursor, and one key. */
+  /* The cover: an orange wall, a cursor, and one key. With no script the cover and the live site
+     simply stack. The script makes them a stage, with the site inside the cursor. */
   .abn-cover {
     position: relative;
-    height: 100lvh;
     overflow: clip;
+  }
+
+  .abn-cover[data-waiting],
+  .abn-cover[data-open] {
+    height: 100lvh;
   }
 
   .abn-cover:focus {
@@ -172,13 +177,20 @@ const phone = [2142, 2142, 2142];
   }
 
   .abn-cover__type {
-    position: absolute;
-    inset: 0 0 auto;
+    position: relative;
     display: grid;
     align-content: space-between;
     gap: 1.5rem;
-    height: 100svh;
+    min-height: 100svh;
     padding: clamp(4.5rem, 11svh, 7rem) var(--gutter) var(--gutter);
+  }
+
+  .abn-cover[data-waiting] .abn-cover__type,
+  .abn-cover[data-open] .abn-cover__type {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 100svh;
+    min-height: 0;
   }
 
   h2 {
@@ -289,18 +301,25 @@ const phone = [2142, 2142, 2142];
 
   /* The live site, opening out of the cursor. */
   .abn-show {
-    position: absolute;
+    position: relative;
     z-index: 2;
-    inset: 0;
     display: grid;
     grid-template-columns: minmax(14rem, 1fr) auto;
     gap: clamp(1.5rem, 3vw, 3rem);
     align-items: center;
-    height: 100lvh;
+    min-height: 100lvh;
     padding: 4rem calc(var(--gutter) + 5vw) calc(1.5rem + var(--bar)) var(--gutter);
     overflow: clip;
     background: var(--bone);
     clip-path: inset(0);
+  }
+
+  .abn-cover[data-waiting] .abn-show,
+  .abn-cover[data-open] .abn-show {
+    position: absolute;
+    inset: 0;
+    height: 100lvh;
+    min-height: 0;
   }
 
   .abn-cover[data-waiting] .abn-show {
@@ -553,7 +572,7 @@ const phone = [2142, 2142, 2142];
     grid-template-columns: minmax(0, 1fr) minmax(0, auto);
     gap: clamp(1.5rem, 5vw, 5rem);
     align-items: center;
-    height: 100lvh;
+    min-height: 100lvh;
     overflow: clip;
     padding: 4.5rem var(--gutter) calc(var(--gutter) + var(--bar));
     background: var(--bone);
@@ -581,31 +600,40 @@ const phone = [2142, 2142, 2142];
   }
 
   .abn-room__copy li {
-    grid-area: 1 / 1;
     font-size: clamp(3.2rem, 9.4vw, 9.5rem);
     font-weight: 900;
     line-height: 0.92;
     letter-spacing: -0.05em;
   }
 
-  :global(.reveals) .abn-room__copy li {
-    opacity: 0;
-    transform: translateY(1.2rem) scale(0.96);
-    transform-origin: 0 100%;
-    transition:
-      opacity 200ms,
-      transform 340ms var(--ease);
+  /* One word at a time needs the script that swaps them. Until then they are a list. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.reveals) .abn-room__copy li {
+      grid-area: 1 / 1;
+      opacity: 0;
+      transform: translateY(1.2rem) scale(0.96);
+      transform-origin: 0 100%;
+      transition:
+        opacity 200ms,
+        transform 340ms var(--ease);
+    }
+
+    :global(.reveals) .abn-room__copy li[data-on] {
+      opacity: 1;
+      transform: none;
+    }
   }
 
-  :global(.reveals) .abn-room__copy li[data-on] {
-    opacity: 1;
-    transform: none;
-  }
-
+  /* The same goes for the drawing, which only a script can draw. */
   .abn-room__plan {
     position: relative;
     z-index: 1;
+    display: none;
     width: min(46vw, calc(100svh - 8rem));
+  }
+
+  :global(.reveals) .abn-room__plan {
+    display: block;
   }
 
   .abn-room__plan canvas {
@@ -777,12 +805,6 @@ const phone = [2142, 2142, 2142];
     }
   }
 
-  @media (scripting: none) {
-    .abn-room__plan {
-      display: none;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce), (scripting: none) {
     h2 i {
       animation: none;
@@ -790,27 +812,6 @@ const phone = [2142, 2142, 2142];
 
     .abn-strip {
       animation: none;
-    }
-
-    /* Nothing to press: the live site simply follows the cover. */
-    .abn-cover {
-      height: auto;
-    }
-
-    .abn-cover__type,
-    .abn-show {
-      position: relative;
-      height: auto;
-      min-height: 100svh;
-    }
-
-    .abn-room {
-      height: auto;
-      min-height: 100svh;
-    }
-
-    .abn-room__copy li {
-      grid-area: auto;
     }
   }
 </style>

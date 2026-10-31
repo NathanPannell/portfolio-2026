@@ -178,7 +178,16 @@ export const startRoom = () => {
 export const startCover = () => {
   const cover = document.querySelector<HTMLElement>('[data-cover]');
   const cursor = cover?.querySelector<HTMLElement>('[data-cursor]');
-  if (!cover?.hasAttribute('data-waiting') || !cursor) return;
+  if (!cover || !cursor) return;
+
+  // The strip of captures scrolls past the edge of its window, where lazy images wouldn't load.
+  const loadStrip = () => {
+    cover.querySelectorAll('img').forEach((image) => {
+      image.loading = 'eager';
+    });
+  };
+  if (cover.hasAttribute('data-open')) loadStrip();
+  if (!cover.hasAttribute('data-waiting')) return;
 
   const measure = () => {
     if (!cover.hasAttribute('data-waiting')) return;
@@ -191,10 +200,5 @@ export const startCover = () => {
   measure();
   void document.fonts.ready.then(measure);
   window.addEventListener('resize', measure);
-  // The strip of captures scrolls past the edge of its window, where lazy images wouldn't load.
-  cover.addEventListener('moment:open', () => {
-    cover.querySelectorAll('img').forEach((image) => {
-      image.loading = 'eager';
-    });
-  });
+  cover.addEventListener('moment:open', loadStrip);
 };
