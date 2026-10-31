@@ -98,6 +98,12 @@ test('Plant! can be reached with the keyboard', async ({ page, isMobile }) => {
   const plant = page.locator('[data-plant]');
   await expect(plant).toBeFocused();
   await expect(plant).toBeInViewport();
+  // Focus lands at the start of the trip, not part-way down it.
+  await expect
+    .poll(() =>
+      page.locator('[data-descent]').evaluate((e) => Math.abs(e.getBoundingClientRect().top)),
+    )
+    .toBeLessThan(2);
   await page.keyboard.press('Enter');
   await expect(page.locator('.pk-mark')).toHaveCount(1);
 });

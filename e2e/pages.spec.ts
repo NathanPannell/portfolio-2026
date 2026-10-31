@@ -273,6 +273,12 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
       )
       .toBe(true);
     await expect.poll(() => uncoveredPoints(page.locator('.ticket'))).toBe(9);
+    // Sampling a point isn't enough: the ticket has to sit wholly below the headline's last line.
+    const lastLine = await title.locator('> *').last().boundingBox();
+    const ticket = await page.locator('.ticket').boundingBox();
+    expect(ticket?.y ?? 0, `${width}x${height}`).toBeGreaterThanOrEqual(
+      (lastLine?.y ?? 9999) + (lastLine?.height ?? 0) - 1,
+    );
     expect(await horizontalOverflow(page), `${width}x${height}`).toBeLessThanOrEqual(0);
   }
 });
@@ -313,6 +319,7 @@ test('Kip rides the vine down, scores each stop, and plants flags', async ({ pag
   }
 
   expect(riderSpots.size).toBeGreaterThan(2);
+  await expect(page.locator('.pk-points')).toHaveCount(0);
   expect(await layer.evaluate((element) => element.style.transform)).not.toBe(start);
 
   await jumpInto(page, '[data-descent]', 1);
@@ -548,16 +555,19 @@ test('a finger can drag a toy, and swiping elsewhere still scrolls', async ({ pa
   await touch('touchEnd', x + 80, y - 60);
   expect(await page.evaluate(() => window.scrollY)).toBe(before);
 
-  // Toys capture their own gestures, so the swipe has to start clear of every one of them.
+  // Toys capture their own gestures, so the swipe starts on the yard itself, clear of all of them.
   await toySettles(page, toy);
   const start = await page.evaluate(() => {
-    const height = window.innerHeight;
-    for (let top = height - 60; top > height / 2; top -= 20) {
+    const yard = document.querySelector('[data-yard]')?.getBoundingClientRect();
+    if (!yard) throw new Error('No yard');
+    const lowest = Math.min(yard.bottom, window.innerHeight) - 40;
+    for (let top = lowest; top > Math.max(yard.top, 280); top -= 20) {
       for (let left = 40; left < window.innerWidth; left += 40) {
-        if (!document.elementFromPoint(left, top)?.closest('[data-toy]')) return { left, top };
+        const hit = document.elementFromPoint(left, top);
+        if (hit?.closest('[data-yard]') && !hit.closest('[data-toy], a')) return { left, top };
       }
     }
-    throw new Error('Nowhere clear of the toys');
+    throw new Error('Nowhere on the yard clear of the toys');
   });
   await touch('touchStart', start.left, start.top);
   for (let step = 1; step <= 6; step += 1) {

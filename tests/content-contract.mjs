@@ -71,6 +71,7 @@ assert(existsSync(join(root, 'src', 'scripts', 'wash.ts')), 'The touch fill scri
 
 // A phone's address bar is what this offset is for, and test browsers can't show the difference.
 assert.match(offbooked, /--bar: calc\(100lvh - 100svh\)/);
+assert.match(offbooked, /--u: min\(1vw, 1\.62svh, calc\(\(100svh - 11lvh/);
 
 // The owner cut these, and they stay cut.
 assert.doesNotMatch(offbooked, /two.actor/i, 'The two-actor test is gone');

@@ -909,7 +909,11 @@ const bubbles = [
      screens the headline is also sized to end above wherever the ticket has got to. */
   @media (max-height: 480px) and (min-aspect-ratio: 5/6) {
     .ob-stage {
-      --u: min(1vw, 1.62svh, calc((100svh - 11lvh - 4.75rem) / 40.5));
+      --u: min(1vw, 1.62svh, calc((100svh - 11lvh - 7.15rem) / 31.5));
+    }
+
+    h2 {
+      top: max(calc(var(--u) * 9), 2.4rem);
     }
   }
 
