@@ -121,22 +121,6 @@ button {
   animation-play-state: paused !important;
 }
 
-/* Reveals are opt-in: startReveals switches them on, so content stays visible if no script runs. */
-@media (prefers-reduced-motion: no-preference) {
-  .reveals [data-reveal] {
-    opacity: 0;
-    transform: translateY(1.5rem) rotate(var(--reveal-turn, 0deg));
-    transition:
-      opacity 700ms var(--ease) var(--reveal-delay, 0ms),
-      transform 900ms var(--ease) var(--reveal-delay, 0ms);
-  }
-
-  .reveals [data-reveal][data-in] {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 .not-found {
   min-height: 100svh;
   display: grid;

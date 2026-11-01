@@ -611,15 +611,22 @@ const details = [
 
     /* Hangs in the gap between the title and the ticket, beside the waveform. */
     .handset {
-      top: 26svh;
+      top: 29svh;
       right: 1.25rem;
-      width: min(46vw, 20.5svh);
+      width: min(46vw, 19svh);
       padding: 0.3rem;
       border-radius: 1.6rem;
     }
 
     .handset img {
       border-radius: 1.3rem;
+    }
+
+    /* The ticket takes more of a small phone, so the handset gets less. */
+    @media (max-height: 700px) {
+      .handset {
+        width: 15svh;
+      }
     }
 
     .beam {

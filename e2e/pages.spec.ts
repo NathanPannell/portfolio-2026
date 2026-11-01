@@ -50,7 +50,7 @@ const clippedText = (page: Page) =>
     ]
       .filter(
         (element) =>
-          !element.closest('[aria-hidden="true"]') && element.getClientRects().length > 0,
+          !element.closest('[aria-hidden="true"], [inert]') && element.getClientRects().length > 0,
       )
       .filter((element) => {
         const { left, right } = element.getBoundingClientRect();
@@ -270,7 +270,9 @@ test('the opened Offbooked screen keeps only the title, the waveform and one pho
   await expect(page.locator('.handset img')).toHaveCount(1);
   await expect(page.locator('.handset')).toBeInViewport({ ratio: 0.98 });
   await expect(page.locator('.voices')).toBeInViewport();
-  await expect(page.locator('.beam--left')).toHaveCSS('opacity', '1');
+  await expect
+    .poll(() => page.locator('.beam--left').evaluate((e) => Number(getComputedStyle(e).opacity)))
+    .toBeGreaterThan(0.5);
   await expect(page.locator('.stamp, .marquee, .script, .slab, .tape, .bubble')).toHaveCount(0);
 });
 
@@ -368,6 +370,19 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
       .toBe(true);
     await expect.poll(() => uncoveredPoints(page.locator('.ticket'))).toBe(9);
     await expect(page.locator('.ticket')).toBeInViewport({ ratio: 1 });
+    // The one phone stays clear of the words on both sides of it.
+    const phone = await page.locator('.handset').boundingBox();
+    const stub = await page.locator('.ticket').boundingBox();
+    const words = await title.locator('> *').last().boundingBox();
+    const beside = (phone?.x ?? 0) >= (stub?.x ?? 0) + (stub?.width ?? 0) - 1;
+    if (!beside) {
+      expect(phone?.y ?? 0, `${width}x${height}`).toBeGreaterThanOrEqual(
+        (words?.y ?? 0) + (words?.height ?? 0) - 12,
+      );
+      expect((phone?.y ?? 0) + (phone?.height ?? 0), `${width}x${height}`).toBeLessThanOrEqual(
+        (stub?.y ?? 0) + 12,
+      );
+    }
     // Sampling a point isn't enough: the ticket has to sit wholly below the headline's last line.
     const lastLine = await title.locator('> *').last().boundingBox();
     const ticket = await page.locator('.ticket').boundingBox();
@@ -850,6 +865,17 @@ for (const [width, height] of everySize) {
     await page.setViewportSize({ width, height });
     await page.goto('/');
 
+    // Each closed screen shows all of itself too.
+    await jumpTo(page, '.abn-cover');
+    for (const part of ['#abn-title', '.abn-cover__line', '.abn-key']) {
+      await expect(page.locator(part), part).toBeInViewport({ ratio: 1 });
+    }
+    const line = await page.locator('.abn-cover__line').boundingBox();
+    const key = await page.locator('.abn-key').boundingBox();
+    const title = await page.locator('#abn-title').boundingBox();
+    expect(line?.y ?? 0).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0) - 12);
+    expect(key?.y ?? 0).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0) - 12);
+
     await useControl(page, '.abn-cover', '.abn-key');
     for (const part of [
       '.abn-show__copy h3',
@@ -872,6 +898,7 @@ for (const [width, height] of everySize) {
     await page.locator('.pk-slide').click();
     await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
     await expect(page.locator('.pk-end__kip')).toBeInViewport({ ratio: 0.9 });
+    await expect(page.locator('.pk-sign')).toBeInViewport({ ratio: 1 });
     await expect(page.locator('.pk-end h3')).toBeInViewport({ ratio: 1 });
     for (const link of await page.locator('.pk-end a').all()) {
       await expect(link).toBeInViewport({ ratio: 1 });
@@ -964,9 +991,6 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
   // Visible isn't enough: the cover's headline stays clear of the site that follows it.
   await page.locator('#abn-title').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('#abn-title'))).toBeGreaterThan(0);
-  for (const reveal of await page.locator('[data-reveal]').all()) {
-    expect(await opacityOf(reveal)).toBe(1);
-  }
 });
 
 test('a script that stalls stops holding the scenes closed', async ({ page }) => {

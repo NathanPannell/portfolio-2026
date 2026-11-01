@@ -30,8 +30,8 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 
 ## What is settled
 
-- One page of full-screen frames: a hero, then four worlds in the owner's order, a short set of working rules, a link index, and a contact footer.
-- The hero is being chosen. Five options are on staging behind a review toggle, and the toggle comes out once the owner picks.
+- One page of full-screen frames: a hero, then four worlds in the owner's order, a link index, and a contact footer. Each world is one simple closed screen until it is pressed, and then one screen of content, or two for Parkdex.
+- The hero is being chosen. Eight options are on staging behind a review toggle, and the toggle comes out once the owner picks.
 - AI Build Night leads. Offbooked is the one presented as a possible business. Parkdex is the playful one. Play by the Sandbox, shown as a website Nathan designed, closes the set before the index.
 - The site positions Nathan as someone who builds for real people, tests with real users and builds an AI community. Avoid nature-guy framing.
 - Every world has its own fonts, colours, motion, and transition in. Do not unify them into one card template.
@@ -45,8 +45,8 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 - No width scrolls sideways.
 - Hover effects sit behind `(hover: hover) and (pointer: fine)`. Touch gets its own equivalent.
 - Keyboard focus reaches every link.
-- The page never traps a scroll. The guide acts only after a scroll has stopped, so wheel, trackpad, touch and keys can pass through every frame without clicking anything.
-- Each section's click moment is a real button that works by keyboard. Nothing is reachable only by clicking: scenes also open after a while on screen, when scrolled past, and when a link inside takes focus.
+- The page never traps a scroll. The only help is a gentle settle after the page has been left alone for a moment, which any input stops at once, so wheel, trackpad, touch and keys can pass through every screen without clicking anything.
+- Each section's click moment is a real button that works by keyboard, and the owner wants it to be the only way in: nothing opens by a timer or on the way past. Under reduced motion, or if the script fails, every section is simply open, so nothing is out of reach.
 - Motion plays on a clock. Nothing is pinned or scrubbed by the scroll position.
 
 ## Open items

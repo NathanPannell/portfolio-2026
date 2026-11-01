@@ -77,6 +77,8 @@ test.describe('scrolling', () => {
     await page.mouse.wheel(0, 300);
     await expect.poll(() => scrollY(page)).toBe(300);
     await glideUnderway(page, 300);
+    // Away from the links, because this press is only taking hold of the page.
+    await page.mouse.move(1000, 10);
     await page.mouse.down();
     await page.mouse.up();
     const held = await scrollY(page);
@@ -290,7 +292,8 @@ test('the toggle swaps the hero, and the choice can be linked to', async ({ page
   await expect(buttons).toHaveCount(heroCount);
   await expect(buttons.nth(0)).toHaveAttribute('aria-pressed', 'true');
   const seen = new Set<string>();
-  for (let option = 1; option <= heroCount; option += 1) {
+  // The default is showing, so it comes last.
+  for (const option of [2, 3, 4, 5, 6, 7, 8, 1]) {
     await buttons.nth(option - 1).click();
     await expect(page).toHaveURL(new RegExp(`\\?hero=${option}$`));
     await expect(buttons.nth(option - 1)).toHaveAttribute('aria-pressed', 'true');

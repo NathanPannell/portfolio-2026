@@ -25,7 +25,6 @@ const watchArrivals = (frames: HTMLElement[]) => {
       for (const entry of entries) {
         const frame = entry.target as HTMLElement;
         frame.toggleAttribute('data-here', entry.isIntersecting);
-        if (entry.isIntersecting) frame.toggleAttribute('data-played', true);
       }
     },
     // The line across the middle of the screen, so exactly one frame is ever here.
@@ -123,9 +122,11 @@ export const startFrames = () => {
     const frame = (event.target as HTMLElement).closest<HTMLElement>('[data-frame]');
     const screen = frames[0]?.offsetHeight ?? window.innerHeight;
     if (!frame || frame.offsetHeight > screen + ALIGNED) return;
-    // Next frame, because the browser scrolls to the focused element after this event.
+    // Next frame, because the browser scrolls to the focused element after this event, and smooth
+    // because that takes over from the browser's own smooth scroll.
     window.requestAnimationFrame(() => {
-      glideTo(frame.getBoundingClientRect().top + window.scrollY);
+      const top = frame.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top, behavior: 'smooth' });
     });
   });
 
@@ -167,7 +168,16 @@ export const startFrames = () => {
     },
     { passive: true },
   );
-  window.addEventListener('touchmove', arm, { passive: true });
+  // A finger that has moved stays armed: the scroll it caused may already have happened by now.
+  window.addEventListener(
+    'touchmove',
+    () => {
+      stop();
+      armed = true;
+      window.clearTimeout(disarm);
+    },
+    { passive: true },
+  );
   for (const type of ['touchend', 'touchcancel']) {
     window.addEventListener(
       type,
