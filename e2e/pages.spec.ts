@@ -962,6 +962,38 @@ test('hovering or focusing an index row fills it with its image', async ({ page,
   await expect.poll(fill).toBe(1);
 });
 
+test('a filled row keeps its host off the picture', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'On a phone the host sits under the name, and has its own test.');
+  await page.goto('/');
+  const row = page.locator('[data-wash]').first();
+  const host = row.locator('.wash-list__host');
+  await row.scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  await expect(host).toHaveCSS('opacity', '1');
+  await row.hover();
+  await expect(host).toHaveCSS('opacity', '0');
+  await page.mouse.move(0, 0);
+  await expect(host).toHaveCSS('opacity', '1');
+});
+
+test('on a phone, a filled row keeps its host legible under the name', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Desktop has its own test.');
+  await page.goto('/');
+  const row = page.locator('[data-wash]').nth(1);
+  await row.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    window.scrollTo({
+      top: rect.top + window.scrollY - window.innerHeight / 2 + rect.height / 2,
+      behavior: 'instant',
+    });
+  });
+  await expect(row).toHaveAttribute('data-active');
+  await expect(row.locator('.wash-list__host')).toHaveCSS('opacity', '1');
+});
+
 test('on touch, the row nearest the middle of the screen fills', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'Desktop uses hover.');
   await page.goto('/');

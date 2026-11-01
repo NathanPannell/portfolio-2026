@@ -165,7 +165,8 @@ const worlds = [
     font-size: 0.85rem;
     transition:
       color 180ms,
-      background 180ms;
+      background 180ms,
+      opacity 180ms;
   }
 
   .wash-list svg {
@@ -218,6 +219,21 @@ const worlds = [
   .wash-list li[data-active] .wash-list__host {
     background: rgb(0 0 0 / 66%);
     color: #fff;
+  }
+
+  /* On a phone the host sits under the name, clear of the picture. Wider, it sits on the picture, so
+     it steps aside while the row is filled. */
+  @media (min-width: 641px) {
+    .wash-list li:has(a:focus-visible) .wash-list__host,
+    .wash-list li[data-active] .wash-list__host {
+      opacity: 0;
+    }
+  }
+
+  @media (min-width: 641px) and (hover: hover) and (pointer: fine) {
+    .wash-list li:hover .wash-list__host {
+      opacity: 0;
+    }
   }
 
   .wash-list li[data-active] .wash-list__name {
