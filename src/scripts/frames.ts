@@ -1,20 +1,23 @@
-// The page is a stack of frames. Each one starts playing when it arrives, and a stopped scroll is
-// guided on to the next frame in the direction it was going. The guide never touches a scroll in
-// progress: wheel, touch and keys stay native, and it only acts once the page has come to rest
-// after one of them, so anchors, find-in-page and Tab are left exactly where they land.
+// The page is a stack of full screens, and scrolling it belongs to the visitor. Each screen starts
+// playing when it arrives, and the only help is a gentle one: when a scroll has been left alone for
+// a moment, the page eases to frame the nearest screen. Any input stops that at once, whether it has
+// started or not, except that a stray sideways wheel only stops one in motion. It only follows wheel, touch and keys, so anchors and find-in-page are left where
+// they land, and it leaves anywhere inside a zone taller than the screen alone.
 
 import { reducedMotion } from './motion';
 
-// How long the page has to sit still, in milliseconds, before it counts as having stopped.
-const SETTLE = 160;
-// Rests this close to a frame's edge go back to that edge rather than on to the next frame.
-const NUDGE = 14;
-// Close enough to a frame's edge to already be there.
+// How long a scroll has to be left alone, in milliseconds, before the page frames itself.
+const IDLE = 1500;
+// How long that takes, in milliseconds.
+const GLIDE = 800;
+// Close enough to an edge to already be there.
 const ALIGNED = 3;
 // How long after a wheel turn or key press a scroll has to start, to count as theirs.
 const DISARM = 400;
 
 const SCROLL_KEYS = new Set([' ', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End']);
+
+const ease = (value: number) => value * value * (3 - 2 * value);
 
 const watchArrivals = (frames: HTMLElement[]) => {
   const observer = new IntersectionObserver(
@@ -22,8 +25,6 @@ const watchArrivals = (frames: HTMLElement[]) => {
       for (const entry of entries) {
         const frame = entry.target as HTMLElement;
         frame.toggleAttribute('data-here', entry.isIntersecting);
-        if (entry.isIntersecting) frame.toggleAttribute('data-played', true);
-        frame.dispatchEvent(new CustomEvent('frame:change', { detail: entry.isIntersecting }));
       }
     },
     // The line across the middle of the screen, so exactly one frame is ever here.
@@ -32,26 +33,26 @@ const watchArrivals = (frames: HTMLElement[]) => {
   frames.forEach((frame) => observer.observe(frame));
 };
 
-/** Where the page should come to rest from `y`, or undefined if it is fine where it is. */
-const restingPlace = (frames: HTMLElement[], y: number, down: boolean) => {
+/** The nearest place that frames a screen from `y`, or undefined if `y` should be left alone. */
+const restingPlace = (frames: HTMLElement[], y: number) => {
+  const view = window.innerHeight;
+  const screen = frames[0]?.offsetHeight ?? view;
   const spans = frames.map((frame) => {
     const { top, height } = frame.getBoundingClientRect();
-    return { top: top + y, bottom: top + y + height, height };
+    return { top: top + y, bottom: top + y + height, tall: height > screen + ALIGNED };
   });
-  const index = spans.findLastIndex(({ top }) => top <= y + ALIGNED);
-  const current = spans[index];
-  const next = spans[index + 1];
-  if (!current || !next || Math.abs(y - current.top) <= ALIGNED) return undefined;
+  const last = spans.at(-1);
+  // The footer runs on after the last frame.
+  if (!last || y + view > last.bottom + ALIGNED) return undefined;
+  const inside = ({ top, bottom }: { top: number; bottom: number }) =>
+    y >= top - ALIGNED && y + view <= bottom + ALIGNED;
+  if (spans.some((span) => span.tall && inside(span))) return undefined;
 
-  // Tall frames scroll freely until their end comes on screen.
-  const view = window.innerHeight;
-  const tall = current.height > (frames[0]?.offsetHeight ?? view) + ALIGNED;
-  if (tall && y + view < current.bottom - ALIGNED) return undefined;
-  const back = tall ? current.bottom - view : current.top;
-
-  if (Math.abs(y - back) <= NUDGE) return back;
-  if (Math.abs(next.top - y) <= NUDGE) return next.top;
-  return down ? next.top : back;
+  const places = spans.flatMap(({ top, bottom, tall }) => (tall ? [top, bottom - view] : [top]));
+  const nearest = places.reduce((best, place) =>
+    Math.abs(place - y) < Math.abs(best - y) ? place : best,
+  );
+  return Math.abs(nearest - y) <= ALIGNED ? undefined : nearest;
 };
 
 export const startFrames = () => {
@@ -61,116 +62,124 @@ export const startFrames = () => {
 
   let armed = false;
   let touching = false;
-  let down = true;
-  let lastY = window.scrollY;
   let timer = 0;
   let scrolled = false;
   let disarm = 0;
   let tabbed = false;
-  // Where the page was sent from and to, until it gets there. Anything can interrupt a smooth
-  // scroll, and an address bar moving on iOS is one of them.
-  let heading: number | undefined;
-  let from = 0;
-  let tries = 0;
+  let glide = 0;
+  let expected = 0;
 
-  // Tabbing into a frame brings the whole frame up, not just the focused element. Only Tab: focus
-  // also moves when a control opens its scene, and that must not pull at a scroll in progress.
-  document.addEventListener('focusin', (event) => {
-    if (!tabbed) return;
-    tabbed = false;
-    const target = event.target as HTMLElement;
-    const frame = target.closest<HTMLElement>('[data-frame]');
-    const full = frames[0]?.offsetHeight ?? window.innerHeight;
-    if (!frame || frame.offsetHeight > full + ALIGNED) return;
-    // Next frame, because the browser scrolls to the focused element after this event.
-    window.requestAnimationFrame(() => {
-      const top = frame.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top, behavior: 'smooth' });
-    });
-  });
-
-  const go = (top: number) => {
-    heading = top;
-    from = window.scrollY;
-    tries += 1;
-    window.scrollTo({ top, behavior: 'smooth' });
+  const stop = () => {
+    window.cancelAnimationFrame(glide);
+    glide = 0;
   };
 
-  const act = () => {
-    if (touching) return;
-    if ((window.visualViewport?.scale ?? 1) > 1.01) {
-      armed = false;
-      return;
-    }
-    if (armed) {
-      armed = false;
-      tries = 0;
-      const top = restingPlace(frames, window.scrollY, down);
-      if (top !== undefined) go(top);
-    } else if (heading !== undefined) {
-      // Stopped short of it is an interruption. Anywhere else, something else moved the page.
-      const y = window.scrollY;
-      const short = (y - from) * (y - heading) < 0 && Math.abs(y - heading) > ALIGNED;
-      if (short && tries < 3) go(heading);
-      else heading = undefined;
-    }
+  // Input that isn't a scroll means the page wasn't left alone after all.
+  const standDown = () => {
+    stop();
+    armed = false;
+    window.clearTimeout(timer);
   };
 
-  // A busy page can run this timer in the middle of a scroll, so look again across two frames.
-  const settle = () => {
-    const y = window.scrollY;
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        if (window.scrollY === y) act();
-        else wait();
-      });
-    });
+  // By hand, not a smooth scrollTo, so that it can be stopped dead on every browser.
+  const glideTo = (top: number) => {
+    stop();
+    const from = window.scrollY;
+    const start = performance.now();
+    const step = (now: number) => {
+      const elapsed = Math.min(1, (now - start) / GLIDE);
+      expected = from + (top - from) * ease(elapsed);
+      window.scrollTo({ top: expected, behavior: 'instant' });
+      glide = elapsed < 1 ? window.requestAnimationFrame(step) : 0;
+    };
+    glide = window.requestAnimationFrame(step);
   };
 
-  // Any new input from the visitor outranks where the guide was going. Input that moved nothing,
-  // like Home at the top of the page, must not stay armed for the next scroll that isn't theirs.
+  const frameUp = () => {
+    if (!armed || touching) return;
+    armed = false;
+    if ((window.visualViewport?.scale ?? 1) > 1.01) return;
+    if (window.getSelection()?.isCollapsed === false) return;
+    const top = restingPlace(frames, window.scrollY);
+    if (top !== undefined) glideTo(top);
+  };
+
+  const wait = () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(frameUp, IDLE);
+  };
+
+  // Input that moved nothing, like Home at the top of the page, must not stay armed for the next
+  // scroll that isn't theirs.
   const arm = () => {
+    stop();
     armed = true;
     scrolled = false;
-    heading = undefined;
     window.clearTimeout(disarm);
     disarm = window.setTimeout(() => {
       if (!scrolled && !touching) armed = false;
     }, DISARM);
   };
 
-  const wait = () => {
+  // Tabbing into a frame brings the whole frame up, not just the focused element. Only Tab: focus
+  // also moves when a control opens its scene.
+  document.addEventListener('focusin', (event) => {
+    if (!tabbed) return;
+    tabbed = false;
+    const frame = (event.target as HTMLElement).closest<HTMLElement>('[data-frame]');
+    const screen = frames[0]?.offsetHeight ?? window.innerHeight;
+    if (!frame || frame.offsetHeight > screen + ALIGNED) return;
+    // Next frame, because the browser scrolls to the focused element after this event, and smooth
+    // because that takes over from the browser's own smooth scroll.
+    window.requestAnimationFrame(() => {
+      const top = frame.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  // A press that opens a scene part way up the screen brings all of it into view.
+  document.addEventListener('moment:open', (event) => {
+    armed = false;
     window.clearTimeout(timer);
-    timer = window.setTimeout(settle, SETTLE);
-  };
+    const top = (event.target as HTMLElement).getBoundingClientRect().top + window.scrollY;
+    if (Math.abs(top - window.scrollY) > ALIGNED) glideTo(top);
+  });
 
   window.addEventListener(
     'wheel',
     (event) => {
-      if (!event.ctrlKey && event.deltaY !== 0) arm();
+      // A trackpad's stray sideways event stops a glide, and leaves a waiting settle waiting.
+      if (event.ctrlKey) standDown();
+      else if (event.deltaY !== 0) arm();
+      else stop();
     },
     { passive: true },
   );
-  // Taking hold of the page ends any trip the guide was on.
-  window.addEventListener(
-    'pointerdown',
-    () => {
-      heading = undefined;
-    },
-    { passive: true },
-  );
+  // Taking hold of the page ends any plan to move it.
+  window.addEventListener('pointerdown', standDown, { passive: true });
   window.addEventListener('keydown', (event) => {
     if (SCROLL_KEYS.has(event.key)) arm();
+    else standDown();
     tabbed = event.key === 'Tab';
   });
   window.addEventListener(
     'touchstart',
     () => {
+      stop();
       touching = true;
     },
     { passive: true },
   );
-  window.addEventListener('touchmove', arm, { passive: true });
+  // A finger that has moved stays armed: the scroll it caused may already have happened by now.
+  window.addEventListener(
+    'touchmove',
+    () => {
+      stop();
+      armed = true;
+      window.clearTimeout(disarm);
+    },
+    { passive: true },
+  );
   for (const type of ['touchend', 'touchcancel']) {
     window.addEventListener(
       type,
@@ -181,12 +190,25 @@ export const startFrames = () => {
       { passive: true },
     );
   }
+  // A turned phone has a different page, and the old target means nothing on it. The address bar
+  // only changes the height.
+  let width = window.innerWidth;
+  window.addEventListener(
+    'resize',
+    () => {
+      if (window.innerWidth !== width) stop();
+      width = window.innerWidth;
+    },
+    { passive: true },
+  );
   window.addEventListener(
     'scroll',
     () => {
-      const y = window.scrollY;
-      if (y !== lastY) down = y > lastY;
-      lastY = y;
+      // Anything else moving the page while it glides wins.
+      if (glide) {
+        if (Math.abs(window.scrollY - expected) > 2) stop();
+        return;
+      }
       scrolled = true;
       wait();
     },

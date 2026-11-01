@@ -10,7 +10,7 @@ People who might work with Nathan, join AI Build Night, or try one of the produc
 
 ## Positioning
 
-The line is "I build for real people." Each section names the people it is for: builders, casts, rivals, creators.
+The line is "I build for real people." Each project names the people it is for: builders, casts, explorers, creators.
 
 Move away from "outdoorsy nature app builder". Parkdex stays on the site as a game, not as the identity.
 
@@ -23,4 +23,4 @@ Move away from "outdoorsy nature app builder". Parkdex stays on the site as a ga
 
 ## Scope
 
-In: the four worlds, working rules, a link index, contact. Out: résumé, blog, CMS, contact form, project archive. The old writing and smaller projects are on production and in git history.
+In: the four worlds, a link index, contact. Out: résumé, blog, CMS, contact form, project archive. The old writing and smaller projects are on production and in git history.

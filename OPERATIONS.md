@@ -108,13 +108,13 @@ To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflar
 
 ## Choosing a hero
 
-Five hero options are on staging. Toggle them with the pill at the bottom of the hero, or link straight to one with `?hero=1` to `?hero=5`: Poster, Doors, Sentence, Name badge, Departures. The toggle only appears on `staging.nathanpannell.com` and local builds.
+Eight hero options are on staging. Toggle them with the pill at the bottom of the hero, or link straight to one with `?hero=1` to `?hero=8`: Doors, Name badge, Departures, Elevator, Pick a card, Neon sign, Receipt, Channels. The toggle only appears on `staging.nathanpannell.com` and local builds.
 
 To settle on one:
 
 1. In `src/components/Hero.astro`, render the chosen component directly in the section, and remove `data-hero-slot`, the `<template>`s, the imports of the others and the toggle's markup and styles.
 2. Delete the other components from `src/components/heroes/`, and `heroes` from `worlds.ts`.
-3. In `src/scripts/heroes.ts`, keep only the chosen hero's script, if it has one, and call it from `index.astro`. Delete the rest. Poster and Doors have no script beyond the door swing.
+3. In `src/scripts/heroes.ts`, keep only the chosen hero's script, if it has one, and call it from `index.astro`. Delete the rest. Neon sign and Receipt have no script at all.
 4. Remove the toggle's tests in `e2e/frames.spec.ts`, and the toggle check in `tests/content-contract.mjs`.
 5. If Doors is not the one, update the door tests in `e2e/navigation.spec.ts` to the chosen hero's links.
 
@@ -126,7 +126,7 @@ For interface changes:
 - Test the deployed staging URL with browser-use.
 - Check phone, intermediate, desktop, and wide layouts.
 - Verify keyboard focus, touch behavior, reduced motion, media height caps, and console errors where relevant.
-- If a frame or click moment changes, go through it both ways on a real phone width, once clicking and once just scrolling past, and confirm its reduced-motion layout.
+- If a frame or click moment changes, go through it both ways on a real phone width, once clicking and once just scrolling past, which must leave it closed, and confirm its reduced-motion layout.
 - If device mockups change, check chassis visibility at the smallest shipped size.
 - If content changes, check the generated route and social metadata.
 

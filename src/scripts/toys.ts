@@ -1,5 +1,6 @@
-// "Grab a toy": a small physics yard. Toys drop in when the yard scrolls into view and can be
-// picked up and thrown with a mouse or a finger. The loop sleeps once everything has settled.
+// The toys on the Play by the Sandbox screen: a small physics yard. They tumble in once the rainbow
+// has gone and can be picked up and thrown with a mouse or a finger. The loop sleeps once everything
+// has settled.
 
 import { reducedMotion } from './motion';
 
@@ -18,6 +19,11 @@ interface Toy {
 const GRAVITY = 0.55;
 const BOUNCE = 0.42;
 const FRICTION = 0.985;
+// How long after the box opens the toys drop in, in milliseconds. The rainbow has left by then.
+const DROP_AT = 1500;
+// One step of the physics, in milliseconds, however fast the screen happens to draw.
+const STEP = 1000 / 60;
+const MOST_BEHIND = STEP * 8;
 
 export const startToys = () => {
   const yard = document.querySelector<HTMLElement>('[data-yard]');
@@ -54,7 +60,7 @@ export const startToys = () => {
   toys.forEach(place);
   if (reducedMotion()) return;
 
-  const tick = () => {
+  const advance = () => {
     let moving = false;
     for (const toy of toys) {
       if (toy.held) {
@@ -84,8 +90,19 @@ export const startToys = () => {
         toy.vx *= -0.7;
       }
       if (Math.abs(toy.vx) > 0.05 || toy.vy !== 0 || toy.y < bottom) moving = true;
-      place(toy);
     }
+    return moving;
+  };
+
+  let last = 0;
+  let behind = 0;
+
+  const tick = (now: number) => {
+    behind = Math.min(MOST_BEHIND, behind + now - last);
+    last = now;
+    let moving = behind < STEP;
+    for (; behind >= STEP; behind -= STEP) moving = advance();
+    toys.filter((toy) => !toy.held).forEach(place);
     if (moving) window.requestAnimationFrame(tick);
     else running = false;
   };
@@ -93,24 +110,23 @@ export const startToys = () => {
   const wake = () => {
     if (running) return;
     running = true;
+    last = performance.now();
+    behind = 0;
     window.requestAnimationFrame(tick);
   };
 
-  // Drop the toys from above the first time the yard is seen.
-  const entrance = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry?.isIntersecting) return;
-      entrance.disconnect();
-      toys.forEach((toy, index) => {
-        toy.y = -toy.size - index * 130;
-        toy.vx = (index % 2 === 0 ? 1 : -1) * 1.5;
-        toy.spin = (index % 2 === 0 ? 1 : -1) * 3;
-      });
-      wake();
-    },
-    { threshold: 0.3 },
-  );
-  entrance.observe(yard);
+  const dropIn = () => {
+    measure();
+    toys.forEach((toy, index) => {
+      toy.y = -toy.size - index * 130;
+      toy.vx = (index % 2 === 0 ? 1 : -1) * 1.5;
+      toy.spin = (index % 2 === 0 ? 1 : -1) * 3;
+    });
+    wake();
+  };
+  yard.closest('[data-moment]')?.addEventListener('moment:open', () => {
+    window.setTimeout(dropIn, DROP_AT);
+  });
 
   for (const toy of toys) {
     let lastX = 0;

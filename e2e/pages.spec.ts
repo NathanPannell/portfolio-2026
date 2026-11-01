@@ -50,8 +50,7 @@ const clippedText = (page: Page) =>
     ]
       .filter(
         (element) =>
-          !element.closest('[aria-hidden="true"], .rules, .tape, .marquee') &&
-          element.getClientRects().length > 0,
+          !element.closest('[aria-hidden="true"], [inert]') && element.getClientRects().length > 0,
       )
       .filter((element) => {
         const { left, right } = element.getBoundingClientRect();
@@ -111,11 +110,11 @@ test('every world has its heading and its links', async ({ page }) => {
     'https://www.playbythesandbox.ca/',
     'https://offbooked.com/',
     'https://parkdex.app/',
-    'https://web.parkdex.app/',
     'https://play.google.com/store/apps/details?id=app.parkdex',
   ]) {
     expect(hrefs).toContain(url);
   }
+  expect(hrefs).not.toContain('https://web.parkdex.app/');
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(1);
 });
 
@@ -138,8 +137,8 @@ const uncoveredPoints = (locator: Locator) =>
 const moments = [
   { name: 'AI Build Night', scene: '.abn-cover', control: '.abn-key', inside: '.abn-show__cta' },
   { name: 'Offbooked', scene: '#offbooked', control: '.rope', inside: '.ticket' },
-  { name: 'Parkdex', scene: '.pk-trip', control: '.pk-plant', inside: '[data-stop] h3' },
-  { name: 'Play by the Sandbox', scene: '.sb-open', control: '.sb-box__open', inside: '#sb-title' },
+  { name: 'Parkdex', scene: '#parkdex', control: '.pk-plant', inside: '[data-stop] h3' },
+  { name: 'Play by the Sandbox', scene: '.sb-open', control: '.sb-box__open', inside: '.sb__cta' },
 ] as const;
 
 const useControl = async (page: Page, scene: string, control: string) => {
@@ -150,8 +149,8 @@ const useControl = async (page: Page, scene: string, control: string) => {
 };
 
 const landKip = async (page: Page) => {
-  await useControl(page, '.pk-trip', '.pk-plant');
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '', { timeout: 12000 });
+  await useControl(page, '#parkdex', '.pk-plant');
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
 };
 
 for (const { name, scene, control, inside } of moments) {
@@ -178,23 +177,41 @@ for (const { name, scene, control, inside } of moments) {
     await expect(page.locator(scene)).toBeFocused();
   });
 
-  test(`${name} opens by itself after a while on screen`, async ({ page }) => {
+  test(`${name} is one full screen until it is opened`, async ({ page }) => {
     await page.goto('/');
-    await jumpTo(page, scene);
-    await expect(page.locator(scene)).toHaveAttribute('data-here', '');
-    await page.waitForTimeout(3000);
-    await expect(page.locator(scene)).toHaveAttribute('data-waiting', '');
-    await expect(page.locator(scene)).toHaveAttribute('data-open', '', { timeout: 5000 });
-  });
-
-  test(`scrolling past ${name} opens it`, async ({ page }) => {
-    await page.goto('/');
-    await page.evaluate(() => window.scrollTo({ top: 99999, behavior: 'instant' }));
-    await expect(page.locator(scene)).toHaveAttribute('data-open', '');
-    await page.reload();
-    await expect(page.locator(scene)).not.toHaveAttribute('data-waiting', '');
+    const fills = await page.locator(scene).evaluate((element) => {
+      const hero = document.querySelector<HTMLElement>('.hero')?.offsetHeight;
+      return element.getBoundingClientRect().height === hero;
+    });
+    expect(fills).toBe(true);
   });
 }
+
+test('nothing but the visitor opens a scene', async ({ page }) => {
+  test.setTimeout(30000);
+  await page.goto('/');
+  for (const { scene } of moments) await jumpTo(page, scene);
+  await jumpTo(page, '#offbooked');
+  await page.waitForTimeout(6500);
+  await page.evaluate(() => window.scrollTo({ top: 99999, behavior: 'instant' }));
+  await page.waitForTimeout(300);
+  for (const { scene } of moments) {
+    await expect(page.locator(scene)).toHaveAttribute('data-waiting', '');
+  }
+  await page.reload();
+  await expect(page.locator('[data-waiting]')).toHaveCount(4);
+});
+
+test('the keyboard goes from one closed scene to the next', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  await page.goto('/');
+  await page.locator('.abn-key').focus();
+  for (const control of ['.rope', '.pk-plant', '.sb-box__open']) {
+    await page.keyboard.press('Tab');
+    await expect(page.locator(control)).toBeFocused();
+  }
+  await expect(page.locator('[data-waiting]')).toHaveCount(4);
+});
 
 test('clicking a closed scene away from its control leaves it closed', async ({ page }) => {
   await page.goto('/');
@@ -243,28 +260,67 @@ test('the curtains open, then the ad lands piece by piece on a clock', async ({ 
   expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
 });
 
-test('tabbing to the ticket opens the curtains', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
-  await page.goto('/');
-  await page.locator('.ticket').focus();
-  await expect(page.locator('#offbooked')).toHaveAttribute('data-open', '');
-});
-
-test('the Offbooked phones keep changing screens', async ({ page }) => {
+test('the opened Offbooked screen keeps only the title, the waveform and one phone', async ({
+  page,
+}) => {
   await page.goto('/');
   await useControl(page, '#offbooked', '.rope');
-  const handset = page.locator('.handset--1');
+  await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 12000 });
+  await expect(page.locator('.handset')).toHaveCount(1);
+  await expect(page.locator('.handset img')).toHaveCount(1);
+  await expect(page.locator('.handset')).toBeInViewport({ ratio: 0.98 });
+  await expect(page.locator('.voices')).toBeInViewport();
+  await expect
+    .poll(() => page.locator('.beam--left').evaluate((e) => Number(getComputedStyle(e).opacity)))
+    .toBeGreaterThan(0.5);
+  await expect(page.locator('.stamp, .marquee, .script, .slab, .tape, .bubble')).toHaveCount(0);
+});
+
+test('the Offbooked ad does not follow the pointer', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'There is no pointer to follow.');
+  await page.goto('/');
+  await useControl(page, '#offbooked', '.rope');
+  const phone = page.locator('.handset');
+  await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 12000 });
+  await page.mouse.move(100, 100);
+  await page.waitForTimeout(100);
+  const before = await phone.boundingBox();
+  await page.mouse.move(1200, 700, { steps: 4 });
+  await page.waitForTimeout(100);
+  expect(await phone.boundingBox()).toEqual(before);
+});
+
+test('the Offbooked loops rest off screen', async ({ page }) => {
+  await page.goto('/');
+  await useControl(page, '#offbooked', '.rope');
+  const voices = page.locator('.voices');
   const running = () =>
-    handset.evaluate((element) =>
+    voices.evaluate((element) =>
       element
         .getAnimations({ subtree: true })
         .some((animation) => animation.playState === 'running'),
     );
   await expect.poll(running).toBe(true);
-  // Out of view, the loops rest.
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await expect(page.locator('#offbooked')).toHaveAttribute('data-resting', '');
   await expect.poll(running).toBe(false);
+});
+
+test('the ticket carries the details of the show', async ({ page }) => {
+  await page.goto('/');
+  const ticket = page.locator('.ticket');
+  await expect(ticket).toHaveAttribute('href', 'https://offbooked.com/');
+  for (const detail of [
+    'Admit the whole cast',
+    'Free in public beta. Cast never pay.',
+    'One link. No account needed.',
+    'Any phone, tablet or laptop.',
+    'Casts in British Columbia and Nova Scotia.',
+    'Places, everyone.',
+    'offbooked.com',
+  ]) {
+    await expect(ticket).toContainText(detail);
+  }
 });
 
 test('the Offbooked ticket can be clicked once it lands', async ({ page }) => {
@@ -273,39 +329,6 @@ test('the Offbooked ticket can be clicked once it lands', async ({ page }) => {
   const ticket = page.locator('.ticket');
   await expect(ticket).toHaveCSS('opacity', '1', { timeout: 12000 });
   await expect.poll(() => uncoveredPoints(ticket)).toBe(9);
-});
-
-test('an address bar never puts the marquee over the ticket', async ({ page }) => {
-  test.setTimeout(60000);
-  // Test browsers have no bar, so stand in for one. The doubled class beats the scoped rule.
-  for (const [width, height, bar] of [
-    [390, 844, 86],
-    [412, 915, 56],
-    [844, 390, 56],
-    [667, 375, 76],
-  ] as const) {
-    await page.setViewportSize({ width, height });
-    await page.goto('/');
-    await page.addStyleTag({ content: `.ob-stage.ob-stage { --bar: ${bar}px; }` });
-    await useControl(page, '#offbooked', '.rope');
-    const ticket = page.locator('.ticket');
-    await expect(ticket).toHaveCSS('opacity', '1', { timeout: 12000 });
-    await expect.poll(() => uncoveredPoints(ticket), `${width}x${height}`).toBe(9);
-    // The marquee itself stands clear of the bar.
-    await expect
-      .poll(
-        () =>
-          page.locator('.marquee').evaluate((element) => {
-            const stage = element.closest('.ob-stage') as HTMLElement;
-            const gap =
-              stage.getBoundingClientRect().bottom - element.getBoundingClientRect().bottom;
-            return Math.round(gap);
-          }),
-        `${width}x${height}`,
-      )
-      .toBe(bar);
-    if (width === 390) await expect.poll(() => uncoveredPoints(page.locator('.tape'))).toBe(9);
-  }
 });
 
 const everySize = [
@@ -329,7 +352,6 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
     await useControl(page, '#offbooked', '.rope');
     const title = page.locator('#ob-title');
     await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 12000 });
-    // Measured by hand, because the pointer's parallax can leave a fraction of a pixel of rounding.
     const edges = await title.evaluate((element) => {
       const { left, right, top, bottom } = element.getBoundingClientRect();
       return { left, top, right: window.innerWidth - right, bottom: window.innerHeight - bottom };
@@ -347,6 +369,20 @@ test('the finished ad keeps its headline and ticket clear at every size', async 
       )
       .toBe(true);
     await expect.poll(() => uncoveredPoints(page.locator('.ticket'))).toBe(9);
+    await expect(page.locator('.ticket')).toBeInViewport({ ratio: 1 });
+    // The one phone stays clear of the words on both sides of it.
+    const phone = await page.locator('.handset').boundingBox();
+    const stub = await page.locator('.ticket').boundingBox();
+    const words = await title.locator('> *').last().boundingBox();
+    const beside = (phone?.x ?? 0) >= (stub?.x ?? 0) + (stub?.width ?? 0) - 1;
+    if (!beside) {
+      expect(phone?.y ?? 0, `${width}x${height}`).toBeGreaterThanOrEqual(
+        (words?.y ?? 0) + (words?.height ?? 0) - 12,
+      );
+      expect((phone?.y ?? 0) + (phone?.height ?? 0), `${width}x${height}`).toBeLessThanOrEqual(
+        (stub?.y ?? 0) + 12,
+      );
+    }
     // Sampling a point isn't enough: the ticket has to sit wholly below the headline's last line.
     const lastLine = await title.locator('> *').last().boundingBox();
     const ticket = await page.locator('.ticket').boundingBox();
@@ -393,57 +429,195 @@ test('the live site opens out of the cursor', async ({ page }) => {
   await expect.poll(() => uncoveredPoints(cta)).toBeGreaterThanOrEqual(8);
 });
 
-test('tabbing past the key still reaches the links behind it', async ({ page, isMobile }) => {
+test('Enter opens onto one screen, with the north star lines in it', async ({ page }) => {
+  await page.goto('/');
+  await useControl(page, '.abn-cover', '.abn-key');
+  await expect(page.locator('.abn-stars')).toContainText(
+    'The next unicorn can come from Vancouver Island.',
+  );
+  await expect(page.locator('.abn-stars')).toContainText('We share what we learn.');
+  await expect(page.locator('.abn-stars')).toBeInViewport({ ratio: 1, timeout: 4000 });
+  await expect(page.locator('.abn-room, .abn-tenets, [data-room]')).toHaveCount(0);
+});
+
+const noWebAudio = "Playwright's WebKit build has no Web Audio.";
+
+// Counts what the page asks Web Audio for, without needing to hear it.
+const listenForThocc = (page: Page) =>
+  page.addInitScript(() => {
+    const heard = { contexts: 0, tones: 0, noises: 0 };
+    Object.assign(window, { heard });
+    const Real = window.AudioContext;
+    window.AudioContext = class extends Real {
+      constructor() {
+        super();
+        heard.contexts += 1;
+      }
+
+      override createOscillator() {
+        heard.tones += 1;
+        return super.createOscillator();
+      }
+
+      override createBufferSource() {
+        heard.noises += 1;
+        return super.createBufferSource();
+      }
+    };
+  });
+
+const heard = (page: Page) =>
+  page.evaluate(
+    () =>
+      (window as unknown as { heard: { contexts: number; tones: number; noises: number } }).heard,
+  );
+
+test('the Enter key thoccs when pressed, and is silent until then', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  await listenForThocc(page);
+  const errors = collectErrors(page);
+  await page.goto('/');
+  await jumpTo(page, '.abn-cover');
+  await page.waitForTimeout(300);
+  expect(await heard(page)).toEqual({ contexts: 0, tones: 0, noises: 0 });
+  // A tap on a phone, which is the path iOS needs: only the lift counts as a gesture for audio.
+  if (isMobile) await page.locator('.abn-key').tap();
+  else await page.locator('.abn-key').click();
+  await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(2);
+  expect((await heard(page)).contexts).toBe(1);
+  expect(errors).toEqual([]);
+});
+
+test('the Enter key thoccs from the keyboard too', async ({ page, isMobile, browserName }) => {
+  test.skip(browserName === 'webkit', noWebAudio);
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  await listenForThocc(page);
   await page.goto('/');
   await page.locator('.abn-key').focus();
-  await page.keyboard.press('Tab');
-  await expect(page.locator('.abn-show__cta')).toBeFocused();
-  await expect(page.locator('.abn-cover')).toHaveAttribute('data-open', '');
+  await page.keyboard.press('Enter');
+  await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(2);
 });
 
-test('the room plays out on a clock while its frame is on screen', async ({ page }) => {
+test('a mouse press dragged off the key leaves the keyboard its thocc', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  test.skip(isMobile, 'This is a mouse and keyboard journey.');
+  await listenForThocc(page);
   await page.goto('/');
-  const word = page.locator('.abn-room__copy li[data-on]');
-  await jumpTo(page, '.abn-room');
-  await expect(word).toHaveText('Doors.');
-  const scrollY = await page.evaluate(() => window.scrollY);
-  await expect(word).toHaveText('Build.', { timeout: 6000 });
-  expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await jumpTo(page, '.abn-cover');
+  const key = await page.locator('.abn-key').boundingBox();
+  if (!key) throw new Error('No key');
+  await page.mouse.move(key.x + key.width / 2, key.y + key.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(40, 40);
+  await page.mouse.up();
+  await expect(page.locator('.abn-cover')).toHaveAttribute('data-waiting', '');
+  await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(2);
+  await page.locator('.abn-key').focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(4);
+});
+
+test('each scene sounds when it is opened, and only then', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  test.setTimeout(30000);
+  await listenForThocc(page);
+  const errors = collectErrors(page);
+  await page.goto('/');
+  await page.evaluate(() => window.scrollTo({ top: 99999, behavior: 'instant' }));
   await page.waitForTimeout(300);
-  const held = await word.textContent();
-  await page.waitForTimeout(3000);
-  expect(await word.textContent()).toBe(held);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  expect(await heard(page)).toEqual({ contexts: 0, tones: 0, noises: 0 });
+
+  const louder = async (open: () => Promise<unknown>) => {
+    const before = await heard(page);
+    await open();
+    await expect
+      .poll(() => heard(page).then(({ tones, noises }) => tones + noises))
+      .toBeGreaterThan(before.tones + before.noises);
+  };
+  await louder(() => useControl(page, '#offbooked', '.rope'));
+  await louder(() => useControl(page, '#parkdex', '.pk-plant'));
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
+  await louder(() => page.locator('.pk-slide').click());
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+  await louder(() => useControl(page, '.sb-open', '.sb-box__open'));
+  expect((await heard(page)).contexts).toBe(1);
+  expect(errors).toEqual([]);
 });
 
-test('the tenets and the rules wipe on when their frames arrive', async ({ page }) => {
+test('pulling the rope sounds the curtains as well as clicking it', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
+  test.skip(isMobile, 'The drag uses the mouse; touch shares its pointer events.');
+  test.skip(browserName === 'webkit', noWebAudio);
+  await listenForThocc(page);
   await page.goto('/');
-  const line = page.locator('.abn-tenets__one');
-  await expect(line).toHaveCSS('clip-path', 'inset(0px 100% 0px 0px)');
-  await jumpTo(page, '.abn-tenets');
-  await expect(line).toHaveCSS('clip-path', 'none', { timeout: 4000 });
-  await jumpTo(page, '#rules');
-  await expect(page.locator('#rules p').first()).toHaveCSS('translate', 'none', { timeout: 4000 });
+  await jumpTo(page, '#offbooked');
+  const tassel = await page.locator('.rope__tassel').boundingBox();
+  if (!tassel) throw new Error('The rope has no tassel');
+  const x = tassel.x + tassel.width / 2;
+  const y = tassel.y + tassel.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x, y + 90, { steps: 6 });
+  await expect(page.locator('#offbooked')).toHaveAttribute('data-open', '');
+  await page.mouse.up();
+  await expect.poll(() => heard(page).then(({ noises }) => noises)).toBeGreaterThan(0);
+  expect((await heard(page)).contexts).toBe(1);
 });
 
-test('Plant! sends Kip down the vine, and each stop scores', async ({ page }) => {
+test('reaching the park by scrolling makes no sound of its own', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  test.setTimeout(30000);
+  await listenForThocc(page);
   await page.goto('/');
-  await jumpTo(page, '.pk-trip');
+  await landKip(page);
+  const before = await heard(page);
+  await page.evaluate(() => window.scrollBy({ top: window.innerHeight, behavior: 'instant' }));
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 6000 });
+  expect(await heard(page)).toEqual(before);
+});
+
+test('a page with no sound still opens', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.AudioContext = class {
+      constructor() {
+        throw new Error('No audio here');
+      }
+    } as unknown as typeof AudioContext;
+  });
+  await page.goto('/');
+  await useControl(page, '.abn-cover', '.abn-key');
+  await useControl(page, '#offbooked', '.rope');
+  await useControl(page, '#parkdex', '.pk-plant');
+  await useControl(page, '.sb-open', '.sb-box__open');
+});
+
+test('Plant! sends Kip down the vine to the four stops', async ({ page }) => {
+  await page.goto('/');
+  await jumpTo(page, '#parkdex');
   await expect(page.locator('#pk-title')).toBeInViewport();
-  const score = page.locator('[data-score]');
-  await expect(score).toHaveText('0');
   await expect(page.locator('[data-stop]').first()).toBeHidden();
+  await expect(page.locator('.pk-ground')).toBeHidden();
   const scrollY = await page.evaluate(() => window.scrollY);
 
   await page.locator('.pk-plant').click();
-  await expect(score).toHaveText('6');
   await expect(page.locator('.pk-mark')).toHaveCount(1);
 
   // Kip follows the vine's curve on the way down, on a clock, while the page stays put.
   const spots = new Set<number>();
   const rider = page.locator('[data-rider]');
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-riding', '');
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-riding', '');
   const screenWidth = page.viewportSize()?.width ?? 0;
   for (let sample = 0; sample < 8; sample += 1) {
     const box = await rider.boundingBox();
@@ -455,14 +629,104 @@ test('Plant! sends Kip down the vine, and each stop scores', async ({ page }) =>
   }
   expect(spots.size).toBeGreaterThan(2);
 
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '', { timeout: 12000 });
-  await expect(score).toHaveText('54', { timeout: 4000 });
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
   for (const stop of await page.locator('[data-stop] img').all()) {
     await expect(stop).toBeInViewport();
   }
   expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
-  await expect(page.locator('.pk-points')).toHaveCount(0, { timeout: 3000 });
+  // The owner cut these.
+  await expect(page.locator('.pk-pole, .pk-score, [data-score], .pk-points')).toHaveCount(0);
 });
+
+const groundTop = (page: Page) =>
+  page.locator('.pk-ground').evaluate((element) => {
+    return Math.round(element.getBoundingClientRect().top + window.scrollY);
+  });
+
+test('the second button slides Kip down to the parks and off the end of the vine', async ({
+  page,
+}) => {
+  test.setTimeout(30000);
+  await page.goto('/');
+  await landKip(page);
+  const trip = page.locator('#parkdex');
+  const diver = page.locator('[data-diver]');
+  await expect(page.locator('.pk-end__kip')).toBeHidden();
+  await page.locator('.pk-slide').click();
+  await expect(trip).toHaveAttribute('data-diving', '');
+  await expect(page.locator('.pk-slide')).toBeHidden();
+
+  // The page comes along. Kip drops in from above the screen, and stays on it from then on.
+  const height = page.viewportSize()?.height ?? 0;
+  let entered = false;
+  for (let sample = 0; sample < 8; sample += 1) {
+    await page.waitForTimeout(250);
+    if (!(await diver.isVisible())) break;
+    const box = await diver.boundingBox();
+    const top = box?.y ?? 9999;
+    expect(top).toBeLessThan(height);
+    const showing = top + (box?.height ?? 0) > 0;
+    if (entered) expect(showing).toBe(true);
+    entered ||= showing;
+  }
+  expect(entered).toBe(true);
+  await expect(trip).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+  await expect(diver).toBeHidden();
+  await expect(page.locator('.pk-end__kip')).toBeInViewport();
+  await expect
+    .poll(() => page.evaluate(() => Math.round(window.scrollY)))
+    .toBe(await groundTop(page));
+  const links = page.locator('.pk-end__links a');
+  await expect(links).toHaveCount(2);
+  await expect(page.locator('.pk-end h3')).toHaveText('1,000+ parks. Which one’s yours?');
+});
+
+test('pressing Plant! part way off the screen still leaves the second button', async ({ page }) => {
+  test.setTimeout(30000);
+  await page.goto('/');
+  const height = await page.evaluate(() => window.innerHeight);
+  await jumpTo(page, '#parkdex');
+  await page.evaluate((by) => window.scrollBy({ top: by, behavior: 'instant' }), height * 0.3);
+  await page.locator('.pk-plant').evaluate((button) => (button as HTMLElement).click());
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
+  await expect(page.locator('.pk-slide')).toBeVisible();
+  await expect(page.locator('#parkdex')).not.toHaveAttribute('data-jumped', '');
+});
+
+test('scrolling down to the parks by hand still gets the jump', async ({ page }) => {
+  test.setTimeout(30000);
+  await page.goto('/');
+  await landKip(page);
+  await page.evaluate(() => window.scrollBy({ top: window.innerHeight, behavior: 'instant' }));
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 6000 });
+  await expect(page.locator('.pk-end__kip')).toBeInViewport();
+  // There is no way on left to take.
+  await expect(page.locator('.pk-slide')).toBeHidden();
+});
+
+for (const input of ['wheel', 'key', 'press'] as const) {
+  test(`a ${input} during the slide lets the page go`, async ({ page, isMobile }) => {
+    test.skip(isMobile, 'These stand in for any input here.');
+    test.setTimeout(30000);
+    await page.goto('/');
+    await landKip(page);
+    const start = await page.evaluate(() => window.scrollY);
+    await page.locator('.pk-slide').click();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(start + 10);
+    if (input === 'wheel') await page.mouse.wheel(0, -40);
+    if (input === 'key') await page.keyboard.press('Shift');
+    if (input === 'press') {
+      await page.mouse.down();
+      await page.mouse.up();
+    }
+    await page.waitForTimeout(120);
+    const held = await page.evaluate(() => window.scrollY);
+    await page.waitForTimeout(500);
+    expect(await page.evaluate(() => window.scrollY)).toBe(held);
+    // Kip finishes the trip regardless.
+    await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+  });
+}
 
 // Watches, frame by frame from inside the page, how much of the screen the six bands cover at most.
 const watchRainbow = (page: Page) =>
@@ -498,24 +762,7 @@ test('the toy box pours the rainbow across, then shows the page', async ({ page 
   await expect(page.locator('.sb-open video')).toBeInViewport();
 });
 
-test('a reload part-way down comes back with everything above it open', async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => {
-    window.history.scrollRestoration = 'auto';
-  });
-  await jumpTo(page, '.sb-panels');
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-open', '');
-  await page.reload();
-  // Settled, not replayed: the scene is already finished, and the score didn't count up.
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-settled', '');
-  await expect(page.locator('.pk-trip')).toHaveAttribute('data-landed', '');
-  await expect(page.locator('[data-score]')).toHaveText('54');
-  await expect(page.locator('.pk-points')).toHaveCount(0);
-  await expect(page.locator('.sb-open')).toHaveAttribute('data-settled', '');
-  await expect(page.locator('.sb-panels')).toBeInViewport();
-});
-
-for (const scene of ['#offbooked', '.pk-ground', '#rules']) {
+for (const scene of ['#offbooked', '#play-by-the-sandbox', '#go']) {
   test(`a reload at ${scene} stays exactly where it was`, async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => {
@@ -563,8 +810,8 @@ test('every scene rests its loops while it is off screen', async ({ page }) => {
   const scenes = page.locator('[data-loops]');
   await expect(scenes).toHaveCount(4);
   await expect(page.locator('[data-loops]:not([data-resting])')).toHaveCount(0);
-  await jumpTo(page, '.pk-trip');
-  await expect(page.locator('.pk-trip')).not.toHaveAttribute('data-resting', '');
+  await jumpTo(page, '#parkdex');
+  await expect(page.locator('#parkdex')).not.toHaveAttribute('data-resting', '');
   await expect(page.locator('[data-loops]:not([data-resting])')).toHaveCount(1);
 });
 
@@ -582,17 +829,21 @@ test('a frame never needs a click to carry on past', async ({ page }) => {
 
 const toySettles = (page: Page, toy: Locator) =>
   expect
-    .poll(async () => {
-      const first = await toy.boundingBox();
-      await page.waitForTimeout(150);
-      const second = await toy.boundingBox();
-      return first && second && Math.abs(first.y - second.y) < 0.5 && second.y > 0;
-    })
+    .poll(
+      async () => {
+        const first = await toy.boundingBox();
+        await page.waitForTimeout(150);
+        const second = await toy.boundingBox();
+        return first && second && Math.abs(first.y - second.y) < 0.5 && second.y > 0;
+      },
+      { timeout: 16000 },
+    )
     .toBe(true);
 
 const settledToy = async (page: Page) => {
-  const yard = page.locator('[data-yard]');
-  await yard.scrollIntoViewIfNeeded();
+  await useControl(page, '.sb-open', '.sb-box__open');
+  // They drop in once the rainbow has gone.
+  await page.waitForTimeout(1800);
   const toy = page.locator('[data-toy]').first();
   await toySettles(page, toy);
   const box = await toy.boundingBox();
@@ -601,6 +852,7 @@ const settledToy = async (page: Page) => {
 };
 
 test('a toy can be picked up and thrown', async ({ page, isMobile }) => {
+  test.setTimeout(45000);
   test.skip(isMobile, 'The next test throws one by touch.');
   await page.goto('/');
   const { toy, box } = await settledToy(page);
@@ -619,6 +871,7 @@ test('a toy can be picked up and thrown', async ({ page, isMobile }) => {
 });
 
 test('a finger can drag a toy, and swiping elsewhere still scrolls', async ({ page, isMobile }) => {
+  test.setTimeout(45000);
   test.skip(!isMobile, 'Touch is a phone journey.');
   await page.goto('/');
   const { toy, box } = await settledToy(page);
@@ -640,6 +893,7 @@ test('a finger can drag a toy, and swiping elsewhere still scrolls', async ({ pa
 
   // Toys capture their own gestures, and a thrown one keeps sliding along the floor, so wait for
   // them all to stop. The swipe then starts high on the yard itself, well clear of the floor.
+  await toySettles(page, toy);
   const toyPositions = () =>
     page.locator('[data-toy]').evaluateAll((toys) =>
       toys.map((element) => {
@@ -672,6 +926,21 @@ test('a finger can drag a toy, and swiping elsewhere still scrolls', async ({ pa
   }
   await touch('touchEnd', start.left, start.top - 240);
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 100);
+});
+
+test('the toys are on the Sandbox screen, with no comic or wordmark around them', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await useControl(page, '.sb-open', '.sb-box__open');
+  await expect(page.locator('.sb-open [data-toy]')).toHaveCount(5);
+  await expect(page.locator('.sb-panels, .sb-lot, .sb__yard-title')).toHaveCount(0);
+  await expect(page.locator('img[src*="wordmark"], img[src*="panel-"]')).toHaveCount(0);
+  await expect(page.locator('.sb-open')).not.toContainText('grab a toy');
+  await page.waitForTimeout(1800);
+  for (const toy of await page.locator('[data-toy]').all()) {
+    await expect(toy).toBeInViewport({ ratio: 0.9, timeout: 4000 });
+  }
 });
 
 test('hovering or focusing an index row fills it with its image', async ({ page, isMobile }) => {
@@ -724,18 +993,6 @@ for (const width of [320, 390, 768, 1024, 1440, 1920]) {
   });
 }
 
-test('the tenets fit on short laptop screens', async ({ page }) => {
-  await page.setViewportSize({ width: 1366, height: 650 });
-  await page.goto('/');
-  await expect
-    .poll(() =>
-      page.locator('.abn-tenets').evaluate((element) => {
-        return element.scrollHeight - element.clientHeight;
-      }),
-    )
-    .toBeLessThanOrEqual(0);
-});
-
 // Whatever a frame has to show must fit inside it, or it can only be seen by leaving the frame.
 for (const [width, height] of everySize) {
   test(`every frame fits at ${width}x${height}`, async ({ page }) => {
@@ -743,9 +1000,21 @@ for (const [width, height] of everySize) {
     await page.setViewportSize({ width, height });
     await page.goto('/');
 
+    // Each closed screen shows all of itself too.
+    await jumpTo(page, '.abn-cover');
+    for (const part of ['#abn-title', '.abn-cover__line', '.abn-key']) {
+      await expect(page.locator(part), part).toBeInViewport({ ratio: 1 });
+    }
+    const line = await page.locator('.abn-cover__line').boundingBox();
+    const key = await page.locator('.abn-key').boundingBox();
+    const title = await page.locator('#abn-title').boundingBox();
+    expect(line?.y ?? 0).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0) - 12);
+    expect(key?.y ?? 0).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0) - 12);
+
     await useControl(page, '.abn-cover', '.abn-key');
     for (const part of [
       '.abn-show__copy h3',
+      '.abn-stars',
       '.abn-show__cta',
       '.abn-show__recap',
       '.abn-browser',
@@ -753,16 +1022,19 @@ for (const [width, height] of everySize) {
       await expect(page.locator(part), part).toBeInViewport({ ratio: 1, timeout: 4000 });
     }
 
-    await jumpTo(page, '.abn-room');
-    await expect(page.locator('.abn-room__plan canvas')).toBeInViewport({ ratio: 0.98 });
-
     await landKip(page);
     // Just under 1, because a fractional phone size can leave a millionth of one off screen.
     for (const stop of await page.locator('[data-stop]').all()) {
       await expect(stop).toBeInViewport({ ratio: 0.995, timeout: 4000 });
     }
+    await expect(page.locator('.pk-slide')).toBeInViewport({ ratio: 1 });
+    await expect.poll(() => uncoveredPoints(page.locator('.pk-slide'))).toBe(9);
 
-    await jumpTo(page, '.pk-ground');
+    await page.locator('.pk-slide').click();
+    await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+    await expect(page.locator('.pk-end__kip')).toBeInViewport({ ratio: 0.9 });
+    await expect(page.locator('.pk-sign')).toBeInViewport({ ratio: 1 });
+    await expect(page.locator('.pk-end h3')).toBeInViewport({ ratio: 1 });
     for (const link of await page.locator('.pk-end a').all()) {
       await expect(link).toBeInViewport({ ratio: 1 });
       await expect.poll(() => uncoveredPoints(link)).toBe(9);
@@ -772,17 +1044,7 @@ for (const [width, height] of everySize) {
     await expect(page.locator('.sb-box')).toBeHidden({ timeout: 3000 });
     await expect(page.locator('#sb-title')).toBeInViewport({ ratio: 1 });
     await expect(page.locator('.sb__screen')).toBeInViewport({ ratio: 0.95 });
-
-    await jumpTo(page, '.sb-panels');
-    for (const panel of await page.locator('.sb__strip img').all()) {
-      await expect(panel).toBeInViewport({ ratio: 0.9, timeout: 3000 });
-    }
-
-    await jumpTo(page, '.sb-lot');
     await expect(page.locator('.sb__cta')).toBeInViewport({ ratio: 0.95 });
-
-    await jumpTo(page, '#rules');
-    await expect(page.locator('#rules p').last()).toBeInViewport({ timeout: 3000 });
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 }
@@ -797,14 +1059,14 @@ test.describe('reduced motion', () => {
     await expect(page.locator('[data-moment-control]:visible')).toHaveCount(0);
     await expect(page.locator('.drape').first()).toBeHidden();
     await expect(page.locator('.wipe')).toBeHidden();
+    await expect(page.locator('[data-rider], [data-diver]')).toHaveCount(2);
     await expect(page.locator('[data-rider]')).toBeHidden();
+    await expect(page.locator('[data-diver]')).toBeHidden();
+    await expect(page.locator('.pk-end__kip')).toBeVisible();
     await expect(page.locator('.abn-show__cta')).toBeVisible();
     await expect(page.locator('.pk-end h3')).toBeVisible();
     await expect(page.locator('[data-stop] h3').first()).toBeVisible();
     await expect(page.locator('.ticket')).toHaveCSS('opacity', '1');
-    for (const step of await page.locator('.abn-room__copy li').all()) {
-      expect(await opacityOf(step)).toBe(1);
-    }
     const animations = await page.evaluate(() =>
       document
         .getAnimations()
@@ -825,25 +1087,25 @@ test.describe('reduced motion', () => {
   });
 
   test('the page is left exactly where a scroll stops it', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'The guide is the same on touch.');
+    test.skip(isMobile, 'Settling is the same on touch.');
     await page.goto('/');
     await page.mouse.move(400, 400);
     await page.mouse.wheel(0, 200);
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(2200);
     expect(await page.evaluate(() => window.scrollY)).toBe(200);
   });
 
   for (const [option, name] of [
-    [3, 'sentence'],
-    [4, 'badge'],
-    [5, 'board'],
+    [2, 'badge'],
+    [3, 'board'],
+    [8, 'channels'],
   ] as const) {
     test(`hero ${option}, the ${name}, holds still`, async ({ page }) => {
       await page.goto(`/?hero=${option}`);
       await page.waitForTimeout(300);
       const first = await page.locator('[data-hero-slot]').innerHTML();
-      // Longer than the sentence takes to start changing.
-      await page.waitForTimeout(3000);
+      // Longer than the channels take to start changing.
+      await page.waitForTimeout(4500);
       expect(await page.locator('[data-hero-slot]').innerHTML()).toBe(first);
     });
   }
@@ -861,17 +1123,9 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
   await expect(page.locator('.abn-show__cta')).toBeVisible();
   await expect(page.locator('[data-stop] img').first()).toBeVisible();
   await expect(page.locator('#sb-title')).toBeVisible();
-  // Visible isn't enough: the cover's headline stays clear of the site that follows it, and the
-  // room's words are a list instead of a pile.
+  // Visible isn't enough: the cover's headline stays clear of the site that follows it.
   await page.locator('#abn-title').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('#abn-title'))).toBeGreaterThan(0);
-  const words = await page
-    .locator('.abn-room__copy li')
-    .evaluateAll((items) => items.map((item) => Math.round(item.getBoundingClientRect().top)));
-  expect(new Set(words).size).toBe(4);
-  for (const reveal of await page.locator('[data-reveal]').all()) {
-    expect(await opacityOf(reveal)).toBe(1);
-  }
 });
 
 test('a script that stalls stops holding the scenes closed', async ({ page }) => {
@@ -896,9 +1150,6 @@ test.describe('without JavaScript', () => {
     await expect(page.locator('a[href="https://offbooked.com/"]').first()).toBeAttached();
     await page.locator('.wash-list').scrollIntoViewIfNeeded();
     await expect(page.locator('.wash-list li').first()).toBeVisible();
-    for (const step of await page.locator('.abn-room__copy li').all()) {
-      expect(await opacityOf(step)).toBe(1);
-    }
     for (const link of await page.locator('.pk-end a').all()) await expect(link).toBeVisible();
     await page.locator('#ob-title').scrollIntoViewIfNeeded();
     for (const part of await page.locator('#ob-title > *').all()) {

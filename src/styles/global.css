@@ -21,8 +21,8 @@ html {
   font-family: var(--sans);
   -webkit-text-size-adjust: 100%;
   overflow-x: clip;
-  /* Frames don't change height, so there's nothing to anchor against, and when a scene opens during
-     a smooth scroll, anchoring can cut that scroll short. */
+  /* Only Parkdex changes height, below the screen, so there's nothing to anchor against, and when a
+     scene opens during a smooth scroll, anchoring can cut that scroll short. */
   overflow-anchor: none;
 }
 
@@ -119,22 +119,6 @@ button {
 [data-resting] *::before,
 [data-resting] *::after {
   animation-play-state: paused !important;
-}
-
-/* Reveals are opt-in: startReveals switches them on, so content stays visible if no script runs. */
-@media (prefers-reduced-motion: no-preference) {
-  .reveals [data-reveal] {
-    opacity: 0;
-    transform: translateY(1.5rem) rotate(var(--reveal-turn, 0deg));
-    transition:
-      opacity 700ms var(--ease) var(--reveal-delay, 0ms),
-      transform 900ms var(--ease) var(--reveal-delay, 0ms);
-  }
-
-  .reveals [data-reveal][data-in] {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 .not-found {

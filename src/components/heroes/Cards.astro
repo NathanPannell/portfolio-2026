@@ -1,0 +1,215 @@
+---
+import { worlds } from './worlds';
+
+const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
+// With a text selector, so a phone doesn't swap them for emoji.
+const suits = ['♠︎', '♥︎', '♣︎', '♦︎'];
+---
+
+<div class="deal">
+  <header>
+    <h1>
+      Nathan Pannell builds things <span>for real people.</span>
+    </h1>
+    <p aria-hidden="true">Pick a card.</p>
+  </header>
+  <ul class="fan">
+    {worlds.map(({ name, href, colour }, index) => (
+      <li class={`card card--${faces[index]}`} style={`--i: ${index}; --tint: ${colour}`}>
+        <a href={href} data-card>
+          <span class="card__suit" aria-hidden="true">
+            {suits[index]}
+          </span>
+          <span class="card__name">{name}</span>
+          <span class="card__suit card__suit--low" aria-hidden="true">
+            {suits[index]}
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .deal {
+    --card: min(21vw, 42svh);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: center;
+    gap: clamp(0.5rem, 2svh, 1.5rem);
+    height: 100svh;
+    overflow: clip;
+    padding: 3.5rem var(--gutter) 4.5rem;
+    background: radial-gradient(90% 90% at 50% 45%, #17694f, #0a3a2c), #0a3a2c;
+    color: #fbf6e6;
+    text-align: center;
+  }
+
+  h1 {
+    max-width: 26ch;
+    font-size: min(4.4vw, 7svh);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+
+  h1 span {
+    display: inline-block;
+    color: #ffc83d;
+  }
+
+  header p {
+    margin-top: 0.3rem;
+    font-family: var(--mono);
+    font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+  }
+
+  /* Four cards fanned from a point below them. */
+  .fan {
+    position: relative;
+    align-self: center;
+    width: calc(var(--card) * 3.7);
+    height: calc(var(--card) * 1.42);
+  }
+
+  .card {
+    --slot: calc(var(--i) - 1.5);
+    position: absolute;
+    top: 0;
+    left: calc(50% - var(--card) / 2);
+    width: var(--card);
+    height: calc(var(--card) * 1.42);
+    perspective: 60rem;
+    transform: translateX(calc(var(--slot) * var(--card) * 0.9)) rotate(calc(var(--slot) * 5deg));
+    transform-origin: 50% 170%;
+    transition: translate 200ms var(--ease);
+  }
+
+  .card a {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 3px solid #0e1113;
+    border-radius: calc(var(--card) * 0.07);
+    background:
+      linear-gradient(var(--tint), var(--tint)) center / calc(100% - 0.8rem) calc(100% - 0.8rem)
+        no-repeat,
+      #fffdf6;
+    box-shadow: 0 0.7rem 1.3rem rgb(0 0 0 / 38%);
+    color: #0e1113;
+    text-decoration: none;
+    transform-origin: 50% 50%;
+    transition: transform 420ms cubic-bezier(0.5, 0, 0.75, 0);
+  }
+
+  .card[data-opening] a {
+    transform: rotateY(88deg);
+  }
+
+  .card__suit {
+    font-size: calc(var(--card) * 0.16);
+    line-height: 1;
+    text-align: left;
+  }
+
+  .card__suit--low {
+    rotate: 180deg;
+  }
+
+  .card__name {
+    align-self: center;
+    font-size: calc(var(--card) * 0.145);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .card--offbooked .card__name {
+    font-family: 'Newsreader Variable', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .card--parkdex .card__name {
+    font-family: 'Bricolage Grotesque Variable', var(--sans);
+    font-weight: 800;
+  }
+
+  .card--sandbox .card__name {
+    font-family: 'Chewy', cursive;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .card a:focus-visible {
+    outline-color: #fff;
+  }
+
+  .card:has(a:focus-visible) {
+    translate: 0 -1rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover {
+      translate: 0 -1.25rem;
+    }
+  }
+
+  /* Phones: dealt out two by two, since a fan this narrow would hide the names. */
+  @media (max-aspect-ratio: 1/1) and (max-width: 700px) {
+    .deal {
+      --card: min(40vw, 28svh);
+      padding-bottom: 4.5rem;
+    }
+
+    h1 {
+      font-size: min(9vw, 5.6svh);
+    }
+
+    .fan {
+      display: grid;
+      grid-template-columns: repeat(2, var(--card));
+      gap: 0.6rem;
+      justify-content: center;
+      width: 100%;
+      height: auto;
+    }
+
+    .card {
+      position: relative;
+      left: auto;
+      height: calc(var(--card) * 1.28);
+      transform: rotate(calc((var(--i) - 1.5) * 1deg));
+      transform-origin: 50% 50%;
+    }
+
+    .card__name {
+      font-size: calc(var(--card) * 0.16);
+    }
+  }
+
+  /* Phones on their side: the words beside the fan. */
+  @media (max-height: 480px) {
+    .deal {
+      --card: min(13.5vw, 42svh);
+      grid-template-rows: none;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      padding-block: 2.5rem 4rem;
+      text-align: left;
+    }
+
+    .fan {
+      margin-inline-end: calc(var(--card) * 0.2);
+    }
+
+    h1 {
+      font-size: 7.4svh;
+    }
+
+    .card__suit {
+      font-size: 0.9rem;
+    }
+  }
+</style>

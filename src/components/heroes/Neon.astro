@@ -1,0 +1,200 @@
+---
+import { worlds } from './worlds';
+---
+
+<div class="neon">
+  <h1>
+    <span class="neon__name">
+      Nathan <span class="neon__late">Pannell</span>
+    </span>
+    <span class="neon__line">builds things for real people.</span>
+  </h1>
+  <ul>
+    {worlds.map(({ name, href, colour }, index) => (
+      <li>
+        <a href={href} style={`--tube: ${colour}; --i: ${index}`}>
+          {name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  /* A brick wall after dark, and the only light in the room is the sign. */
+  .neon {
+    --glow: #ff5b23;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: clamp(1rem, 5svh, 3.25rem);
+    height: 100svh;
+    overflow: clip;
+    padding: 3rem var(--gutter) 4.5rem;
+    background:
+      radial-gradient(70% 62% at 50% 44%, rgb(255 91 35 / 16%), transparent),
+      repeating-linear-gradient(0deg, #0b0a0d 0 3px, transparent 3px 2.6rem),
+      repeating-linear-gradient(90deg, #0b0a0d 0 3px, transparent 3px 5.4rem), #1b1619;
+    color: #fff5ea;
+    text-align: center;
+  }
+
+  h1 {
+    display: grid;
+    gap: clamp(0.4rem, 2svh, 1.1rem);
+  }
+
+  .neon__name {
+    font-family: 'Newsreader Variable', Georgia, serif;
+    font-size: min(13.5vw, 26svh);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-shadow:
+      0 0 0.02em #fff,
+      0 0 0.08em var(--glow),
+      0 0 0.22em var(--glow),
+      0 0 0.6em rgb(255 91 35 / 60%);
+  }
+
+  .neon__line {
+    color: #dffbff;
+    font-size: min(3.6vw, 6svh);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-shadow:
+      0 0 0.05em #fff,
+      0 0 0.3em #39d5ff,
+      0 0 0.8em rgb(57 213 255 / 60%);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem clamp(0.75rem, 2vw, 1.5rem);
+    justify-content: center;
+  }
+
+  /* Each project is a small tube sign of its own, dim until it is wanted. */
+  a {
+    display: block;
+    padding: 0.4rem 1.1rem 0.5rem;
+    border: 2px solid var(--tube);
+    border-radius: 0.8rem;
+    box-shadow:
+      0 0 0.4rem var(--tube),
+      inset 0 0 0.4rem color-mix(in srgb, var(--tube) 40%, transparent);
+    color: var(--tube);
+    font-size: clamp(1.05rem, min(2.1vw, 4svh), 1.8rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    text-shadow: 0 0 0.45rem var(--tube);
+    transition:
+      box-shadow 140ms,
+      background 140ms;
+  }
+
+  a:focus-visible {
+    outline-color: #fff;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover {
+      background: color-mix(in srgb, var(--tube) 16%, transparent);
+      box-shadow:
+        0 0 1.3rem var(--tube),
+        0 0 3rem var(--tube),
+        inset 0 0 0.7rem var(--tube);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .neon__name {
+      animation: strike 1.5s linear both;
+    }
+
+    .neon__late {
+      animation: stutter 2.6s linear both;
+    }
+
+    .neon__line,
+    li {
+      animation: strike 900ms linear 900ms both;
+    }
+
+    li:nth-child(2) {
+      animation-delay: 1100ms;
+    }
+
+    li:nth-child(3) {
+      animation-delay: 1250ms;
+    }
+
+    li:nth-child(4) {
+      animation-delay: 1400ms;
+    }
+  }
+
+  @keyframes strike {
+    0%,
+    12%,
+    20%,
+    34% {
+      opacity: 0.08;
+    }
+
+    10%,
+    16%,
+    28%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes stutter {
+    0%,
+    45%,
+    53%,
+    68% {
+      opacity: 0.08;
+    }
+
+    50%,
+    60%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @media (max-aspect-ratio: 1/1) {
+    .neon__name {
+      font-size: min(21vw, 13svh);
+    }
+
+    .neon__line {
+      font-size: min(5.4vw, 3svh);
+    }
+
+    ul {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  @media (max-height: 480px) {
+    .neon {
+      padding-block: 2.5rem 3.75rem;
+    }
+
+    .neon__name {
+      font-size: 20svh;
+    }
+
+    a {
+      padding: 0.2rem 0.75rem 0.3rem;
+      font-size: 0.95rem;
+    }
+  }
+</style>

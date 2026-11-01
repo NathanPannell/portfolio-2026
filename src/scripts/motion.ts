@@ -1,28 +1,6 @@
-// Shared motion plumbing: reveals, resting loops and lazy video.
+// Shared motion plumbing: resting loops and lazy video.
 
 export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-export const startReveals = () => {
-  const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
-  // Anything already on screen after a reload stays as it is, rather than vanishing to reveal again.
-  for (const target of targets) {
-    if (target.getBoundingClientRect().top < window.innerHeight) {
-      target.toggleAttribute('data-in', true);
-    }
-  }
-  document.documentElement.classList.add('reveals');
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        entry.target.toggleAttribute('data-in', true);
-        observer.unobserve(entry.target);
-      }
-    },
-    { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
-  );
-  targets.forEach((target) => observer.observe(target));
-};
 
 /** Pauses the looping CSS inside each `[data-loops]` scene while it is off screen. */
 export const startRests = () => {

@@ -1,28 +1,40 @@
 ---
 import Badge from './heroes/Badge.astro';
 import Board from './heroes/Board.astro';
+import Cards from './heroes/Cards.astro';
+import Channels from './heroes/Channels.astro';
 import Doors from './heroes/Doors.astro';
-import Poster from './heroes/Poster.astro';
-import Sentence from './heroes/Sentence.astro';
+import Lift from './heroes/Lift.astro';
+import Neon from './heroes/Neon.astro';
+import Receipt from './heroes/Receipt.astro';
 import { heroes } from './heroes/worlds';
 ---
 
-<section class="hero" data-frame data-heroes data-audience="real people">
+<section class="hero" data-frame data-heroes>
   <div class="hero__slot" data-hero-slot data-hero-shown="doors">
     <Doors />
   </div>
 
-  <template data-hero-option="poster">
-    <Poster />
-  </template>
-  <template data-hero-option="sentence">
-    <Sentence />
-  </template>
   <template data-hero-option="badge">
     <Badge />
   </template>
   <template data-hero-option="board">
     <Board />
+  </template>
+  <template data-hero-option="lift">
+    <Lift />
+  </template>
+  <template data-hero-option="cards">
+    <Cards />
+  </template>
+  <template data-hero-option="neon">
+    <Neon />
+  </template>
+  <template data-hero-option="receipt">
+    <Receipt />
+  </template>
+  <template data-hero-option="channels">
+    <Channels />
   </template>
 
   <a class="hero__next" href="#ai-build-night" aria-label="Next: AI Build Night">
@@ -140,14 +152,25 @@ import { heroes } from './heroes/worlds';
   }
 
   /* A phone has room for the numbers and the arrow, not the label. */
-  @media (max-width: 520px) {
+  @media (max-width: 620px), (max-height: 480px) {
     .hero-toggle__label,
     .hero-toggle__name {
       display: none;
     }
 
     .hero-toggle {
-      padding: 0.2rem 0.4rem;
+      gap: 0;
+      padding: 0.1rem 0.3rem;
+    }
+
+    .hero-toggle button {
+      width: min(1.95rem, calc((100vw - var(--gutter) * 2 - 4rem) / 8));
+      height: 2.1rem;
+      font-size: 0.78rem;
+    }
+
+    .hero-toggle button[aria-pressed='true'] {
+      border-radius: 0.6rem;
     }
   }
 </style>

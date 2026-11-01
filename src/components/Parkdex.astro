@@ -4,31 +4,36 @@ const stops = [
     image: 'arrival',
     title: 'Go to a park.',
     alt: 'Parkdex map of Beacon Hill Park: inside the boundary, with a flag to take',
-    flag: ['#1fa08d', '#2b2455'],
   },
   {
     image: 'planted',
     title: 'Plant your flag.',
     alt: 'Parkdex flag planted screen: plus six points',
-    flag: ['#7a3fb0', '#1fa08d'],
   },
   {
     image: 'founder',
     title: 'Be the founder.',
     alt: 'Parkdex park page for Holland Point with a Become the founder button',
-    flag: ['#f7c948', '#e0483a'],
   },
   {
     image: 'take',
     title: 'Steal it.',
     alt: 'Parkdex screen: a flag being knocked over, reading Take it from at salish sky',
-    flag: ['#e0483a', '#f7c948'],
   },
 ];
 ---
 
-<section id="parkdex" class="pk" data-audience="rivals" aria-labelledby="pk-title">
-  <div class="pk-trip" data-frame data-moment data-trip data-loops tabindex="-1">
+<section
+  id="parkdex"
+  class="pk"
+  data-frame
+  data-moment
+  data-trip
+  data-loops
+  tabindex="-1"
+  aria-labelledby="pk-title"
+>
+  <div class="pk-trip">
     <div class="pk-back" aria-hidden="true">
       <div class="pk-layer pk-layer--far" data-layer="0.12"></div>
       <div class="pk-layer pk-layer--mid" data-layer="0.3"></div>
@@ -40,24 +45,20 @@ const stops = [
       <div class="pk-sky">
         <i class="pk-cloud pk-cloud--one" aria-hidden="true"></i>
         <i class="pk-cloud pk-cloud--two" aria-hidden="true"></i>
-        <h2 id="pk-title">Capture the flag, for real parks.</h2>
+        <div class="pk-title">
+          <p class="pk-name">Parkdex</p>
+          <h2 id="pk-title">Capture the flag, for real parks.</h2>
+        </div>
       </div>
 
       <div class="pk-canopy" aria-hidden="true"></div>
 
-      <div class="pk-forest" data-forest-floor>
+      <div class="pk-forest" data-forest-floor data-opens>
         <ol class="pk-stops">
           {stops.map((stop, index) => (
             <li class="pk-stop" data-stop style={`--stop: ${index}`}>
               <h3>{stop.title}</h3>
               <figure class="pk-hang">
-                <div
-                  class="pk-pole"
-                  style={`--a: ${stop.flag[0]}; --b: ${stop.flag[1]}`}
-                  aria-hidden="true"
-                >
-                  <i />
-                </div>
                 <img
                   src={`/media/parkdex/${stop.image}-360.webp`}
                   srcset={`/media/parkdex/${stop.image}-360.webp 360w, /media/parkdex/${stop.image}-640.webp 640w`}
@@ -72,15 +73,13 @@ const stops = [
             </li>
           ))}
         </ol>
+        <button class="pk-slide" type="button" data-slide>
+          Slide down with Kip <span aria-hidden="true">↓</span>
+        </button>
       </div>
     </div>
 
     <div class="pk-layer pk-layer--near" data-layer="1.5" aria-hidden="true"></div>
-
-    <p class="pk-score" aria-hidden="true">
-      <i class="flagmark"></i>
-      <b data-score>0</b>
-    </p>
 
     <div class="pk-rider" data-rider aria-hidden="true">
       <span class="pk-rider__say">KLEEP!</span>
@@ -117,35 +116,53 @@ const stops = [
     </button>
   </div>
 
-  <div class="pk-ground" data-frame>
-    <svg class="pk-hill" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 220V120C220 30 460 20 720 70s520 70 720-20v170z"></path>
-    </svg>
+  <div class="pk-ground" data-ground data-opens>
+    <div class="pk-vine pk-vine--end" data-vine-end aria-hidden="true"></div>
     <div class="pk-end">
       <img
         class="pk-end__kip"
+        data-kip-spot
         src="/media/parkdex/kip-cheer.webp"
         width="360"
         height="360"
         loading="lazy"
         alt=""
       />
-      <h3>1,000+ parks. Which one’s yours?</h3>
-      <div class="pk-end__links">
-        <a
-          class="pk-btn pk-btn--main"
-          href="https://play.google.com/store/apps/details?id=app.parkdex"
-        >
-          Get it on Google Play
-        </a>
-        <a class="pk-btn" href="https://parkdex.app/">
-          parkdex.app ↗
-        </a>
-        <a class="pk-btn" href="https://web.parkdex.app/">
-          Open the web app ↗
-        </a>
+      <div class="pk-sign">
+        <h3>1,000+ parks. Which one’s yours?</h3>
+        <div class="pk-end__links">
+          <a
+            class="pk-btn pk-btn--main"
+            href="https://play.google.com/store/apps/details?id=app.parkdex"
+          >
+            Get it on Google Play
+          </a>
+          <a class="pk-btn" href="https://parkdex.app/">
+            parkdex.app ↗
+          </a>
+        </div>
       </div>
     </div>
+  </div>
+
+  <div class="pk-diver" data-diver aria-hidden="true">
+    <img
+      data-pose
+      src="/media/parkdex/kip-wave.webp"
+      width="360"
+      height="360"
+      loading="lazy"
+      alt=""
+    />
+    <img
+      data-pose
+      data-on
+      src="/media/parkdex/kip-point.webp"
+      width="360"
+      height="360"
+      loading="lazy"
+      alt=""
+    />
   </div>
 </section>
 
@@ -158,19 +175,21 @@ const stops = [
     --forest: #1f6448;
     --floor: #16452f;
     --bar: calc(100lvh - 100svh);
+    --vine-x: 50%;
+    --vine-width: clamp(14rem, 23vw, 21.5rem);
     position: relative;
     color: var(--ink);
     font-family: 'Bricolage Grotesque Variable', var(--sans);
+  }
+
+  .pk:focus {
+    outline: none;
   }
 
   /* Without a stage the trip is plain page content, top to bottom. */
   .pk-trip {
     position: relative;
     background: var(--forest);
-  }
-
-  .pk-trip:focus {
-    outline: none;
   }
 
   :global(.stage) .pk-trip {
@@ -181,8 +200,10 @@ const stops = [
   .pk-back,
   .pk-layer--near,
   .pk-rider,
-  .pk-score,
-  .pk-plant {
+  .pk-plant,
+  .pk-slide,
+  .pk-diver,
+  .pk-vine--end {
     display: none;
   }
 
@@ -227,7 +248,7 @@ const stops = [
   }
 
   /* Foreground leaves whip past on the ride, and are gone by the time Kip lands. */
-  .pk-trip[data-riding] .pk-layer--near {
+  .pk[data-riding] .pk-layer--near {
     display: block;
     z-index: 3;
     animation: leaves 2800ms ease-in-out both;
@@ -268,8 +289,6 @@ const stops = [
 
   .pk-world {
     position: relative;
-    --vine-x: 50%;
-    --vine-width: clamp(14rem, 23vw, 21.5rem);
   }
 
   :global(.stage) .pk-trip .pk-world {
@@ -298,9 +317,19 @@ const stops = [
     background: linear-gradient(#cdeeff, #eaf7ff);
   }
 
-  h2 {
+  .pk-title {
     position: relative;
     z-index: 2;
+  }
+
+  .pk-name {
+    color: #c9420f;
+    font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
     max-width: 42vw;
     font-size: clamp(3rem, min(7.4vw, 15svh), 7rem);
     font-weight: 800;
@@ -356,12 +385,12 @@ const stops = [
 
   :global(.stage) .pk-trip .pk-forest {
     height: 100lvh;
-    padding-bottom: calc(1.5rem + var(--bar));
+    padding-bottom: calc(4.5rem + var(--bar));
   }
 
   /* Four phones in a row, each sized from whichever runs out first, the width or the height. */
   .pk-stops {
-    --shot: min(calc((100vw - var(--gutter) * 2 - 6rem) / 4), calc((100svh - 11rem) * 0.4624));
+    --shot: min(calc((100vw - var(--gutter) * 2 - 6rem) / 4), calc((100svh - 13.5rem) * 0.4624));
     display: flex;
     gap: 2rem;
     align-items: start;
@@ -380,12 +409,12 @@ const stops = [
   }
 
   /* The phones drop in on the vine one by one, once Kip has landed. */
-  :global(.stage) .pk-trip:not([data-landed]) .pk-stop {
+  :global(.stage) .pk:not([data-landed]) .pk-stop {
     visibility: hidden;
     transform: translate3d(0, -110lvh, 0) rotate(6deg);
   }
 
-  .pk-trip[data-landed]:not([data-settled]) .pk-stop {
+  .pk[data-landed] .pk-stop {
     transition: transform 760ms cubic-bezier(0.2, 1.3, 0.4, 1) calc(var(--stop) * 260ms);
   }
 
@@ -438,75 +467,49 @@ const stops = [
     box-shadow: 0.35rem 0.35rem 0 var(--ink);
   }
 
-  .pk-pole {
-    position: absolute;
-    z-index: 2;
-    top: -0.5rem;
-    right: 0.6rem;
-    width: 0.4rem;
-    height: 3.4rem;
-    border: 2px solid var(--ink);
-    border-radius: 0.3rem;
-    background: var(--cream);
-    transform-origin: 50% 100%;
-  }
-
-  :global(.stage) .pk-trip:not([data-landed]) .pk-pole {
-    transform: scaleY(0);
-  }
-
-  .pk-trip[data-landed]:not([data-settled]) .pk-pole {
-    transition: transform 500ms cubic-bezier(0.2, 1.5, 0.4, 1) calc(var(--stop) * 260ms + 500ms);
-  }
-
-  .pk-pole i {
-    position: absolute;
-    top: 0.1rem;
-    right: 100%;
-    width: 2.6rem;
-    height: 1.8rem;
-    border: 3px solid var(--ink);
-    background: linear-gradient(90deg, var(--a) 50%, var(--b) 50%);
-    transform-origin: 100% 50%;
-    animation: wave 1.5s ease-in-out infinite alternate;
-  }
-
-  @keyframes wave {
-    to {
-      transform: skewY(-7deg) scaleX(0.94);
-    }
-  }
-
+  /* The bottom of the vine. On a stage, this screen waits until the flag is planted. */
   .pk-ground {
     position: relative;
     display: grid;
     align-content: center;
     min-height: 100lvh;
+    overflow: clip;
     padding: clamp(4.5rem, 10vw, 8rem) var(--gutter) calc(2rem + var(--bar));
     color: var(--cream);
-    background: linear-gradient(var(--forest) clamp(3rem, 8vw, 6rem), var(--floor) 0);
+    background: url('../art/parkdex/ground.svg') center bottom / cover no-repeat var(--forest);
   }
 
-  .pk-hill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: clamp(3rem, 8vw, 6rem);
-    fill: var(--floor);
+  :global(.stage) .pk:not([data-open]) .pk-ground {
+    display: none;
   }
 
+  :global(.stage) .pk-vine--end {
+    display: block;
+    bottom: 58%;
+    mask: linear-gradient(#000 calc(100% - 3rem), transparent);
+  }
+
+  /* A layer of its own in front of the vine, which keeps the sign's posts in front of the view. */
   .pk-end {
     position: relative;
+    z-index: 1;
     display: grid;
     justify-items: center;
     gap: 1rem;
     text-align: center;
   }
 
+  /* Waits for Kip to arrive, then takes over from the one on the vine. */
   .pk-end__kip {
-    width: clamp(8rem, min(15vw, 26svh), 13rem);
+    position: relative;
+    z-index: 1;
+    width: clamp(7rem, min(13vw, 22svh), 11rem);
+    margin-bottom: -1.4rem;
     animation: hop 1s ease-in-out infinite alternate;
+  }
+
+  :global(.stage) .pk:not([data-jumped]) .pk-end__kip {
+    visibility: hidden;
   }
 
   @keyframes hop {
@@ -515,9 +518,45 @@ const stops = [
     }
   }
 
+  /* A park's own sign: planks and two posts, so the type stays clear of the view behind it. */
+  .pk-sign {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.9rem;
+    max-width: min(100%, 52rem);
+    padding: clamp(1.25rem, 3svh, 2.25rem) clamp(1.25rem, 4vw, 3.25rem);
+    border: 0.3rem solid var(--ink);
+    border-radius: 1.1rem;
+    background:
+      repeating-linear-gradient(rgb(20 38 32 / 34%) 0 3px, transparent 3px 33.33%),
+      linear-gradient(#7a4a26, #5b3419);
+    box-shadow: 0 0.55rem 0 var(--ink);
+  }
+
+  .pk-sign::before,
+  .pk-sign::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 100%;
+    width: 1.5rem;
+    height: 100lvh;
+    border: 0.3rem solid var(--ink);
+    background: #5b3419;
+  }
+
+  .pk-sign::before {
+    left: 16%;
+  }
+
+  .pk-sign::after {
+    right: 16%;
+  }
+
   .pk-end h3 {
     max-width: 14ch;
-    font-size: clamp(2.8rem, min(7vw, 13svh), 6.5rem);
+    font-size: clamp(2.4rem, min(6vw, 11svh), 5.5rem);
     line-height: 0.95;
   }
 
@@ -526,7 +565,6 @@ const stops = [
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.6rem;
-    margin-top: 0.6rem;
   }
 
   .pk-btn {
@@ -555,35 +593,6 @@ const stops = [
     background: var(--orange);
   }
 
-  :global(.stage) .pk-trip .pk-score {
-    position: absolute;
-    z-index: 4;
-    top: 3.4rem;
-    right: var(--gutter);
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    padding: 0.3rem 0.9rem 0.3rem 0.5rem;
-    border: 3px solid var(--ink);
-    border-radius: 99rem;
-    background: var(--cream);
-    box-shadow: 0 0.25rem 0 var(--ink);
-  }
-
-  .pk-score b {
-    font-size: 1.3rem;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .flagmark {
-    width: 1.9rem;
-    height: 1.3rem;
-    border: 2px solid var(--ink);
-    border-radius: 0.15rem;
-    background: linear-gradient(90deg, #7a3fb0 50%, #1fa08d 50%);
-  }
-
   /* Holds Kip on the vine's line, a little above the middle of the screen. */
   .pk-rider {
     --size: clamp(6.5rem, 11vw, 10rem);
@@ -600,8 +609,59 @@ const stops = [
     display: block;
   }
 
-  .pk-trip[data-landed] .pk-rider {
+  .pk[data-landed] .pk-rider {
     opacity: 0;
+  }
+
+  /* One Kip for the rest of the way down, loose in the section so the frames can't clip it. */
+  .pk-diver {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    width: clamp(6.5rem, 11vw, 10rem);
+    aspect-ratio: 1;
+    pointer-events: none;
+  }
+
+  .pk[data-diving] .pk-diver {
+    display: block;
+  }
+
+  .pk-diver img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+
+  .pk-diver img[data-on] {
+    opacity: 1;
+  }
+
+  /* The way on down, once the phones are in. */
+  .pk-slide {
+    position: absolute;
+    z-index: 3;
+    bottom: calc(1.25rem + var(--bar));
+    left: 50%;
+    padding: 0.7rem 1.3rem;
+    border: 3px solid var(--ink);
+    border-radius: 99rem;
+    background: var(--yellow);
+    box-shadow: 0 0.3rem 0 var(--ink);
+    color: var(--ink);
+    font-weight: 800;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  :global(.stage) .pk[data-landed]:not([data-diving], [data-jumped]) .pk-slide {
+    display: block;
+  }
+
+  .pk-slide:active {
+    box-shadow: 0 0.1rem 0 var(--ink);
+    translate: 0 0.2rem;
   }
 
   .pk-rider img {
@@ -651,12 +711,12 @@ const stops = [
       box-shadow 100ms;
   }
 
-  :global(.stage) .pk-trip:not([data-open]) .pk-plant {
+  :global(.stage) .pk:not([data-open]) .pk-plant {
     display: grid;
     animation: beckon 2.2s ease-in-out infinite;
   }
 
-  .pk-trip[data-open]:not([data-settled]) .pk-plant {
+  .pk[data-open] .pk-plant {
     display: grid;
     pointer-events: none;
     animation: planted 520ms var(--ease) forwards;
@@ -739,36 +799,15 @@ const stops = [
     background: var(--flag);
   }
 
-  :global(.pk-points) {
-    position: absolute;
-    z-index: 4;
-    top: 26%;
-    left: 50%;
-    color: #fff1b8;
-    font-size: 2.6rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    -webkit-text-stroke: 2px #142620;
-    pointer-events: none;
-    animation: rise 900ms ease-out forwards;
-  }
-
   @keyframes sprout {
     from {
       transform: scaleY(0);
     }
   }
 
-  @keyframes rise {
-    to {
-      opacity: 0;
-      transform: translateY(-5rem) scale(1.25);
-    }
-  }
-
   /* On a phone the vine runs down the left, and the stops sit two by two. */
   @media (max-width: 760px) {
-    .pk-world {
+    .pk {
       --vine-x: 17%;
       --vine-width: 10rem;
     }
@@ -814,11 +853,11 @@ const stops = [
     }
 
     :global(.stage) .pk-trip .pk-forest {
-      padding-bottom: calc(1rem + var(--bar));
+      padding-bottom: calc(3.75rem + var(--bar));
     }
 
     .pk-stops {
-      --shot: min(calc((100vw - 3.5rem) / 2), calc((100svh - 14rem) / 2 * 0.4624));
+      --shot: min(calc((100vw - 3.5rem) / 2), calc((100svh - 15.5rem) / 2 * 0.4624));
       flex-wrap: wrap;
       gap: 0.75rem 1.25rem;
     }
@@ -841,15 +880,6 @@ const stops = [
       box-shadow: 0.22rem 0.22rem 0 var(--ink);
     }
 
-    .pk-pole {
-      height: 2.6rem;
-    }
-
-    .pk-pole i {
-      width: 2rem;
-      height: 1.4rem;
-    }
-
     .pk-rider {
       --size: 4.75rem;
       top: 44%;
@@ -858,10 +888,6 @@ const stops = [
 
     .pk-rider__say {
       display: none;
-    }
-
-    :global(.stage) .pk-trip .pk-score {
-      top: 2.9rem;
     }
 
     .pk-plant {
@@ -887,7 +913,7 @@ const stops = [
     }
 
     .pk-stops {
-      --shot: calc((100svh - 6rem) * 0.4624);
+      --shot: calc((100svh - 8rem) * 0.4624);
       flex-wrap: nowrap;
       gap: 1rem;
     }
@@ -905,21 +931,31 @@ const stops = [
     }
 
     h2 {
-      max-width: 50vw;
-      font-size: 2.4rem;
+      max-width: 38vw;
+      font-size: 1.9rem;
     }
 
     .pk-ground {
       padding-top: 3rem;
     }
 
+    .pk-end {
+      gap: 0.5rem;
+    }
+
     .pk-end__kip {
-      display: none;
+      width: 4.5rem;
+      margin-bottom: -1.1rem;
+    }
+
+    .pk-sign {
+      gap: 0.5rem;
+      padding-block: 0.6rem;
     }
 
     .pk-end h3 {
       max-width: none;
-      font-size: 2.2rem;
+      font-size: 1.7rem;
     }
 
     .pk-plant {
@@ -941,7 +977,6 @@ const stops = [
   @media (prefers-reduced-motion: reduce), (scripting: none) {
     .pk-cloud,
     .pk-hang,
-    .pk-pole i,
     .pk-end__kip {
       animation: none;
     }

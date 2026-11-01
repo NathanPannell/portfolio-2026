@@ -4,13 +4,13 @@ Everything under `public/media/` is a real capture, taken on 2026-10-31 unless n
 
 | Folder | Source |
 | --- | --- |
-| `build-night/` | The aibuildnight.ca home page in production, captured on 2026-10-31. `live-*` is the desktop page at 1440 wide and `live-phone-*` the phone page at 390, each cut into three pieces that stack seamlessly. The band of Night 001 photos is spliced out of both, because attendee permission is still pending. The organisers' portraits stay in: they are the organisers' own public bios. `index/build-night-*` is that page's dark tenets band with its heading painted out, and dimmed on the small version, so nothing sits behind the row's name. |
-| `sandbox/` | playbythesandbox.ca in production. `panel-*` are crops of its comic panels. `site-loop.mp4` plays forward then backward so it loops cleanly. |
-| `offbooked/` | Offbooked from `origin/staging` at `b5dcd6a`, run locally on a throwaway Postgres with the repo's Hamlet demo seed. `landing-*` is offbooked.com in production. The cast names are demo data. |
+| `build-night/` | The aibuildnight.ca home page in production, captured on 2026-10-31. `live-*` is the desktop page at 1440 wide and `live-phone-*` the phone page at 390, each cut into three pieces that stack seamlessly. The band of Night 001 photos is spliced out of both, because attendee permission is still pending. The organisers' portraits stay in: they are the organisers' own public bios. |
+| `sandbox/` | playbythesandbox.ca in production. `site-loop.mp4` plays forward then backward so it loops cleanly. |
+| `offbooked/` | Offbooked from `origin/staging` at `b5dcd6a`, run locally on a throwaway Postgres with the repo's Hamlet demo seed. The cast names are demo data. |
 | `parkdex/` | `arrival` is web.parkdex.app in production, as a guest, in a browser that blocked every write. The `@n8tewolf` on it is the owner's own handle. `planted`, `founder` and `take` are from parkdex.app in production, whose app captures use demo handles. `kip-wave` is from the same page, and the other `kip-*` poses are from `art-source/kip/` in the Parkdex repo. |
-| `index/` | Full-colour fills composed from the captures above and the parkdex.app homepage. |
+| `index/` | Full-colour fills drawn for the shape of an index row, with the subject at the right and the row's own colour under its name: the live AI Build Night headline, the tops of two Offbooked screens, the Parkdex park art with Kip, and the Sandbox marquee. The sky is feathered over the corner where the site's logo card overlaps the marquee. |
 
-`og.jpg` and the icons in `public/` are generated for this site. `src/art/parkdex/` holds the hand-built SVG forest and vine, which are illustration rather than captures.
+`og.jpg` and the icons in `public/` are generated for this site. `src/art/parkdex/` holds the hand-built SVG forest, vine and park, which are illustration rather than captures.
 
 ## Replacing media
 

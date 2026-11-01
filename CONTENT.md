@@ -15,10 +15,8 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 | AI Build Night: "Stop reading about AI. Start building with it.", a free night in Victoria, BC. Night 001 filled up, and Night 002 is next. | aibuildnight.ca home and Past nights pages, checked 2026-10-31 |
 | The two tenets | Public on aibuildnight.ca. `ai-build-night-site-workspace/ops/goals.md` is the source. |
 | Play by the Sandbox: Mello's event at the Vancouver Art Gallery. | playbythesandbox.ca |
-| Offbooked: public beta, free for now, no account for the cast. | offbooked.com |
+| Offbooked: public beta, free in the beta, cast never pay, no account for the cast, works on any phone, tablet or laptop, used by casts in British Columbia and Nova Scotia. | offbooked.com home page and FAQ, checked 2026-11-01 |
 | Parkdex: 1,000+ parks. | Live app and Play listing |
-
-The AI Build Night room is a drawing of how a night runs, not a head count. It shows no times: the live home page no longer publishes a schedule.
 
 ## Check before showing
 

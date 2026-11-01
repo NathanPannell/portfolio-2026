@@ -40,11 +40,13 @@ for (const url of [
   'https://www.playbythesandbox.ca/',
   'https://offbooked.com/',
   'https://parkdex.app/',
-  'https://web.parkdex.app/',
   'https://play.google.com/store/apps/details?id=app.parkdex',
 ]) {
   assert(markup.includes(url), `Missing outbound link: ${url}`);
 }
+
+// The owner took the Parkdex web app off this site.
+assert.doesNotMatch(markup, /web\.parkdex\.app/, 'No link to the Parkdex web app');
 
 // Offbooked is not on any store yet, and nothing can be bought. Neither may be implied.
 const offbooked = readFileSync(join(root, 'src', 'components', 'Offbooked.astro'), 'utf8');
@@ -88,23 +90,36 @@ for (const [component, control] of [
   );
 }
 
+// Only the visitor opens a scene: no timer, and nothing that opens one on the way past.
+const momentsScript = readFileSync(join(root, 'src', 'scripts', 'moments.ts'), 'utf8');
+assert.doesNotMatch(momentsScript, /setTimeout|IntersectionObserver|addEventListener\('scroll/);
+
 // The hero toggle is a review tool and never reaches production.
 const heroes = readFileSync(join(root, 'src', 'scripts', 'heroes.ts'), 'utf8');
 assert.doesNotMatch(/REVIEW_HOSTS = \[(.*)\]/.exec(heroes)?.[1] ?? 'www.', /www\./);
 
-// The kept interaction: a row fills with a full-colour image, with a touch equivalent.
+// The kept interaction: a row fills with a full-colour image, with a touch equivalent. The images
+// are drawn for the row and pinned to its height, so `cover` can't crop them down to a strip.
 const index = readFileSync(join(root, 'src', 'components', 'Index.astro'), 'utf8');
 assert.match(index, /\.wash-list li::before/);
+assert.match(index, /var\(--wash-image\) right center \/ auto 100% no-repeat/);
 assert.match(index, /\.wash-list li\[data-active\]::before/);
 assert(existsSync(join(root, 'src', 'scripts', 'wash.ts')), 'The touch fill script must remain');
 
-// A phone's address bar is what this offset is for, and test browsers can't show the difference.
-assert.match(offbooked, /--bar: calc\(100lvh - 100svh\)/);
-assert.match(offbooked, /--u: min\(1vw, 1\.62svh, calc\(\(100svh - 11lvh/);
+// A phone's address bar can't cover the ad if it fits the small viewport, and test browsers can't
+// show the difference.
+assert.match(offbooked, /\.ob-copy \{[^}]*height: 100svh/);
 
 // The owner cut these, and they stay cut.
 assert.doesNotMatch(offbooked, /two.actor/i, 'The two-actor test is gone');
 assert.doesNotMatch(markup, /The one I’d bet on|got pulled for failing/, 'Unapproved public lines');
+assert.doesNotMatch(markup, /Find a real person|grab a toy/, 'Sections the owner removed');
+assert.doesNotMatch(markup, /data-audience|data-for[ >=]/, 'The audience label is gone');
+for (const path of sources) {
+  const name = relative(root, path);
+  assert.doesNotMatch(readFileSync(path, 'utf8'), /\brivals\b/i, `Explorers now: ${name}`);
+}
+assert.doesNotMatch(offbooked, /class="(?:stamp|marquee|slab|script|tape|bubble)/, 'Tidied away');
 
 // Every world honours reduced motion with its own still layout.
 for (const component of ['Hero', 'BuildNight', 'Sandbox', 'Offbooked', 'Parkdex', 'Index']) {

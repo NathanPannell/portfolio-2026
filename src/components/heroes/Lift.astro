@@ -1,0 +1,189 @@
+---
+import { worlds } from './worlds';
+---
+
+<div class="lift" data-lift>
+  <div class="lift__plate">
+    <p class="lift__display" aria-hidden="true">
+      <span class="lift__arrow">▼</span>
+      <span data-lift-floor>G</span>
+    </p>
+    <h1>
+      <span class="lift__name">Nathan Pannell</span>
+      <span class="lift__line">builds things for real people.</span>
+    </h1>
+    <ul>
+      {worlds.map(({ name, href, colour }, index) => (
+        <li>
+          <a href={href} data-floor={`B${index + 1}`} style={`--lit: ${colour}`}>
+            <span class="lift__button" aria-hidden="true">{`B${index + 1}`}</span>
+            <span class="lift__label">{name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  /* Two steel doors, shut, with the panel mounted on the wall between them. */
+  .lift {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 100svh;
+    overflow: clip;
+    padding: 3rem var(--gutter) 4.5rem;
+    background:
+      linear-gradient(
+        90deg,
+        transparent calc(50% - 2px),
+        #15181a calc(50% - 2px) calc(50% + 2px),
+        transparent 0
+      ),
+      repeating-linear-gradient(90deg, rgb(255 255 255 / 3%) 0 2px, transparent 2px 5px),
+      linear-gradient(90deg, #565c60, #8d9498 24%, #6b7276 50%, #8d9498 76%, #565c60);
+  }
+
+  .lift__plate {
+    display: grid;
+    gap: clamp(0.5rem, 2svh, 1.25rem);
+    width: min(100%, 36rem, calc((100svh - 7.5rem) * 0.86));
+    padding: clamp(0.85rem, 2.6svh, 1.75rem) clamp(1rem, 3vw, 2rem);
+    border: 2px solid #5f4714;
+    border-radius: 1rem;
+    background: linear-gradient(150deg, #e3c26f, #c79c3f 48%, #eacb7c 62%, #b98c31);
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 60%),
+      0 1.2rem 2.4rem rgb(0 0 0 / 45%);
+    color: #2a1d05;
+  }
+
+  .lift__display {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    min-width: 7rem;
+    padding: 0.15rem 0.9rem;
+    border-radius: 0.4rem;
+    background: #120605;
+    box-shadow: inset 0 0.15rem 0.4rem #000;
+    color: #ff5b23;
+    font-family: var(--mono);
+    font-size: clamp(1.3rem, 4svh, 2rem);
+    font-weight: 700;
+    text-shadow: 0 0 0.5em rgb(255 91 35 / 70%);
+  }
+
+  .lift__arrow {
+    font-size: 0.7em;
+  }
+
+  h1 {
+    display: grid;
+    gap: 0.2rem;
+    text-align: center;
+  }
+
+  .lift__name {
+    font-size: clamp(2.1rem, min(9.4vw, 8.5svh), 4.1rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-shadow: 0 1px 0 rgb(255 255 255 / 50%);
+  }
+
+  .lift__line {
+    font-size: clamp(0.95rem, min(3.4vw, 2.7svh), 1.35rem);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  ul {
+    display: grid;
+    gap: clamp(0.3rem, 1.3svh, 0.75rem);
+  }
+
+  a {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    color: inherit;
+    font-size: clamp(1.05rem, min(4.4vw, 3.3svh), 1.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  a:focus-visible {
+    outline-color: #2a1d05;
+    border-radius: 99rem;
+  }
+
+  .lift__button {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.5em;
+    height: 2.5em;
+    border: 3px solid #6c5216;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 32%, #fff6dc, #dfd6bf 70%);
+    box-shadow:
+      inset 0 -0.12em 0.2em rgb(0 0 0 / 30%),
+      0 0.14em 0 #6c5216;
+    font-family: var(--mono);
+    font-size: 0.82em;
+    transition:
+      background 120ms,
+      box-shadow 120ms,
+      transform 80ms;
+  }
+
+  a[data-pressed] .lift__button {
+    background: var(--lit);
+    box-shadow:
+      0 0 1.1em var(--lit),
+      inset 0 0.1em 0.2em rgb(0 0 0 / 30%);
+    transform: translateY(0.1em);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover .lift__button {
+      background: var(--lit);
+    }
+  }
+
+  /* Phones on their side: the name beside the floors. */
+  @media (max-height: 480px) {
+    .lift {
+      padding-block: 2.5rem 3.75rem;
+    }
+
+    .lift__plate {
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: 1.5rem;
+      align-items: center;
+      width: min(100%, 44rem);
+    }
+
+    .lift__display {
+      grid-column: 1;
+    }
+
+    h1 {
+      grid-column: 1;
+    }
+
+    ul {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    a {
+      font-size: 1rem;
+    }
+  }
+</style>

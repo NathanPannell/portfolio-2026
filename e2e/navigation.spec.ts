@@ -29,17 +29,20 @@ for (const id of ['offbooked', 'parkdex', 'play-by-the-sandbox']) {
   });
 }
 
-test('the audience label follows the scroll', async ({ page }) => {
+test('the doors name who each project is for, in the order of the page', async ({ page }) => {
   await page.goto('/');
-  const label = page.locator('[data-for]');
-  await expect(label).toHaveText('real people');
-  await page.locator('#offbooked').evaluate((element) => {
-    window.scrollTo({
-      top: element.getBoundingClientRect().top + window.scrollY,
-      behavior: 'instant',
-    });
-  });
-  await expect(label).toHaveText('casts');
+  await expect(page.locator('.door__who')).toHaveText([
+    'for builders',
+    'for casts',
+    'for explorers',
+    'for creators',
+  ]);
+});
+
+test('the header is the name, and nothing else', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.chrome')).toHaveText('Nathan Pannell');
+  await expect(page.locator('[data-for], [data-audience]')).toHaveCount(0);
 });
 
 test('the name returns to the top', async ({ page }) => {
@@ -69,7 +72,7 @@ test('the skip link moves keyboard focus past the header', async ({ page, isMobi
   await expect(page.locator('#main-content :focus')).toHaveCount(1);
 });
 
-test('tabbing through a closed scene opens it as soon as a link takes focus', async ({
+test('a closed scene keeps its links out of the tab order until it opens', async ({
   page,
   isMobile,
 }) => {
@@ -77,20 +80,14 @@ test('tabbing through a closed scene opens it as soon as a link takes focus', as
   await page.goto('/');
   await page.locator('.rope').focus();
   await page.keyboard.press('Tab');
-  const ticket = page.locator('.ticket');
-  await expect(ticket).toBeFocused();
-  await expect(page.locator('#offbooked')).toHaveAttribute('data-open', '');
-  await expect(ticket).toBeInViewport({ timeout: 6000 });
-  await expect
-    .poll(
-      () =>
-        ticket.evaluate((element) => {
-          const { left, top, width, height } = element.getBoundingClientRect();
-          return element.contains(document.elementFromPoint(left + width / 2, top + height / 2));
-        }),
-      { timeout: 6000 },
-    )
-    .toBe(true);
+  await expect(page.locator('.pk-plant')).toBeFocused();
+  await expect(page.locator('#offbooked')).toHaveAttribute('data-waiting', '');
+
+  await page.locator('.rope').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#offbooked')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.ticket')).toBeFocused();
 });
 
 test('reverse tabbing goes back up into the hero', async ({ page, isMobile }) => {
@@ -105,7 +102,7 @@ test('reverse tabbing goes back up into the hero', async ({ page, isMobile }) =>
 test('Plant! can be reached with the keyboard', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
-  await page.locator('.ticket').focus();
+  await page.locator('.rope').focus();
   await page.keyboard.press('Tab');
   const plant = page.locator('.pk-plant');
   await expect(plant).toBeFocused();
@@ -120,14 +117,24 @@ test('a scroll past a focused control is not pulled back', async ({ page, isMobi
   await page.locator('.abn-key').focus();
   await page.keyboard.press('End');
   await expect(page.locator('.contact__mail')).toBeInViewport({ timeout: 5000 });
-  await page.waitForTimeout(800);
+  // Longer than a scroll has to be left alone before anything could move it.
+  await page.waitForTimeout(2200);
   await expect(page.locator('.contact__mail')).toBeInViewport();
 });
 
-test('tabbing to a Parkdex link brings it on screen', async ({ page, isMobile }) => {
+test('the keyboard can take Kip all the way down', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  test.setTimeout(30000);
   await page.goto('/');
+  await page.locator('.pk-plant').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.pk-slide')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+  await page.keyboard.press('Tab');
   const link = page.locator('.pk-end a').first();
-  await link.focus();
+  await expect(link).toBeFocused();
   await expect(link).toBeInViewport();
 });
