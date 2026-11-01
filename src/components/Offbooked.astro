@@ -185,7 +185,7 @@ const steps = [
   .ob-copy {
     --steps-room: calc(100svh - 10.25rem);
     --step-size: clamp(1.05rem, min(1.75vw, 3.1svh), 1.7rem);
-    --step-lines: 2;
+    --step-lines: 3;
     --step-number: var(--marker);
     --step-number-ink: var(--red-deep);
     --step-frame: 0.35rem solid #161514;
@@ -496,8 +496,9 @@ const steps = [
 
   @media (max-width: 760px) {
     .ob-copy {
-      --steps-room: calc(100svh - 12.75rem);
-      --step-size: clamp(0.95rem, 4.3vw, 1.15rem);
+      --title: clamp(1.8rem, min(8.6vw, 5svh), 3rem);
+      --steps-room: calc(100svh - 9.5rem - var(--title) * 2);
+      --step-size: clamp(0.85rem, min(4.3vw, 2.2svh), 1.15rem);
       --step-frame: 0.22rem solid #161514;
       --step-corner: 0.9rem;
       grid-template-rows: auto minmax(0, 1fr) auto;
@@ -507,7 +508,7 @@ const steps = [
     }
 
     h2 {
-      font-size: clamp(1.8rem, min(8.6vw, 5svh), 3rem);
+      font-size: var(--title);
     }
 
     .ticket {
@@ -522,7 +523,7 @@ const steps = [
   }
 
   /* Phones on their side: the title and the ticket share a line above the steps. */
-  @media (max-height: 480px) {
+  @media (max-height: 480px) and (orientation: landscape) {
     .ob-copy {
       --steps-room: calc(100svh - 7rem);
       --step-size: 0.85rem;

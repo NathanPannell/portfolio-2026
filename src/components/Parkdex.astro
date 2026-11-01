@@ -915,7 +915,7 @@ const stops = [
   }
 
   /* Phones on their side: four across, with just enough room for each title. */
-  @media (max-height: 480px) {
+  @media (max-height: 480px) and (orientation: landscape) {
     .pk-forest {
       padding-top: 3.25rem;
     }
@@ -935,7 +935,9 @@ const stops = [
       padding-inline: 0.4rem;
       font-size: 0.74rem;
     }
+  }
 
+  @media (max-height: 480px) {
     .pk-sky {
       padding-top: 3rem;
     }

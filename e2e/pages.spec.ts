@@ -206,8 +206,14 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
     await expect(step, label).toBeInViewport({ ratio: 0.995 });
   }
   const collisions = await page.locator(scene).evaluate((root) => {
-    const parts = [...root.querySelectorAll<HTMLElement>('.step, a[href]')].filter(
-      (part) => !part.closest('[inert]') && part.getClientRects().length > 0,
+    const parts = [
+      document.querySelector<HTMLElement>('.chrome__name'),
+      ...root.querySelectorAll<HTMLElement>(
+        '.step, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2',
+      ),
+    ].filter(
+      (part): part is HTMLElement =>
+        !!part && !part.closest('[inert]') && part.getClientRects().length > 0,
     );
     const hits: string[] = [];
     for (const [index, part] of parts.entries()) {
@@ -237,6 +243,16 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
 };
 
 for (const { name, scene, control, steps } of explained) {
+  test(`${name} keeps its steps back until it opens`, async ({ page }) => {
+    await page.goto('/');
+    await jumpTo(page, scene);
+    await expect(page.locator(`${scene} .step`).first()).toHaveCSS('opacity', '0');
+    await page.locator(control).click();
+    await expect(page.locator(`${scene} .step`).last()).toHaveCSS('opacity', '1', {
+      timeout: 6000,
+    });
+  });
+
   test(`${name} says what it does in numbered steps, all at once`, async ({ page }) => {
     await page.goto('/');
     await useControl(page, scene, control);
@@ -445,15 +461,19 @@ test('the Offbooked ticket can be clicked once it lands', async ({ page }) => {
 });
 
 const everySize = [
+  [320, 480],
   [320, 640],
   [390, 844],
   [568, 320],
   [667, 375],
+  [600, 1024],
   [760, 760],
   [844, 390],
   [860, 860],
+  [1000, 500],
   [1024, 768],
   [1440, 900],
+  [1920, 480],
   [1920, 1080],
 ] as const;
 
@@ -1055,6 +1075,9 @@ test.describe('reduced motion', () => {
     await expect(page.locator('.pk-end h3')).toBeVisible();
     await expect(page.locator('[data-stop] h3').first()).toBeVisible();
     await expect(page.locator('.ticket')).toHaveCSS('opacity', '1');
+    for (const step of await page.locator('.step').all()) {
+      await expect(step).toHaveCSS('opacity', '1');
+    }
     const animations = await page.evaluate(() =>
       document
         .getAnimations()
@@ -1096,6 +1119,9 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
   await expect(page.locator('.abn-show__cta')).toBeVisible();
   await expect(page.locator('[data-stop] img').first()).toBeVisible();
   await expect(page.locator('#sb-title')).toBeVisible();
+  for (const step of await page.locator('.step').all()) {
+    expect(await opacityOf(step)).toBe(1);
+  }
   // Visible isn't enough: the cover's headline stays clear of the site that follows it.
   await page.locator('#abn-title').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('#abn-title'))).toBeGreaterThan(0);
@@ -1110,6 +1136,9 @@ test('a script that stalls stops holding the scenes closed', async ({ page }) =>
   await expect(page.locator('html')).not.toHaveClass(/stage/, { timeout: 8000 });
   await page.locator('.abn-show__cta').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('.abn-show__cta'))).toBeGreaterThan(0);
+  for (const step of await page.locator('.step').all()) {
+    expect(await opacityOf(step)).toBe(1);
+  }
 });
 
 test.describe('without JavaScript', () => {
@@ -1128,6 +1157,9 @@ test.describe('without JavaScript', () => {
       expect(await opacityOf(part)).toBe(1);
     }
     expect(await opacityOf(page.locator('.ticket'))).toBe(1);
+    for (const step of await page.locator('.step').all()) {
+      expect(await opacityOf(step)).toBe(1);
+    }
     await expect(page.locator('.drape').first()).toBeHidden();
     await expect(page.locator('.wipe')).toBeHidden();
     await expect(page.locator('[data-moment-control]:visible')).toHaveCount(0);

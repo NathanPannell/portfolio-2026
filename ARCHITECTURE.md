@@ -32,7 +32,7 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
 | `tests/content-contract.mjs` | Section order, required links, claims guards, reduced-motion coverage, media budget. |
 | `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonical, share card, JSON-LD, 404. |
-| `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps, ten viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
+| `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps, fourteen viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
 | `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`). |
 | `public/_headers` | Cloudflare security and caching headers. |
 | `public/_redirects` | Old project and essay URLs. |
@@ -72,7 +72,7 @@ A `[data-loops]` scene has its looping CSS paused while it is off screen (`start
 
 Each section says what it does in three or four numbered steps, all on screen at once, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked and Sandbox, and Parkdex's stops on the vine are the same idea in its own design. The owner offered this or a rotation through the lines. All at once won because the whole explanation is there at a first look: nothing to wait for, no timer to pause, and nothing different under reduced motion or without JavaScript.
 
-A section sets `--steps-room`, the height the steps get, and `--step-*` for its colours and type. Every size then comes from that and the width, so the steps always fit the screen they are on: `e2e/pages.spec.ts` checks that at ten sizes, including that nothing overlaps. Wide pictures sit two by two on a big screen with `pairs`, in a row otherwise, and beside their words on a phone. App screens crop from the top on a phone, because the top of the screen is what shows the step.
+A section sets `--steps-room`, the height the steps get, and `--step-*` for its colours and type. Every size then comes from that and the width, so the steps fit the screen they are on: `e2e/pages.spec.ts` checks that at fourteen sizes, including that nothing overlaps. Wide pictures sit two by two on a big screen with `pairs`, in a row otherwise, and beside their words on a phone. App screens crop from the top on a phone, because the top of the screen is what shows the step.
 
 ## Reduced motion and no JavaScript
 
