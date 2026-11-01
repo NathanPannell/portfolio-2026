@@ -80,7 +80,7 @@ const steps = [
             offbooked.com <span aria-hidden="true">↗</span>
           </span>
         </a>
-        <Steps steps={steps} shape="phone" />
+        <Steps name="offbooked" steps={steps} shape="phone" layout="rotating" />
       </div>
     </div>
 
@@ -195,6 +195,12 @@ const steps = [
     --step-tracking: -0.01em;
     --step-weight: 600;
     --step-wait: 1200ms;
+    --window: calc(var(--steps-room) * 0.46);
+    --rail-size: clamp(1.15rem, min(2vw, 3.5svh), 2rem);
+    --rail-rows: 0.4rem;
+    --rail-gap: clamp(1.5rem, 6vw, 6rem);
+    --rail-pad: 0.3em 0.5em;
+    --toggle-inset: 0;
     position: absolute;
     z-index: 6;
     top: 0;
@@ -235,6 +241,50 @@ const steps = [
   .ob-copy :global(.steps) {
     grid-column: 1 / -1;
     align-self: start;
+  }
+
+  /* Rotating: one big phone, beside a page of the script with each line marked in turn, the way an
+     actor marks their own. The marker runs along the line for as long as the step has left. */
+  .ob-copy :global(.steps-set[data-layout='rotating']) {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 36rem) var(--window);
+    justify-content: center;
+  }
+
+  .ob-copy :global([data-layout='rotating'] > .steps) {
+    grid-row: auto;
+    grid-column: auto;
+    align-self: center;
+    padding: 1.1rem 1.25rem;
+    background: var(--paper);
+    box-shadow: 0 1rem 2rem rgb(29 16 12 / 45%);
+    color: var(--ink);
+    rotate: -0.5deg;
+  }
+
+  .ob-copy :global([data-layout='rotating'] .step__number) {
+    background: none;
+    color: var(--red);
+  }
+
+  .ob-copy :global(.step__pick) {
+    background: linear-gradient(var(--marker), var(--marker)) 0 0 / 0 100% no-repeat;
+  }
+
+  .ob-copy :global([data-current] .step__pick) {
+    background-size: calc(var(--progress) * 100%) 100%;
+  }
+
+  .ob-copy :global(.steps-window) {
+    overflow: hidden;
+    border: 0.45rem solid #161514;
+    border-radius: 2.4rem;
+    background: #161514;
+    box-shadow: 0 1.5rem 3rem rgb(29 16 12 / 55%);
+  }
+
+  .ob-copy :global(.steps-window__view) {
+    border-radius: 1.95rem;
   }
 
   /* One link, on what's left of the ticket. */
@@ -520,6 +570,57 @@ const steps = [
     .ob-copy :global(.steps) {
       grid-row: 2;
     }
+
+    .ob-copy :global(.steps-set[data-layout='rotating']) {
+      grid-row: 2;
+    }
+  }
+
+  @media (max-width: 760px) and (orientation: portrait) {
+    .ob-copy {
+      --window: min(54vw, calc(var(--steps-room) * 0.46));
+      --rail-size: clamp(0.9rem, 4.2vw, 1.15rem);
+      --rail-gap: 0.75rem;
+    }
+
+    .ob-copy :global(.steps-set[data-layout='rotating']) {
+      grid-template-columns: minmax(0, 1fr) var(--window);
+    }
+
+    .ob-copy :global([data-layout='rotating'] > .steps) {
+      padding: 0.6rem 0.5rem;
+    }
+
+    .ob-copy :global(.steps-window) {
+      border-width: 0.3rem;
+      border-radius: 1.5rem;
+    }
+
+    .ob-copy :global(.steps-window__view) {
+      border-radius: 1.2rem;
+    }
+  }
+
+  /* Tall enough for the phone to stand over the whole script. */
+  @media (max-width: 760px) and (orientation: portrait) and (min-height: 700px) {
+    .ob-copy {
+      --window: calc((var(--steps-room) - 9.5rem) * 0.46);
+    }
+
+    .ob-copy :global(.steps-set[data-layout='rotating']) {
+      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      gap: 0.6rem;
+    }
+
+    .ob-copy :global([data-layout='rotating'] > .steps) {
+      width: 100%;
+    }
+
+    .ob-copy :global([data-layout='rotating'] .steps-window) {
+      order: -1;
+    }
   }
 
   /* Phones on their side: the title and the ticket share a line above the steps. */
@@ -529,6 +630,10 @@ const steps = [
       --step-size: 0.85rem;
       --step-frame: 0.2rem solid #161514;
       --step-corner: 0.7rem;
+      --rail-size: 0.9rem;
+      --rail-rows: 0;
+      --rail-gap: 1.25rem;
+      --rail-pad: 0.2em 0.45em;
       grid-template-rows: auto minmax(0, 1fr);
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 0.4rem 1rem;
@@ -555,6 +660,24 @@ const steps = [
 
     .ob-copy :global(.steps) {
       grid-row: auto;
+    }
+
+    .ob-copy :global(.steps-set[data-layout='rotating']) {
+      grid-row: auto;
+    }
+
+    .ob-copy :global([data-layout='rotating'] > .steps) {
+      padding: 0.35rem 0.4rem;
+      rotate: none;
+    }
+
+    .ob-copy :global(.steps-window) {
+      border-width: 0.2rem;
+      border-radius: 1rem;
+    }
+
+    .ob-copy :global(.steps-window__view) {
+      border-radius: 0.8rem;
     }
   }
 

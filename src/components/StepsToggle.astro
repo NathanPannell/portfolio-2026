@@ -1,0 +1,60 @@
+<div class="steps-toggle" data-steps-toggle role="group" aria-label="Layout of these steps" hidden>
+  <span aria-hidden="true">Steps</span>
+  <button type="button" data-layout-pick="side">
+    Side by side
+  </button>
+  <button type="button" data-layout-pick="rotating">
+    Rotating
+  </button>
+</div>
+
+<style>
+  /* A review tool, in the same plain dress in every section, and gone once a layout is chosen. */
+  .steps-toggle {
+    position: absolute;
+    z-index: 7;
+    top: 0.7rem;
+    right: var(--toggle-inset, var(--gutter));
+    display: flex;
+    gap: 0.15rem;
+    align-items: center;
+    padding: 0.15rem;
+    border-radius: 99rem;
+    background: rgb(14 17 19 / 82%);
+    color: #f5f4f0;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .steps-toggle[hidden] {
+    display: none;
+  }
+
+  span {
+    padding-inline: 0.5rem 0.2rem;
+  }
+
+  button {
+    padding: 0.35rem 0.55rem;
+    border: 0;
+    border-radius: 99rem;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  button[aria-pressed='true'] {
+    background: #f5f4f0;
+    color: #0e1113;
+  }
+
+  @media (max-width: 480px) {
+    span {
+      display: none;
+    }
+  }
+</style>

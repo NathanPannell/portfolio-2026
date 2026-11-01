@@ -153,6 +153,11 @@ const landKip = async (page: Page) => {
   await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
 };
 
+// Review links: every section side by side, and each section on the layout it doesn't start on.
+const sideBySide = '/?abn=side&offbooked=side&parkdex=side&sandbox=side';
+const turnedAround = '/?abn=side&offbooked=side&parkdex=rotating&sandbox=rotating';
+const allRotating = '/?abn=rotating&offbooked=rotating&parkdex=rotating&sandbox=rotating';
+
 // What each opened section says, in the owner's order, with one real picture to each line.
 const explained = [
   {
@@ -191,7 +196,7 @@ const explained = [
 
 // Every step on screen, its words and picture inside it, and nothing sitting on anything else.
 const stepsFit = async (page: Page, scene: string, label: string) => {
-  const steps = page.locator(`${scene} .step`);
+  const steps = page.locator(`${scene} [data-step]`);
   await expect(steps.last(), label).toHaveCSS('opacity', '1', { timeout: 6000 });
   // Everything has landed, so nothing below is measured on its way in.
   await page.locator(scene).evaluate((root) =>
@@ -199,17 +204,24 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
       root
         .getAnimations({ subtree: true })
         .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
+        // Not the rotation's own count, which only ends by moving on to the next step.
+        .filter(
+          (animation) => !(animation.effect as KeyframeEffect).target?.matches('[data-steps]'),
+        )
         .map((animation) => animation.finished),
     ),
   );
   for (const step of await steps.all()) {
     await expect(step, label).toBeInViewport({ ratio: 0.995 });
   }
+  const opened = page.locator(`${scene} [data-steps-window]:visible`);
+  // Only its first and last steps' worth of room: a tilted window reaches a little past its box.
+  if ((await opened.count()) > 0) await expect(opened, label).toBeInViewport({ ratio: 0.98 });
   const collisions = await page.locator(scene).evaluate((root) => {
     const parts = [
       document.querySelector<HTMLElement>('.chrome__name'),
       ...root.querySelectorAll<HTMLElement>(
-        '.step, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2',
+        '[data-step], [data-steps-window], .steps-toggle, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2, .pk-slide',
       ),
     ].filter(
       (part): part is HTMLElement =>
@@ -254,7 +266,7 @@ for (const { name, scene, control, steps } of explained) {
   });
 
   test(`${name} says what it does in numbered steps, all at once`, async ({ page }) => {
-    await page.goto('/');
+    await page.goto(sideBySide);
     await useControl(page, scene, control);
     const shown = page.locator(`${scene} .step`);
     await expect(shown).toHaveCount(steps.length);
@@ -279,6 +291,242 @@ for (const { name, scene, control, steps } of explained) {
     expect(await page.locator(`${scene} .steps`).innerHTML()).toBe(first);
   });
 }
+
+const sets = [
+  { name: 'abn', scene: '.abn-cover', control: '.abn-key', starts: 'rotating' },
+  { name: 'offbooked', scene: '#offbooked', control: '.rope', starts: 'rotating' },
+  { name: 'parkdex', scene: '#parkdex', control: '.pk-plant', starts: 'side' },
+  { name: 'sandbox', scene: '.sb-open', control: '.sb-box__open', starts: 'side' },
+] as const;
+
+const openSet = async (page: Page, { name, scene, control }: (typeof sets)[number]) => {
+  await useControl(page, scene, control);
+  if (name === 'parkdex') {
+    await expect(page.locator(scene)).toHaveAttribute('data-landed', '', { timeout: 12000 });
+  }
+  await expect(page.locator(`[data-steps="${name}"] [data-step]`).last()).toBeInViewport({
+    timeout: 6000,
+  });
+};
+
+// The count is an animation on the set itself, which leaves it to be read, or run to its end.
+const counting = (set: Locator) =>
+  set.evaluate((element) => element.getAnimations()[0]?.playState ?? 'none');
+const finishStep = (set: Locator) =>
+  set.evaluate((element) => element.getAnimations()[0]?.finish());
+
+const showing = (set: Locator) =>
+  set
+    .locator('[data-step]')
+    .evaluateAll((rows) => rows.findIndex((row) => row.hasAttribute('data-current')));
+
+const showingPicture = (set: Locator) =>
+  set
+    .locator('[data-steps-view] figure')
+    .evaluateAll((pictures) =>
+      pictures.flatMap((picture, index) =>
+        getComputedStyle(picture).visibility === 'visible' ? [index] : [],
+      ),
+    );
+
+test('two sections start rotating and two side by side', async ({ page }) => {
+  await page.goto('/');
+  for (const { name, starts } of sets) {
+    await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', starts);
+  }
+  await expect(page.locator('[data-steps]')).toHaveCount(4);
+});
+
+for (const set of sets) {
+  test(`${set.name} rotates only once it is open, however long the wait`, async ({ page }) => {
+    await page.goto(allRotating);
+    const steps = page.locator(`[data-steps="${set.name}"]`);
+    await jumpTo(page, set.scene);
+    await page.waitForTimeout(500);
+    expect(await counting(steps)).toBe('none');
+    await openSet(page, set);
+    expect(await showing(steps)).toBe(0);
+    await expect.poll(() => counting(steps)).toBe('running');
+    await finishStep(steps);
+    await expect.poll(() => showing(steps)).toBe(1);
+    await expect.poll(() => showingPicture(steps)).toEqual([1]);
+    await stepsFit(page, set.scene, set.name);
+    await expect(steps.locator('[aria-current="step"]')).toHaveCount(1);
+    // All the way round and back to the first.
+    const total = await steps.locator('[data-step]').count();
+    for (let step = 0; step < total; step += 1) {
+      await expect.poll(() => counting(steps)).toBe('running');
+      const before = await showing(steps);
+      await finishStep(steps);
+      await expect.poll(() => showing(steps)).toBe((before + 1) % total);
+    }
+  });
+
+  test(`${set.name} shows every step in its list while it rotates`, async ({ page }) => {
+    await page.goto(allRotating);
+    await openSet(page, set);
+    const steps = page.locator(`[data-steps="${set.name}"]`);
+    const rows = steps.locator('[data-step]');
+    for (const row of await rows.all()) await expect(row.locator('button')).toBeVisible();
+    await expect(steps.locator('[data-steps-view] figure')).toHaveCount(await rows.count());
+  });
+
+  test(`${set.name} stops rotating once a step is picked`, async ({ page }) => {
+    await page.goto(allRotating);
+    await openSet(page, set);
+    const steps = page.locator(`[data-steps="${set.name}"]`);
+    await expect.poll(() => counting(steps)).toBe('running');
+    await steps.locator('.step__pick').nth(2).click();
+    await expect.poll(() => showing(steps)).toBe(2);
+    await expect.poll(() => showingPicture(steps)).toEqual([2]);
+    await expect(steps.locator('.step__pick').nth(2)).toHaveAttribute('aria-current', 'step');
+    expect(await counting(steps)).toBe('none');
+  });
+
+  test(`${set.name} has both layouts on a toggle of its own, in a link`, async ({ page }) => {
+    await page.goto('/');
+    await openSet(page, set);
+    const steps = page.locator(`[data-steps="${set.name}"]`);
+    const other = set.starts === 'side' ? 'rotating' : 'side';
+    const toggle = steps.locator('[data-steps-toggle]');
+    await expect(toggle).toBeInViewport({ ratio: 1 });
+    await expect.poll(() => uncoveredPoints(toggle)).toBe(9);
+    await expect(toggle.locator(`[data-layout-pick="${set.starts}"]`)).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await toggle.locator(`[data-layout-pick="${other}"]`).click();
+    await expect(steps).toHaveAttribute('data-layout', other);
+    await stepsFit(page, set.name === 'parkdex' ? '.pk-forest' : set.scene, set.name);
+    expect(new URL(page.url()).searchParams.get(set.name)).toBe(other);
+    // The other three stay as they were.
+    for (const { name, starts } of sets) {
+      if (name === set.name) continue;
+      await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', starts);
+    }
+    await page.reload();
+    await expect(steps).toHaveAttribute('data-layout', other);
+  });
+}
+
+test.describe('with a mouse and keyboard', () => {
+  test.skip(({ isMobile }) => isMobile, 'There is no pointer to rest or keys to press.');
+
+  test('it keeps counting under a mouse left where the control was', async ({ page }) => {
+    await page.goto(allRotating);
+    for (const set of sets.filter(({ name }) => name !== 'parkdex')) {
+      await jumpTo(page, set.scene);
+      await page.locator(set.control).click();
+      const steps = page.locator(`[data-steps="${set.name}"]`);
+      await expect.poll(() => counting(steps)).toBe('running');
+      await page.waitForTimeout(300);
+      expect(await counting(steps)).toBe('running');
+    }
+  });
+
+  test('a mouse on the list or the window pauses the count, and leaving resumes it', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await openSet(page, sets[1]);
+    const steps = page.locator('[data-steps="offbooked"]');
+    await expect.poll(() => counting(steps)).toBe('running');
+    await page.locator('#offbooked [data-steps-window]').hover();
+    await expect.poll(() => counting(steps)).toBe('paused');
+    await page.mouse.move(2, 2);
+    await expect.poll(() => counting(steps)).toBe('running');
+  });
+
+  test('resting the mouse on a step picks it', async ({ page }) => {
+    await page.goto('/');
+    await openSet(page, sets[0]);
+    const steps = page.locator('[data-steps="abn"]');
+    await expect.poll(() => counting(steps)).toBe('running');
+    await steps.locator('[data-step]').nth(3).hover();
+    await expect.poll(() => showing(steps)).toBe(3);
+    expect(await counting(steps)).toBe('none');
+  });
+
+  test('focus pauses the count, and keys pick and move between steps', async ({ page }) => {
+    await page.goto('/');
+    await openSet(page, sets[0]);
+    const steps = page.locator('[data-steps="abn"]');
+    const picks = steps.locator('.step__pick');
+    await expect.poll(() => counting(steps)).toBe('running');
+    await picks.nth(1).focus();
+    await expect.poll(() => counting(steps)).toBe('paused');
+    await page.locator('.abn-show__cta').focus();
+    await expect.poll(() => counting(steps)).toBe('running');
+    await picks.nth(1).focus();
+    await page.keyboard.press('Enter');
+    await expect.poll(() => showing(steps)).toBe(1);
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(() => showing(steps)).toBe(2);
+    await expect(picks.nth(2)).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('ArrowUp');
+    await expect.poll(() => showing(steps)).toBe(0);
+    expect(await counting(steps)).toBe('none');
+  });
+
+  test('the keyboard reaches a step and the toggle only once the section is open', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await jumpTo(page, '#offbooked');
+    const steps = page.locator('[data-steps="offbooked"]');
+    const closedOff = () => steps.evaluate((set) => (set as HTMLElement).inert);
+    expect(await closedOff()).toBe(true);
+    await page.locator('.rope').click();
+    await expect.poll(closedOff).toBe(false);
+  });
+});
+
+test('the real dwell moves on by itself, and leaves time to read', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The clock is the same on a phone.');
+  test.setTimeout(30000);
+  await page.goto('/');
+  await openSet(page, sets[1]);
+  const steps = page.locator('[data-steps="offbooked"]');
+  await page.mouse.move(2, 2);
+  await expect.poll(() => counting(steps)).toBe('running');
+  const start = Date.now();
+  await expect.poll(() => showing(steps), { timeout: 12000 }).toBe(1);
+  expect(Date.now() - start).toBeGreaterThan(5000);
+});
+
+test('off screen, the count waits', async ({ page }) => {
+  await page.goto('/');
+  await openSet(page, sets[0]);
+  const steps = page.locator('[data-steps="abn"]');
+  await expect.poll(() => counting(steps)).toBe('running');
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect.poll(() => counting(steps)).toBe('paused');
+});
+
+test('going back to side by side puts every picture back with its step', async ({ page }) => {
+  await page.goto('/');
+  await openSet(page, sets[1]);
+  const steps = page.locator('[data-steps="offbooked"]');
+  await steps.locator('[data-layout-pick="side"]').click();
+  await expect(steps.locator('[data-steps-window]')).toBeHidden();
+  await expect(steps.locator('[data-step] figure')).toHaveCount(4);
+  await expect(steps.locator('.step__pick')).toHaveCount(0);
+  expect(await counting(steps)).toBe('none');
+  await expect(steps.locator('[data-step] h3').first()).toHaveText('1Upload your script.');
+});
+
+test('production has no toggle, and ignores a review link', async ({ page }) => {
+  await page.route('https://www.nathanpannell.com/**', async (route) => {
+    const { pathname, search } = new URL(route.request().url());
+    await route.fulfill({ response: await page.request.get(`${pathname}${search}`) });
+  });
+  await page.goto(`https://www.nathanpannell.com${turnedAround}`);
+  await expect(page.locator('[data-steps-toggle]:visible')).toHaveCount(0);
+  for (const { name, starts } of sets) {
+    await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', starts);
+  }
+});
 
 test('the Parkdex stops are the four steps, with the demo leaderboard third', async ({ page }) => {
   await page.goto('/');
@@ -461,6 +709,8 @@ test('the Offbooked ticket can be clicked once it lands', async ({ page }) => {
 });
 
 const everySize = [
+  [1280, 720],
+  [1366, 625],
   [320, 480],
   [320, 640],
   [390, 844],
@@ -975,6 +1225,40 @@ test('on a phone, a filled row keeps its host legible under the name', async ({
   await expect(row.locator('.wash-list__host')).toHaveCSS('opacity', '1');
 });
 
+// Where a row's picture ends, from the same offset the row draws it with.
+const pictureEnd = (row: Locator) =>
+  row.evaluate((element) => {
+    const { right } = element.getBoundingClientRect();
+    const offset = getComputedStyle(element, '::before').backgroundPositionX.split(',')[2];
+    return right - Number(/100% - ([\d.]+)px/.exec(offset ?? '')?.[1]);
+  });
+
+for (const width of [320, 360, 390, 640]) {
+  test(`at ${width}px an index row keeps its arrow off the picture, beside its host`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    for (const row of await page.locator('[data-wash]').all()) {
+      const host = await row.locator('.wash-list__host').boundingBox();
+      const arrow = await row.locator('svg').boundingBox();
+      expect((arrow?.x ?? 0) + (arrow?.width ?? 0)).toBeLessThan(width * 0.75);
+      expect(arrow?.x ?? 0).toBeGreaterThanOrEqual((host?.x ?? 0) + (host?.width ?? 0));
+    }
+  });
+}
+
+for (const width of [641, 768, 1024, 1440]) {
+  test(`at ${width}px an index row's picture stops short of its arrow`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    for (const row of await page.locator('[data-wash]').all()) {
+      const arrow = await row.locator('svg').boundingBox();
+      expect(await pictureEnd(row)).toBeLessThanOrEqual(arrow?.x ?? 0);
+    }
+  });
+}
+
 test('on touch, the row nearest the middle of the screen fills', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'Desktop uses hover.');
   await page.goto('/');
@@ -1055,6 +1339,25 @@ for (const [width, height] of everySize) {
     await stepsFit(page, '.sb-open', `Sandbox at ${width}x${height}`);
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
+
+  test(`every section's other layout fits at ${width}x${height}`, async ({ page }) => {
+    test.setTimeout(60000);
+    await page.setViewportSize({ width, height });
+    await page.goto(turnedAround);
+    await useControl(page, '.abn-cover', '.abn-key');
+    await stepsFit(page, '.abn-cover', `AI Build Night at ${width}x${height}`);
+    await useControl(page, '#offbooked', '.rope');
+    await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 12000 });
+    await stepsFit(page, '#offbooked', `Offbooked at ${width}x${height}`);
+    await landKip(page);
+    await stepsFit(page, '.pk-forest', `Parkdex at ${width}x${height}`);
+    await page.locator('.pk-slide').click();
+    await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+    await useControl(page, '.sb-open', '.sb-box__open');
+    await expect(page.locator('.sb-box')).toBeHidden({ timeout: 3000 });
+    await stepsFit(page, '.sb-open', `Sandbox at ${width}x${height}`);
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
+  });
 }
 
 test.describe('reduced motion', () => {
@@ -1078,6 +1381,13 @@ test.describe('reduced motion', () => {
     for (const step of await page.locator('.step').all()) {
       await expect(step).toHaveCSS('opacity', '1');
     }
+    // Rotating here means a list to pick from: it never moves on by itself.
+    const steps = page.locator('[data-steps="abn"]');
+    await expect(steps).toHaveAttribute('data-layout', 'rotating');
+    await expect(steps.locator('[data-step]')).toHaveCount(4);
+    expect(await counting(steps)).toBe('none');
+    await steps.locator('.step__pick').nth(1).click();
+    await expect.poll(() => showing(steps)).toBe(1);
     const animations = await page.evaluate(() =>
       document
         .getAnimations()
@@ -1122,6 +1432,11 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
   for (const step of await page.locator('.step').all()) {
     expect(await opacityOf(step)).toBe(1);
   }
+  // Every step keeps its own picture, in the order they were written.
+  await expect(page.locator('[data-step] figure')).toHaveCount(15);
+  await expect(
+    page.locator('[data-steps-window]:visible, [data-steps-toggle]:visible'),
+  ).toHaveCount(0);
   // Visible isn't enough: the cover's headline stays clear of the site that follows it.
   await page.locator('#abn-title').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('#abn-title'))).toBeGreaterThan(0);

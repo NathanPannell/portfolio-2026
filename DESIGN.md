@@ -28,6 +28,7 @@ Each world follows its product's real brand. Check the product before changing i
 - Reduced motion is a designed layout, not motion turned off.
 - Keep words few. A section's steps do the explaining, so a visitor knows what it is from a first look, and links out do the rest.
 - Every step has its own real picture. See "Steps" in `ARCHITECTURE.md`.
+- No two sections' steps should look stamped from one template. A main window belongs to its section: a browser, a phone by a script, a phone on the vine, a crayon drawing.
 - Each press has a sound of its own, and nothing else on the page makes one.
 - A click moment is a physical object from that world, and the only thing that opens the scene. A closed screen stays simple: the name and the one thing to press. See "Click moments" in `ARCHITECTURE.md`.
 - Motion plays on a clock once a frame arrives. Nothing is tied to the scroll position, and the only scroll help is a gentle settle after a pause.

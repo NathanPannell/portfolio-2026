@@ -1,4 +1,12 @@
 /* The shell only. Every world on the homepage owns its look in its own component. */
+
+/* How far through a rotating step is. At rest it is all the way, so nothing shows as counting. */
+@property --progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
 :root {
   --ink: #0b0d0e;
   --bone: #f5f4f0;

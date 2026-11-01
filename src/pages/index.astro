@@ -31,6 +31,7 @@ import Sandbox from '../components/Sandbox.astro';
   import { startLoops, startRests } from '../scripts/motion';
   import { startRide } from '../scripts/ride';
   import { startSounds } from '../scripts/sound';
+  import { startSteps } from '../scripts/steps';
   import { startWash } from '../scripts/wash';
 
   // Scenes close first, so everything after finds them in the state they will open from. One of
@@ -38,6 +39,7 @@ import Sandbox from '../components/Sandbox.astro';
   for (const start of [
     startDoors,
     startMoments,
+    startSteps,
     startLoops,
     startRests,
     startCover,

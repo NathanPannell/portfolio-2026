@@ -88,8 +88,8 @@ const startSlide = (
   // Down the vine from `from` to its end. With `follow`, the page comes too, until any input.
   const dive = (from: number, follow: boolean) => {
     gone = true;
-    // The button is about to leave, so the next Tab carries on from inside the scene.
-    if (document.activeElement === button) trip.focus({ preventScroll: true });
+    // The button is about to leave, so the next Tab carries on from where this trip ends.
+    if (document.activeElement === button) ground.focus({ preventScroll: true });
     trip.toggleAttribute('data-diving', true);
     poses.forEach((pose, index) => pose.toggleAttribute('data-on', index === 1));
     const to = sectionY(end) + end.offsetHeight;
@@ -205,6 +205,7 @@ export const startRide = () => {
     place(forest.offsetTop);
     trip.removeAttribute('data-riding');
     trip.toggleAttribute('data-landed', true);
+    trip.dispatchEvent(new CustomEvent('moment:landed'));
     watchTheGround?.();
   };
 

@@ -94,17 +94,32 @@ const worlds = [
 
   /* Carried over from the old homepage: the row's whole background fills with a full-colour image.
      Each one is drawn for a row this shape, with its subject at the right and its own colour under
-     the name, and pinned to the row's right edge and full height so it is never cropped to a strip. */
+     the name, and held at full height so it is never cropped to a strip. On a phone, where the arrow
+     sits under the name, it runs off the right edge to stay clear of the name. Wider, it stops short
+     of the arrow and fades into the row's colour. */
   .wash-list {
     border-top: 1px solid #33383a;
   }
 
   .wash-list li {
     --wash-image: var(--wash-small);
+    --wash-inset: calc(clamp(1rem, 27rem - 100vw, 3.75rem) * -1);
+    --wash-edge: none;
     position: relative;
     isolation: isolate;
     overflow: hidden;
     border-bottom: 1px solid #33383a;
+  }
+
+  @media (min-width: 641px) {
+    .wash-list li {
+      --wash-inset: calc(var(--gutter) + 2.75rem);
+      --wash-edge: linear-gradient(
+        90deg,
+        transparent calc(100% - var(--wash-inset) - 3rem),
+        var(--wash-field) calc(100% - var(--wash-inset))
+      );
+    }
   }
 
   @media (min-width: 900px) {
@@ -126,7 +141,8 @@ const worlds = [
         rgb(0 0 0 / 4%) 62%,
         rgb(0 0 0 / 34%)
       ),
-      var(--wash-image) right center / auto 100% no-repeat,
+      var(--wash-edge),
+      var(--wash-image) right var(--wash-inset) center / auto 100% no-repeat,
       var(--wash-field);
     opacity: 0;
     transform: scale(1.035);
@@ -294,12 +310,14 @@ const worlds = [
 
   @media (max-width: 640px) {
     .wash-list a {
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.2rem 1rem;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.2rem 0.5rem;
     }
 
     .wash-list__name {
-      grid-column: 1;
+      grid-column: 1 / -1;
+      max-width: 7em;
+      font-size: clamp(1.75rem, 9.3vw, 2.4rem);
     }
 
     .wash-list__host {
@@ -309,7 +327,9 @@ const worlds = [
 
     .wash-list svg {
       grid-column: 2;
-      grid-row: 1 / span 2;
+      grid-row: 2;
+      width: 1.15rem;
+      height: 1.15rem;
     }
   }
 
