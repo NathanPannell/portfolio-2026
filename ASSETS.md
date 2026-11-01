@@ -8,7 +8,7 @@ Everything under `public/media/` is a real capture, taken on 2026-10-31 unless n
 | `sandbox/` | playbythesandbox.ca in production. `site-loop.mp4` plays forward then backward so it loops cleanly. |
 | `offbooked/` | Offbooked from `origin/staging` at `b5dcd6a`, run locally on a throwaway Postgres with the repo's Hamlet demo seed. The cast names are demo data. |
 | `parkdex/` | `arrival` is web.parkdex.app in production, as a guest, in a browser that blocked every write. The `@n8tewolf` on it is the owner's own handle. `planted`, `founder` and `take` are from parkdex.app in production, whose app captures use demo handles. `kip-wave` is from the same page, and the other `kip-*` poses are from `art-source/kip/` in the Parkdex repo. |
-| `index/` | Full-colour fills drawn for the shape of an index row, with the subject at the right and the row's own colour under its name: the live AI Build Night headline, the tops of two Offbooked screens, the Parkdex park art with Kip, and the Sandbox marquee. The sky is feathered over the corner where the site's logo card overlaps the marquee. |
+| `index/` | Full-colour fills drawn for the shape of an index row, with the subject at the right and the row's own colour under its name: the live AI Build Night headline, or its Enter key on the small version, the tops of two Offbooked screens, the Parkdex park art with Kip, and the Sandbox marquee. The sky is feathered over the corner where the site's logo card overlaps the marquee. |
 
 `og.jpg` and the icons in `public/` are generated for this site. `src/art/parkdex/` holds the hand-built SVG forest, vine and park, which are illustration rather than captures.
 
