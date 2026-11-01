@@ -1,7 +1,7 @@
 ---
 import { worlds } from './worlds';
 
-const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
+const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox', 'tempo'];
 ---
 
 <div class="doors">
@@ -117,6 +117,26 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
     letter-spacing: 0;
   }
 
+  /* The one dark door, with the rehearsal room's light in its type. */
+  .door--tempo a {
+    color: #efe5cf;
+  }
+
+  .door--tempo a::before {
+    border-color: rgb(227 166 70 / 45%);
+  }
+
+  .door--tempo .door__name {
+    color: #e3a646;
+    font-family: 'Big Shoulders Display Variable', var(--sans);
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .door--tempo a:focus-visible {
+    outline-color: #efe5cf;
+  }
+
   .door__knob {
     position: absolute;
     top: 48%;
@@ -171,7 +191,7 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
     }
   }
 
-  /* Phones get four long doors, one above the other. */
+  /* Phones get five long doors, one above the other. */
   @media (max-aspect-ratio: 1/1) {
     .doors {
       padding-bottom: 4.25rem;

@@ -108,17 +108,17 @@ To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflar
 
 ## Choosing each section's steps layout
 
-Each section's steps can be side by side or rotating, and the owner is choosing per section. Sections start on: AI Build Night rotating, Offbooked rotating, Parkdex side by side, Sandbox side by side. A small pill at the top right of each opened section switches it, and only appears on `staging.nathanpannell.com` and local builds. Every switch updates the address bar, so the link can be sent as it stands. Links name each section by `abn`, `offbooked`, `parkdex` and `sandbox`, each `side` or `rotating`:
+Each section's steps can be side by side or rotating, and the owner is choosing per section. Sections start on: AI Build Night rotating, Offbooked rotating, Parkdex side by side, Sandbox side by side, Not Quite My Tempo rotating. A small pill at the top right of each opened section switches it, and only appears on `staging.nathanpannell.com` and local builds. Every switch updates the address bar, so the link can be sent as it stands. Links name each section by `abn`, `offbooked`, `parkdex`, `sandbox` and `tempo`, each `side` or `rotating`:
 
-`https://staging.nathanpannell.com/?abn=rotating&offbooked=side&parkdex=rotating&sandbox=side`
+`https://staging.nathanpannell.com/?abn=rotating&offbooked=side&parkdex=rotating&sandbox=side&tempo=rotating`
 
 To settle on one for each section:
 
-1. Set the `layout` prop on each `<Steps>` in `BuildNight.astro`, `Offbooked.astro` and `Sandbox.astro`, and `data-layout-default` in `Parkdex.astro`, to the chosen layout.
+1. Set the `layout` prop on each `<Steps>` in `BuildNight.astro`, `Offbooked.astro`, `Sandbox.astro` and `Tempo.astro`, and `data-layout-default` in `Parkdex.astro`, to the chosen layout.
 2. Delete `src/components/StepsToggle.astro` and each `<StepsToggle />`, with Parkdex's import of it.
 3. In `src/scripts/steps.ts`, remove `REVIEW_HOSTS`, the `review` and `onChoose` arguments, `writeLink`, the `choices` and `toggle` code and the `asked` lookup.
 4. Remove the toggle's tests from `e2e/pages.spec.ts`, the production test among them, and move the rest off the review links at the top of the steps tests.
-5. If no section ended up rotating, delete `steps.ts` and its call in `index.astro`, the window markup and rotating styles, `--progress` in `global.css`, and `moment:landed` in `ride.ts`. If none stayed side by side, keep the side-by-side markup and styles anyway: they are what shows without JavaScript.
+5. If no section ended up rotating, delete `steps.ts` and its call in `index.astro`, the window markup and rotating styles, `--progress` in `global.css`, `data-counting`, and `moment:landed` in `ride.ts`. If none stayed side by side, keep the side-by-side markup and styles anyway: they are what shows without JavaScript.
 
 ## Required UI verification
 
@@ -138,7 +138,7 @@ The content contract protects:
 
 - the order of the homepage's sections
 - the outbound links that were checked against the live products
-- no Offbooked store link or price, and no Parkdex tester link
+- no Offbooked store link or price, no Parkdex tester link, and no link to the unconnected notquitemytempo.com
 - no analytics beacon in the source, and no return of the lines the owner cut
 - the image-fill interaction and its touch equivalent
 - a reduced-motion layout in every world

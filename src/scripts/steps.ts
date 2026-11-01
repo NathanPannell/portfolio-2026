@@ -84,7 +84,9 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
   const countDown = (delay = 0) => {
     count?.cancel();
     count = undefined;
+    set.removeAttribute('data-counting');
     if (layout !== 'rotating' || !opened || picked || reducedMotion()) return;
+    set.toggleAttribute('data-counting', true);
     count = set.animate({ '--progress': [0, 1] }, { duration: DWELL, delay, fill: 'backwards' });
     count.onfinish = () => {
       show((now + 1) % steps.length);

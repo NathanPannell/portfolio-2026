@@ -98,7 +98,7 @@ for (const route of sitemapRoutes()) {
 test('every world has its heading and its links', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  for (const id of ['abn-title', 'ob-title', 'pk-title', 'sb-title', 'go-title']) {
+  for (const id of ['abn-title', 'ob-title', 'pk-title', 'sb-title', 'tp-title', 'go-title']) {
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }
   const hrefs = await page
@@ -110,6 +110,7 @@ test('every world has its heading and its links', async ({ page }) => {
     'https://www.playbythesandbox.ca/',
     'https://offbooked.com/',
     'https://parkdex.app/',
+    'https://notquitemytempo-sand.vercel.app/',
     'https://play.google.com/store/apps/details?id=app.parkdex',
   ]) {
     expect(hrefs).toContain(url);
@@ -139,6 +140,7 @@ const moments = [
   { name: 'Offbooked', scene: '#offbooked', control: '.rope', inside: '.ticket' },
   { name: 'Parkdex', scene: '#parkdex', control: '.pk-plant', inside: '[data-stop] h3' },
   { name: 'Play by the Sandbox', scene: '.sb-open', control: '.sb-box__open', inside: '.sb__cta' },
+  { name: 'Not Quite My Tempo', scene: '.tp', control: '.tp-tap', inside: '.tp__cta' },
 ] as const;
 
 const useControl = async (page: Page, scene: string, control: string) => {
@@ -154,9 +156,10 @@ const landKip = async (page: Page) => {
 };
 
 // Review links: every section side by side, and each section on the layout it doesn't start on.
-const sideBySide = '/?abn=side&offbooked=side&parkdex=side&sandbox=side';
-const turnedAround = '/?abn=side&offbooked=side&parkdex=rotating&sandbox=rotating';
-const allRotating = '/?abn=rotating&offbooked=rotating&parkdex=rotating&sandbox=rotating';
+const sideBySide = '/?abn=side&offbooked=side&parkdex=side&sandbox=side&tempo=side';
+const turnedAround = '/?abn=side&offbooked=side&parkdex=rotating&sandbox=rotating&tempo=side';
+const allRotating =
+  '/?abn=rotating&offbooked=rotating&parkdex=rotating&sandbox=rotating&tempo=rotating';
 
 // What each opened section says, in the owner's order, with one real picture to each line.
 const explained = [
@@ -192,6 +195,17 @@ const explained = [
       'I created a 3D landing page with interactive elements and fun visuals.',
     ],
   },
+  {
+    name: 'Not Quite My Tempo',
+    scene: '.tp',
+    control: '.tp-tap',
+    steps: [
+      'It’s 5:58 a.m., and you’re the new drummer.',
+      'Keep his tempo. When he stops, call it: rushing, dragging or in time.',
+      'Duck when the chair comes.',
+      'Find all three endings.',
+    ],
+  },
 ] as const;
 
 // Every step on screen, its words and picture inside it, and nothing sitting on anything else.
@@ -221,7 +235,7 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
     const parts = [
       document.querySelector<HTMLElement>('.chrome__name'),
       ...root.querySelectorAll<HTMLElement>(
-        '[data-step], [data-steps-window], .steps-toggle, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2, .pk-slide',
+        '[data-step], [data-steps-window], .steps-toggle, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2, .tp__head h2, .tp__head p, .pk-slide',
       ),
     ].filter(
       (part): part is HTMLElement =>
@@ -302,6 +316,7 @@ const sets = [
   { name: 'offbooked', scene: '#offbooked', control: '.rope', starts: 'rotating' },
   { name: 'parkdex', scene: '#parkdex', control: '.pk-plant', starts: 'side' },
   { name: 'sandbox', scene: '.sb-open', control: '.sb-box__open', starts: 'side' },
+  { name: 'tempo', scene: '.tp', control: '.tp-tap', starts: 'rotating' },
 ] as const;
 
 const openSet = async (page: Page, { name, scene, control }: (typeof sets)[number]) => {
@@ -334,12 +349,12 @@ const showingPicture = (set: Locator) =>
       ),
     );
 
-test('two sections start rotating and two side by side', async ({ page }) => {
+test('three sections start rotating and two side by side', async ({ page }) => {
   await page.goto('/');
   for (const { name, starts } of sets) {
     await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', starts);
   }
-  await expect(page.locator('[data-steps]')).toHaveCount(4);
+  await expect(page.locator('[data-steps]')).toHaveCount(5);
 });
 
 for (const set of sets) {
@@ -943,6 +958,7 @@ test('each scene sounds when it is opened, and only then', async ({ page, browse
   await louder(() => page.locator('.pk-slide').click());
   await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
   await louder(() => useControl(page, '.sb-open', '.sb-box__open'));
+  await louder(() => useControl(page, '.tp', '.tp-tap'));
   expect((await heard(page)).contexts).toBe(1);
   expect(errors).toEqual([]);
 });
@@ -995,6 +1011,7 @@ test('a page with no sound still opens', async ({ page }) => {
   await useControl(page, '#offbooked', '.rope');
   await useControl(page, '#parkdex', '.pk-plant');
   await useControl(page, '.sb-open', '.sb-box__open');
+  await useControl(page, '.tp', '.tp-tap');
 });
 
 test('Plant! sends Kip down the vine to the four stops', async ({ page }) => {
@@ -1156,7 +1173,7 @@ test('the toy box pours the rainbow across, then shows the page', async ({ page 
   await expect(page.locator('.sb-open video')).toBeInViewport();
 });
 
-for (const scene of ['#offbooked', '#play-by-the-sandbox', '#go']) {
+for (const scene of ['#offbooked', '#play-by-the-sandbox', '#not-quite-my-tempo', '#go']) {
   test(`a reload at ${scene} stays exactly where it was`, async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => {
@@ -1202,7 +1219,7 @@ test('a reload at the top of a closed scene leaves it closed', async ({ page }) 
 test('every scene rests its loops while it is off screen', async ({ page }) => {
   await page.goto('/');
   const scenes = page.locator('[data-loops]');
-  await expect(scenes).toHaveCount(4);
+  await expect(scenes).toHaveCount(5);
   await expect(page.locator('[data-loops]:not([data-resting])')).toHaveCount(0);
   await jumpTo(page, '#parkdex');
   await expect(page.locator('#parkdex')).not.toHaveAttribute('data-resting', '');
@@ -1230,6 +1247,117 @@ test('the Sandbox screen keeps the steps and its link, with nothing around them'
   await expect(page.locator('.sb-panels, .sb-lot, .sb__yard-title, [data-toy]')).toHaveCount(0);
   await expect(page.locator('img[src*="wordmark"], img[src*="panel-"]')).toHaveCount(0);
   await expect(page.locator('.sb-open')).not.toContainText('grab a toy');
+});
+
+// Lands a press at a point in the ring's beat, which is 625 milliseconds long. A real press can't be
+// timed this closely from out here, so this moves the ring to meet it.
+const pressAt = (page: Page, through: number, type: 'pointerdown' | 'keydown' | 'click') =>
+  page.locator('[data-beat]').evaluate(
+    (ring, [at, kind]) => {
+      const beat = ring.getAnimations()[0];
+      const control = ring.closest('button');
+      if (!beat || !control) throw new Error('The ring is not running');
+      beat.startTime = performance.now() - 625 * 3 - Number(at);
+      if (kind === 'pointerdown') control.dispatchEvent(new PointerEvent(kind, { bubbles: true }));
+      if (kind === 'keydown') control.dispatchEvent(new KeyboardEvent(kind, { key: ' ' }));
+      if (kind === 'click') control.click();
+    },
+    [through, type] as const,
+  );
+
+const letGo = (page: Page) =>
+  page.locator('.tp-tap').evaluate((control: HTMLElement) => {
+    control.click();
+  });
+
+for (const [through, word] of [
+  [5, 'Perfect'],
+  [70, 'Good'],
+  [200, 'Dragging'],
+  [425, 'Rushing'],
+  [555, 'Good'],
+  [600, 'Perfect'],
+] as const) {
+  test(`a press ${through}ms into the beat is called ${word}, and opens it either way`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await jumpTo(page, '.tp');
+    await pressAt(page, through, 'pointerdown');
+    await letGo(page);
+    await expect(page.locator('.tp')).toHaveAttribute('data-open', '');
+    await expect(page.locator('[data-verdict]')).toHaveText(word);
+    await expect(page.locator('[data-verdict-by]')).toHaveText(/^[+-]?\d+ ms$/);
+  });
+}
+
+for (const type of ['pointerdown', 'keydown'] as const) {
+  test(`a ${type} counts from when it lands, not from the click that follows it`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await jumpTo(page, '.tp');
+    await pressAt(page, 5, type);
+    await page.waitForTimeout(250);
+    await letGo(page);
+    await expect(page.locator('[data-verdict]')).toHaveText('Perfect');
+  });
+}
+
+test('a press with no pointer or key behind it is judged on the click', async ({ page }) => {
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await pressAt(page, 200, 'click');
+  await expect(page.locator('[data-verdict]')).toHaveText('Dragging');
+});
+
+test('a real press gets a word', async ({ page }) => {
+  await page.goto('/');
+  await useControl(page, '.tp', '.tp-tap');
+  await expect(page.locator('[data-verdict]')).toHaveText(/^(Perfect|Good|Rushing|Dragging)$/);
+});
+
+test('the closed Tempo screen is silent, and its beat only runs on screen', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  await listenForThocc(page);
+  await page.goto('/');
+  await expect(page.locator('.tp')).toHaveAttribute('data-resting', '');
+  await jumpTo(page, '.tp');
+  await expect(page.locator('.tp')).not.toHaveAttribute('data-resting', '');
+  await page.waitForTimeout(1500);
+  expect(await heard(page)).toEqual({ contexts: 0, tones: 0, noises: 0 });
+});
+
+test('the verdict clears, and leaves the room to the steps and one link', async ({ page }) => {
+  await page.goto('/');
+  await useControl(page, '.tp', '.tp-tap');
+  await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
+  await expect(page.locator('.tp a')).toHaveCount(1);
+  await expect(page.locator('.tp__cta')).toHaveAttribute(
+    'href',
+    'https://notquitemytempo-sand.vercel.app/',
+  );
+});
+
+test('his patience runs out over each step, and is full when nothing is counting', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await openSet(page, sets[4]);
+  const steps = page.locator('[data-steps="tempo"]');
+  await expect(steps).toHaveAttribute('data-counting', '');
+  await steps.locator('.step__pick').nth(2).click();
+  await expect(steps).not.toHaveAttribute('data-counting', '');
+  await expect
+    .poll(() =>
+      steps
+        .locator('.steps-window__bar')
+        .evaluate((bar) => getComputedStyle(bar, '::after').transform),
+    )
+    .toBe('none');
 });
 
 test('hovering or focusing an index row fills it with its image', async ({ page, isMobile }) => {
@@ -1291,8 +1419,9 @@ const pictureEnd = (row: Locator) =>
     return right - Number(/100% - ([\d.]+)px/.exec(offset ?? '')?.[1]);
   });
 
-// Where each row's subject starts across its picture: the key, the phones, Kip, the marquee.
-const subjects = [0.59, 0.485, 0.55, 0.466];
+// Where each row's subject starts across its picture: the key, the phones, Kip, the marquee, the
+// band.
+const subjects = [0.59, 0.485, 0.55, 0.466, 0.69];
 
 // Where a row's subject starts on screen, and where its name, host and arrow end.
 const rowEdges = (row: Locator, subject: number) =>
@@ -1414,6 +1543,29 @@ for (const [width, height] of everySize) {
     await expect(page.locator('#sb-title')).toBeInViewport({ ratio: 1 });
     await expect(page.locator('.sb__cta')).toBeInViewport({ ratio: 0.95 });
     await stepsFit(page, '.sb-open', `Sandbox at ${width}x${height}`);
+
+    await jumpTo(page, '.tp');
+    const closed = ['.tp-closed__name', '.tp-tap', '.tp-closed__hint', '.tp-count'];
+    for (const part of closed) {
+      await expect(page.locator(part), part).toBeInViewport({ ratio: 1 });
+    }
+    const boxes = await Promise.all(closed.map((part) => page.locator(part).boundingBox()));
+    for (const [index, box] of boxes.entries()) {
+      for (const other of boxes.slice(index + 1)) {
+        if (!box || !other) throw new Error('A closed part has no box');
+        const apart =
+          other.x >= box.x + box.width ||
+          box.x >= other.x + other.width ||
+          other.y >= box.y + box.height ||
+          box.y >= other.y + other.height;
+        expect(apart, `${closed[index]} at ${width}x${height}`).toBe(true);
+      }
+    }
+    await useControl(page, '.tp', '.tp-tap');
+    await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
+    await expect(page.locator('#tp-title')).toBeInViewport({ ratio: 1 });
+    await expect(page.locator('.tp__cta')).toBeInViewport({ ratio: 1 });
+    await stepsFit(page, '.tp', `Not Quite My Tempo at ${width}x${height}`);
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 
@@ -1433,6 +1585,9 @@ for (const [width, height] of everySize) {
     await useControl(page, '.sb-open', '.sb-box__open');
     await expect(page.locator('.sb-box')).toBeHidden({ timeout: 3000 });
     await stepsFit(page, '.sb-open', `Sandbox at ${width}x${height}`);
+    await useControl(page, '.tp', '.tp-tap');
+    await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
+    await stepsFit(page, '.tp', `Not Quite My Tempo at ${width}x${height}`);
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 }
@@ -1454,6 +1609,8 @@ test.describe('reduced motion', () => {
     await expect(page.locator('.abn-show__cta')).toBeVisible();
     await expect(page.locator('.pk-end h3')).toBeVisible();
     await expect(page.locator('[data-stop] h3').first()).toBeVisible();
+    await expect(page.locator('.tp-closed')).toBeHidden();
+    await expect(page.locator('.tp__cta')).toBeVisible();
     await expect(page.locator('.ticket')).toHaveCSS('opacity', '1');
     for (const step of await page.locator('.step').all()) {
       await expect(step).toHaveCSS('opacity', '1');
@@ -1506,11 +1663,13 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
   await expect(page.locator('.abn-show__cta')).toBeVisible();
   await expect(page.locator('[data-stop] img').first()).toBeVisible();
   await expect(page.locator('#sb-title')).toBeVisible();
+  await expect(page.locator('#tp-title')).toBeVisible();
+  await expect(page.locator('.tp-closed')).toBeHidden();
   for (const step of await page.locator('.step').all()) {
     expect(await opacityOf(step)).toBe(1);
   }
   // Every step keeps its own picture, in the order they were written.
-  await expect(page.locator('[data-step] figure')).toHaveCount(15);
+  await expect(page.locator('[data-step] figure')).toHaveCount(19);
   await expect(
     page.locator('[data-steps-window]:visible, [data-steps-toggle]:visible'),
   ).toHaveCount(0);
@@ -1554,6 +1713,8 @@ test.describe('without JavaScript', () => {
     }
     await expect(page.locator('.drape').first()).toBeHidden();
     await expect(page.locator('.wipe')).toBeHidden();
+    await expect(page.locator('.tp-closed')).toBeHidden();
+    await expect(page.locator('.tp__cta')).toBeVisible();
     await expect(page.locator('[data-moment-control]:visible')).toHaveCount(0);
   });
 });

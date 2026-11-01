@@ -21,10 +21,24 @@ const markup = sources
   .join('\n');
 
 // Every world on the homepage, in the order the owner ranked them.
-const worlds = ['ai-build-night', 'offbooked', 'parkdex', 'play-by-the-sandbox'];
+const worlds = [
+  'ai-build-night',
+  'offbooked',
+  'parkdex',
+  'play-by-the-sandbox',
+  'not-quite-my-tempo',
+];
 let lastIndex = -1;
 const page = readFileSync(join(root, 'src', 'pages', 'index.astro'), 'utf8');
-for (const component of ['<Hero', '<BuildNight', '<Offbooked', '<Parkdex', '<Sandbox', '<Index']) {
+for (const component of [
+  '<Hero',
+  '<BuildNight',
+  '<Offbooked',
+  '<Parkdex',
+  '<Sandbox',
+  '<Tempo',
+  '<Index',
+]) {
   const index = page.indexOf(component);
   assert(index > lastIndex, `${component} must stay in its place on the homepage`);
   lastIndex = index;
@@ -40,11 +54,15 @@ for (const url of [
   'https://www.playbythesandbox.ca/',
   'https://offbooked.com/',
   'https://parkdex.app/',
+  'https://notquitemytempo-sand.vercel.app/',
   'https://play.google.com/store/apps/details?id=app.parkdex',
   'https://x.com/nathanwpannell',
 ]) {
   assert(markup.includes(url), `Missing outbound link: ${url}`);
 }
+
+// The game's domain isn't connected, so its link stays on Vercel.
+assert.doesNotMatch(markup, /notquitemytempo\.com/, 'That domain is not connected');
 
 // The owner's X handle changed, so the old one must not come back.
 assert.doesNotMatch(markup, /x\.com\/nwpannell/, 'Old X handle');
@@ -84,6 +102,7 @@ for (const [component, control] of [
   ['Offbooked', 'rope'],
   ['Parkdex', 'pk-plant'],
   ['Sandbox', 'sb-box__open'],
+  ['Tempo', 'tp-tap'],
 ]) {
   const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
   assert.match(source, /\bdata-moment(?!-)/, `${component} needs a click moment`);
@@ -95,8 +114,10 @@ for (const [component, control] of [
 }
 
 // Only the visitor opens a scene: no timer, and nothing that opens one on the way past.
-const momentsScript = readFileSync(join(root, 'src', 'scripts', 'moments.ts'), 'utf8');
-assert.doesNotMatch(momentsScript, /setTimeout|IntersectionObserver|addEventListener\('scroll/);
+for (const script of ['moments.ts', 'tempo.ts']) {
+  const source = readFileSync(join(root, 'src', 'scripts', script), 'utf8');
+  assert.doesNotMatch(source, /setTimeout|IntersectionObserver|addEventListener\('scroll/);
+}
 
 // The owner chose Doors, so the hero toggle and the other options stay out.
 assert.doesNotMatch(markup, /data-hero/, 'The hero toggle is gone');
@@ -107,7 +128,7 @@ assert.deepEqual(
 );
 
 // Each section says what it does in numbered steps, all on screen at once.
-for (const component of ['BuildNight', 'Offbooked', 'Sandbox']) {
+for (const component of ['BuildNight', 'Offbooked', 'Sandbox', 'Tempo']) {
   const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
   assert.match(source, /<Steps\b/, `${component} explains itself in steps`);
 }
@@ -140,7 +161,15 @@ for (const path of sources) {
 assert.doesNotMatch(offbooked, /class="(?:stamp|marquee|slab|script|tape|bubble)/, 'Tidied away');
 
 // Every world honours reduced motion with its own still layout.
-for (const component of ['Hero', 'BuildNight', 'Sandbox', 'Offbooked', 'Parkdex', 'Index']) {
+for (const component of [
+  'Hero',
+  'BuildNight',
+  'Sandbox',
+  'Offbooked',
+  'Parkdex',
+  'Tempo',
+  'Index',
+]) {
   const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
   assert.match(
     source,

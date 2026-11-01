@@ -18,6 +18,7 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 | Play by the Sandbox: Mello's event at the Vancouver Art Gallery, for creatives. A 3D landing page in a crayon style, which is a three.js scene on the live site. | playbythesandbox.ca and its repo, checked 2026-11-01 |
 | Offbooked: public beta, free in the beta, cast never pay, no account for the cast, works on any phone, tablet or laptop, used by casts in British Columbia and Nova Scotia. | offbooked.com home page and FAQ, checked 2026-11-01 |
 | Parkdex: 1,000+ parks. Points, and a leaderboard. | Live app and Play listing |
+| Not Quite My Tempo: a four-minute rhythm horror game in a jazz rehearsal room, free in a browser, with three endings (The Nod, The Loop, The Fifth Name). The player is the new drummer, taps to keep the conductor's tempo, calls rushing, dragging or in time when he stops the band, and ducks a thrown chair. | The game's own page and script, played through with its test bot on 2026-11-01 |
 | Offbooked steps: a director uploads a script and shares a link, each actor records their lines, and everyone practises with the cast's voices. A line nobody has recorded yet plays in a computer voice. | Offbooked repo and the app's own intro, checked 2026-11-01 |
 
 ## Check before showing
@@ -25,6 +26,9 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 - **Offbooked download:** there is no App Store or Google Play listing. Link a store only when the listing is public.
 - **Offbooked price:** nothing can be bought yet. Show no price until payments ship.
 - **Parkdex link:** use the public Play listing, not the tester group link.
+- **Not Quite My Tempo link:** use notquitemytempo-sand.vercel.app. notquitemytempo.com isn't connected.
+- **Not Quite My Tempo pictures:** the game gets bloody later on, and this site stays out of that. Use nothing from 2:14 a.m. onwards, and nothing with blood in shot unless it is already on the game's own landing page or share card.
+- **Not Quite My Tempo's name:** it's a line from a film. Don't name the film anywhere on this site.
 
 ## Privacy
 

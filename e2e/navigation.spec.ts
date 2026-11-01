@@ -5,6 +5,7 @@ for (const [label, id] of [
   ['Offbooked', 'offbooked'],
   ['Parkdex', 'parkdex'],
   ['Play by the Sandbox', 'play-by-the-sandbox'],
+  ['Not Quite My Tempo', 'not-quite-my-tempo'],
 ] as const) {
   test(`the ${label} door jumps to its world`, async ({ page }) => {
     await page.goto('/');
@@ -18,7 +19,7 @@ for (const [label, id] of [
   });
 }
 
-for (const id of ['offbooked', 'parkdex', 'play-by-the-sandbox']) {
+for (const id of ['offbooked', 'parkdex', 'play-by-the-sandbox', 'not-quite-my-tempo']) {
   test(`arriving at #${id} lands on that world`, async ({ page }) => {
     await page.goto(`/#${id}`);
     await expect

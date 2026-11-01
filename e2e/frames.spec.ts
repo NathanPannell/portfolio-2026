@@ -299,7 +299,7 @@ test.describe('on touch', () => {
       await page.waitForTimeout(60);
     }
     expect(await scrollY(page)).toBeGreaterThanOrEqual(target);
-    await expect(page.locator('[data-waiting]')).toHaveCount(4);
+    await expect(page.locator('[data-waiting]')).toHaveCount(5);
   });
 });
 
@@ -324,7 +324,7 @@ test.describe('the doors, standing still', () => {
       await expect(page.locator('h1')).toContainText('Nathan Pannell');
       await expect(page.locator('h1')).toContainText('real people');
       const worlds = page.locator('.doors a[href^="#"]');
-      await expect(worlds).toHaveCount(4);
+      await expect(worlds).toHaveCount(5);
       await expect(page.locator('.hero__next')).toBeInViewport({ ratio: 1 });
       // Each link's middle can be reached: nothing sits on top of it, and it is on screen.
       for (const world of await worlds.all()) {
