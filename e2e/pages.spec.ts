@@ -553,6 +553,29 @@ test('each scene sounds when it is opened, and only then', async ({ page, browse
   expect(errors).toEqual([]);
 });
 
+test('pulling the rope sounds the curtains as well as clicking it', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
+  test.skip(isMobile, 'The drag uses the mouse; touch shares its pointer events.');
+  test.skip(browserName === 'webkit', noWebAudio);
+  await listenForThocc(page);
+  await page.goto('/');
+  await jumpTo(page, '#offbooked');
+  const tassel = await page.locator('.rope__tassel').boundingBox();
+  if (!tassel) throw new Error('The rope has no tassel');
+  const x = tassel.x + tassel.width / 2;
+  const y = tassel.y + tassel.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x, y + 90, { steps: 6 });
+  await expect(page.locator('#offbooked')).toHaveAttribute('data-open', '');
+  await page.mouse.up();
+  await expect.poll(() => heard(page).then(({ noises }) => noises)).toBeGreaterThan(0);
+  expect((await heard(page)).contexts).toBe(1);
+});
+
 test('reaching the park by scrolling makes no sound of its own', async ({ page, browserName }) => {
   test.skip(browserName === 'webkit', noWebAudio);
   test.setTimeout(30000);
@@ -633,16 +656,20 @@ test('the second button slides Kip down to the parks and off the end of the vine
   await expect(trip).toHaveAttribute('data-diving', '');
   await expect(page.locator('.pk-slide')).toBeHidden();
 
-  // The page comes along, and Kip stays on screen the whole way.
+  // The page comes along. Kip drops in from above the screen, and stays on it from then on.
   const height = page.viewportSize()?.height ?? 0;
-  for (let sample = 0; sample < 5; sample += 1) {
+  let entered = false;
+  for (let sample = 0; sample < 8; sample += 1) {
     await page.waitForTimeout(250);
     if (!(await diver.isVisible())) break;
     const box = await diver.boundingBox();
-    expect(box?.y ?? 9999).toBeLessThan(height);
-    // It starts just above the top of the screen, and then stays on it.
-    if (sample > 0) expect(box?.y ?? -9999).toBeGreaterThan(-(box?.height ?? 0));
+    const top = box?.y ?? 9999;
+    expect(top).toBeLessThan(height);
+    const showing = top + (box?.height ?? 0) > 0;
+    if (entered) expect(showing).toBe(true);
+    entered ||= showing;
   }
+  expect(entered).toBe(true);
   await expect(trip).toHaveAttribute('data-jumped', '', { timeout: 8000 });
   await expect(diver).toBeHidden();
   await expect(page.locator('.pk-end__kip')).toBeInViewport();

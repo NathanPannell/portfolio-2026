@@ -489,10 +489,10 @@ const stops = [
     mask: linear-gradient(#000 calc(100% - 3rem), transparent);
   }
 
-  /* A layer of its own, so the sign's posts stand in front of the view behind it. */
+  /* A layer of its own in front of the vine, which keeps the sign's posts in front of the view. */
   .pk-end {
     position: relative;
-    isolation: isolate;
+    z-index: 1;
     display: grid;
     justify-items: center;
     gap: 1rem;

@@ -148,8 +148,10 @@ export const startFrames = () => {
   window.addEventListener(
     'wheel',
     (event) => {
-      if (!event.ctrlKey && event.deltaY !== 0) arm();
-      else standDown();
+      // A trackpad's stray sideways event stops a glide, and leaves a waiting settle waiting.
+      if (event.ctrlKey) standDown();
+      else if (event.deltaY !== 0) arm();
+      else stop();
     },
     { passive: true },
   );
