@@ -26,12 +26,14 @@ const startBadge = (root: HTMLElement): Stop => {
   };
 
   let last = 0;
-  let behind = 0;
+  // Half a step, so frames on a 60 Hz screen don't land right on a step's edge and jitter.
+  let behind = SWING_STEP / 2;
+  let lastMove = 0;
 
   const tick = (now: number) => {
     frame = 0;
     if (held) return;
-    behind = Math.min(SWING_STEP * 8, behind + now - (last || now - SWING_STEP));
+    behind = Math.min(SWING_STEP * 8, behind + now - (last || now));
     last = now;
     for (; behind >= SWING_STEP; behind -= SWING_STEP) {
       speed = (speed - angle * 0.016) * 0.975;
@@ -49,6 +51,8 @@ const startBadge = (root: HTMLElement): Stop => {
     if ((event.target as HTMLElement).closest('a')) return;
     held = true;
     last = 0;
+    behind = SWING_STEP / 2;
+    lastMove = event.timeStamp;
     startX = event.clientX;
     startAngle = angle;
     speed = 0;
@@ -57,7 +61,9 @@ const startBadge = (root: HTMLElement): Stop => {
   badge.addEventListener('pointermove', (event) => {
     if (!held) return;
     const next = Math.max(-34, Math.min(34, startAngle - (event.clientX - startX) * 0.09));
-    speed = next - angle;
+    // Per step of the pendulum, so the same flick swings as far on any screen.
+    speed = ((next - angle) / Math.max(1, event.timeStamp - lastMove)) * SWING_STEP;
+    lastMove = event.timeStamp;
     angle = next;
     draw();
   });
