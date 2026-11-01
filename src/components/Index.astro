@@ -5,44 +5,41 @@ const worlds = [
     host: 'aibuildnight.ca',
     href: 'https://aibuildnight.ca/',
     image: 'build-night',
+    field: '#ff5b23',
   },
   {
     name: 'Offbooked',
     host: 'offbooked.com',
     href: 'https://offbooked.com/',
     image: 'offbooked',
+    field: '#a8382a',
   },
   {
     name: 'Parkdex',
     host: 'parkdex.app',
     href: 'https://parkdex.app/',
     image: 'parkdex',
+    field: '#d6ecdf',
   },
   {
     name: 'Play by the Sandbox',
     host: 'playbythesandbox.ca',
     href: 'https://www.playbythesandbox.ca/',
     image: 'sandbox',
+    field: '#b8a4d6',
   },
 ];
-const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they use.'];
 ---
 
-<section id="rules" class="rules" data-frame data-audience="real people" aria-label="How I work">
-  {rules.map((rule, index) => (
-    <p style={`--n: ${index}`}>{rule}</p>
-  ))}
-</section>
-
-<section id="go" class="go" data-frame data-audience="you" aria-labelledby="go-title">
+<section id="go" class="go" data-frame aria-labelledby="go-title">
   <header>
     <h2 id="go-title">All of it is live. Go poke it.</h2>
   </header>
   <ol class="wash-list" data-wash-list>
-    {worlds.map(({ name, host, href, image }) => (
+    {worlds.map(({ name, host, href, image, field }) => (
       <li
         data-wash
-        style={`--wash-small: url(/media/index/${image}-900.webp); --wash-large: url(/media/index/${image}-1800.webp)`}
+        style={`--wash-small: url(/media/index/${image}-900.webp); --wash-large: url(/media/index/${image}-1800.webp); --wash-field: ${field}`}
       >
         <a href={href}>
           <span class="wash-list__name">{name}</span>
@@ -56,7 +53,7 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
   </ol>
 </section>
 
-<footer class="contact" data-audience="you">
+<footer class="contact">
   <p>Know someone with a problem worth solving?</p>
   <a class="contact__mail" href="mailto:contact@nathanpannell.com">
     contact@nathanpannell.com
@@ -76,41 +73,6 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
 </footer>
 
 <style>
-  .rules {
-    position: relative;
-    display: grid;
-    align-content: center;
-    gap: clamp(0.5rem, 2svh, 1.5rem);
-    min-height: 100lvh;
-    overflow: clip;
-    background: var(--bone);
-    color: var(--ink);
-  }
-
-  .rules p {
-    padding-inline: var(--gutter);
-    font-size: clamp(1.9rem, 8.1vw, 11rem);
-    font-weight: 900;
-    line-height: 0.98;
-    letter-spacing: -0.05em;
-    white-space: nowrap;
-  }
-
-  .rules p:nth-child(2) {
-    color: var(--signal);
-  }
-
-  /* The three lines slam in from alternate sides when the frame arrives. */
-  @media (prefers-reduced-motion: no-preference) {
-    .rules p {
-      transition: translate 900ms var(--ease) calc(var(--n) * 260ms + 150ms);
-    }
-
-    :global(.reveals) .rules:not([data-played]) p {
-      translate: calc((var(--n) * 2 - 1.5) * -120vw) 0;
-    }
-  }
-
   .go {
     position: relative;
     padding: clamp(5rem, 11vw, 9rem) 0 0;
@@ -130,7 +92,9 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
     letter-spacing: -0.045em;
   }
 
-  /* Carried over from the old homepage: the row's whole background fills with a full-colour image. */
+  /* Carried over from the old homepage: the row's whole background fills with a full-colour image.
+     Each one is drawn for a row this shape, with its subject at the right and its own colour under
+     the name, and pinned to the row's right edge and full height so it is never cropped to a strip. */
   .wash-list {
     border-top: 1px solid #33383a;
   }
@@ -155,8 +119,9 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
     z-index: -1;
     inset: 0;
     background:
-      linear-gradient(90deg, rgb(0 0 0 / 66%), rgb(0 0 0 / 6%) 56%, rgb(0 0 0 / 48%)),
-      var(--wash-image) center / cover;
+      linear-gradient(90deg, rgb(0 0 0 / 62%), rgb(0 0 0 / 4%) 50%, rgb(0 0 0 / 34%)),
+      var(--wash-image) right center / auto 100% no-repeat,
+      var(--wash-field);
     opacity: 0;
     transform: scale(1.035);
     transition:
@@ -294,14 +259,6 @@ const rules = ['Find a real person.', 'Put it in their hands.', 'Keep what they 
     color: #8d918f;
     font-family: var(--mono);
     font-size: 0.78rem;
-  }
-
-  /* Narrow phones wrap each rule. On their side, the rules stay one line each so all three fit. */
-  @media (max-width: 640px) and (min-height: 481px) {
-    .rules p {
-      font-size: 14.5vw;
-      white-space: normal;
-    }
   }
 
   @media (max-width: 640px) {

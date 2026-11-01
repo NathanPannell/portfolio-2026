@@ -1,4 +1,4 @@
-// The five hero concepts and the toggle between them, a review tool: `?hero=3` links straight to one.
+// The hero concepts and the toggle between them, a review tool: `?hero=3` links straight to one.
 // It only exists on staging and local builds. See OPERATIONS.md for how to settle on one.
 
 import { reducedMotion } from './motion';
@@ -6,47 +6,6 @@ import { reducedMotion } from './motion';
 type Stop = () => void;
 
 const REVIEW_HOSTS = ['staging.nathanpannell.com', 'localhost', '127.0.0.1'];
-
-const startSentence = (root: HTMLElement): Stop => {
-  const clause = root.querySelector<HTMLElement>('[data-clause]');
-  const links = Array.from(root.querySelectorAll<HTMLElement>('[data-clause-of]'));
-  const owner = clause?.parentElement;
-  if (!clause || !owner) return () => {};
-  const opening = clause.textContent ?? '';
-  // The opening line comes round again after the four worlds.
-  const lines = [...links.map((link) => link.dataset['clauseOf'] ?? ''), opening];
-  let line = -1;
-  let timer = 0;
-
-  const show = (index: number) => {
-    links.forEach((link, i) => link.toggleAttribute('data-current', i === index));
-    owner.style.setProperty('--clause', links[index]?.dataset['colour'] ?? 'var(--signal)');
-  };
-
-  const type = (text: string, length: number) => {
-    clause.textContent = text.slice(0, length);
-    timer =
-      length < text.length
-        ? window.setTimeout(() => type(text, length + 1), 42)
-        : window.setTimeout(next, line === lines.length - 1 ? 4200 : 2400);
-  };
-
-  const erase = (text: string, length: number) => {
-    clause.textContent = text.slice(0, length);
-    if (length > 0) {
-      timer = window.setTimeout(() => erase(text, length - 1), 18);
-      return;
-    }
-    line = (line + 1) % lines.length;
-    show(line);
-    type(lines[line] ?? '', 0);
-  };
-
-  const next = () => erase(clause.textContent ?? '', (clause.textContent ?? '').length);
-
-  timer = window.setTimeout(next, 2600);
-  return () => window.clearTimeout(timer);
-};
 
 // A damped pendulum. Sideways drags swing it, and up-and-down swipes stay with the page.
 const startBadge = (root: HTMLElement): Stop => {
@@ -104,27 +63,108 @@ const startBadge = (root: HTMLElement): Stop => {
   return () => cancelAnimationFrame(frame);
 };
 
-// The door swings first, and the page moves on once it has.
-const DOOR_SWING = 430;
-
-const startDoors = (root: HTMLElement): Stop => {
+// The thing a hero does when it is pressed, and then the page moves on: `press` gets the link.
+const movesOnAfter = (
+  links: Iterable<HTMLAnchorElement>,
+  wait: number,
+  press: (link: HTMLAnchorElement) => void,
+): Stop => {
   const timers: number[] = [];
-  for (const link of root.querySelectorAll<HTMLAnchorElement>('.door a')) {
+  for (const link of links) {
     link.addEventListener('click', (event) => {
       if (event.metaKey || event.ctrlKey || event.shiftKey) return;
       event.preventDefault();
-      const door = link.parentElement;
-      door?.toggleAttribute('data-opening', true);
+      press(link);
       timers.push(
         window.setTimeout(() => {
           // Not location.hash, which does nothing if the page is already at that address.
           window.location.href = link.href;
-          door?.removeAttribute('data-opening');
-        }, DOOR_SWING),
+          link.parentElement?.removeAttribute('data-opening');
+          link.removeAttribute('data-pressed');
+        }, wait),
       );
     });
   }
   return () => timers.forEach((timer) => window.clearTimeout(timer));
+};
+
+const DOOR_SWING = 430;
+
+const startSwinging = (root: HTMLElement, selector: string) =>
+  movesOnAfter(root.querySelectorAll<HTMLAnchorElement>(selector), DOOR_SWING, (link) => {
+    link.parentElement?.toggleAttribute('data-opening', true);
+  });
+
+// The floors count down on the display before the page goes.
+const FLOOR_TIME = 170;
+
+const startLift = (root: HTMLElement): Stop => {
+  const display = root.querySelector<HTMLElement>('[data-lift-floor]');
+  const links = Array.from(root.querySelectorAll<HTMLAnchorElement>('[data-floor]'));
+  let ticking = 0;
+  const stopMoving = movesOnAfter(links, FLOOR_TIME * 4 + 120, (link) => {
+    window.clearInterval(ticking);
+    links.forEach((other) => other.removeAttribute('data-pressed'));
+    link.toggleAttribute('data-pressed', true);
+    const floors = ['G', ...links.map((other) => other.dataset['floor'] ?? '')];
+    const last = floors.indexOf(link.dataset['floor'] ?? '');
+    let floor = 0;
+    ticking = window.setInterval(() => {
+      floor += 1;
+      if (display) display.textContent = floors[floor] ?? '';
+      if (floor >= last) window.clearInterval(ticking);
+    }, FLOOR_TIME);
+  });
+  return () => {
+    window.clearInterval(ticking);
+    stopMoving();
+  };
+};
+
+// Changes by itself every few seconds until someone reaches for the dial.
+const CHANNEL_TIME = 4200;
+const SNOW = 170;
+
+const startChannels = (root: HTMLElement): Stop => {
+  const set = root.querySelector<HTMLElement>('[data-channels]');
+  const pictures = Array.from(root.querySelectorAll<HTMLElement>('[data-picture]'));
+  const links = Array.from(root.querySelectorAll<HTMLAnchorElement>('[data-channel]'));
+  const snow = root.querySelector<HTMLElement>('.tv__static');
+  let on = 0;
+  let timer = 0;
+
+  const tune = (channel: number) => {
+    on = channel;
+    set?.toggleAttribute('data-tuning', true);
+    pictures.forEach((picture, index) => picture.toggleAttribute('data-on', index === channel));
+    links.forEach((link, index) => link.toggleAttribute('data-on', index === channel));
+    if (!snow) return;
+    // Taken off and put back, so it plays again.
+    snow.removeAttribute('data-on');
+    void snow.offsetWidth;
+    snow.toggleAttribute('data-on', true);
+  };
+  const drift = () => {
+    window.clearInterval(timer);
+    timer = window.setInterval(() => tune((on + 1) % pictures.length), CHANNEL_TIME);
+  };
+
+  links.forEach((link, index) => {
+    const reach = () => {
+      window.clearInterval(timer);
+      tune(index);
+    };
+    link.addEventListener('pointerenter', reach);
+    link.addEventListener('focus', reach);
+    link.addEventListener('pointerleave', drift);
+  });
+  tune(0);
+  drift();
+  const stopMoving = movesOnAfter(links, SNOW + 130, (link) => tune(links.indexOf(link)));
+  return () => {
+    window.clearInterval(timer);
+    stopMoving();
+  };
 };
 
 const FLAP_CHARACTERS = 'ABCDEFGHIJKLMNOPRSTUVWY0123456789';
@@ -170,10 +210,12 @@ const startBoard = (root: HTMLElement): Stop => {
 };
 
 const starts: Record<string, (root: HTMLElement) => Stop> = {
-  doors: startDoors,
-  sentence: startSentence,
+  doors: (root) => startSwinging(root, '.door a'),
+  cards: (root) => startSwinging(root, '[data-card]'),
   badge: startBadge,
   board: startBoard,
+  lift: startLift,
+  channels: startChannels,
 };
 
 export const startHeroes = () => {

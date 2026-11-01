@@ -4,38 +4,19 @@ import '@fontsource/gaegu/latin-400.css';
 import '@fontsource/gaegu/latin-700.css';
 
 const crayons = ['#e2231a', '#f28b1e', '#f3cf1c', '#2fa84f', '#1f7fd6', '#8a4fd3'];
-const panels = [
-  { name: 'team', width: 900, height: 1138, alt: 'Comic panel: a director and a brand high-five' },
-  { name: 'make', width: 900, height: 1071, alt: 'Comic panel: filming an ad on set' },
-  { name: 'show', width: 900, height: 1167, alt: 'Comic panel: a crowd watching a big screen' },
-];
 ---
 
-<section
-  id="play-by-the-sandbox"
-  class="sb"
-  data-audience="creators"
-  data-loops
-  aria-labelledby="sb-title"
->
+<section id="play-by-the-sandbox" class="sb" data-loops aria-labelledby="sb-title">
   <div class="sb-open" data-frame data-moment tabindex="-1">
-    <div class="sb-open__page">
+    <div class="sb-open__page" data-yard>
       <header class="sb__head">
-        <img
-          class="sb__word"
-          src="/media/sandbox/wordmark-800.webp"
-          srcset="/media/sandbox/wordmark-480.webp 480w, /media/sandbox/wordmark-800.webp 800w"
-          sizes="(max-width: 700px) 70vw, 30rem"
-          width="800"
-          height="225"
-          loading="lazy"
-          decoding="async"
-          alt="Play by the Sandbox, January 2027, Vancouver Art Gallery"
-        />
         <h2 id="sb-title">I made an ad showdown look like a toy box.</h2>
         <p class="sb__lede">
-          Mello’s event at the Vancouver Art Gallery. I designed and built the site.
+          Mello’s event at the Vancouver Art Gallery, January 2027. I designed and built the site.
         </p>
+        <a class="sb__cta" href="https://www.playbythesandbox.ca/" data-opens>
+          I wanna play <span aria-hidden="true">→</span>
+        </a>
       </header>
 
       <figure class="sb__screen">
@@ -56,18 +37,54 @@ const panels = [
           premiere night!
         </span>
       </figure>
+
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M18 34h64l-9 58H27z" fill="#f4b6c6"></path>
+          <path d="M18 34h64l-9 58H27zM26 34C28 4 72 4 74 34" fill="none"></path>
+          <path d="m50 50 5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f7e29a"></path>
+        </svg>
+        <span class="sr-only">Bucket</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="42" fill="#b9d6f2"></circle>
+          <path
+            d="M8 50c14-14 70-14 84 0M50 8c-16 22-16 62 0 84M50 8c16 22 16 62 0 84"
+            fill="none"
+          ></path>
+          <circle cx="50" cy="50" r="42" fill="none"></circle>
+        </svg>
+        <span class="sr-only">Beach ball</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M44 8h12v46H44z" fill="#d7b7f0"></path>
+          <path d="M28 54h44l-6 26c-3 12-29 12-32 0z" fill="#bfe6c8"></path>
+        </svg>
+        <span class="sr-only">Spade</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path
+            d="M22 62c0-22 16-26 26-26 4-22 34-18 30 4-2 8-8 10-8 10 16 2 26-2 28-6 4 26-22 42-46 42S22 78 22 62z"
+            fill="#f7e29a"
+          ></path>
+          <circle cx="66" cy="28" r="3.5" fill="#2e2a45"></circle>
+          <path d="M78 34l14 2-13 7" fill="#f28b1e"></path>
+        </svg>
+        <span class="sr-only">Rubber duck</span>
+      </div>
+      <div class="toy" data-toy>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="m50 6 13 28 31 4-23 21 6 31-27-15-27 15 6-31L6 38l31-4z" fill="#f3b48a"></path>
+        </svg>
+        <span class="sr-only">Star</span>
+      </div>
     </div>
 
     <div class="sb-box">
-      <img
-        class="sb-box__word"
-        src="/media/sandbox/wordmark-480.webp"
-        width="480"
-        height="135"
-        loading="lazy"
-        decoding="async"
-        alt=""
-      />
+      <p class="sb-box__name">Play by the Sandbox</p>
       <button
         class="sb-box__open"
         type="button"
@@ -122,78 +139,6 @@ const panels = [
       ))}
     </div>
   </div>
-
-  <div class="sb-panels" data-frame>
-    <div class="sb__strip">
-      {panels.map(({ name, width, height, alt }, index) => (
-        <img
-          data-reveal
-          style={`--reveal-delay: ${index * 220 + 100}ms; --reveal-turn: ${index * 8 - 8}deg`}
-          src={`/media/sandbox/panel-${name}-480.webp`}
-          srcset={`/media/sandbox/panel-${name}-480.webp 480w, /media/sandbox/panel-${name}-900.webp 900w`}
-          sizes="(max-width: 700px) 56vw, 30vw"
-          width={width}
-          height={height}
-          loading="lazy"
-          decoding="async"
-          alt={alt}
-        />
-      ))}
-    </div>
-  </div>
-
-  <div class="sb-lot" data-frame>
-    <div class="sb__yard" data-yard>
-      <p class="sb__yard-title">grab a toy</p>
-
-      <div class="toy" data-toy>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <path d="M18 34h64l-9 58H27z" fill="#f4b6c6"></path>
-          <path d="M18 34h64l-9 58H27zM26 34C28 4 72 4 74 34" fill="none"></path>
-          <path d="m50 50 5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f7e29a"></path>
-        </svg>
-        <span class="sr-only">Bucket</span>
-      </div>
-      <div class="toy" data-toy>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r="42" fill="#b9d6f2"></circle>
-          <path
-            d="M8 50c14-14 70-14 84 0M50 8c-16 22-16 62 0 84M50 8c16 22 16 62 0 84"
-            fill="none"
-          ></path>
-          <circle cx="50" cy="50" r="42" fill="none"></circle>
-        </svg>
-        <span class="sr-only">Beach ball</span>
-      </div>
-      <div class="toy" data-toy>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <path d="M44 8h12v46H44z" fill="#d7b7f0"></path>
-          <path d="M28 54h44l-6 26c-3 12-29 12-32 0z" fill="#bfe6c8"></path>
-        </svg>
-        <span class="sr-only">Spade</span>
-      </div>
-      <div class="toy" data-toy>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <path
-            d="M22 62c0-22 16-26 26-26 4-22 34-18 30 4-2 8-8 10-8 10 16 2 26-2 28-6 4 26-22 42-46 42S22 78 22 62z"
-            fill="#f7e29a"
-          ></path>
-          <circle cx="66" cy="28" r="3.5" fill="#2e2a45"></circle>
-          <path d="M78 34l14 2-13 7" fill="#f28b1e"></path>
-        </svg>
-        <span class="sr-only">Rubber duck</span>
-      </div>
-      <div class="toy" data-toy>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <path d="m50 6 13 28 31 4-23 21 6 31-27-15-27 15 6-31L6 38l31-4z" fill="#f3b48a"></path>
-        </svg>
-        <span class="sr-only">Star</span>
-      </div>
-      <a class="sb__cta" href="https://www.playbythesandbox.ca/">
-        I wanna play <span aria-hidden="true">→</span>
-      </a>
-    </div>
-  </div>
 </section>
 
 <style>
@@ -217,29 +162,41 @@ const panels = [
     line-height: 1.35;
   }
 
+  /* The sand carries on below the page, under a phone's address bar. */
   .sb-open {
     position: relative;
     height: 100lvh;
     overflow: clip;
+    background: var(--sand);
   }
 
   .sb-open:focus {
     outline: none;
   }
 
+  /* The whole screen is the yard: the toys live on the sand along the bottom of it. */
   .sb-open__page {
+    position: relative;
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: clamp(1.5rem, 4vw, 4rem);
     align-items: center;
     height: 100svh;
-    padding: 4rem var(--gutter) 2rem;
+    overflow: hidden;
+    padding: 4rem var(--gutter) clamp(7rem, 15svh, 9rem);
+    background:
+      linear-gradient(transparent calc(100% - 3.5rem), var(--sand) calc(100% - 3.5rem)),
+      var(--sb-paper);
+    background-image:
+      linear-gradient(transparent calc(100% - 3.5rem), var(--sand) calc(100% - 3.5rem)),
+      var(--sb-grid);
+    background-size: auto, var(--sb-grid-size), var(--sb-grid-size);
   }
 
   /* The toy box sits on its own paper, over the page it opens onto. */
   .sb-box {
     position: absolute;
-    z-index: 2;
+    z-index: 4;
     inset: 0;
     display: none;
     align-content: center;
@@ -256,7 +213,7 @@ const panels = [
   }
 
   /* Gone while the rainbow covers the screen, so the wipe is what changes the page. */
-  .sb-open[data-open]:not([data-settled]) .sb-box {
+  .sb-open[data-open] .sb-box {
     display: grid;
     pointer-events: none;
     animation: cleared 1100ms steps(1, end) forwards;
@@ -268,10 +225,13 @@ const panels = [
     }
   }
 
-  .sb-box__word {
-    width: min(70vw, 34svh, 22rem);
-    rotate: -1.5deg;
-    border-radius: 1rem;
+  .sb-box__name {
+    color: #a0521d;
+    font-family: 'Chewy', 'Comic Sans MS', cursive;
+    font-size: clamp(2.6rem, min(7vw, 11svh), 5.5rem);
+    line-height: 1;
+    text-align: center;
+    text-shadow: 0.05em 0.05em 0 rgb(160 82 29 / 22%);
   }
 
   .sb-box__open {
@@ -349,12 +309,12 @@ const panels = [
     }
   }
 
-  .sb-open[data-open]:not([data-settled]) .sb-box__lid {
+  .sb-open[data-open] .sb-box__lid {
     transform: rotate(-64deg) translate(0, -6px);
     transition: transform 380ms cubic-bezier(0.2, 1.4, 0.4, 1);
   }
 
-  .sb-open[data-open]:not([data-settled]) .sb-box__crayons path {
+  .sb-open[data-open] .sb-box__crayons path {
     transform: translateY(-64px);
     transition: transform 380ms cubic-bezier(0.2, 1.5, 0.4, 1) calc(var(--row) * 24ms);
   }
@@ -379,14 +339,14 @@ const panels = [
      transforms alone. It always plays whole, whatever the scroll is doing. */
   .wipe {
     position: absolute;
-    z-index: 3;
+    z-index: 5;
     inset: 0;
     overflow: clip;
     visibility: hidden;
     pointer-events: none;
   }
 
-  .sb-open[data-open]:not([data-settled]) .wipe {
+  .sb-open[data-open] .wipe {
     animation: rainbow 2100ms steps(1, end) forwards;
   }
 
@@ -418,7 +378,7 @@ const panels = [
     --way: 1;
   }
 
-  .sb-open[data-open]:not([data-settled]) .wipe__band {
+  .sb-open[data-open] .wipe__band {
     animation: sweep 1700ms cubic-bezier(0.45, 0, 0.55, 1) calc(var(--row) * 70ms + 150ms) both;
   }
 
@@ -505,12 +465,6 @@ const panels = [
     gap: 0.9rem;
   }
 
-  .sb__word {
-    width: min(100%, 26rem);
-    rotate: -1.5deg;
-    border-radius: 1.2rem;
-  }
-
   h2 {
     color: #a0521d;
     font-family: 'Chewy', 'Comic Sans MS', cursive;
@@ -530,7 +484,7 @@ const panels = [
   .sb__screen {
     position: relative;
     width: 100%;
-    max-width: calc((100svh - 7rem) * 1.6);
+    max-width: calc((100svh - 13rem) * 1.6);
     justify-self: center;
     padding: clamp(0.5rem, 1.2vw, 0.85rem);
     border: 3px solid var(--ink);
@@ -586,81 +540,16 @@ const panels = [
     }
   }
 
-  .sb-panels {
-    display: grid;
-    align-items: center;
-    height: 100lvh;
-    padding: 4rem var(--gutter) calc(2rem + var(--bar));
-  }
-
-  .sb__strip {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(0.75rem, 2vw, 1.75rem);
-    align-items: center;
-    justify-items: center;
-    max-width: 82rem;
-    max-height: 100%;
-    margin: 0 auto;
-  }
-
-  /* Sized before they load: an image with no size of its own may never be seen as on screen. */
-  .sb__strip img {
-    width: min(100%, calc((100svh - 7rem) * 0.77));
-  }
-
-  .sb__strip img:nth-child(1) {
-    rotate: -1.5deg;
-  }
-
-  .sb__strip img:nth-child(2) {
-    translate: 0 1.25rem;
-    rotate: 1deg;
-  }
-
-  .sb__strip img:nth-child(3) {
-    rotate: -0.75deg;
-  }
-
-  /* The sand carries on below the yard, under a phone's address bar. */
-  .sb-lot {
-    height: 100lvh;
-    background: var(--sand);
-  }
-
-  .sb__yard {
-    position: relative;
-    height: 100svh;
-    overflow: hidden;
-    background:
-      linear-gradient(transparent calc(100% - 3.5rem), var(--sand) calc(100% - 3.5rem)),
-      var(--sb-paper);
-    background-image:
-      linear-gradient(transparent calc(100% - 3.5rem), var(--sand) calc(100% - 3.5rem)),
-      var(--sb-grid);
-    background-size: auto, var(--sb-grid-size), var(--sb-grid-size);
-  }
-
-  .sb__yard-title {
-    position: absolute;
-    top: 14%;
-    width: 100%;
-    color: #6d3fb0;
-    font-family: 'Chewy', cursive;
-    font-size: clamp(3rem, 9vw, 6.5rem);
-    line-height: 1;
-    text-align: center;
-  }
-
   .toy {
     position: absolute;
     top: 0;
     left: 0;
     z-index: 2;
-    width: clamp(4.5rem, 10vw, 7.5rem);
-    height: clamp(4.5rem, 10vw, 7.5rem);
+    width: clamp(3.75rem, min(9vw, 13svh), 7rem);
+    height: clamp(3.75rem, min(9vw, 13svh), 7rem);
     cursor: grab;
-    touch-action: none;
+    /* Thrown sideways. A swipe up or down on one still scrolls the page. */
+    touch-action: pan-y;
     user-select: none;
     will-change: transform;
   }
@@ -680,10 +569,8 @@ const panels = [
   }
 
   .sb__cta {
-    position: absolute;
-    z-index: 1;
-    top: 42%;
-    left: 50%;
+    position: relative;
+    z-index: 3;
     padding: 0.7rem 1.5rem;
     border: 3px solid var(--ink);
     background: #f7e29a;
@@ -692,13 +579,13 @@ const panels = [
     font-weight: 700;
     white-space: nowrap;
     text-decoration: none;
-    transform: translateX(-50%) rotate(-2deg);
+    transform: rotate(-2deg);
     transition: transform 160ms var(--ease);
   }
 
   @media (hover: hover) and (pointer: fine) {
     .sb__cta:hover {
-      transform: translateX(-50%) rotate(1deg) scale(1.05);
+      transform: rotate(1deg) scale(1.05);
     }
   }
 
@@ -707,7 +594,7 @@ const panels = [
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto auto;
       align-content: center;
-      gap: 1.25rem;
+      gap: 1rem;
       padding-top: 3.25rem;
     }
 
@@ -717,41 +604,18 @@ const panels = [
       text-align: center;
     }
 
-    .sb__word {
-      width: min(70%, 16rem);
-    }
-
     h2 {
-      font-size: clamp(2.3rem, 10.5vw, 3.4rem);
+      font-size: clamp(2.1rem, min(10vw, 5.4svh), 3.4rem);
     }
 
-    .sb__strip {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: repeat(3, minmax(0, 1fr));
-      height: 100%;
-      gap: 0.25rem;
+    .sb__lede {
+      font-size: 1.1rem;
+      line-height: 1.2;
     }
 
-    .sb-panels {
-      padding-top: 3.25rem;
-    }
-
-    /* Three panels stepping down the page, each as tall as a third of the screen. */
-    .sb__strip img {
-      width: calc((100svh - 6.75rem) / 3 * 0.77);
-    }
-
-    .sb__strip img:nth-child(1) {
-      justify-self: start;
-    }
-
-    .sb__strip img:nth-child(2) {
-      justify-self: end;
-      translate: none;
-    }
-
-    .sb__strip img:nth-child(3) {
-      justify-self: start;
+    .sb__cta {
+      font-size: 1.3rem;
+      padding: 0.45rem 1.1rem;
     }
   }
 
@@ -761,7 +625,7 @@ const panels = [
       grid-template-columns: minmax(0, 4fr) minmax(0, 5fr);
       grid-template-rows: none;
       padding-top: 2.75rem;
-      padding-bottom: 1rem;
+      padding-bottom: 5.75rem;
     }
 
     .sb__head {
@@ -769,32 +633,12 @@ const panels = [
       text-align: left;
     }
 
-    .sb__word,
     .sb__lede {
       display: none;
     }
 
     h2 {
-      font-size: 2.2rem;
-    }
-
-    .sb__strip {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-template-rows: none;
-    }
-
-    .sb__strip img {
-      width: calc((100svh - 4.5rem) * 0.77);
-      justify-self: center;
-    }
-
-    .sb__strip img:nth-child(n) {
-      justify-self: center;
-    }
-
-    .sb-panels {
-      padding-top: 2.75rem;
-      padding-bottom: calc(1rem + var(--bar));
+      font-size: 1.9rem;
     }
   }
 
@@ -812,10 +656,6 @@ const panels = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .sb__yard-title {
-      display: none;
-    }
-
     .sb__bubble {
       animation: none;
     }
@@ -827,10 +667,6 @@ const panels = [
     .sb-open__page {
       height: auto;
       min-height: 100svh;
-    }
-
-    .sb-panels {
-      height: auto;
     }
   }
 </style>

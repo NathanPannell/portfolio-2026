@@ -1,13 +1,11 @@
-// The thing to click in each section: a rope, a key, a flag, a toy box. A `[data-moment]` scene waits
-// closed until its `[data-moment-control]` is used, and nothing behind one stays out of reach: it
-// also opens by itself after a while on screen, when the page scrolls past it, and when a link
-// inside it takes focus. If this script fails or stalls, SiteLayout stands the stages down, so
-// nothing stays hidden.
+// The thing to press in each section: a key, a rope, a flag, a toy box. A `[data-moment]` scene stays
+// closed until its `[data-moment-control]` is used, and nothing else opens it. What it opens onto is
+// marked `[data-opens]` and stays out of reach of the keyboard until then. If this script fails or
+// stalls, SiteLayout stands the stages down, and under reduced motion there never is a stage: both
+// leave every scene open, as plain page content.
 
 import { reducedMotion } from './motion';
 
-// How long a closed scene waits on screen, in milliseconds, before opening itself.
-const AUTO_OPEN = 6000;
 // How far a rope has to come down before it opens the scene, and as far as it goes, in pixels.
 const PULL = 70;
 const MOST = 150;
@@ -43,71 +41,30 @@ export const startMoments = () => {
   const root = document.documentElement;
   root.toggleAttribute('data-moments', true);
   root.classList.add('stage');
-  const waiting = new Set<HTMLElement>();
-  const timers = new Map<HTMLElement, number>();
 
   const open = (scene: HTMLElement) => {
-    if (!waiting.delete(scene)) return;
-    window.clearTimeout(timers.get(scene));
+    if (!scene.hasAttribute('data-waiting')) return;
     const control = scene.querySelector<HTMLElement>('[data-moment-control]');
     const focused = control === document.activeElement;
-    const { top, bottom } = scene.getBoundingClientRect();
-    // Nobody is there to see it, and looping scenes rest off screen, which would hold it half done.
-    if (bottom <= 0 || top >= window.innerHeight) scene.toggleAttribute('data-settled', true);
     scene.removeAttribute('data-waiting');
     scene.toggleAttribute('data-open', true);
+    scene.querySelectorAll<HTMLElement>('[data-opens]').forEach((part) => {
+      part.inert = false;
+    });
     control?.setAttribute('aria-expanded', 'true');
     if (control) control.tabIndex = -1;
     // The control is about to leave, so the next Tab carries on from inside the scene.
     if (focused) scene.focus({ preventScroll: true });
-    scene.dispatchEvent(new CustomEvent('moment:open'));
+    scene.dispatchEvent(new CustomEvent('moment:open', { bubbles: true }));
   };
 
-  const scenes = Array.from(document.querySelectorAll<HTMLElement>('[data-moment]'));
-  for (const scene of scenes) {
-    // Already gone by, on a reload or a jump down the page.
-    if (scene.getBoundingClientRect().bottom <= 0) {
-      scene.toggleAttribute('data-open', true);
-      scene.toggleAttribute('data-settled', true);
-      continue;
-    }
-    waiting.add(scene);
+  for (const scene of document.querySelectorAll<HTMLElement>('[data-moment]')) {
     scene.toggleAttribute('data-waiting', true);
+    scene.querySelectorAll<HTMLElement>('[data-opens]').forEach((part) => {
+      part.inert = true;
+    });
     const control = scene.querySelector<HTMLElement>('[data-moment-control]');
     control?.addEventListener('click', () => open(scene));
     if (control?.hasAttribute('data-pull')) startPull(control, () => open(scene));
-    // Links only: a click anywhere in a scene can focus the scene itself.
-    scene.addEventListener('focusin', (event) => {
-      if ((event.target as HTMLElement).closest('a')) open(scene);
-    });
   }
-
-  const arrivals = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        const scene = entry.target as HTMLElement;
-        window.clearTimeout(timers.get(scene));
-        if (!entry.isIntersecting) continue;
-        timers.set(
-          scene,
-          window.setTimeout(() => open(scene), AUTO_OPEN),
-        );
-      }
-    },
-    { rootMargin: '-50% 0px -50% 0px' },
-  );
-  waiting.forEach((scene) => arrivals.observe(scene));
-
-  let frame = 0;
-  const openWhatIsPast = () => {
-    frame = 0;
-    for (const scene of waiting) {
-      if (scene.getBoundingClientRect().bottom <= 0) open(scene);
-    }
-    if (waiting.size === 0) window.removeEventListener('scroll', schedule);
-  };
-  const schedule = () => {
-    if (!frame) frame = window.requestAnimationFrame(openWhatIsPast);
-  };
-  window.addEventListener('scroll', schedule, { passive: true });
 };

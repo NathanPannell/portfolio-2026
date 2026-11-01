@@ -2,9 +2,6 @@
   <a class="chrome__name" href="#top">
     Nathan Pannell
   </a>
-  <p class="chrome__for" aria-hidden="true">
-    for <b data-for>real people</b>
-  </p>
 </header>
 
 <style>
@@ -14,9 +11,6 @@
     top: 0;
     right: 0;
     left: 0;
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
     padding: 1.1rem var(--gutter);
     color: #fff;
     font-family: var(--mono);
@@ -30,26 +24,4 @@
     text-decoration: none;
     pointer-events: auto;
   }
-
-  .chrome__for b {
-    font-weight: 700;
-  }
 </style>
-
-<script>
-  const label = document.querySelector<HTMLElement>('[data-for]');
-  if (label) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting)
-            label.textContent = (entry.target as HTMLElement).dataset['audience'] ?? '';
-        }
-      },
-      { rootMargin: '-50% 0px -50% 0px' },
-    );
-    document
-      .querySelectorAll<HTMLElement>('[data-audience]')
-      .forEach((section) => observer.observe(section));
-  }
-</script>

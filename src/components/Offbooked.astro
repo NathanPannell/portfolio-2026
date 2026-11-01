@@ -2,50 +2,20 @@
 import '@fontsource-variable/newsreader/wght.css';
 import '@fontsource-variable/newsreader/wght-italic.css';
 
-// When each piece lands after the curtains start to open, in seconds.
-const CURTAINS = 1;
-
-// Each phone flips through screens on its own beat.
-const phones = [
-  {
-    at: 2.1,
-    screens: [
-      ['record', 'Offbooked recording screen: an actor records a line of Hamlet'],
-      ['cast', 'Offbooked cast list: how many lines each part has recorded'],
-      ['home', 'Offbooked home screen in the phone’s browser'],
-    ],
-  },
-  {
-    at: 2.3,
-    screens: [
-      ['play', 'Offbooked run-through: the actor’s own lines are highlighted'],
-      ['landing', 'The Offbooked landing page on a phone'],
-      ['record', 'Offbooked recording screen: an actor records a line of Hamlet'],
-    ],
-  },
-  {
-    at: 2.5,
-    screens: [
-      ['cast', 'Offbooked cast list: how many lines each part has recorded'],
-      ['home', 'Offbooked home screen in the phone’s browser'],
-      ['play', 'Offbooked run-through: the actor’s own lines are highlighted'],
-    ],
-  },
-];
-const bubbles = [
-  ['bubble--one', 'Line?'],
-  ['bubble--two', 'Again!'],
-  ['bubble--three', 'Places!'],
+// Everything on the ticket is as stated on offbooked.com. No prices until they can be paid.
+const details = [
+  ['Admission', 'Free in public beta. Cast never pay.'],
+  ['Cast', 'One link. No account needed.'],
+  ['Playing on', 'Any phone, tablet or laptop.'],
+  ['Now running', 'Casts in British Columbia and Nova Scotia.'],
 ];
 ---
 
 <section
   id="offbooked"
   class="ob"
-  data-audience="casts"
   data-frame
   data-moment
-  data-collage
   data-loops
   tabindex="-1"
   aria-labelledby="ob-title"
@@ -73,119 +43,58 @@ const bubbles = [
     <div class="collage">
       <i class="beam beam--left" aria-hidden="true"></i>
       <i class="beam beam--right" aria-hidden="true"></i>
-      <div class="slab" style={`--at: ${CURTAINS}s`} data-at data-depth="-6"></div>
-      <div
-        class="halftone"
-        style={`--at: ${CURTAINS}s`}
-        data-at
-        data-depth="14"
-        aria-hidden="true"
-      ></div>
+      <div class="ob-copy">
+        <h2 id="ob-title">
+          <span style="--at: 1.2s" data-at>
+            Run lines with
+          </span>
+          <em style="--at: 1.45s" data-at>
+            your cast,
+          </em>
+          <span style="--at: 1.7s" data-at>
+            not a robot.
+          </span>
+        </h2>
 
-      <h2 id="ob-title" data-depth="-10">
-        <span style="--at: 1.2s" data-at>
-          Run lines with
-        </span>
-        <em style="--at: 1.45s" data-at>
-          your cast,
-        </em>
-        <span style="--at: 1.7s" data-at>
-          not a robot.
-        </span>
-      </h2>
-
-      <div class="script" style="--at: 1.9s" data-at data-depth="10" aria-hidden="true">
-        <p class="script__scene">Act 1, Scene 2</p>
-        <p>
-          <b>HORATIO</b> Hail to your lordship!
-        </p>
-        <p>
-          <b>HAMLET</b> I am glad to see you well: Horatio, or I do forget myself.
-        </p>
-        <p class="script__mine">
-          <b>HORATIO</b> The same, my lord, and your poor servant ever.
-        </p>
-        <p>
-          <b>HAMLET</b> Sir, my good friend; I’ll change that name with you.
-        </p>
-        <p class="script__mine">
-          <b>HORATIO</b> A truant disposition, good my lord.
-        </p>
-      </div>
-
-      {phones.map(({ at, screens }, index) => (
-        <figure
-          class={`handset handset--${index + 1}`}
-          style={`--at: ${at}s`}
-          data-at
-          data-depth={String(18 + index * 12)}
-        >
-          {screens.map(([name, alt], screen) => (
-            <img
-              style={`--screen: ${screen}`}
-              src={`/media/offbooked/${name}-360.webp`}
-              srcset={`/media/offbooked/${name}-360.webp 360w, /media/offbooked/${name}-640.webp 640w`}
-              sizes="(max-width: 700px) 42vw, 22vw"
-              width="640"
-              height="1385"
-              loading="lazy"
-              decoding="async"
-              alt={screen === 0 ? alt : ''}
-            />
+        <div class="voices" style="--at: 2s" data-at aria-hidden="true">
+          {Array.from({ length: 18 }, (_, i) => (
+            <i style={`--i: ${i}`} />
           ))}
-        </figure>
-      ))}
+        </div>
 
-      <div class="voices" style="--at: 2.8s" data-at data-depth="20" aria-hidden="true">
-        {Array.from({ length: 18 }, (_, i) => (
-          <i style={`--i: ${i}`} />
-        ))}
+        <a class="ticket" href="https://offbooked.com/" style="--at: 2.3s" data-at data-opens>
+          <span class="ticket__main">
+            <span class="ticket__small">Admit the whole cast</span>
+            <dl class="ticket__details">
+              {details.map(([label, text]) => (
+                <div>
+                  <dt>{label}</dt>
+                  <dd>{text}</dd>
+                </div>
+              ))}
+            </dl>
+          </span>
+          <span class="ticket__stub">
+            <span class="ticket__small">Places, everyone.</span>
+            <span class="ticket__big">
+              offbooked.com <span aria-hidden="true">↗</span>
+            </span>
+          </span>
+        </a>
       </div>
 
-      {bubbles.map(([name, text]) => (
-        <p class={`bubble ${name}`} style="--at: 2.8s" data-at aria-hidden="true">
-          <span>{text}</span>
-        </p>
-      ))}
-
-      <svg
-        class="stamp"
-        viewBox="0 0 200 200"
-        style="--at: 3s"
-        data-at
-        data-depth="26"
-        aria-hidden="true"
-      >
-        <defs>
-          <path id="stamp-ring" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1 -148 0"></path>
-        </defs>
-        <circle cx="100" cy="100" r="98"></circle>
-        <text>
-          <textPath href="#stamp-ring">PUBLIC BETA · FREE FOR NOW · PUBLIC BETA ·</textPath>
-        </text>
-        <text class="stamp__mid" x="100" y="112" text-anchor="middle">
-          ★
-        </text>
-      </svg>
-
-      <p class="tape" style="--at: 3.2s" data-at data-depth="16">
-        Cast needs no account
-      </p>
-
-      <a class="ticket" href="https://offbooked.com/" style="--at: 3.4s" data-at data-depth="-12">
-        <span class="ticket__small">Admit the whole cast</span>
-        <span class="ticket__big">
-          offbooked.com <span aria-hidden="true">↗</span>
-        </span>
-      </a>
-
-      <p class="marquee" style="--at: 0.9s" data-at aria-hidden="true">
-        <span>
-          One link · Everyone records on their phone · The whole cast rehearses · One link ·
-          Everyone records on their phone · The whole cast rehearses · One link · Everyone records
-          on their phone · The whole cast rehearses ·
-        </span>
-      </p>
+      <figure class="handset" style="--at: 1.9s" data-at>
+        <img
+          src="/media/offbooked/play-360.webp"
+          srcset="/media/offbooked/play-360.webp 360w, /media/offbooked/play-640.webp 640w"
+          sizes="(max-width: 700px) 46vw, 24vw"
+          width="640"
+          height="1385"
+          loading="lazy"
+          decoding="async"
+          alt="Offbooked run-through: the actor’s own lines are highlighted"
+        />
+      </figure>
     </div>
 
     <div class="drape drape--left" aria-hidden="true"></div>
@@ -218,8 +127,6 @@ const bubbles = [
 
   .ob-stage {
     --u: min(1vw, 1.62svh);
-    /* What a phone's address bar hides at the bottom of this taller-than-the-bar stage. */
-    --bar: calc(100lvh - 100svh);
     position: relative;
     height: 100lvh;
     overflow: clip;
@@ -229,39 +136,19 @@ const bubbles = [
   .collage {
     position: absolute;
     inset: 0;
-    background-color: var(--paper);
-    background-image: radial-gradient(rgb(29 28 26 / 7%) 0.5px, transparent 0.6px);
-    background-size: 5px 5px;
-  }
-
-  [data-depth] {
-    --move: calc(var(--mx, 0) * var(--d, 0) * 1px);
-    --lift: calc(var(--my, 0) * var(--d, 0) * 1px);
-    translate: var(--move) var(--lift);
+    background: radial-gradient(90% 80% at 72% 40%, var(--red), var(--red-deep));
   }
 
   /* Off stage while the curtains are shut. Each piece then lands at its own --at. */
-  .ob[data-open]:not([data-settled]) [data-at] {
+  .ob[data-open] [data-at] {
     transition:
       transform 620ms var(--spring) var(--at),
       opacity 200ms var(--at);
   }
 
-  :global(.stage) .ob:not([data-open]) .slab {
-    transform: translate3d(-104%, 0, 0);
-  }
-
-  :global(.stage) .ob:not([data-open]) .halftone {
-    transform: scale(0);
-  }
-
   :global(.stage) .ob:not([data-open]) h2 [data-at] {
     opacity: 0;
     transform: translate3d(-3rem, 0, 0) rotate(-4deg);
-  }
-
-  :global(.stage) .ob:not([data-open]) .script {
-    transform: translate3d(0, -130%, 0) rotate(-22deg);
   }
 
   :global(.stage) .ob:not([data-open]) .handset {
@@ -273,27 +160,9 @@ const bubbles = [
     transform: scaleY(0);
   }
 
-  :global(.stage) .ob:not([data-open]) .stamp {
-    opacity: 0;
-    transform: scale(3.4);
-  }
-
-  :global(.stage) .ob:not([data-open]) .tape {
-    opacity: 0;
-    transform: translate3d(5rem, -2rem, 0) rotate(30deg);
-  }
-
   :global(.stage) .ob:not([data-open]) .ticket {
     opacity: 0;
-    transform: translate3d(0, 140%, 0) rotate(-14deg);
-  }
-
-  :global(.stage) .ob:not([data-open]) .marquee {
-    transform: translate3d(0, 100%, 0);
-  }
-
-  :global(.stage) .ob:not([data-open]) .bubble {
-    opacity: 0;
+    transform: translate3d(0, 140%, 0) rotate(-6deg);
   }
 
   /* Two follow spots hunting across the set. */
@@ -334,50 +203,26 @@ const bubbles = [
     }
   }
 
-  .slab {
+  /* Everything sits inside the small viewport, so an address bar can't cover any of it. */
+  .ob-copy {
     position: absolute;
-    inset: -2% 37% -2% -2%;
-    background: var(--red);
-    clip-path: polygon(
-      0 0,
-      99% 0,
-      97% 7%,
-      100% 13%,
-      96% 21%,
-      99% 30%,
-      95% 38%,
-      98% 46%,
-      94% 55%,
-      98% 63%,
-      95% 71%,
-      99% 80%,
-      96% 89%,
-      99% 100%,
-      0 100%
-    );
-  }
-
-  .halftone {
-    position: absolute;
-    top: 8%;
-    right: 3%;
-    width: calc(var(--u) * 42);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(var(--red) 34%, transparent 36%) 0 0 / 0.75rem 0.75rem;
-    opacity: 0.55;
-    animation: turn 60s linear infinite;
+    z-index: 6;
+    top: 0;
+    left: calc(var(--gutter) + 2.5vw);
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: calc(var(--u) * 2.4);
+    width: calc(var(--u) * 54);
+    height: 100svh;
+    padding-top: 2.5rem;
   }
 
   h2 {
-    position: absolute;
-    top: calc(var(--u) * 9);
-    left: calc(var(--gutter) + 1.5vw);
-    width: calc(var(--u) * 43);
     color: var(--paper);
-    font-size: calc(var(--u) * 8.4);
+    font-size: calc(var(--u) * 7);
     font-weight: 500;
-    line-height: 0.93;
+    line-height: 0.95;
     letter-spacing: -0.035em;
   }
 
@@ -395,169 +240,34 @@ const bubbles = [
     rotate: -1.5deg;
   }
 
-  .script {
-    position: absolute;
-    top: 7%;
-    right: 24%;
-    width: calc(var(--u) * 27);
-    padding: calc(var(--u) * 2);
-    background: #fffdf7;
-    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 22%);
-    font-size: calc(var(--u) * 1.25);
-    line-height: 1.32;
-    rotate: 5deg;
-    animation: script-sway 8s ease-in-out infinite alternate;
-    clip-path: polygon(
-      0 0,
-      100% 0,
-      100% 92%,
-      96% 95%,
-      90% 92%,
-      80% 97%,
-      70% 94%,
-      58% 99%,
-      44% 95%,
-      30% 98%,
-      16% 94%,
-      6% 98%,
-      0 94%
-    );
-  }
-
-  @keyframes script-sway {
-    to {
-      rotate: 2deg;
-    }
-  }
-
-  .script p {
-    margin-bottom: 0.65em;
-  }
-
-  .script b {
-    display: block;
-    font-family: var(--mono);
-    font-size: 0.72em;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-  }
-
-  .script__scene {
-    font-size: 1.3em;
-    font-style: italic;
-  }
-
-  /* The highlighter keeps going over the actor's own lines. */
-  .script__mine {
-    padding: 0.25em 0.45em;
-    background: linear-gradient(var(--marker), var(--marker)) no-repeat 0 0 / 100% 100%;
-    animation: highlight 4.4s var(--ease) infinite;
-  }
-
-  .script__mine:last-child {
-    animation-delay: -2.2s;
-  }
-
-  @keyframes highlight {
-    0% {
-      background-size: 0 100%;
-    }
-
-    35%,
-    100% {
-      background-size: 100% 100%;
-    }
-  }
-
+  /* One phone, in the run-through. */
   .handset {
     position: absolute;
-    width: calc(var(--u) * 19.5);
+    z-index: 5;
+    top: calc(50svh - var(--u) * 26.7);
+    right: calc(var(--gutter) + 6vw);
+    width: calc(var(--u) * 24);
     aspect-ratio: 640 / 1385;
     box-sizing: content-box;
-    padding: calc(var(--u) * 0.55);
-    border-radius: calc(var(--u) * 3);
+    padding: calc(var(--u) * 0.6);
+    border-radius: calc(var(--u) * 3.4);
     background: #161514;
-    box-shadow: 0 1.5rem 3rem rgb(29 16 12 / 42%);
-  }
-
-  /* Screens stack, and each one takes a turn on top. */
-  .handset img {
-    position: absolute;
-    width: calc(100% - var(--u) * 1.1);
-    border-radius: calc(var(--u) * 2.5);
-    animation: screen 9s steps(1, end) infinite;
-    animation-delay: calc(var(--screen) * 3s - 9s);
-  }
-
-  .handset img:first-child {
-    animation-name: none;
-  }
-
-  @keyframes screen {
-    0%,
-    33.3% {
-      opacity: 1;
-    }
-
-    33.4%,
-    100% {
-      opacity: 0;
-    }
-  }
-
-  .handset--1 {
-    z-index: 3;
-    top: 16%;
-    right: 26%;
-    rotate: -7deg;
-    animation: tilt-one 6s ease-in-out infinite alternate;
-  }
-
-  .handset--2 {
-    z-index: 4;
-    top: 11%;
-    right: 12%;
+    box-shadow: 0 1.5rem 3rem rgb(29 16 12 / 50%);
     rotate: 3deg;
-    animation: tilt-two 7s ease-in-out infinite alternate;
   }
 
-  .handset--3 {
-    z-index: 2;
-    top: 24%;
-    right: -3%;
-    rotate: 9deg;
-    animation: tilt-three 5s ease-in-out infinite alternate;
-  }
-
-  @keyframes tilt-one {
-    to {
-      rotate: -4deg;
-    }
-  }
-
-  @keyframes tilt-two {
-    to {
-      rotate: 0deg;
-    }
-  }
-
-  @keyframes tilt-three {
-    to {
-      rotate: 6deg;
-    }
+  .handset img {
+    width: 100%;
+    border-radius: calc(var(--u) * 2.9);
   }
 
   /* Everyone's voices, in the run-through. */
   .voices {
-    position: absolute;
-    z-index: 5;
-    bottom: 22%;
-    left: calc(var(--gutter) + 1.5vw);
     display: flex;
     gap: 0.28rem;
     align-items: center;
-    width: calc(var(--u) * 30);
-    height: calc(var(--u) * 8);
+    width: calc(var(--u) * 34);
+    height: calc(var(--u) * 7);
     transform-origin: 50% 100%;
   }
 
@@ -577,147 +287,25 @@ const bubbles = [
     }
   }
 
-  .bubble {
-    position: absolute;
-    z-index: 7;
-    pointer-events: none;
-  }
-
-  .bubble span {
-    display: block;
-    padding: 0.25em 0.75em;
-    border: 3px solid var(--ink);
-    border-radius: 1.2em 1.2em 1.2em 0.2em;
-    background: #fff;
-    font-size: clamp(1.1rem, 2.2vw, 2rem);
-    font-style: italic;
-    font-weight: 500;
-    animation: pop 7.5s var(--spring) infinite;
-  }
-
-  .bubble--one {
-    top: 12%;
-    right: 37%;
-  }
-
-  .bubble--two {
-    top: 50%;
-    right: 3%;
-  }
-
-  .bubble--two span {
-    animation-delay: -2.5s;
-  }
-
-  .bubble--three {
-    top: 74%;
-    right: 34%;
-  }
-
-  .bubble--three span {
-    animation-delay: -5s;
-  }
-
-  @keyframes pop {
-    0%,
-    100% {
-      transform: scale(0) rotate(-12deg);
-    }
-
-    6%,
-    26% {
-      transform: none;
-    }
-
-    33% {
-      transform: scale(0) rotate(8deg);
-    }
-  }
-
-  .stamp {
-    position: absolute;
-    z-index: 6;
-    bottom: calc(13% + var(--bar));
-    right: 41%;
-    width: calc(var(--u) * 13);
-    animation: turn 18s linear infinite;
-  }
-
-  .stamp circle {
-    fill: var(--marker);
-    stroke: var(--ink);
-    stroke-width: 2;
-  }
-
-  .stamp text {
-    fill: var(--ink);
-    font-family: var(--mono);
-    font-size: 15.5px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
-
-  .stamp .stamp__mid {
-    font-size: 44px;
-  }
-
-  @keyframes turn {
-    to {
-      rotate: 360deg;
-    }
-  }
-
-  .tape {
-    position: absolute;
-    z-index: 6;
-    top: 6%;
-    right: 4%;
-    padding: 0.35rem 1.1rem;
-    background: var(--ink);
-    color: var(--paper);
-    font-family: var(--mono);
-    font-size: clamp(0.72rem, 1vw, 0.92rem);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    rotate: 6deg;
-    transform-origin: 100% 0;
-    animation: flutter 2.8s ease-in-out infinite alternate;
-  }
-
-  @keyframes flutter {
-    to {
-      rotate: 3deg;
-    }
-  }
-
+  /* A proper ticket: the show's details on the left, a stub to tear off on the right. */
   .ticket {
-    position: absolute;
-    z-index: 6;
-    bottom: calc(11% + var(--bar));
-    left: calc(var(--gutter) + 1.5vw);
     display: grid;
-    padding: 0.65rem 1.4rem 0.75rem 1.1rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: 100%;
     background: var(--paper);
     color: var(--ink);
     text-decoration: none;
-    rotate: -2deg;
     mask:
-      radial-gradient(circle 0.55rem at 100% 50%, transparent 98%, #000) right,
-      radial-gradient(circle 0.55rem at 0 50%, transparent 98%, #000) left;
+      radial-gradient(circle 0.6rem at 100% 50%, transparent 98%, #000) right,
+      radial-gradient(circle 0.6rem at 0 50%, transparent 98%, #000) left;
     mask-size: 51% 100%;
     mask-repeat: no-repeat;
-    animation: admit 3.2s ease-in-out infinite alternate;
-  }
-
-  @keyframes admit {
-    to {
-      rotate: 1.5deg;
-    }
+    transition: background 160ms;
   }
 
   @media (hover: hover) and (pointer: fine) {
     .ticket:hover {
-      animation-play-state: paused;
+      background: var(--marker);
     }
   }
 
@@ -726,46 +314,55 @@ const bubbles = [
     outline-offset: -0.55rem;
   }
 
+  .ticket__main {
+    display: grid;
+    gap: 0.5rem;
+    padding: calc(var(--u) * 1.3) calc(var(--u) * 1.6) calc(var(--u) * 1.4) calc(var(--u) * 2);
+  }
+
   .ticket__small {
     font-family: var(--mono);
-    font-size: 0.7rem;
+    font-size: clamp(0.66rem, calc(var(--u) * 0.85), 0.82rem);
+    font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
+  .ticket__details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(var(--u) * 0.7) calc(var(--u) * 1.5);
+    margin: 0;
+  }
+
+  dt {
+    color: var(--red);
+    font-family: var(--mono);
+    font-size: clamp(0.6rem, calc(var(--u) * 0.72), 0.72rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    font-size: clamp(0.85rem, calc(var(--u) * 1.15), 1.2rem);
+    line-height: 1.12;
+  }
+
+  .ticket__stub {
+    display: grid;
+    align-content: center;
+    gap: 0.35rem;
+    padding: calc(var(--u) * 1.3) calc(var(--u) * 2.2) calc(var(--u) * 1.3) calc(var(--u) * 1.6);
+    border-left: 2px dashed rgb(29 28 26 / 45%);
+  }
+
   .ticket__big {
-    font-size: clamp(1.45rem, 2.6vw, 2.25rem);
+    font-size: clamp(1.2rem, calc(var(--u) * 2.2), 2.1rem);
     font-style: italic;
     font-weight: 500;
-    line-height: 1.1;
-  }
-
-  .marquee {
-    position: absolute;
-    z-index: 7;
-    right: 0;
-    bottom: var(--bar);
-    left: 0;
-    overflow: hidden;
-    padding: 0.5rem 0;
-    background: var(--marker);
-    color: var(--ink);
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    line-height: 1.05;
     white-space: nowrap;
-  }
-
-  .marquee span {
-    display: inline-block;
-    animation: slide 40s linear infinite;
-  }
-
-  @keyframes slide {
-    to {
-      transform: translateX(-33.33%);
-    }
   }
 
   /* Velvet: folds bunch up at the wings as the drapes open. The scalloped hem and fringe come down
@@ -805,7 +402,7 @@ const bubbles = [
     transform: none;
   }
 
-  .ob[data-open]:not([data-settled]) .drape {
+  .ob[data-open] .drape {
     transition: transform 1200ms cubic-bezier(0.65, 0, 0.2, 1) 120ms;
   }
 
@@ -873,7 +470,7 @@ const bubbles = [
   }
 
   /* Used once. It runs on down and is hauled back up with the curtains. */
-  .ob[data-open]:not([data-settled]) .rope {
+  .ob[data-open] .rope {
     display: block;
     pointer-events: none;
     animation: haul 1000ms var(--ease) forwards;
@@ -969,115 +566,60 @@ const bubbles = [
       --u: min(2.45vw, 1.14svh);
     }
 
-    .slab {
-      inset: -2% -2% 55% -2%;
-      clip-path: polygon(
-        0 0,
-        100% 0,
-        100% 94%,
-        90% 98%,
-        78% 93%,
-        64% 99%,
-        50% 94%,
-        36% 100%,
-        22% 94%,
-        10% 98%,
-        0 93%
-      );
+    .ob-copy {
+      left: 1.25rem;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      align-content: stretch;
+      gap: 0.75rem;
+      width: calc(100% - 2.5rem);
+      padding-block: 3.75rem 1.25rem;
     }
 
     h2 {
-      top: 5.2rem;
-      left: 1.5rem;
-      width: calc(100% - 3rem);
-      font-size: clamp(2.7rem, 13vw, 6.5rem);
-    }
-
-    .halftone {
-      top: auto;
-      right: auto;
-      bottom: 6%;
-      left: -14%;
-      width: 70%;
-    }
-
-    .script {
-      top: 46%;
-      right: auto;
-      left: -8%;
-      width: 44%;
-      font-size: 0.72rem;
-      rotate: -6deg;
-    }
-
-    .handset {
-      width: calc(44% - 0.6rem);
-      padding: 0.3rem;
-      border-radius: 1.5rem;
-    }
-
-    .handset img {
-      width: calc(100% - 0.6rem);
-      border-radius: 1.25rem;
-    }
-
-    .handset--1 {
-      top: 43%;
-      right: auto;
-      left: 5%;
-    }
-
-    .handset--2 {
-      top: 40%;
-      right: 2%;
-    }
-
-    .handset--3 {
-      display: none;
+      font-size: clamp(2.5rem, min(12.5vw, 7.4svh), 6rem);
     }
 
     .voices {
-      z-index: 5;
-      bottom: calc(8.5rem + var(--bar));
-      left: 1.25rem;
+      grid-row: 3;
+      align-self: center;
       width: 42%;
-      height: 2.2rem;
+      height: 3.5rem;
       gap: 0.18rem;
     }
 
-    .bubble--one {
-      top: 38%;
-      right: auto;
-      left: 4%;
-    }
-
-    .bubble--two {
-      top: 62%;
-      right: 2%;
-    }
-
-    .bubble--three {
-      display: none;
-    }
-
-    .stamp {
-      top: 37%;
-      right: 2%;
-      bottom: auto;
-      width: 5.75rem;
-    }
-
-    .tape {
-      top: auto;
-      right: -1%;
-      bottom: calc(5.5rem + var(--bar));
-      font-size: 0.68rem;
-    }
-
     .ticket {
-      bottom: calc(3.1rem + var(--bar));
-      left: 1.25rem;
-      background: var(--marker);
+      grid-row: 4;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ticket__main,
+    .ticket__stub {
+      padding-inline: 1.4rem;
+    }
+
+    .ticket__stub {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      padding-block: 0.5rem 0.6rem;
+      border-top: 2px dashed rgb(29 28 26 / 45%);
+      border-left: 0;
+    }
+
+    .ticket__details {
+      gap: 0.4rem 1rem;
+    }
+
+    /* Hangs in the gap between the title and the ticket, beside the waveform. */
+    .handset {
+      top: 26svh;
+      right: 1.25rem;
+      width: min(46vw, 20.5svh);
+      padding: 0.3rem;
+      border-radius: 1.6rem;
+    }
+
+    .handset img {
+      border-radius: 1.3rem;
     }
 
     .beam {
@@ -1095,66 +637,51 @@ const bubbles = [
       left: auto;
       rotate: -6deg;
     }
-
-    @media (max-width: 380px) {
-      .tape {
-        display: none;
-      }
-    }
-
-    @media (max-height: 700px) {
-      .bubble--two {
-        display: none;
-      }
-    }
   }
 
-  /* Phones on their side: too short for the waveform and the bubbles next to the headline. */
-  @media (max-height: 480px) {
-    .voices,
-    .bubble {
-      display: none;
-    }
-
-    .tape {
-      top: 3.25rem;
-      bottom: auto;
-    }
-  }
-
-  /* An address bar lifts the ticket further than the bar shrinks the headline, so on short wide
-     screens the headline is also sized to end above wherever the ticket has got to. */
+  /* Phones on their side: the phone and the waveform go, for the title and the ticket. */
   @media (max-height: 480px) and (min-aspect-ratio: 5/6) {
-    .ob-stage {
-      --u: min(1vw, 1.62svh, calc((100svh - 11lvh - 7.15rem) / 31.5));
+    .ob-copy {
+      width: calc(100% - var(--gutter) * 2 - 5vw - 22svh);
+      gap: 0.5rem;
     }
 
     h2 {
-      top: max(calc(var(--u) * 9), 2.4rem);
+      font-size: 13svh;
+    }
+
+    .voices {
+      display: none;
+    }
+
+    .handset {
+      top: 12svh;
+      right: 2.5vw;
+      width: 20svh;
+    }
+
+    .ticket__main,
+    .ticket__stub {
+      padding-block: 0.4rem;
+    }
+
+    .ticket__details {
+      gap: 0.2rem 0.75rem;
+    }
+
+    dd {
+      font-size: 0.78rem;
+    }
+
+    .ticket__big {
+      font-size: 1.1rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
     .drape,
     .billing,
-    .beam,
-    .bubble {
-      display: none;
-    }
-
-    .halftone,
-    .script,
-    .handset,
-    .stamp,
-    .marquee span,
-    .script__mine,
-    .tape,
-    .ticket,
-    .handset img {
-      animation: none;
-    }
-
-    .handset img:not(:first-child) {
+    .beam {
       display: none;
     }
 

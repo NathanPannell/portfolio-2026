@@ -1,5 +1,4 @@
 ---
-const steps = ['Doors.', 'Build.', 'Get unstuck.', 'Demo.'];
 const contours = [
   'M-50 120C180 40 320 210 520 130S830 30 1050 150',
   'M-50 210C150 150 300 310 520 220S860 110 1050 250',
@@ -15,7 +14,7 @@ const desktop = [1018, 1018, 1019];
 const phone = [2142, 2142, 2142];
 ---
 
-<section id="ai-build-night" class="abn" data-audience="builders" aria-labelledby="abn-title">
+<section id="ai-build-night" class="abn" aria-labelledby="abn-title">
   <div class="abn-cover" data-frame data-moment data-cover data-loops tabindex="-1">
     <div class="abn-cover__type">
       <h2 id="abn-title">
@@ -33,17 +32,19 @@ const phone = [2142, 2142, 2142];
           aria-expanded="false"
           aria-label="Press Enter to open the live site"
         >
-          <span class="abn-key__cap">
-            <span class="abn-key__word">Enter</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M19 6v6H6M10 8l-4 4 4 4"></path>
-            </svg>
+          <span class="abn-key__wall">
+            <span class="abn-key__cap">
+              <span class="abn-key__word">Enter</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 6v6H6M10 8l-4 4 4 4"></path>
+              </svg>
+            </span>
           </span>
         </button>
       </div>
     </div>
 
-    <div class="abn-show">
+    <div class="abn-show" data-opens>
       <svg
         class="abn-contours"
         viewBox="0 0 1000 900"
@@ -58,6 +59,10 @@ const phone = [2142, 2142, 2142];
       <div class="abn-show__copy">
         <h3>Night 001 filled up. Night 002 is next.</h3>
         <p>A free night in Victoria, BC. I co-run it and built the site.</p>
+        <ul class="abn-stars" aria-label="What we believe">
+          <li>The next unicorn can come from Vancouver Island.</li>
+          <li>We share what we learn.</li>
+        </ul>
         <div class="abn-show__links">
           <a class="abn-show__cta" href="https://aibuildnight.ca/">
             <span>aibuildnight.ca</span>
@@ -114,35 +119,6 @@ const phone = [2142, 2142, 2142];
         </div>
       </figure>
     </div>
-  </div>
-
-  <div class="abn-room" data-frame data-room>
-    <svg
-      class="abn-contours"
-      viewBox="0 0 1000 900"
-      preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true"
-    >
-      {contours.map((d) => (
-        <path d={d} />
-      ))}
-    </svg>
-    <ol class="abn-room__copy">
-      {steps.map((step) => (
-        <li data-step>{step}</li>
-      ))}
-    </ol>
-    <figure class="abn-room__plan">
-      <canvas
-        role="img"
-        aria-label="A top-down drawing of a room filling with people and laptops"
-      ></canvas>
-    </figure>
-  </div>
-
-  <div class="abn-tenets" data-frame>
-    <p class="abn-tenets__one">The next unicorn can come from Vancouver Island.</p>
-    <p class="abn-tenets__two">We share what we learn.</p>
   </div>
 </section>
 
@@ -226,48 +202,71 @@ const phone = [2142, 2142, 2142];
   }
 
   .abn-cover__line {
-    max-width: 16ch;
+    max-width: 20ch;
     font-size: clamp(1.7rem, min(3.6vw, 6svh), 3.2rem);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.03em;
   }
 
-  /* A real, chunky key. It only exists while there is something to press it for. */
+  /* A real switch in a plate: a dished cap on tall walls, which sink into the plate when pressed. It
+     only exists while there is something to press it for. */
   .abn-key {
+    --travel: clamp(0.5rem, 1.1svh, 0.8rem);
+    position: relative;
     display: none;
-    padding: 0 0 0.75rem;
+    flex: none;
+    width: clamp(15rem, min(30vw, 46svh), 26rem);
+    aspect-ratio: 1.5;
+    padding: 0;
     border: 0;
-    border-radius: 1.1rem;
-    background: var(--ink);
-    transition: padding 90ms;
+    border-radius: 1.5rem;
+    background: linear-gradient(160deg, #24282b, #0b0d0e 70%);
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 22%),
+      inset 0 -0.3rem 0.5rem rgb(0 0 0 / 70%),
+      0 1.3rem 1.8rem -0.5rem rgb(70 18 0 / 62%);
   }
 
   :global(.stage) .abn-cover:not([data-open]) .abn-key {
     display: block;
   }
 
+  .abn-key__wall {
+    position: absolute;
+    inset: 4.5% 4% calc(5% + var(--travel) * 1.4);
+    border-radius: 1.15rem;
+    background: linear-gradient(90deg, #a9a69c, #d9d6cc 18%, #d9d6cc 82%, #a9a69c);
+    box-shadow:
+      0 var(--travel) 0 #7d7a71,
+      0 calc(var(--travel) + 0.5rem) 0.7rem rgb(0 0 0 / 72%);
+    transition:
+      transform 70ms ease-out,
+      box-shadow 70ms ease-out;
+  }
+
   .abn-key__cap {
+    position: absolute;
+    inset: 5% 6.5% 11%;
     display: flex;
-    gap: 1.1rem;
+    gap: 1rem;
     align-items: end;
     justify-content: space-between;
-    width: clamp(10.5rem, 20vw, 15rem);
-    height: clamp(6rem, 11vw, 8.5rem);
-    padding: 0.9rem 1.1rem;
-    border: 3px solid var(--ink);
-    border-radius: 1.1rem;
-    background: var(--bone);
+    padding: 0.9rem 1.15rem;
+    border-radius: 0.9rem;
+    background: radial-gradient(120% 100% at 50% 8%, #fffefa, #efece3 62%, #dcd8cc);
+    box-shadow:
+      inset 0 0.18rem 0.3rem #fff,
+      inset 0 -0.35rem 0.7rem rgb(60 54 40 / 22%);
     color: var(--ink);
     font-family: var(--mono);
-    font-size: clamp(1.1rem, 1.7vw, 1.45rem);
-    font-weight: 700;
-    transition: transform 90ms;
+    font-size: clamp(1.5rem, min(2.6vw, 4svh), 2.3rem);
+    font-weight: 800;
   }
 
   .abn-key svg {
-    width: 2rem;
-    height: 2rem;
+    width: 1.5em;
+    height: 1.5em;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
@@ -275,12 +274,20 @@ const phone = [2142, 2142, 2142];
     stroke-width: 2.4;
   }
 
-  .abn-key:active .abn-key__cap {
-    transform: translateY(0.55rem);
+  .abn-key:active .abn-key__wall {
+    transform: translateY(var(--travel));
+    box-shadow:
+      0 0.1rem 0 #7d7a71,
+      0 0.25rem 0.3rem rgb(0 0 0 / 72%);
+  }
+
+  .abn-key:focus-visible {
+    outline-color: var(--ink);
+    outline-offset: 0.3rem;
   }
 
   /* The key dips by itself every few seconds, so it reads as something to press. */
-  :global(.stage) .abn-cover[data-here]:not([data-open]) .abn-key__cap {
+  :global(.stage) .abn-cover[data-here]:not([data-open]) .abn-key__wall {
     animation: dip 3.4s ease-in-out infinite;
   }
 
@@ -293,7 +300,7 @@ const phone = [2142, 2142, 2142];
 
     86%,
     90% {
-      transform: translateY(0.45rem);
+      transform: translateY(calc(var(--travel) * 0.8));
     }
   }
 
@@ -324,7 +331,7 @@ const phone = [2142, 2142, 2142];
   }
 
   /* Cut down to the cursor and painted to match it, so the cursor stays a cursor until the key is
-     pressed. Only painted over, because its links still have to take keyboard focus. */
+     pressed. */
   .abn-show::after {
     content: '';
     position: absolute;
@@ -347,7 +354,7 @@ const phone = [2142, 2142, 2142];
     }
   }
 
-  .abn-cover[data-open]:not([data-settled]) .abn-show {
+  .abn-cover[data-open] .abn-show {
     transition: clip-path 1000ms cubic-bezier(0.7, 0, 0.15, 1) 120ms;
   }
 
@@ -376,6 +383,21 @@ const phone = [2142, 2142, 2142];
     font-weight: 900;
     line-height: 0.96;
     letter-spacing: -0.04em;
+  }
+
+  /* The north star, as big as the column lets it be. */
+  .abn-stars {
+    display: grid;
+    gap: 0.4rem;
+    padding-block: 0.3rem;
+    font-size: clamp(1.25rem, min(2.1vw, 3.5svh), 2.1rem);
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  .abn-stars li:last-child {
+    color: #c23c0c;
   }
 
   .abn-show__links {
@@ -543,9 +565,9 @@ const phone = [2142, 2142, 2142];
   }
 
   /* Each piece follows the cursor's opening, in turn. */
-  .abn-cover[data-open]:not([data-settled]) .abn-browser,
-  .abn-cover[data-open]:not([data-settled]) .abn-phone,
-  .abn-cover[data-open]:not([data-settled]) .abn-show__copy {
+  .abn-cover[data-open] .abn-browser,
+  .abn-cover[data-open] .abn-phone,
+  .abn-cover[data-open] .abn-show__copy {
     transition: transform 700ms var(--ease) var(--wait, 700ms);
   }
 
@@ -563,123 +585,13 @@ const phone = [2142, 2142, 2142];
     transform: translateX(-3rem);
   }
 
-  .abn-room {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-    gap: clamp(1.5rem, 5vw, 5rem);
-    align-items: center;
-    min-height: 100lvh;
-    overflow: clip;
-    padding: 4.5rem var(--gutter) calc(var(--gutter) + var(--bar));
-    background: var(--bone);
-  }
-
-  .abn-room .abn-contours path {
-    stroke-dasharray: 1400;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .abn-room .abn-contours path {
-      transition: stroke-dashoffset 3.5s var(--ease);
-    }
-
-    :global(.reveals) .abn-room:not([data-played]) .abn-contours path {
-      stroke-dashoffset: 1400;
-    }
-  }
-
-  /* The words swap in place, at a size that fills the side of the room. */
-  .abn-room__copy {
-    position: relative;
-    z-index: 1;
-    display: grid;
-  }
-
-  .abn-room__copy li {
-    font-size: clamp(3.2rem, 9.4vw, 9.5rem);
-    font-weight: 900;
-    line-height: 0.92;
-    letter-spacing: -0.05em;
-  }
-
-  /* One word at a time needs the script that swaps them. Until then they are a list. */
-  @media (prefers-reduced-motion: no-preference) {
-    :global(.reveals) .abn-room__copy li {
-      grid-area: 1 / 1;
-      opacity: 0;
-      transform: translateY(1.2rem) scale(0.96);
-      transform-origin: 0 100%;
-      transition:
-        opacity 200ms,
-        transform 340ms var(--ease);
-    }
-
-    :global(.reveals) .abn-room__copy li[data-on] {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  /* The same goes for the drawing, which only a script can draw. */
-  .abn-room__plan {
-    position: relative;
-    z-index: 1;
-    display: none;
-    width: min(46vw, calc(100svh - 8rem));
-  }
-
-  :global(.reveals) .abn-room__plan {
-    display: block;
-  }
-
-  .abn-room__plan canvas {
-    width: 100%;
-    aspect-ratio: 1;
-    box-shadow: 0.6rem 0.6rem 0 var(--ink);
-  }
-
-  .abn-tenets {
-    display: grid;
-    align-content: center;
-    gap: clamp(1rem, 3svh, 2rem);
-    height: 100lvh;
-    overflow: clip;
-    padding: 4rem var(--gutter) calc(4rem + var(--bar));
-    background: var(--ink);
-    color: var(--glass);
-  }
-
-  .abn-tenets__one,
-  .abn-tenets__two {
-    font-size: clamp(2.3rem, min(8.6vw, 12svh), 9rem);
-    font-weight: 900;
-    line-height: 0.93;
-    letter-spacing: -0.045em;
-    text-wrap: balance;
-  }
-
-  .abn-tenets__two {
-    color: var(--signal);
-  }
-
-  /* Each line wipes on when the frame arrives. */
-  @media (prefers-reduced-motion: no-preference) {
-    .abn-tenets__one,
-    .abn-tenets__two {
-      transition: clip-path 1100ms var(--ease) 200ms;
-    }
-
-    .abn-tenets__two {
-      transition-delay: 1000ms;
-    }
-
-    :global(.reveals) .abn-tenets:not([data-played]) p {
-      clip-path: inset(0 100% 0 0);
-    }
-  }
-
   @media (max-width: 860px) {
+    /* The key is the whole point of this screen, so on a phone it gets the whole width. */
+    .abn-key {
+      width: min(100%, 44svh, 26rem);
+      margin-inline: auto;
+    }
+
     .abn-show {
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto minmax(0, 1fr);
@@ -716,6 +628,10 @@ const phone = [2142, 2142, 2142];
       display: none;
     }
 
+    .abn-stars {
+      font-size: clamp(1.1rem, min(5vw, 2.6svh), 1.6rem);
+    }
+
     .abn-browser {
       width: min(100%, calc((100svh - 9rem) * 0.82));
       box-shadow: 0.4rem 0.4rem 0 var(--ink);
@@ -727,30 +643,7 @@ const phone = [2142, 2142, 2142];
     }
   }
 
-  @media (max-width: 860px) and (orientation: portrait) {
-    .abn-room {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: auto minmax(0, 1fr);
-      gap: 0.85rem;
-      align-items: start;
-      justify-items: center;
-      padding-top: 4rem;
-    }
-
-    .abn-room__copy {
-      width: 100%;
-    }
-
-    .abn-room__copy li {
-      font-size: clamp(2.8rem, 14.5vw, 5rem);
-    }
-
-    .abn-room__plan {
-      width: min(100%, calc(100svh - 14rem));
-    }
-  }
-
-  /* Phones on their side keep the drawing beside the word, and the site beside its links. */
+  /* Phones on their side keep the site beside its links. */
   @media (max-height: 480px) {
     .abn-cover__type {
       padding-top: 3rem;
@@ -760,8 +653,12 @@ const phone = [2142, 2142, 2142];
       font-size: 1.4rem;
     }
 
-    .abn-key__cap {
-      height: 4.5rem;
+    .abn-key {
+      width: 10.5rem;
+    }
+
+    .abn-stars {
+      font-size: 1rem;
     }
 
     .abn-show {
@@ -786,19 +683,6 @@ const phone = [2142, 2142, 2142];
 
     .abn-phone {
       display: none;
-    }
-
-    .abn-room {
-      padding-top: 3rem;
-      padding-bottom: calc(0.5rem + var(--bar));
-    }
-
-    .abn-room__copy li {
-      font-size: 3rem;
-    }
-
-    .abn-room__plan {
-      width: calc(100svh - 5rem);
     }
   }
 
