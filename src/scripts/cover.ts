@@ -1,10 +1,11 @@
 // AI Build Night's cover. Its cursor is where the live site opens out from, and its Enter key thoccs.
 
-// A deep plastic thump with a short clack on top, made here so there is no file to fetch.
+// A deep plastic thump with a short clack on top, made here so there is no file to fetch. The clack
+// and the higher tone are what carry on a phone speaker, which can't play the thump at all.
 const thocc = (context: AudioContext) => {
   const now = context.currentTime;
   const out = context.createGain();
-  out.gain.value = 0.85;
+  out.gain.value = 0.72;
   out.connect(context.destination);
 
   const thump = (type: OscillatorType, from: number, to: number, level: number, length: number) => {
@@ -20,10 +21,10 @@ const thocc = (context: AudioContext) => {
     tone.start(now);
     tone.stop(now + length);
   };
-  thump('sine', 240, 96, 0.9, 0.11);
-  thump('triangle', 520, 300, 0.32, 0.05);
+  thump('sine', 240, 96, 0.8, 0.11);
+  thump('triangle', 780, 420, 0.5, 0.06);
 
-  const samples = Math.ceil(context.sampleRate * 0.018);
+  const samples = Math.ceil(context.sampleRate * 0.026);
   const noise = context.createBuffer(1, samples, context.sampleRate);
   const data = noise.getChannelData(0);
   for (let index = 0; index < samples; index += 1) {
@@ -34,9 +35,9 @@ const thocc = (context: AudioContext) => {
   const level = context.createGain();
   clack.buffer = noise;
   band.type = 'bandpass';
-  band.frequency.value = 1500;
+  band.frequency.value = 1100;
   band.Q.value = 0.8;
-  level.gain.value = 0.3;
+  level.gain.value = 0.85;
   clack.connect(band).connect(level).connect(out);
   clack.start(now);
 };
