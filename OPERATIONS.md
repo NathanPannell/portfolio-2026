@@ -106,6 +106,20 @@ To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflar
 - Do not add `Cache-Control: no-transform` to HTML responses.
 - After enabling, verify exactly one beacon on the custom domain before claiming analytics is active: one `static.cloudflareinsights.com/beacon.min.js` script and one `cdn-cgi/rum` request.
 
+## Choosing each section's steps layout
+
+Each section's steps can be side by side or rotating, and the owner is choosing per section. Sections start on: AI Build Night rotating, Offbooked rotating, Parkdex side by side, Sandbox side by side. A small pill at the top right of each opened section switches it, and only appears on `staging.nathanpannell.com` and local builds. Every switch updates the address bar, so the link can be sent as it stands. Links name each section by `abn`, `offbooked`, `parkdex` and `sandbox`, each `side` or `rotating`:
+
+`https://staging.nathanpannell.com/?abn=rotating&offbooked=side&parkdex=rotating&sandbox=side`
+
+To settle on one for each section:
+
+1. Set the `layout` prop on each `<Steps>` in `BuildNight.astro`, `Offbooked.astro` and `Sandbox.astro`, and `data-layout-default` in `Parkdex.astro`, to the chosen layout.
+2. Delete `src/components/StepsToggle.astro` and each `<StepsToggle />`, with Parkdex's import of it.
+3. In `src/scripts/steps.ts`, remove `REVIEW_HOSTS`, the `review` and `onChoose` arguments, `writeLink`, the `choices` and `toggle` code and the `asked` lookup.
+4. Remove the toggle's tests from `e2e/pages.spec.ts`, the production test among them, and move the rest off the review links at the top of the steps tests.
+5. If no section ended up rotating, delete `steps.ts` and its call in `index.astro`, the window markup and rotating styles, `--progress` in `global.css`, and `moment:landed` in `ride.ts`. If none stayed side by side, keep the side-by-side markup and styles anyway: they are what shows without JavaScript.
+
 ## Required UI verification
 
 For interface changes:

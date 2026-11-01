@@ -8,8 +8,9 @@ export default defineConfig({
   forbidOnly: !!process.env['CI'],
   retries: 0,
   // These pages run long timed sequences in software-rendered browsers. On a many-core machine the
-  // default of one per two cores starves them until frames stop for seconds at a time.
-  ...(process.env['CI'] ? {} : { workers: 4 }),
+  // default of one per two cores starves them until frames stop for seconds at a time. Four still
+  // starved the Parkdex journeys now and then once the suite grew past three hundred tests.
+  ...(process.env['CI'] ? {} : { workers: 3 }),
   reporter: process.env['CI'] ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: `http://127.0.0.1:${port}`,

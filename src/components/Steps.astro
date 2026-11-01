@@ -1,8 +1,11 @@
 ---
-// How a section explains itself: numbered steps, all on screen at once, each with its own real
-// picture. Nothing rotates and nothing waits to be scrolled to. A section sets `--steps-room`, the
-// height these get, and `--step-*` for its own colours. Parkdex has its own stops on the vine, in
-// the same format.
+import StepsToggle from './StepsToggle.astro';
+
+// How a section explains itself: numbered steps, each with its own real picture. As written here
+// they are all on screen at once. `src/scripts/steps.ts` can move the pictures into one main window
+// that rotates through them beside the list. A section sets `--steps-room`, the height these get,
+// `--step-*` for its own colours, `--window` for the main window's width, and dresses the list and
+// the window itself. Parkdex has its own stops on the vine, in the same format.
 interface Step {
   title: string;
   alt: string;
@@ -13,61 +16,91 @@ interface Step {
 }
 
 interface Props {
+  // What this set goes by in a review link: `?offbooked=rotating`.
+  name: string;
   steps: Step[];
   shape: 'phone' | 'wide';
+  // Which layout a visitor starts on.
+  layout: 'side' | 'rotating';
   // Two by two on a big screen, for four wide pictures that would be small in a row.
   pairs?: boolean;
+  // Gives the main window a browser's address bar, reading this.
+  address?: string;
 }
 
-const { steps, shape, pairs = false } = Astro.props;
+const { name, steps, shape, layout, pairs = false, address } = Astro.props;
 const widths = shape === 'phone' ? [360, 640] : [480, 900];
 ---
 
-<ol
-  class:list={['steps', `steps--${shape}`, { 'steps--pairs': pairs }]}
+<div
+  class="steps-set"
+  data-steps={name}
+  data-layout-default={layout}
+  data-opens
   style={`--count: ${steps.length}`}
 >
-  {steps.map(({ title, alt, image, video, poster }, index) => (
-    <li class="step" style={`--step: ${index}`}>
-      <h3>
-        <span class="step__number" aria-hidden="true">
-          {index + 1}
-        </span>
-        <span>{title}</span>
-      </h3>
-      <figure class="step__picture">
-        {video ? (
-          <video
-            data-src={video}
-            poster={poster}
-            width="1120"
-            height="700"
-            muted
-            loop
-            playsinline
-            preload="none"
-            aria-label={alt}
-          />
-        ) : (
-          <img
-            src={`${image}-${widths[0]}.webp`}
-            srcset={widths.map((width) => `${image}-${width}.webp ${width}w`).join(', ')}
-            sizes={
-              shape === 'phone' ? '(max-width: 760px) 46vw, 20vw' : '(max-width: 760px) 44vw, 30vw'
-            }
-            width={shape === 'phone' ? 640 : 900}
-            height={shape === 'phone' ? 1385 : 563}
-            loading="lazy"
-            decoding="async"
-            alt={alt}
-          />
-        )}
-      </figure>
-    </li>
-  ))}
-</ol>
+  <ol class:list={['steps', `steps--${shape}`, { 'steps--pairs': pairs }]} data-steps-list>
+    {steps.map(({ title, alt, image, video, poster }, index) => (
+      <li class="step" data-step style={`--step: ${index}`}>
+        <h3>
+          <span class="step__number" aria-hidden="true">
+            {index + 1}
+          </span>
+          <span>{title}</span>
+        </h3>
+        <figure class="step__picture">
+          {video ? (
+            <video
+              data-src={video}
+              poster={poster}
+              width="1120"
+              height="700"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-label={alt}
+            />
+          ) : (
+            <img
+              src={`${image}-${widths[0]}.webp`}
+              srcset={widths.map((width) => `${image}-${width}.webp ${width}w`).join(', ')}
+              sizes={
+                shape === 'phone'
+                  ? '(max-width: 760px) 60vw, 24vw'
+                  : '(max-width: 760px) 92vw, 60vw'
+              }
+              width={shape === 'phone' ? 640 : 900}
+              height={shape === 'phone' ? 1385 : 563}
+              loading="lazy"
+              decoding="async"
+              alt={alt}
+            />
+          )}
+        </figure>
+      </li>
+    ))}
+  </ol>
+  <div class={`steps-window steps-window--${shape}`} data-steps-window hidden>
+    {address && (
+      <div class="steps-window__bar" aria-hidden="true">
+        <i></i>
+        <i></i>
+        <i></i>
+        <span>{address}</span>
+      </div>
+    )}
+    <div class="steps-window__view" data-steps-view></div>
+  </div>
+  <StepsToggle />
+</div>
 
 <style>
+  /* Side by side, the list is the section's own child. See the rotating layout below. */
+  .steps-set {
+    display: contents;
+  }
+
   .steps {
     --gap: clamp(0.75rem, 2vw, 2rem);
     --size: var(--step-size, clamp(1.05rem, min(1.75vw, 3.1svh), 1.8rem));
@@ -282,8 +315,146 @@ const widths = shape === 'phone' ? [360, 640] : [480, 900];
     }
   }
 
+  /* The rotating layout: every step in a list, and one picture at a time beside it. `--progress`
+     runs from 0 to 1 over each step, for a section to draw how long is left. */
+  .steps-set[data-layout='rotating'] {
+    display: grid;
+    grid-template-columns: var(--rail-columns, minmax(0, 1fr) var(--window));
+    gap: var(--rail-gap, clamp(1.25rem, 3.5vw, 3.5rem));
+    align-items: center;
+    height: var(--steps-room);
+  }
+
+  [data-layout='rotating'] > .steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rail-rows, 0.4rem);
+    justify-content: center;
+    height: auto;
+  }
+
+  [data-layout='rotating'] .step {
+    display: block;
+    padding: 0;
+  }
+
+  [data-layout='rotating'] h3 {
+    display: block;
+    font-size: var(--rail-size, var(--size));
+  }
+
+  h3 :global(.step__pick) {
+    display: flex;
+    gap: var(--rail-number-gap, 0.6em);
+    align-items: center;
+    width: 100%;
+    padding: var(--rail-pad, 0.55em 0.65em);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .steps-window {
+    position: relative;
+    width: var(--window);
+  }
+
+  .steps-window[hidden] {
+    display: none;
+  }
+
+  .steps-window__bar {
+    position: relative;
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    height: var(--bar-height, 2.5rem);
+    padding-inline: 0.8rem;
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .steps-window__bar i {
+    flex: none;
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  .steps-window__bar span {
+    flex: 1;
+    margin-left: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .steps-window__view {
+    display: grid;
+    overflow: hidden;
+  }
+
+  .steps-window__view .step__picture {
+    grid-area: 1 / 1;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    opacity: 0;
+    rotate: none;
+    visibility: hidden;
+    transition:
+      opacity 320ms,
+      visibility 0s 320ms;
+  }
+
+  .steps-window__view .step__picture[data-current] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 320ms;
+  }
+
+  :global(.stage [data-moment]:not([data-open])) .steps-window {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0);
+  }
+
+  :global([data-moment][data-open]) .steps-window {
+    transition:
+      opacity 320ms var(--step-wait, 0ms),
+      transform 560ms var(--ease) var(--step-wait, 0ms);
+  }
+
+  /* On an upright phone, wide pictures go above the list, at most about half the height. */
+  @media (max-width: 760px) and (orientation: portrait) {
+    .steps-set[data-layout='rotating']:has(.steps-window--wide) {
+      --window: min(100%, calc((var(--steps-room) * 0.46 - var(--bar-height, 2.5rem)) * 1.6));
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(0.6rem, 2.5svh, 1.5rem);
+      align-content: center;
+      justify-items: center;
+    }
+
+    [data-layout='rotating'] .steps-window--wide {
+      order: -1;
+    }
+
+    [data-layout='rotating']:has(.steps-window--wide) > .steps {
+      width: 100%;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .step {
+    .step,
+    .steps-window,
+    .steps-window__view .step__picture,
+    .steps-window__view .step__picture[data-current] {
       transition: none;
     }
   }

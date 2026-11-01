@@ -16,7 +16,8 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/components/Chrome.astro` | Fixed name link. |
 | `src/components/Hero.astro` | The hero frame. |
 | `src/components/heroes/` | Doors, the hero, plus `worlds.ts`, the facts about the four projects. |
-| `src/components/Steps.astro` | The numbered steps each section explains itself with, all on screen at once. |
+| `src/components/Steps.astro` | The numbered steps each section explains itself with, and the main window they can rotate in. |
+| `src/components/StepsToggle.astro` | The small review control that switches a section between its two layouts. |
 | `src/components/BuildNight.astro` | AI Build Night: cover and key, then its four steps and links on one screen. |
 | `src/components/Offbooked.astro` | Curtains and rope, then the title, one link and four steps. |
 | `src/components/Parkdex.astro` | Sky, Plant!, the ride, the four stops, the way on down, and the park at the bottom with its links. |
@@ -27,12 +28,13 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/scripts/motion.ts` | Reduced-motion check, resting loops, and lazy video. |
 | `src/scripts/doors.ts` | The doors swing open before the page moves on. |
 | `src/scripts/cover.ts` | AI Build Night: the cursor the steps open from, and the Enter key. |
+| `src/scripts/steps.ts` | Each section's layout, the rotation and its pausing, and the review toggle and links. |
 | `src/scripts/sound.ts` | Every sound on the page, made with Web Audio. |
 | `src/scripts/ride.ts` | Parkdex: Kip's timed ride down the vine, forest layers, and the slide to the park and the jump. |
 | `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
 | `tests/content-contract.mjs` | Section order, required links, claims guards, reduced-motion coverage, media budget. |
 | `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonical, share card, JSON-LD, 404. |
-| `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps, fourteen viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
+| `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps in both layouts, sixteen viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
 | `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`). |
 | `public/_headers` | Cloudflare security and caching headers. |
 | `public/_redirects` | Old project and essay URLs. |
@@ -70,9 +72,14 @@ A `[data-loops]` scene has its looping CSS paused while it is off screen (`start
 
 ## Steps
 
-Each section says what it does in three or four numbered steps, all on screen at once, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked and Sandbox, and Parkdex's stops on the vine are the same idea in its own design. The owner offered this or a rotation through the lines. All at once won because the whole explanation is there at a first look: nothing to wait for, no timer to pause, and nothing different under reduced motion or without JavaScript.
+Each section says what it does in three or four numbered steps, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked and Sandbox, and Parkdex's stops on the vine are the same idea in its own design. There are two layouts, and the owner is comparing them per section:
 
-A section sets `--steps-room`, the height the steps get, and `--step-*` for its colours and type. Every size then comes from that and the width, so the steps fit the screen they are on: `e2e/pages.spec.ts` checks that at fourteen sizes, including that nothing overlaps. Wide pictures sit two by two on a big screen with `pairs`, in a row otherwise, and beside their words on a phone. App screens crop from the top on a phone, because the top of the screen is what shows the step.
+- **Side by side:** every step and picture on screen at once. This is what the markup is, so it is what shows without JavaScript or if the script stalls.
+- **Rotating:** the whole list stays on screen, and one main window shows one picture at a time. `src/scripts/steps.ts` moves the pictures into the window, so nothing is written twice. Each section dresses this its own way, because four matching templates was the owner's complaint: a browser that loads each page for AI Build Night, one phone beside a marked-up page of the script for Offbooked, trail signs and a hanging phone with Kip on the vine for Parkdex, and a browser drawn in crayon for Sandbox.
+
+The rotation's rules live in `startSet`. It starts only after the opening (`moment:open`, or `moment:landed` for Parkdex), so it never depends on scrolling, and it never runs under reduced motion, where the list is simply there to pick from. Its count is a Web Animation of `--progress` on the set, not a timer, so hovering, focusing or leaving the screen can pause it mid-step and a section can draw how long is left. Hover and focus only count on the list and the window, and hover needs real movement, because the mouse that pressed a section's control is often left resting right where the window appears. Picking a step by hover, tap, click or keys stops the rotation for good.
+
+A section sets `--steps-room`, the height the steps get, `--step-*` for its colours and type, and `--window` for the width of the main window. Every size then comes from those and the screen's width, so the steps fit the screen they are on: `e2e/pages.spec.ts` checks both layouts at sixteen sizes, including that nothing overlaps. Side by side, wide pictures sit two by two on a big screen with `pairs`, in a row otherwise, and beside their words on a phone. App screens crop from the top on a phone, because the top of the screen is what shows the step.
 
 ## Reduced motion and no JavaScript
 
