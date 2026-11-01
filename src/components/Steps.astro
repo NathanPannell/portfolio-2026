@@ -345,7 +345,7 @@ const widths = shape === 'phone' ? [360, 640] : [480, 900];
 
   h3 :global(.step__pick) {
     display: flex;
-    gap: 0.6em;
+    gap: var(--rail-number-gap, 0.6em);
     align-items: center;
     width: 100%;
     padding: var(--rail-pad, 0.55em 0.65em);

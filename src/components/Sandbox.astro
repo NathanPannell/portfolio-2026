@@ -618,6 +618,10 @@ const steps = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .sb-open__page :global(.steps-window__view .step__picture[data-current]) {
+      animation: none;
+    }
+
     .sb-open {
       height: auto;
     }

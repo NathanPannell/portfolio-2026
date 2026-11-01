@@ -1213,6 +1213,13 @@ const stops = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .pk-steps[data-layout='rotating'] h3,
+    .pk-window .pk-hang,
+    .pk-window .pk-hang[data-current],
+    [data-layout='rotating'] > .pk-guide {
+      transition: none;
+    }
+
     .pk-cloud,
     .pk-hang,
     .pk-window,

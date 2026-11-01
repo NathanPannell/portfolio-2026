@@ -238,6 +238,11 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
         const { bottom } = part.querySelector(selector)?.getBoundingClientRect() ?? box;
         if (bottom > box.bottom + slack) hits.push(`Spills out: ${part.textContent?.slice(0, 30)}`);
       }
+      // Every word stays inside the step it is in.
+      const pick = part.querySelector('.step__pick');
+      if (pick && pick.scrollWidth > pick.clientWidth + 1) {
+        hits.push(`Overruns: ${part.textContent?.slice(0, 30)}`);
+      }
       for (const other of parts.slice(index + 1)) {
         const next = other.getBoundingClientRect();
         const apart =
@@ -445,6 +450,19 @@ test.describe('with a mouse and keyboard', () => {
     await steps.locator('[data-step]').nth(3).hover();
     await expect.poll(() => showing(steps)).toBe(3);
     expect(await counting(steps)).toBe('none');
+    // And any other, after that.
+    await steps.locator('[data-step]').nth(1).hover();
+    await expect.poll(() => showing(steps)).toBe(1);
+  });
+
+  test('a key held with a modifier is left to the browser', async ({ page }) => {
+    await page.goto('/');
+    await openSet(page, sets[0]);
+    const steps = page.locator('[data-steps="abn"]');
+    await steps.locator('.step__pick').first().focus();
+    await page.keyboard.press('Shift+ArrowDown');
+    expect(await showing(steps)).toBe(0);
+    expect(await steps.evaluate((element) => element.getAnimations().length)).toBe(1);
   });
 
   test('focus pauses the count, and keys pick and move between steps', async ({ page }) => {
@@ -493,6 +511,23 @@ test('the real dwell moves on by itself, and leaves time to read', async ({ page
   const start = Date.now();
   await expect.poll(() => showing(steps), { timeout: 12000 }).toBe(1);
   expect(Date.now() - start).toBeGreaterThan(5000);
+});
+
+test('the step showing is marked from its first moment, not only as the count runs', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await openSet(page, sets[1]);
+  const pick = page.locator('[data-steps="offbooked"] [data-current] .step__pick');
+  await expect(pick).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+});
+
+test('a closed screen has no toggle on it', async ({ page }) => {
+  await page.goto('/?sandbox=rotating');
+  await jumpTo(page, '.sb-open');
+  const toggle = page.locator('[data-steps="sandbox"] [data-steps-toggle]');
+  await expect(toggle).toBeInViewport();
+  expect(await uncoveredPoints(toggle)).toBe(0);
 });
 
 test('off screen, the count waits', async ({ page }) => {
@@ -712,6 +747,7 @@ const everySize = [
   [1280, 720],
   [1366, 625],
   [320, 480],
+  [320, 568],
   [320, 640],
   [390, 844],
   [568, 320],
@@ -1233,17 +1269,36 @@ const pictureEnd = (row: Locator) =>
     return right - Number(/100% - ([\d.]+)px/.exec(offset ?? '')?.[1]);
   });
 
-for (const width of [320, 360, 390, 640]) {
-  test(`at ${width}px an index row keeps its arrow off the picture, beside its host`, async ({
-    page,
-  }) => {
+// Where each row's subject starts across its picture: the key, the phones, Kip, the marquee.
+const subjects = [0.59, 0.485, 0.55, 0.5];
+
+// Where a row's subject starts on screen, and where its name, host and arrow end.
+const rowEdges = (row: Locator, subject: number) =>
+  row.evaluate((element, at) => {
+    const { right, height } = element.getBoundingClientRect();
+    const offset = getComputedStyle(element, '::before').backgroundPositionX.split(',')[2];
+    const past = Number(/100% \+ ([\d.]+)px/.exec(offset ?? '')?.[1]);
+    const wide = (height * 900) / 280;
+    const range = document.createRange();
+    range.selectNodeContents(element.querySelector('.wash-list__name') as Element);
+    return {
+      subject: right + past - wide + wide * at,
+      name: range.getBoundingClientRect().right,
+      arrow: element.querySelector('svg')?.getBoundingClientRect().right ?? Infinity,
+      hostRight: element.querySelector('.wash-list__host')?.getBoundingClientRect().right ?? 0,
+      arrowLeft: element.querySelector('svg')?.getBoundingClientRect().left ?? 0,
+    };
+  }, subject);
+
+for (const width of [320, 360, 390, 412, 445, 640]) {
+  test(`at ${width}px an index row keeps its name and arrow off its subject`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
-    for (const row of await page.locator('[data-wash]').all()) {
-      const host = await row.locator('.wash-list__host').boundingBox();
-      const arrow = await row.locator('svg').boundingBox();
-      expect((arrow?.x ?? 0) + (arrow?.width ?? 0)).toBeLessThan(width * 0.75);
-      expect(arrow?.x ?? 0).toBeGreaterThanOrEqual((host?.x ?? 0) + (host?.width ?? 0));
+    for (const [index, row] of (await page.locator('[data-wash]').all()).entries()) {
+      const edges = await rowEdges(row, subjects[index] ?? 0);
+      expect(edges.name, `name of row ${index}`).toBeLessThanOrEqual(edges.subject);
+      expect(edges.arrow, `arrow of row ${index}`).toBeLessThanOrEqual(edges.subject);
+      expect(edges.arrowLeft).toBeGreaterThanOrEqual(edges.hostRight);
     }
   });
 }

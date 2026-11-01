@@ -20,6 +20,23 @@ const HOVER = 120;
 const NEXT_KEYS = new Set(['ArrowDown', 'ArrowRight']);
 const LAST_KEYS = new Set(['ArrowUp', 'ArrowLeft']);
 
+// Whether the mouse itself just moved, rather than the page moving under it. A mouse that pressed a
+// section's control is often left resting right where the window appears.
+let mouseMoved = false;
+
+const watchTheMouse = () => {
+  let x = -1;
+  let y = -1;
+  const note = ({ clientX, clientY }: PointerEvent) => {
+    mouseMoved = clientX !== x || clientY !== y;
+    x = clientX;
+    y = clientY;
+  };
+  for (const type of ['pointerdown', 'pointermove'] as const) {
+    window.addEventListener(type, note, { capture: true, passive: true });
+  }
+};
+
 const asLayout = (value: string | null | undefined): Layout | undefined =>
   value === 'side' || value === 'rotating' ? value : undefined;
 
@@ -55,6 +72,11 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
       picture.toggleAttribute('data-current', at === index);
       if (at === index) pick.setAttribute('aria-current', 'step');
       else pick.removeAttribute('aria-current');
+      // A loop plays while it can be seen. Under reduced motion it never has a source.
+      const video = picture.querySelector('video');
+      if (!video?.src) return;
+      if (layout === 'side' || at === index) void video.play().catch(() => undefined);
+      else video.pause();
     });
   };
 
@@ -113,10 +135,8 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
     pick.className = 'step__pick';
     pick.addEventListener('click', () => pickStep(index));
     let timer = 0;
-    // Movement, not arrival: the mouse that pressed a section's control may be resting right here.
     row.addEventListener('pointermove', (event) => {
-      if (event.pointerType !== 'mouse' || layout !== 'rotating' || picked) return;
-      if (event.movementX === 0 && event.movementY === 0) return;
+      if (event.pointerType !== 'mouse' || !mouseMoved || layout !== 'rotating') return;
       window.clearTimeout(timer);
       timer = window.setTimeout(() => pickStep(index), HOVER);
     });
@@ -125,8 +145,7 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
 
   for (const part of [list, frame]) {
     part.addEventListener('pointermove', (event) => {
-      if (event.pointerType !== 'mouse') return;
-      if (event.movementX !== 0 || event.movementY !== 0) hold('hover', true);
+      if (event.pointerType === 'mouse' && mouseMoved) hold('hover', true);
     });
     part.addEventListener('pointerleave', () => hold('hover', false));
   }
@@ -138,6 +157,7 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
   list.addEventListener('keydown', (event) => {
     const move = NEXT_KEYS.has(event.key) ? 1 : LAST_KEYS.has(event.key) ? -1 : 0;
     if (move === 0 || layout !== 'rotating') return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     event.preventDefault();
     const index = (now + move + steps.length) % steps.length;
     pickStep(index);
@@ -181,6 +201,7 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
 export const startSteps = () => {
   const review = REVIEW_HOSTS.includes(window.location.hostname);
   const sets = Array.from(document.querySelectorAll<HTMLElement>('[data-steps]'));
+  watchTheMouse();
 
   // Every choice goes in the address bar, so whatever is on screen is a link to send.
   const writeLink = () => {

@@ -308,21 +308,34 @@ const worlds = [
     font-size: 0.78rem;
   }
 
+  /* The longest name takes two lines before it can reach the picture. */
+  @media (max-width: 720px) {
+    .wash-list__name {
+      max-width: 7em;
+    }
+  }
+
+  /* Two lines still fit the row's height here, or its picture would grow back over them. */
   @media (max-width: 640px) {
+    .wash-list li:last-child {
+      --wash-inset: calc(clamp(1rem, 27rem - 100vw, 3.75rem) * -1 - 1rem);
+    }
+
     .wash-list a {
       grid-template-columns: auto minmax(0, 1fr);
       gap: 0.2rem 0.5rem;
+      padding-block: 0.6rem;
     }
 
     .wash-list__name {
       grid-column: 1 / -1;
-      max-width: 7em;
       font-size: clamp(1.75rem, 9.3vw, 2.4rem);
     }
 
     .wash-list__host {
       grid-column: 1;
       grid-row: 2;
+      font-size: 0.75rem;
     }
 
     .wash-list svg {

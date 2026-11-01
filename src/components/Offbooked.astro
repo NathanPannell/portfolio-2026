@@ -272,6 +272,7 @@ const steps = [
   }
 
   .ob-copy :global([data-current] .step__pick) {
+    background-color: rgb(243 217 139 / 45%);
     background-size: calc(var(--progress) * 100%) 100%;
   }
 
@@ -578,9 +579,11 @@ const steps = [
 
   @media (max-width: 760px) and (orientation: portrait) {
     .ob-copy {
-      --window: min(54vw, calc(var(--steps-room) * 0.46));
-      --rail-size: clamp(0.9rem, 4.2vw, 1.15rem);
+      --window: min(50vw, calc(var(--steps-room) * 0.46));
+      --rail-size: clamp(0.85rem, 4vw, 1.15rem);
       --rail-gap: 0.75rem;
+      --rail-pad: 0.3em;
+      --rail-number-gap: 0.3em;
     }
 
     .ob-copy :global(.steps-set[data-layout='rotating']) {
@@ -588,7 +591,7 @@ const steps = [
     }
 
     .ob-copy :global([data-layout='rotating'] > .steps) {
-      padding: 0.6rem 0.5rem;
+      padding: 0.6rem 0.3rem;
     }
 
     .ob-copy :global(.steps-window) {
