@@ -642,10 +642,9 @@ const crayons = ['#e2231a', '#f28b1e', '#f3cf1c', '#2fa84f', '#1f7fd6', '#8a4fd3
     }
   }
 
-  @media (scripting: none) {
-    .toy {
-      display: none;
-    }
+  /* A toy only has a place once the script has given it one. */
+  .toy:not([style]) {
+    visibility: hidden;
   }
 
   /* These toys hold still, so a swipe that starts on one should scroll like any other. */

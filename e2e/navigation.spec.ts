@@ -29,6 +29,16 @@ for (const id of ['offbooked', 'parkdex', 'play-by-the-sandbox']) {
   });
 }
 
+test('the doors name who each project is for, in the order of the page', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.door__who')).toHaveText([
+    'for builders',
+    'for casts',
+    'for explorers',
+    'for creators',
+  ]);
+});
+
 test('the header is the name, and nothing else', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.chrome')).toHaveText('Nathan Pannell');

@@ -1,8 +1,8 @@
 // The page is a stack of full screens, and scrolling it belongs to the visitor. Each screen starts
 // playing when it arrives, and the only help is a gentle one: when a scroll has been left alone for
-// a moment, the page eases to frame the nearest screen. Any input stops that at once. It only follows
-// wheel, touch and keys, so anchors, find-in-page and Tab are left where they land, and it leaves
-// anywhere inside a zone taller than the screen alone.
+// a moment, the page eases to frame the nearest screen. Any input stops that at once, whether it has
+// started or not. It only follows wheel, touch and keys, so anchors and find-in-page are left where
+// they land, and it leaves anywhere inside a zone taller than the screen alone.
 
 import { reducedMotion } from './motion';
 
@@ -74,6 +74,13 @@ export const startFrames = () => {
     glide = 0;
   };
 
+  // Input that isn't a scroll means the page wasn't left alone after all.
+  const standDown = () => {
+    stop();
+    armed = false;
+    window.clearTimeout(timer);
+  };
+
   // By hand, not a smooth scrollTo, so that it can be stopped dead on every browser.
   const glideTo = (top: number) => {
     stop();
@@ -141,23 +148,16 @@ export const startFrames = () => {
   window.addEventListener(
     'wheel',
     (event) => {
-      stop();
       if (!event.ctrlKey && event.deltaY !== 0) arm();
+      else standDown();
     },
     { passive: true },
   );
   // Taking hold of the page ends any plan to move it.
-  window.addEventListener(
-    'pointerdown',
-    () => {
-      stop();
-      armed = false;
-    },
-    { passive: true },
-  );
+  window.addEventListener('pointerdown', standDown, { passive: true });
   window.addEventListener('keydown', (event) => {
-    stop();
     if (SCROLL_KEYS.has(event.key)) arm();
+    else standDown();
     tabbed = event.key === 'Tab';
   });
   window.addEventListener(

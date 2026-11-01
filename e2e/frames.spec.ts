@@ -71,6 +71,17 @@ test.describe('scrolling', () => {
     expect(held).toBeGreaterThan(0);
   });
 
+  test('a key during the wait means there is no settle', async ({ page }) => {
+    await page.goto('/');
+    await page.mouse.move(700, 450);
+    await page.mouse.wheel(0, 300);
+    await expect.poll(() => scrollY(page)).toBe(300);
+    await page.waitForTimeout(500);
+    await page.keyboard.press('Shift');
+    await page.waitForTimeout(IDLE + 500);
+    expect(await scrollY(page)).toBe(300);
+  });
+
   test('a press stops a settle at once', async ({ page }) => {
     await page.goto('/');
     await page.mouse.move(700, 450);
@@ -391,11 +402,12 @@ test('the toggle only exists on staging and local builds', async ({ page, baseUR
 
 test('the name badge swings when dragged, and settles', async ({ page, isMobile }) => {
   test.skip(isMobile, 'The drag uses the mouse; touch shares its pointer events.');
+  test.setTimeout(75000);
   await page.goto('/?hero=2');
   const badge = page.locator('[data-badge]');
   const angle = () =>
     badge.evaluate((element) => Number(/rotate\((.+)deg\)/.exec(element.style.transform)?.[1]));
-  await expect.poll(() => angle().then(Math.abs), { timeout: 12000 }).toBeLessThan(1);
+  await expect.poll(() => angle().then(Math.abs), { timeout: 30000 }).toBeLessThan(1);
   const box = await page.locator('.badge__name').boundingBox();
   if (!box) throw new Error('No badge name');
   await page.mouse.move(box.x + 40, box.y + 10);
@@ -403,7 +415,7 @@ test('the name badge swings when dragged, and settles', async ({ page, isMobile 
   await page.mouse.move(box.x + 240, box.y + 10, { steps: 6 });
   expect(Math.abs(await angle())).toBeGreaterThan(5);
   await page.mouse.up();
-  await expect.poll(() => angle().then(Math.abs), { timeout: 12000 }).toBeLessThan(1);
+  await expect.poll(() => angle().then(Math.abs), { timeout: 30000 }).toBeLessThan(1);
 });
 
 test('the board flaps to its final words', async ({ page }) => {

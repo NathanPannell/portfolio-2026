@@ -489,8 +489,10 @@ const stops = [
     mask: linear-gradient(#000 calc(100% - 3rem), transparent);
   }
 
+  /* A layer of its own, so the sign's posts stand in front of the view behind it. */
   .pk-end {
     position: relative;
+    isolation: isolate;
     display: grid;
     justify-items: center;
     gap: 1rem;

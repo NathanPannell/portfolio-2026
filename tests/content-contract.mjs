@@ -114,7 +114,11 @@ assert.match(offbooked, /\.ob-copy \{[^}]*height: 100svh/);
 assert.doesNotMatch(offbooked, /two.actor/i, 'The two-actor test is gone');
 assert.doesNotMatch(markup, /The one I’d bet on|got pulled for failing/, 'Unapproved public lines');
 assert.doesNotMatch(markup, /Find a real person|grab a toy/, 'Sections the owner removed');
-assert.doesNotMatch(markup, /for rivals|data-audience|data-for[ >=]/, 'The audience label is gone');
+assert.doesNotMatch(markup, /data-audience|data-for[ >=]/, 'The audience label is gone');
+for (const path of sources) {
+  const name = relative(root, path);
+  assert.doesNotMatch(readFileSync(path, 'utf8'), /\brivals\b/i, `Explorers now: ${name}`);
+}
 assert.doesNotMatch(offbooked, /class="(?:stamp|marquee|slab|script|tape|bubble)/, 'Tidied away');
 
 // Every world honours reduced motion with its own still layout.

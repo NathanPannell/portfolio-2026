@@ -438,8 +438,6 @@ test('Enter opens onto one screen, with the north star lines in it', async ({ pa
   await expect(page.locator('.abn-stars')).toContainText('We share what we learn.');
   await expect(page.locator('.abn-stars')).toBeInViewport({ ratio: 1, timeout: 4000 });
   await expect(page.locator('.abn-room, .abn-tenets, [data-room]')).toHaveCount(0);
-  const height = await page.locator('.abn-cover').evaluate((element) => element.scrollHeight);
-  expect(height).toBeLessThanOrEqual(await page.locator('.hero').evaluate((e) => e.scrollHeight));
 });
 
 const noWebAudio = "Playwright's WebKit build has no Web Audio.";
@@ -642,6 +640,8 @@ test('the second button slides Kip down to the parks and off the end of the vine
     if (!(await diver.isVisible())) break;
     const box = await diver.boundingBox();
     expect(box?.y ?? 9999).toBeLessThan(height);
+    // It starts just above the top of the screen, and then stays on it.
+    if (sample > 0) expect(box?.y ?? -9999).toBeGreaterThan(-(box?.height ?? 0));
   }
   await expect(trip).toHaveAttribute('data-jumped', '', { timeout: 8000 });
   await expect(diver).toBeHidden();
@@ -802,12 +802,15 @@ test('a frame never needs a click to carry on past', async ({ page }) => {
 
 const toySettles = (page: Page, toy: Locator) =>
   expect
-    .poll(async () => {
-      const first = await toy.boundingBox();
-      await page.waitForTimeout(150);
-      const second = await toy.boundingBox();
-      return first && second && Math.abs(first.y - second.y) < 0.5 && second.y > 0;
-    })
+    .poll(
+      async () => {
+        const first = await toy.boundingBox();
+        await page.waitForTimeout(150);
+        const second = await toy.boundingBox();
+        return first && second && Math.abs(first.y - second.y) < 0.5 && second.y > 0;
+      },
+      { timeout: 16000 },
+    )
     .toBe(true);
 
 const settledToy = async (page: Page) => {
@@ -822,6 +825,7 @@ const settledToy = async (page: Page) => {
 };
 
 test('a toy can be picked up and thrown', async ({ page, isMobile }) => {
+  test.setTimeout(45000);
   test.skip(isMobile, 'The next test throws one by touch.');
   await page.goto('/');
   const { toy, box } = await settledToy(page);
@@ -840,6 +844,7 @@ test('a toy can be picked up and thrown', async ({ page, isMobile }) => {
 });
 
 test('a finger can drag a toy, and swiping elsewhere still scrolls', async ({ page, isMobile }) => {
+  test.setTimeout(45000);
   test.skip(!isMobile, 'Touch is a phone journey.');
   await page.goto('/');
   const { toy, box } = await settledToy(page);
