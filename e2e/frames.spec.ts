@@ -82,6 +82,16 @@ test.describe('scrolling', () => {
     expect(await scrollY(page)).toBe(300);
   });
 
+  test('a stray sideways wheel leaves a waiting settle waiting', async ({ page }) => {
+    await page.goto('/');
+    await page.mouse.move(700, 450);
+    await page.mouse.wheel(0, 120);
+    await expect.poll(() => scrollY(page)).toBe(120);
+    await page.waitForTimeout(400);
+    await page.mouse.wheel(30, 0);
+    await settlesAt(page, 0);
+  });
+
   test('a press stops a settle at once', async ({ page }) => {
     await page.goto('/');
     await page.mouse.move(700, 450);

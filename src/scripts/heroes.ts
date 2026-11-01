@@ -7,6 +7,9 @@ type Stop = () => void;
 
 const REVIEW_HOSTS = ['staging.nathanpannell.com', 'localhost', '127.0.0.1'];
 
+// One step of the pendulum, in milliseconds, however fast the screen happens to draw.
+const SWING_STEP = 1000 / 60;
+
 // A damped pendulum. Sideways drags swing it, and up-and-down swipes stay with the page.
 const startBadge = (root: HTMLElement): Stop => {
   const badge = root.querySelector<HTMLElement>('[data-badge]');
@@ -22,11 +25,18 @@ const startBadge = (root: HTMLElement): Stop => {
     badge.style.transform = `rotate(${angle.toFixed(2)}deg)`;
   };
 
-  const tick = () => {
+  let last = 0;
+  let behind = 0;
+
+  const tick = (now: number) => {
     frame = 0;
     if (held) return;
-    speed = (speed - angle * 0.016) * 0.975;
-    angle += speed;
+    behind = Math.min(SWING_STEP * 8, behind + now - (last || now - SWING_STEP));
+    last = now;
+    for (; behind >= SWING_STEP; behind -= SWING_STEP) {
+      speed = (speed - angle * 0.016) * 0.975;
+      angle += speed;
+    }
     draw();
     if (Math.abs(angle) > 0.02 || Math.abs(speed) > 0.02) frame = requestAnimationFrame(tick);
     else {
@@ -38,6 +48,7 @@ const startBadge = (root: HTMLElement): Stop => {
   badge.addEventListener('pointerdown', (event) => {
     if ((event.target as HTMLElement).closest('a')) return;
     held = true;
+    last = 0;
     startX = event.clientX;
     startAngle = angle;
     speed = 0;

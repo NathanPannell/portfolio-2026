@@ -45,7 +45,7 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 - No width scrolls sideways.
 - Hover effects sit behind `(hover: hover) and (pointer: fine)`. Touch gets its own equivalent.
 - Keyboard focus reaches every link.
-- The page never traps a scroll. The only help is a gentle settle after the page has been left alone for a moment, which any input stops at once, so wheel, trackpad, touch and keys can pass through every screen without clicking anything.
+- The page never traps a scroll. The only help is a gentle settle after the page has been left alone for a moment, which any real input stops at once, so wheel, trackpad, touch and keys can pass through every screen without clicking anything.
 - Each section's click moment is a real button that works by keyboard, and the owner wants it to be the only way in: nothing opens by a timer or on the way past. Under reduced motion, or if the script fails, every section is simply open, so nothing is out of reach.
 - Motion plays on a clock. Nothing is pinned or scrubbed by the scroll position.
 

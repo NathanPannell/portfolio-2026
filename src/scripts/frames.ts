@@ -1,7 +1,7 @@
 // The page is a stack of full screens, and scrolling it belongs to the visitor. Each screen starts
 // playing when it arrives, and the only help is a gentle one: when a scroll has been left alone for
 // a moment, the page eases to frame the nearest screen. Any input stops that at once, whether it has
-// started or not. It only follows wheel, touch and keys, so anchors and find-in-page are left where
+// started or not, except that a stray sideways wheel only stops one in motion. It only follows wheel, touch and keys, so anchors and find-in-page are left where
 // they land, and it leaves anywhere inside a zone taller than the screen alone.
 
 import { reducedMotion } from './motion';
