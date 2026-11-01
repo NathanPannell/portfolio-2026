@@ -98,9 +98,23 @@ for (const [component, control] of [
 const momentsScript = readFileSync(join(root, 'src', 'scripts', 'moments.ts'), 'utf8');
 assert.doesNotMatch(momentsScript, /setTimeout|IntersectionObserver|addEventListener\('scroll/);
 
-// The hero toggle is a review tool and never reaches production.
-const heroes = readFileSync(join(root, 'src', 'scripts', 'heroes.ts'), 'utf8');
-assert.doesNotMatch(/REVIEW_HOSTS = \[(.*)\]/.exec(heroes)?.[1] ?? 'www.', /www\./);
+// The owner chose Doors, so the hero toggle and the other options stay out.
+assert.doesNotMatch(markup, /data-hero/, 'The hero toggle is gone');
+assert.deepEqual(
+  readdirSync(join(root, 'src', 'components', 'heroes')).sort(),
+  ['Doors.astro', 'worlds.ts'],
+  'Doors is the one hero',
+);
+
+// Each section says what it does in numbered steps, all on screen at once.
+for (const component of ['BuildNight', 'Offbooked', 'Sandbox']) {
+  const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
+  assert.match(source, /<Steps\b/, `${component} explains itself in steps`);
+}
+
+// The night's real schedule has about two hours of building, so it can't be called one hour.
+const buildNight = readFileSync(join(root, 'src', 'components', 'BuildNight.astro'), 'utf8');
+assert.doesNotMatch(buildNight, /one hour/i, 'A night is not an hour of building');
 
 // The kept interaction: a row fills with a full-colour image, with a touch equivalent. The images
 // are drawn for the row and pinned to its height, so `cover` can't crop them down to a strip.

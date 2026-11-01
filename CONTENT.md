@@ -13,10 +13,12 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 | Claim | Source |
 | --- | --- |
 | AI Build Night: "Stop reading about AI. Start building with it.", a free night in Victoria, BC. Night 001 filled up, and Night 002 is next. | aibuildnight.ca home and Past nights pages, checked 2026-10-31 |
+| AI Build Night steps: once a month (the third Thursday), building in one night, sharing, and the community line. Say "one night", never "one hour": doors are at 6, show-and-tell starts after 8, so a night has about two hours of building. | The site's theme and home page, checked 2026-11-01 |
 | The two tenets | Public on aibuildnight.ca. `ai-build-night-site-workspace/ops/goals.md` is the source. |
-| Play by the Sandbox: Mello's event at the Vancouver Art Gallery. | playbythesandbox.ca |
+| Play by the Sandbox: Mello's event at the Vancouver Art Gallery, for creatives. A 3D landing page in a crayon style, which is a three.js scene on the live site. | playbythesandbox.ca and its repo, checked 2026-11-01 |
 | Offbooked: public beta, free in the beta, cast never pay, no account for the cast, works on any phone, tablet or laptop, used by casts in British Columbia and Nova Scotia. | offbooked.com home page and FAQ, checked 2026-11-01 |
-| Parkdex: 1,000+ parks. | Live app and Play listing |
+| Parkdex: 1,000+ parks. Points, and a leaderboard. | Live app and Play listing |
+| Offbooked steps: a director uploads a script and shares a link, each actor records their lines, and everyone practises with the cast's voices. A line nobody has recorded yet plays in a computer voice. | Offbooked repo and the app's own intro, checked 2026-11-01 |
 
 ## Check before showing
 

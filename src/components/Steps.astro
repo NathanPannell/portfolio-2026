@@ -1,0 +1,280 @@
+---
+// How a section explains itself: numbered steps, all on screen at once, each with its own real
+// picture. Nothing rotates and nothing waits to be scrolled to. A section sets `--steps-room`, the
+// height these get, and `--step-*` for its own colours. Parkdex has its own stops on the vine, in
+// the same format.
+interface Step {
+  title: string;
+  alt: string;
+  // Exported at `{image}-{width}.webp`, the widths in `sizes`.
+  image?: string;
+  video?: string;
+  poster?: string;
+}
+
+interface Props {
+  steps: Step[];
+  shape: 'phone' | 'wide';
+  // Two by two on a big screen, for four wide pictures that would be small in a row.
+  pairs?: boolean;
+}
+
+const { steps, shape, pairs = false } = Astro.props;
+const widths = shape === 'phone' ? [360, 640] : [480, 900];
+---
+
+<ol
+  class:list={['steps', `steps--${shape}`, { 'steps--pairs': pairs }]}
+  style={`--count: ${steps.length}`}
+>
+  {steps.map(({ title, alt, image, video, poster }, index) => (
+    <li class="step" style={`--step: ${index}`}>
+      <h3>
+        <span class="step__number" aria-hidden="true">
+          {index + 1}
+        </span>
+        <span>{title}</span>
+      </h3>
+      <figure class="step__picture">
+        {video ? (
+          <video
+            data-src={video}
+            poster={poster}
+            width="1120"
+            height="700"
+            muted
+            loop
+            playsinline
+            preload="none"
+            aria-label={alt}
+          />
+        ) : (
+          <img
+            src={`${image}-${widths[0]}.webp`}
+            srcset={widths.map((width) => `${image}-${width}.webp ${width}w`).join(', ')}
+            sizes={
+              shape === 'phone' ? '(max-width: 760px) 46vw, 20vw' : '(max-width: 760px) 44vw, 30vw'
+            }
+            width={shape === 'phone' ? 640 : 900}
+            height={shape === 'phone' ? 1385 : 563}
+            loading="lazy"
+            decoding="async"
+            alt={alt}
+          />
+        )}
+      </figure>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    --gap: clamp(0.75rem, 2vw, 2rem);
+    --size: var(--step-size, clamp(1.05rem, min(1.75vw, 3.1svh), 1.8rem));
+    --title-room: calc(var(--step-lines, 3) * var(--size) * 1.12 + 0.75rem);
+    --across: calc((100vw - var(--gutter) * 2 - var(--gap) * (var(--count) - 1)) / var(--count));
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: repeat(var(--count), var(--shot));
+    gap: 0 var(--gap);
+    align-self: center;
+    justify-content: center;
+  }
+
+  .steps--phone {
+    --shot: min(var(--across), calc((var(--steps-room) - var(--title-room)) * 0.4624));
+  }
+
+  .steps--wide {
+    --shot: min(var(--across), calc((var(--steps-room) - var(--title-room)) * 1.6));
+  }
+
+  /* The pictures line up across the row, however many lines each title takes. */
+  .step {
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  h3 {
+    display: flex;
+    gap: 0.5em;
+    align-items: start;
+    font-size: var(--size);
+    font-weight: var(--step-weight, 800);
+    line-height: 1.12;
+    letter-spacing: var(--step-tracking, -0.02em);
+  }
+
+  .step__number {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.5em;
+    height: 1.5em;
+    margin-top: -0.14em;
+    border-radius: 50%;
+    background: var(--step-number, currentColor);
+    color: var(--step-number-ink, #fff);
+    font-family: var(--mono);
+    font-size: 0.8em;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .step__picture {
+    overflow: hidden;
+    border: var(--step-frame, 2px solid currentColor);
+    border-radius: var(--step-corner, 0.6rem);
+    background: var(--step-behind, none);
+    box-shadow: var(--step-shadow, none);
+    rotate: var(--step-tilt, 0deg);
+    align-self: start;
+  }
+
+  .step:nth-child(even) .step__picture {
+    rotate: calc(var(--step-tilt, 0deg) * -1);
+  }
+
+  .step__picture img,
+  .step__picture video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* In a scene, the steps follow it in one by one. */
+  :global(.stage) [data-moment]:not([data-open]) .step {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0);
+  }
+
+  :global([data-moment][data-open]) .step {
+    transition:
+      opacity 320ms var(--step-wait, 0ms),
+      transform 560ms var(--ease) calc(var(--step-wait, 0ms) + var(--step) * 130ms);
+  }
+
+  @media (min-width: 761px) and (min-height: 481px) {
+    .steps--pairs {
+      --shot: min(
+        calc((100vw - var(--gutter) * 2 - var(--gap)) / 2 * 0.54),
+        calc((var(--steps-room) - var(--gap)) / 2 * 1.6)
+      );
+      grid-template-rows: none;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--gap);
+    }
+
+    .steps--pairs .step {
+      grid-row: auto;
+      grid-template-rows: none;
+      grid-template-columns: minmax(0, 1fr) var(--shot);
+      gap: clamp(0.75rem, 1.5vw, 1.5rem);
+      align-items: center;
+    }
+
+    .steps--pairs .step__picture {
+      grid-row: 1;
+      grid-column: 2;
+    }
+  }
+
+  /* Too narrow for pictures side by side at any size, so phones keep the words big and crop. */
+  @media (max-width: 760px) {
+    .steps--phone {
+      grid-template-rows: repeat(2, auto minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      height: var(--steps-room);
+    }
+
+    .steps--phone .step {
+      grid-row: span 2;
+      gap: 0.4rem;
+      padding-bottom: 0.6rem;
+    }
+
+    .steps--phone .step__picture {
+      min-height: 0;
+      align-self: stretch;
+    }
+
+    .steps--phone img {
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    .steps--wide {
+      grid-template-rows: repeat(var(--count), minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.6rem;
+      height: var(--steps-room);
+    }
+
+    .steps--wide .step {
+      grid-row: auto;
+      grid-template-rows: none;
+      grid-template-columns: minmax(0, 1fr) min(
+          42%,
+          calc((var(--steps-room) / var(--count) - 0.6rem) * 1.6)
+        );
+      align-items: center;
+    }
+
+    .steps--wide .step__picture {
+      align-self: center;
+    }
+  }
+
+  /* Phones on their side: the steps stay across, and the app screens crop to what is left. */
+  @media (max-height: 480px) {
+    .steps--phone,
+    .steps--wide {
+      grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+      gap: 0 0.75rem;
+    }
+
+    .steps--phone {
+      grid-template-rows: auto minmax(0, 1fr);
+      height: var(--steps-room);
+    }
+
+    .steps--wide {
+      grid-template-rows: auto auto;
+      height: auto;
+    }
+
+    .steps .step {
+      grid-row: span 2;
+      grid-template-rows: subgrid;
+      grid-template-columns: none;
+      gap: 0.3rem;
+      align-items: stretch;
+      padding-bottom: 0;
+    }
+
+    .steps--phone .step__picture {
+      min-height: 0;
+      align-self: stretch;
+    }
+
+    .steps--wide .step__picture {
+      align-self: start;
+    }
+
+    .steps--phone img {
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .step {
+      transition: none;
+    }
+  }
+</style>

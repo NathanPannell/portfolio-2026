@@ -1,13 +1,30 @@
 ---
 import '@fontsource-variable/newsreader/wght.css';
 import '@fontsource-variable/newsreader/wght-italic.css';
+import Steps from './Steps.astro';
 
-// Everything on the ticket is as stated on offbooked.com. No prices until they can be paid.
-const details = [
-  ['Admission', 'Free in public beta. Cast never pay.'],
-  ['Cast', 'One link. No account needed.'],
-  ['Playing on', 'Any phone, tablet or laptop.'],
-  ['Now running', 'Casts in British Columbia and Nova Scotia.'],
+// Each screen is the real app, run locally on its Hamlet demo. See ASSETS.md.
+const steps = [
+  {
+    title: 'Upload your script.',
+    image: '/media/offbooked/upload',
+    alt: 'Offbooked new production screen: Hamlet, with its script file added',
+  },
+  {
+    title: 'Invite your cast.',
+    image: '/media/offbooked/invite',
+    alt: 'Offbooked invite screen: Sam invited you to Hamlet. Who are you playing?',
+  },
+  {
+    title: 'Everyone records their lines.',
+    image: '/media/offbooked/record',
+    alt: 'Offbooked recording screen for Francisco, with a take in progress',
+  },
+  {
+    title: 'Practise with your castmates’ voices.',
+    image: '/media/offbooked/practise',
+    alt: 'Offbooked playing the scene back, with the actor’s own lines highlighted',
+  },
 ];
 ---
 
@@ -57,45 +74,14 @@ const details = [
           </span>
         </h2>
 
-        <div class="voices" style="--at: 2s" data-at aria-hidden="true">
-          {Array.from({ length: 18 }, (_, i) => (
-            <i style={`--i: ${i}`} />
-          ))}
-        </div>
-
-        <a class="ticket" href="https://offbooked.com/" style="--at: 2.3s" data-at data-opens>
-          <span class="ticket__main">
-            <span class="ticket__small">Admit the whole cast</span>
-            <dl class="ticket__details">
-              {details.map(([label, text]) => (
-                <div>
-                  <dt>{label}</dt>
-                  <dd>{text}</dd>
-                </div>
-              ))}
-            </dl>
-          </span>
-          <span class="ticket__stub">
-            <span class="ticket__small">Places, everyone.</span>
-            <span class="ticket__big">
-              offbooked.com <span aria-hidden="true">↗</span>
-            </span>
+        <a class="ticket" href="https://offbooked.com/" style="--at: 2s" data-at data-opens>
+          <span class="ticket__small">Free in public beta</span>
+          <span class="ticket__big">
+            offbooked.com <span aria-hidden="true">↗</span>
           </span>
         </a>
+        <Steps steps={steps} shape="phone" />
       </div>
-
-      <figure class="handset" style="--at: 1.9s" data-at>
-        <img
-          src="/media/offbooked/play-360.webp"
-          srcset="/media/offbooked/play-360.webp 360w, /media/offbooked/play-640.webp 640w"
-          sizes="(max-width: 700px) 46vw, 24vw"
-          width="640"
-          height="1385"
-          loading="lazy"
-          decoding="async"
-          alt="Offbooked run-through: the actor’s own lines are highlighted"
-        />
-      </figure>
     </div>
 
     <div class="drape drape--left" aria-hidden="true"></div>
@@ -152,15 +138,6 @@ const details = [
     transform: translate3d(-3rem, 0, 0) rotate(-4deg);
   }
 
-  :global(.stage) .ob:not([data-open]) .handset {
-    transform: translate3d(0, 130lvh, 0) rotate(14deg);
-  }
-
-  :global(.stage) .ob:not([data-open]) .voices {
-    opacity: 0;
-    transform: scaleY(0);
-  }
-
   :global(.stage) .ob:not([data-open]) .ticket {
     opacity: 0;
     transform: translate3d(0, 140%, 0) rotate(-6deg);
@@ -206,34 +183,48 @@ const details = [
 
   /* Everything sits inside the small viewport, so an address bar can't cover any of it. */
   .ob-copy {
+    --steps-room: calc(100svh - 10.25rem);
+    --step-size: clamp(1.05rem, min(1.75vw, 3.1svh), 1.7rem);
+    --step-lines: 2;
+    --step-number: var(--marker);
+    --step-number-ink: var(--red-deep);
+    --step-frame: 0.35rem solid #161514;
+    --step-corner: 1.4rem;
+    --step-behind: #161514;
+    --step-shadow: 0 1rem 2rem rgb(29 16 12 / 45%);
+    --step-tracking: -0.01em;
+    --step-weight: 600;
+    --step-wait: 1200ms;
     position: absolute;
     z-index: 6;
     top: 0;
-    left: calc(var(--gutter) + 2.5vw);
+    left: var(--gutter);
     display: grid;
-    align-content: center;
-    justify-items: start;
-    gap: calc(var(--u) * 2.4);
-    width: calc(var(--u) * 54);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(0.75rem, 2.5svh, 1.75rem) 2rem;
+    align-items: center;
+    width: calc(100% - var(--gutter) * 2);
     height: 100svh;
-    padding-top: 2.5rem;
+    padding-block: 4rem 1.25rem;
+    color: var(--paper);
   }
 
   h2 {
     color: var(--paper);
-    font-size: calc(var(--u) * 7);
+    font-size: clamp(2rem, min(4.2vw, 8svh), 4.4rem);
     font-weight: 500;
-    line-height: 0.95;
+    line-height: 1;
     letter-spacing: -0.035em;
   }
 
   h2 span,
   h2 em {
-    display: block;
-    width: fit-content;
+    display: inline-block;
   }
 
   h2 em {
+    margin-inline: 0.22em;
     padding: 0 0.1em 0.04em;
     background: var(--marker);
     color: var(--red-deep);
@@ -241,58 +232,16 @@ const details = [
     rotate: -1.5deg;
   }
 
-  /* One phone, in the run-through. */
-  .handset {
-    position: absolute;
-    z-index: 5;
-    top: calc(50svh - var(--u) * 26.7);
-    right: calc(var(--gutter) + 6vw);
-    width: calc(var(--u) * 24);
-    aspect-ratio: 640 / 1385;
-    box-sizing: content-box;
-    padding: calc(var(--u) * 0.6);
-    border-radius: calc(var(--u) * 3.4);
-    background: #161514;
-    box-shadow: 0 1.5rem 3rem rgb(29 16 12 / 50%);
-    rotate: 3deg;
+  .ob-copy :global(.steps) {
+    grid-column: 1 / -1;
+    align-self: start;
   }
 
-  .handset img {
-    width: 100%;
-    border-radius: calc(var(--u) * 2.9);
-  }
-
-  /* Everyone's voices, in the run-through. */
-  .voices {
-    display: flex;
-    gap: 0.28rem;
-    align-items: center;
-    width: calc(var(--u) * 34);
-    height: calc(var(--u) * 7);
-    transform-origin: 50% 100%;
-  }
-
-  .voices i {
-    flex: 1;
-    height: 100%;
-    border-radius: 99rem;
-    background: var(--marker);
-    transform: scaleY(0.2);
-    animation: speak 1.1s ease-in-out infinite alternate;
-    animation-delay: calc(var(--i) * -170ms);
-  }
-
-  @keyframes speak {
-    to {
-      transform: scaleY(1);
-    }
-  }
-
-  /* A proper ticket: the show's details on the left, a stub to tear off on the right. */
+  /* One link, on what's left of the ticket. */
   .ticket {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    width: 100%;
+    gap: 0.15rem;
+    padding: 0.7rem 1.75rem 0.8rem;
     background: var(--paper);
     color: var(--ink);
     text-decoration: none;
@@ -315,51 +264,16 @@ const details = [
     outline-offset: -0.55rem;
   }
 
-  .ticket__main {
-    display: grid;
-    gap: 0.5rem;
-    padding: calc(var(--u) * 1.3) calc(var(--u) * 1.6) calc(var(--u) * 1.4) calc(var(--u) * 2);
-  }
-
   .ticket__small {
     font-family: var(--mono);
-    font-size: clamp(0.66rem, calc(var(--u) * 0.85), 0.82rem);
+    font-size: 0.72rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
-  .ticket__details {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: calc(var(--u) * 0.7) calc(var(--u) * 1.5);
-    margin: 0;
-  }
-
-  dt {
-    color: var(--red);
-    font-family: var(--mono);
-    font-size: clamp(0.6rem, calc(var(--u) * 0.72), 0.72rem);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  dd {
-    margin: 0;
-    font-size: clamp(0.85rem, calc(var(--u) * 1.15), 1.2rem);
-    line-height: 1.12;
-  }
-
-  .ticket__stub {
-    display: grid;
-    align-content: center;
-    gap: 0.35rem;
-    padding: calc(var(--u) * 1.3) calc(var(--u) * 2.2) calc(var(--u) * 1.3) calc(var(--u) * 1.6);
-    border-left: 2px dashed rgb(29 28 26 / 45%);
-  }
-
   .ticket__big {
-    font-size: clamp(1.2rem, calc(var(--u) * 2.2), 2.1rem);
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
     font-style: italic;
     font-weight: 500;
     line-height: 1.05;
@@ -563,77 +477,6 @@ const details = [
   }
 
   @media (max-aspect-ratio: 5/6) {
-    .ob-stage {
-      --u: min(2.45vw, 1.14svh);
-    }
-
-    .ob-copy {
-      left: 1.25rem;
-      grid-template-rows: auto auto minmax(0, 1fr) auto;
-      align-content: stretch;
-      gap: 0.75rem;
-      width: calc(100% - 2.5rem);
-      padding-block: 3.75rem 1.25rem;
-    }
-
-    h2 {
-      font-size: clamp(2.5rem, min(12.5vw, 7.4svh), 6rem);
-    }
-
-    .voices {
-      grid-row: 3;
-      align-self: center;
-      width: 42%;
-      height: 3.5rem;
-      gap: 0.18rem;
-    }
-
-    .ticket {
-      grid-row: 4;
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .ticket__main,
-    .ticket__stub {
-      padding-inline: 1.4rem;
-    }
-
-    .ticket__stub {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      padding-block: 0.5rem 0.6rem;
-      border-top: 2px dashed rgb(29 28 26 / 45%);
-      border-left: 0;
-    }
-
-    .ticket__details {
-      gap: 0.4rem 1rem;
-    }
-
-    /* Hangs in the gap between the title and the ticket, beside the waveform. */
-    .handset {
-      top: 29svh;
-      right: 1.25rem;
-      width: min(46vw, 19svh);
-      padding: 0.3rem;
-      border-radius: 1.6rem;
-    }
-
-    .handset img {
-      border-radius: 1.3rem;
-    }
-
-    /* The ticket takes more of a small phone, so the handset gets less. */
-    @media (max-height: 700px) {
-      .handset {
-        width: 15svh;
-      }
-    }
-
-    .beam {
-      opacity: 0.55;
-    }
-
     /* Short enough to hang clear of the title. */
     .rope {
       top: calc(40svh - 8.2rem);
@@ -645,44 +488,72 @@ const details = [
       left: auto;
       rotate: -6deg;
     }
+
+    .beam {
+      opacity: 0.55;
+    }
   }
 
-  /* Phones on their side: the phone and the waveform go, for the title and the ticket. */
-  @media (max-height: 480px) and (min-aspect-ratio: 5/6) {
+  @media (max-width: 760px) {
     .ob-copy {
-      width: calc(100% - var(--gutter) * 2 - 5vw - 22svh);
-      gap: 0.5rem;
+      --steps-room: calc(100svh - 12.75rem);
+      --step-size: clamp(0.95rem, 4.3vw, 1.15rem);
+      --step-frame: 0.22rem solid #161514;
+      --step-corner: 0.9rem;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.6rem;
+      padding-block: 3.25rem 0.9rem;
     }
 
     h2 {
-      font-size: 13svh;
+      font-size: clamp(1.8rem, min(8.6vw, 5svh), 3rem);
     }
 
-    .voices {
+    .ticket {
+      grid-row: 3;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .ob-copy :global(.steps) {
+      grid-row: 2;
+    }
+  }
+
+  /* Phones on their side: the title and the ticket share a line above the steps. */
+  @media (max-height: 480px) {
+    .ob-copy {
+      --steps-room: calc(100svh - 7rem);
+      --step-size: 0.85rem;
+      --step-frame: 0.2rem solid #161514;
+      --step-corner: 0.7rem;
+      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.4rem 1rem;
+      padding-block: 2.75rem 0.6rem;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+    }
+
+    .ticket {
+      grid-row: auto;
+      display: block;
+      padding: 0.25rem 1.2rem;
+    }
+
+    .ticket__small {
       display: none;
     }
 
-    .handset {
-      top: 12svh;
-      right: 2.5vw;
-      width: 20svh;
-    }
-
-    .ticket__main,
-    .ticket__stub {
-      padding-block: 0.4rem;
-    }
-
-    .ticket__details {
-      gap: 0.2rem 0.75rem;
-    }
-
-    dd {
-      font-size: 0.78rem;
-    }
-
     .ticket__big {
-      font-size: 1.1rem;
+      font-size: 1rem;
+    }
+
+    .ob-copy :global(.steps) {
+      grid-row: auto;
     }
   }
 
@@ -691,11 +562,6 @@ const details = [
     .billing,
     .beam {
       display: none;
-    }
-
-    .voices i {
-      animation: none;
-      transform: scaleY(0.55);
     }
   }
 </style>

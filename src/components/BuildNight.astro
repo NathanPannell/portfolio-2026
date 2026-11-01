@@ -1,17 +1,30 @@
 ---
-const contours = [
-  'M-50 120C180 40 320 210 520 130S830 30 1050 150',
-  'M-50 210C150 150 300 310 520 220S860 110 1050 250',
-  'M-50 320C200 240 280 430 540 320S840 230 1050 360',
-  'M-50 430C170 370 330 520 560 420S820 340 1050 470',
-  'M-50 540C160 470 300 640 540 530S850 450 1050 590',
-  'M-50 650C200 590 340 730 560 640S860 570 1050 690',
-  'M-50 760C180 700 300 850 540 750S830 690 1050 800',
+import Steps from './Steps.astro';
+
+// The Night 001 photos stay off this site until attendee permission clears, so every picture here
+// is the live site's own words.
+const steps = [
+  {
+    title: 'A free night, once a month.',
+    image: '/media/build-night/night',
+    alt: 'The AI Build Night site: Victoria, BC. See you at the next one.',
+  },
+  {
+    title: 'Build something with AI in one night.',
+    image: '/media/build-night/challenge',
+    alt: 'The AI Build Night challenge page, Closing the gap to YC, with its Simulithic track',
+  },
+  {
+    title: 'Share and learn with other builders.',
+    image: '/media/build-night/share',
+    alt: 'The AI Build Night site: We share what we learn.',
+  },
+  {
+    title: 'Grow and support a community in Victoria that can create the next big thing.',
+    image: '/media/build-night/unicorn',
+    alt: 'The AI Build Night site: The next unicorn can come from Vancouver Island.',
+  },
 ];
-// Fresh captures of the live home page, stacked into one long strip. The Night 001 photos are
-// spliced out while attendee permission is pending.
-const desktop = [1018, 1018, 1019];
-const phone = [2142, 2142, 2142];
 ---
 
 <section id="ai-build-night" class="abn" aria-labelledby="abn-title">
@@ -30,7 +43,7 @@ const phone = [2142, 2142, 2142];
           type="button"
           data-moment-control
           aria-expanded="false"
-          aria-label="Press Enter to open the live site"
+          aria-label="Press Enter to see how it works"
         >
           <span class="abn-key__wall">
             <span class="abn-key__cap">
@@ -45,24 +58,10 @@ const phone = [2142, 2142, 2142];
     </div>
 
     <div class="abn-show" data-opens>
-      <svg
-        class="abn-contours"
-        viewBox="0 0 1000 900"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-      >
-        {contours.map((d) => (
-          <path d={d} />
-        ))}
-      </svg>
-
-      <div class="abn-show__copy">
-        <h3>Night 001 filled up. Night 002 is next.</h3>
-        <p>A free night in Victoria, BC. I co-run it and built the site.</p>
-        <ul class="abn-stars" aria-label="What we believe">
-          <li>The next unicorn can come from Vancouver Island.</li>
-          <li>We share what we learn.</li>
-        </ul>
+      <div class="abn-show__top">
+        <p class="abn-show__lead">
+          Night 001 filled up. Night 002 is next. <span>I co-run it and built the site.</span>
+        </p>
         <div class="abn-show__links">
           <a class="abn-show__cta" href="https://aibuildnight.ca/">
             <span>aibuildnight.ca</span>
@@ -74,50 +73,7 @@ const phone = [2142, 2142, 2142];
           </a>
         </div>
       </div>
-
-      <figure class="abn-browser">
-        <div class="abn-browser__bar" aria-hidden="true">
-          <i></i>
-          <i></i>
-          <i></i>
-          <span>aibuildnight.ca</span>
-        </div>
-        <div class="abn-browser__view">
-          <div class="abn-strip abn-strip--desktop">
-            {desktop.map((height, index) => (
-              <img
-                src={`/media/build-night/live-${index + 1}.webp`}
-                width="1400"
-                height={height}
-                loading="lazy"
-                decoding="async"
-                alt={
-                  index === 0
-                    ? 'The live AI Build Night home page, scrolling from its headline to what we believe and who runs it'
-                    : ''
-                }
-              />
-            ))}
-          </div>
-        </div>
-      </figure>
-
-      <figure class="abn-phone">
-        <div class="abn-phone__view">
-          <div class="abn-strip abn-strip--phone">
-            {phone.map((height, index) => (
-              <img
-                src={`/media/build-night/live-phone-${index + 1}.webp`}
-                width="640"
-                height={height}
-                loading="lazy"
-                decoding="async"
-                alt={index === 0 ? 'The same page on a phone' : ''}
-              />
-            ))}
-          </div>
-        </div>
-      </figure>
+      <Steps steps={steps} shape="wide" pairs />
     </div>
   </div>
 </section>
@@ -303,16 +259,24 @@ const phone = [2142, 2142, 2142];
     }
   }
 
-  /* The live site, opening out of the cursor. */
+  /* The steps, opening out of the cursor. */
   .abn-show {
+    --steps-room: calc(100svh - 12.5rem);
+    --step-size: clamp(1.15rem, min(2.05vw, 3.6svh), 2.2rem);
+    --step-lines: 5;
+    --step-number: var(--signal);
+    --step-number-ink: var(--ink);
+    --step-frame: 2px solid var(--ink);
+    --step-wait: 700ms;
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: minmax(14rem, 1fr) auto;
-    gap: clamp(1.5rem, 3vw, 3rem);
-    align-items: center;
+    grid-template-rows: auto auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1rem, 4svh, 3rem);
+    align-content: center;
     min-height: 100lvh;
-    padding: 4rem calc(var(--gutter) + 5vw) calc(1.5rem + var(--bar)) var(--gutter);
+    padding: 4.5rem var(--gutter) calc(1.5rem + var(--bar));
     overflow: clip;
     background: var(--bone);
     clip-path: inset(0);
@@ -357,46 +321,28 @@ const phone = [2142, 2142, 2142];
     transition: clip-path 1000ms cubic-bezier(0.7, 0, 0.15, 1) 120ms;
   }
 
-  .abn-contours {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    fill: none;
-    stroke: var(--harbour);
-    stroke-width: 1;
-    opacity: 0.32;
+  .abn-show__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2.5rem;
+    align-items: end;
+    justify-content: space-between;
   }
 
-  .abn-show__copy {
-    position: relative;
-    display: grid;
-    gap: 0.9rem;
-    font-size: clamp(1rem, 1.3vw, 1.2rem);
+  .abn-show__lead {
+    max-width: 22em;
+    font-size: clamp(1.5rem, min(2.8vw, 5svh), 2.8rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .abn-show__lead span {
+    display: block;
+    margin-top: 0.3em;
+    font-size: 0.55em;
     font-weight: 500;
-    line-height: 1.3;
-  }
-
-  .abn-show__copy h3 {
-    font-size: clamp(2rem, min(3.6vw, 6.4svh), 3.6rem);
-    font-weight: 900;
-    line-height: 0.96;
-    letter-spacing: -0.04em;
-  }
-
-  /* The north star, as big as the column lets it be. */
-  .abn-stars {
-    display: grid;
-    gap: 0.4rem;
-    padding-block: 0.3rem;
-    font-size: clamp(1.25rem, min(2.1vw, 3.5svh), 2.1rem);
-    font-weight: 900;
-    line-height: 1.02;
-    letter-spacing: -0.03em;
-  }
-
-  .abn-stars li:last-child {
-    color: #c23c0c;
+    letter-spacing: -0.01em;
   }
 
   .abn-show__links {
@@ -436,213 +382,47 @@ const phone = [2142, 2142, 2142];
     }
   }
 
-  /* As big as the frame allows: these captures are the point of this frame. */
-  .abn-browser {
-    position: relative;
-    width: min(62vw, calc((100svh - 9rem) * 1.55));
-    overflow: hidden;
-    border: 2px solid var(--ink);
-    border-radius: 0.7rem;
-    background: var(--bone);
-    box-shadow: 0.7rem 0.7rem 0 var(--ink);
-  }
-
-  .abn-browser__bar {
-    display: flex;
-    gap: 0.35rem;
-    align-items: center;
-    padding: 0.55rem 0.7rem;
-    border-bottom: 2px solid var(--ink);
-    font-family: var(--mono);
-    font-size: 0.72rem;
-  }
-
-  .abn-browser__bar i {
-    width: 0.6rem;
-    height: 0.6rem;
-    border-radius: 50%;
-    background: var(--ink);
-  }
-
-  .abn-browser__bar span {
-    margin-left: 0.5rem;
-  }
-
-  .abn-browser__view {
-    aspect-ratio: 8 / 5;
-    overflow: hidden;
-  }
-
-  .abn-strip img {
-    display: block;
-    width: 100%;
-  }
-
-  /* Reading down the page on a clock: a held beat on each band, then back to the top. */
-  .abn-strip--desktop {
-    animation: read-desktop 24s var(--ease) infinite;
-  }
-
-  .abn-strip--phone {
-    animation: read-phone 24s var(--ease) infinite 0.6s;
-  }
-
-  @keyframes read-desktop {
-    0%,
-    14% {
-      transform: none;
-    }
-
-    20%,
-    34% {
-      transform: translateY(-36.4%);
-    }
-
-    40%,
-    54% {
-      transform: translateY(-56.2%);
-    }
-
-    60%,
-    74% {
-      transform: translateY(-66.9%);
-    }
-
-    80%,
-    94% {
-      transform: translateY(-71.4%);
-    }
-  }
-
-  @keyframes read-phone {
-    0%,
-    14% {
-      transform: none;
-    }
-
-    20%,
-    34% {
-      transform: translateY(-22.6%);
-    }
-
-    40%,
-    54% {
-      transform: translateY(-40.7%);
-    }
-
-    60%,
-    74% {
-      transform: translateY(-53.9%);
-    }
-
-    80%,
-    94% {
-      transform: translateY(-78.5%);
-    }
-  }
-
-  :global(.stage) .abn-cover:not([data-open]) .abn-strip {
-    animation-play-state: paused;
-  }
-
-  .abn-phone {
-    position: absolute;
-    z-index: 2;
-    right: 1.25rem;
-    bottom: calc(1rem + var(--bar));
-    width: min(14vw, calc((100svh - 12rem) * 0.3));
-    padding: 0.4rem;
-    border-radius: 1.5rem;
-    background: var(--ink);
-    box-shadow: 0.45rem 0.45rem 0 rgb(14 17 19 / 28%);
-  }
-
-  .abn-phone__view {
-    aspect-ratio: 9 / 19.5;
-    overflow: hidden;
-    border-radius: 1.15rem;
-  }
-
-  /* Each piece follows the cursor's opening, in turn. */
-  .abn-cover[data-open] .abn-browser,
-  .abn-cover[data-open] .abn-phone,
-  .abn-cover[data-open] .abn-show__copy {
-    transition: transform 700ms var(--ease) var(--wait, 700ms);
-  }
-
-  :global(.stage) .abn-cover:not([data-open]) .abn-browser {
-    transform: translateY(6rem) scale(0.94);
-  }
-
-  :global(.stage) .abn-cover:not([data-open]) .abn-phone {
-    --wait: 950ms;
-    transform: translateY(120%) rotate(8deg);
-  }
-
-  :global(.stage) .abn-cover:not([data-open]) .abn-show__copy {
-    --wait: 800ms;
-    transform: translateX(-3rem);
-  }
-
   @media (max-width: 860px) {
     /* The key is the whole point of this screen, so on a phone it gets the whole width. */
     .abn-key {
       width: min(100%, 44svh, 26rem);
       margin-inline: auto;
     }
+  }
 
+  @media (max-width: 760px) {
     .abn-show {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: auto minmax(0, 1fr);
-      gap: 1rem;
-      align-items: start;
-      padding: 3.5rem var(--gutter) calc(1.5rem + var(--bar));
+      --steps-room: calc(100svh - 13rem);
+      --step-size: clamp(0.9rem, min(4.5vw, 2.3svh), 1.2rem);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      padding-top: 3.25rem;
+      padding-bottom: calc(1rem + var(--bar));
     }
 
-    /* Under the browser, the links sit beside the phone. */
-    .abn-show__copy {
-      position: static;
+    .abn-show__top {
+      display: contents;
     }
 
     .abn-show__links {
-      position: absolute;
-      bottom: calc(1.5rem + var(--bar));
-      left: var(--gutter);
-      z-index: 1;
-      display: grid;
-      justify-items: start;
+      flex-wrap: nowrap;
+      gap: 0.8rem;
+      order: 1;
+      white-space: nowrap;
     }
 
     .abn-show__cta {
-      gap: 0.6rem;
-      padding: 0.7rem 0.8rem;
-      font-size: 1rem;
+      gap: 0.5rem;
+      padding: 0.55rem 0.65rem;
+      font-size: 0.95rem;
     }
 
-    .abn-show__copy h3 {
-      font-size: clamp(1.7rem, min(7.4vw, 4.4svh), 2.6rem);
-    }
-
-    .abn-show__copy p {
-      display: none;
-    }
-
-    .abn-stars {
-      font-size: clamp(1.1rem, min(5vw, 2.6svh), 1.6rem);
-    }
-
-    .abn-browser {
-      width: min(100%, calc((100svh - 9rem) * 0.82));
-      box-shadow: 0.4rem 0.4rem 0 var(--ink);
-    }
-
-    .abn-phone {
-      right: var(--gutter);
-      width: min(44vw, calc(44svh * 0.46));
+    .abn-show__recap {
+      font-size: 0.9rem;
     }
   }
 
-  /* Phones on their side keep the site beside its links. */
+  /* Phones on their side keep everything on one line above the steps. */
   @media (max-height: 480px) {
     .abn-cover__type {
       padding-block: 2.75rem 1rem;
@@ -664,60 +444,47 @@ const phone = [2142, 2142, 2142];
       width: 10.5rem;
     }
 
-    .abn-stars {
-      gap: 0.15rem;
-      font-size: 0.9rem;
-    }
-
     .abn-show {
-      grid-template-columns: minmax(10rem, 1fr) auto;
-      grid-template-rows: none;
-      gap: 1rem;
+      --steps-room: calc(100svh - 6.75rem);
+      --step-size: 0.82rem;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 0.5rem;
+      padding-top: 2.75rem;
+      padding-bottom: calc(0.75rem + var(--bar));
+    }
+
+    .abn-show__top {
+      display: flex;
+      flex-wrap: nowrap;
       align-items: center;
-      padding-top: 2.5rem;
     }
 
-    .abn-show__copy {
-      gap: 0.35rem;
+    .abn-show__lead {
+      max-width: none;
+      font-size: 1.05rem;
     }
 
-    .abn-show__copy h3 {
-      font-size: 1.2rem;
+    .abn-show__lead span {
+      display: inline;
+    }
+
+    .abn-show__links {
+      flex: none;
+      order: 0;
     }
 
     .abn-show__cta {
-      padding: 0.35rem 0.6rem;
+      padding: 0.3rem 0.6rem;
       font-size: 0.85rem;
     }
 
     .abn-show__recap {
       font-size: 0.85rem;
     }
-
-    .abn-show__copy {
-      position: relative;
-    }
-
-    .abn-show__links {
-      position: static;
-      display: flex;
-    }
-
-    .abn-browser {
-      width: min(52vw, calc((100svh - 5rem) * 1.3));
-    }
-
-    .abn-phone {
-      display: none;
-    }
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
     h2 i {
-      animation: none;
-    }
-
-    .abn-strip {
       animation: none;
     }
   }

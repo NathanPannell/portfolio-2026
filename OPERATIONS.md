@@ -106,18 +106,6 @@ To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflar
 - Do not add `Cache-Control: no-transform` to HTML responses.
 - After enabling, verify exactly one beacon on the custom domain before claiming analytics is active: one `static.cloudflareinsights.com/beacon.min.js` script and one `cdn-cgi/rum` request.
 
-## Choosing a hero
-
-Eight hero options are on staging. Toggle them with the pill at the bottom of the hero, or link straight to one with `?hero=1` to `?hero=8`: Doors, Name badge, Departures, Elevator, Pick a card, Neon sign, Receipt, Channels. The toggle only appears on `staging.nathanpannell.com` and local builds.
-
-To settle on one:
-
-1. In `src/components/Hero.astro`, render the chosen component directly in the section, and remove `data-hero-slot`, the `<template>`s, the imports of the others and the toggle's markup and styles.
-2. Delete the other components from `src/components/heroes/`, and `heroes` from `worlds.ts`.
-3. In `src/scripts/heroes.ts`, keep only the chosen hero's script, if it has one, and call it from `index.astro`. Delete the rest. Neon sign and Receipt have no script at all.
-4. Remove the toggle's tests in `e2e/frames.spec.ts`, and the toggle check in `tests/content-contract.mjs`.
-5. If Doors is not the one, update the door tests in `e2e/navigation.spec.ts` to the chosen hero's links.
-
 ## Required UI verification
 
 For interface changes:

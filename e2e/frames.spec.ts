@@ -303,168 +303,69 @@ test.describe('on touch', () => {
   });
 });
 
-const heroCount = 8;
-
-test('the toggle swaps the hero, and the choice can be linked to', async ({ page }) => {
-  test.setTimeout(60000);
-  await page.goto('/');
-  const toggle = page.locator('[data-hero-toggle]');
-  await expect(toggle).toBeVisible();
-  const buttons = toggle.locator('button');
-  await expect(buttons).toHaveCount(heroCount);
-  await expect(buttons.nth(0)).toHaveAttribute('aria-pressed', 'true');
-  const seen = new Set<string>();
-  // The default is showing, so it comes last.
-  for (const option of [2, 3, 4, 5, 6, 7, 8, 1]) {
-    await buttons.nth(option - 1).click();
-    await expect(page).toHaveURL(new RegExp(`\\?hero=${option}$`));
-    await expect(buttons.nth(option - 1)).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('h1')).toHaveCount(1);
-    seen.add((await page.locator('[data-hero-slot]').getAttribute('data-hero-shown')) ?? '');
-  }
-  expect(seen.size).toBe(heroCount);
-
-  await page.goto('/?hero=2');
-  await expect(page.locator('[data-badge]')).toBeVisible();
-  await expect(buttons.nth(1)).toHaveAttribute('aria-pressed', 'true');
-  await page.reload();
-  await expect(page.locator('[data-badge]')).toBeVisible();
-});
-
-test.describe('each hero, standing still', () => {
+test.describe('the doors, standing still', () => {
   test.use({ reducedMotion: 'reduce' });
 
-  for (let option = 1; option <= heroCount; option += 1) {
-    test(`hero ${option} says who and what, and fits every size`, async ({ page }) => {
-      test.setTimeout(60000);
-      for (const [width, height] of [
-        [320, 640],
-        [390, 844],
-        [844, 390],
-        [768, 1024],
-        [1024, 768],
-        [1440, 900],
-        [1920, 1080],
-      ] as const) {
-        const size = `hero ${option} at ${width}x${height}`;
-        await page.setViewportSize({ width, height });
-        await page.goto(`/?hero=${option}`);
-        await expect(page.locator('h1')).toHaveCount(1);
-        await expect(page.locator('h1')).toContainText('Nathan Pannell');
-        await expect(page.locator('h1')).toContainText('real people');
-        const worlds = page.locator('[data-hero-slot] a[href^="#"]');
-        await expect(worlds).toHaveCount(4);
-        await expect(page.locator('.hero__next')).toBeInViewport({ ratio: 1 });
-        await expect(page.locator('[data-hero-toggle]')).toBeInViewport({ ratio: 1 });
-        // Each link's middle can be reached: nothing sits on top of it, and it is on screen.
-        for (const world of await worlds.all()) {
-          await expect
-            .poll(
-              () =>
-                world.evaluate((element) => {
-                  const { left, right, top, bottom } = element.getBoundingClientRect();
-                  const hit = document.elementFromPoint((left + right) / 2, (top + bottom) / 2);
-                  return left >= 0 && right <= window.innerWidth + 1 && element.contains(hit);
-                }),
-              size,
-            )
-            .toBe(true);
-        }
-        // No line of type runs off the side of the screen, or off the bottom of it.
-        const clipped = await page.locator('[data-hero-slot]').evaluate((slot) =>
-          [...slot.querySelectorAll<HTMLElement>('*')]
-            .filter(
-              (element) =>
-                !element.closest('.sr-only') &&
-                [...element.childNodes].some((node) => node.nodeType === Node.TEXT_NODE),
-            )
-            .filter((element) => {
-              const { left, right, bottom } = element.getBoundingClientRect();
-              return (
-                element.textContent?.trim() &&
-                (left < -1 || right > window.innerWidth + 1 || bottom > window.innerHeight + 1)
-              );
-            })
-            .map((element) => element.textContent?.trim().slice(0, 30)),
-        );
-        expect(clipped, size).toEqual([]);
+  test('they say who and what, and fit every size', async ({ page }) => {
+    test.setTimeout(60000);
+    for (const [width, height] of [
+      [320, 640],
+      [390, 844],
+      [844, 390],
+      [768, 1024],
+      [1024, 768],
+      [1440, 900],
+      [1920, 1080],
+    ] as const) {
+      const size = `doors at ${width}x${height}`;
+      await page.setViewportSize({ width, height });
+      await page.goto('/');
+      await expect(page.locator('h1')).toHaveCount(1);
+      await expect(page.locator('h1')).toContainText('Nathan Pannell');
+      await expect(page.locator('h1')).toContainText('real people');
+      const worlds = page.locator('.doors a[href^="#"]');
+      await expect(worlds).toHaveCount(4);
+      await expect(page.locator('.hero__next')).toBeInViewport({ ratio: 1 });
+      // Each link's middle can be reached: nothing sits on top of it, and it is on screen.
+      for (const world of await worlds.all()) {
+        await expect
+          .poll(
+            () =>
+              world.evaluate((element) => {
+                const { left, right, top, bottom } = element.getBoundingClientRect();
+                const hit = document.elementFromPoint((left + right) / 2, (top + bottom) / 2);
+                return left >= 0 && right <= window.innerWidth + 1 && element.contains(hit);
+              }),
+            size,
+          )
+          .toBe(true);
       }
-    });
-  }
-});
-
-test('a choice that does not exist falls back to the default', async ({ page }) => {
-  await page.goto('/?hero=9');
-  await expect(page.locator('.doors')).toBeVisible();
-});
-
-test('the toggle only exists on staging and local builds', async ({ page, baseURL }) => {
-  // Serve this build from the production address.
-  await page.route('https://www.nathanpannell.com/**', async (route) => {
-    const { pathname, search } = new URL(route.request().url());
-    const response = await route.fetch({ url: `${baseURL}${pathname}${search}` });
-    await route.fulfill({ response });
+      // No line of type runs off the side of the screen, or off the bottom of it.
+      const clipped = await page.locator('.doors').evaluate((doors) =>
+        [...doors.querySelectorAll<HTMLElement>('*')]
+          .filter(
+            (element) =>
+              !element.closest('.sr-only') &&
+              [...element.childNodes].some((node) => node.nodeType === Node.TEXT_NODE),
+          )
+          .filter((element) => {
+            const { left, right, bottom } = element.getBoundingClientRect();
+            return (
+              element.textContent?.trim() &&
+              (left < -1 || right > window.innerWidth + 1 || bottom > window.innerHeight + 1)
+            );
+          })
+          .map((element) => element.textContent?.trim().slice(0, 30)),
+      );
+      expect(clipped, size).toEqual([]);
+    }
   });
-  await page.goto('https://www.nathanpannell.com/?hero=3');
-  await expect(page.locator('.doors')).toBeVisible();
-  await expect(page.locator('[data-hero-toggle]')).toBeHidden();
 });
 
-test('the name badge swings when dragged, and settles', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'The drag uses the mouse; touch shares its pointer events.');
-  test.setTimeout(75000);
-  await page.goto('/?hero=2');
-  const badge = page.locator('[data-badge]');
-  const angle = () =>
-    badge.evaluate((element) => Number(/rotate\((.+)deg\)/.exec(element.style.transform)?.[1]));
-  await expect.poll(() => angle().then(Math.abs), { timeout: 30000 }).toBeLessThan(1);
-  const box = await page.locator('.badge__name').boundingBox();
-  if (!box) throw new Error('No badge name');
-  await page.mouse.move(box.x + 40, box.y + 10);
-  await page.mouse.down();
-  await page.mouse.move(box.x + 240, box.y + 10, { steps: 6 });
-  expect(Math.abs(await angle())).toBeGreaterThan(5);
-  await page.mouse.up();
-  await expect.poll(() => angle().then(Math.abs), { timeout: 30000 }).toBeLessThan(1);
-});
-
-test('the board flaps to its final words', async ({ page }) => {
+test('Doors is the only hero, whatever an old link asks for', async ({ page }) => {
   await page.goto('/?hero=3');
-  const flaps = page.locator('.board__line--name .flap');
-  const name = () => flaps.evaluateAll((cells) => cells.map((c) => c.textContent).join(''));
-  await expect.poll(name, { timeout: 4000 }).toBe('NATHANPANNELL');
-});
-
-test('the elevator counts down the floors, then the page goes', async ({ page }) => {
-  await page.goto('/?hero=4');
-  const floor = page.locator('[data-lift-floor]');
-  await expect(floor).toHaveText('G');
-  await page.locator('[data-floor="B3"]').click();
-  await expect(page.locator('[data-floor="B3"]')).toHaveAttribute('data-pressed', '');
-  await expect(floor).toHaveText('B3');
-  await expect(page).toHaveURL(/#parkdex$/);
-});
-
-test('a card flips over, then the page goes', async ({ page, isMobile }) => {
-  await page.goto('/?hero=5');
-  const card = page.locator('.card').nth(1);
-  await card.locator('a').click();
-  if (!isMobile) await expect(card).toHaveAttribute('data-opening', '');
-  await expect(page).toHaveURL(/#offbooked$/);
-});
-
-test('the channels change by themselves, and the dial takes over', async ({ page, isMobile }) => {
-  await page.goto('/?hero=8');
-  const shown = page.locator('[data-picture][data-on]');
-  await expect(shown).toHaveCount(1);
-  const pictures = page.locator('[data-picture]');
-  await expect(pictures.nth(0)).toHaveAttribute('data-on', '');
-  await expect(pictures.nth(1)).toHaveAttribute('data-on', '', { timeout: 6000 });
-  if (isMobile) return;
-  await page.locator('[data-channel]').nth(3).hover();
-  await expect(pictures.nth(3)).toHaveAttribute('data-on', '');
-  await page.waitForTimeout(4600);
-  await expect(pictures.nth(3)).toHaveAttribute('data-on', '');
+  await expect(page.locator('.doors')).toBeVisible();
+  await expect(page.locator('.hero-toggle, [data-hero-toggle], template')).toHaveCount(0);
 });
 
 test('a door works the second time too', async ({ page }) => {
@@ -476,14 +377,6 @@ test('a door works the second time too', async ({ page }) => {
   await jumpTo(page, 0);
   await door.click();
   await settlesAt(page, await topOf(page, '#parkdex'));
-});
-
-test('pressing the hero already showing leaves it running', async ({ page }) => {
-  await page.goto('/?hero=8');
-  const pictures = page.locator('[data-picture]');
-  await expect(pictures.nth(1)).toHaveAttribute('data-on', '', { timeout: 6000 });
-  await page.locator('[data-hero-pick="channels"]').click();
-  await expect(pictures.nth(2)).toHaveAttribute('data-on', '', { timeout: 6000 });
 });
 
 test('a door swings open before the page moves on', async ({ page, isMobile }) => {

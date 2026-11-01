@@ -95,7 +95,7 @@ test('reverse tabbing goes back up into the hero', async ({ page, isMobile }) =>
   await page.goto('/');
   await page.locator('.abn-key').focus();
   await page.keyboard.press('Shift+Tab');
-  await expect(page.locator('[data-hero-toggle] button').last()).toBeFocused();
+  await expect(page.locator('.hero__next')).toBeFocused();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5);
 });
 

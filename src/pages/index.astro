@@ -25,26 +25,24 @@ import Sandbox from '../components/Sandbox.astro';
 
 <script>
   import { startCover } from '../scripts/cover';
+  import { startDoors } from '../scripts/doors';
   import { startFrames } from '../scripts/frames';
-  import { startHeroes } from '../scripts/heroes';
   import { startMoments } from '../scripts/moments';
   import { startLoops, startRests } from '../scripts/motion';
   import { startRide } from '../scripts/ride';
   import { startSounds } from '../scripts/sound';
-  import { startToys } from '../scripts/toys';
   import { startWash } from '../scripts/wash';
 
   // Scenes close first, so everything after finds them in the state they will open from. One of
   // these failing leaves the others running.
   for (const start of [
-    startHeroes,
+    startDoors,
     startMoments,
     startLoops,
     startRests,
     startCover,
     startRide,
     startSounds,
-    startToys,
     startWash,
     startFrames,
   ]) {
