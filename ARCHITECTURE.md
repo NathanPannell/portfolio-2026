@@ -25,7 +25,8 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/scripts/moments.ts` | The click-to-open scenes, which only the visitor can open. |
 | `src/scripts/motion.ts` | Reduced-motion check, resting loops, and lazy video. |
 | `src/scripts/heroes.ts` | The hero toggle, and the scripts for the heroes that need one. |
-| `src/scripts/cover.ts` | AI Build Night: the cursor the live site opens from, and the Enter key's thocc. |
+| `src/scripts/cover.ts` | AI Build Night: the cursor the live site opens from, and the Enter key. |
+| `src/scripts/sound.ts` | Every sound on the page, made with Web Audio. |
 | `src/scripts/ride.ts` | Parkdex: Kip's timed ride down the vine, forest layers, and the slide to the park and the jump. |
 | `src/scripts/toys.ts` | Throwable toys with a small physics loop that sleeps when everything settles. |
 | `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
@@ -57,7 +58,9 @@ Each of the four projects starts as one full closed screen. A `[data-moment]` sc
 
 Only the visitor opens a scene, by design: no timer, no opening on the way past, and the content contract fails if `moments.ts` grows one. Parts marked `[data-opens]` stay `inert` until then, so the keyboard goes from one closed scene to the next. Using the control sets `data-open`, moves focus into the scene and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
 
-AI Build Night's site opens from the block cursor: `startCover` measures the cursor and clips the panel to it. The thocc is made with Web Audio, so there is no file to fetch. A mouse sounds on the way down, but a finger only counts as a gesture for audio when it lifts, so touch sounds on the click, which is what unlocks audio on iOS. The phone's silent switch still silences it.
+AI Build Night's site opens from the block cursor: `startCover` measures the cursor and clips the panel to it. A mouse sounds the key on the way down, but a finger only counts as a gesture for audio when it lifts, so touch sounds on the click.
+
+Each press has a sound, all in `sound.ts`: the thocc, the curtains, the flag and the vine, and the toy box. They are made with Web Audio, so there are no files to fetch, and only a press starts one: scrolling to the park plays Kip's jump silently. iOS keeps audio suspended until a finger lifts, and anything scheduled before then waits, so a rope pulled by hand sounds when it is let go if nothing on the page has been tapped yet. The phone's silent switch still silences everything.
 
 Parkdex's ride is a timed `requestAnimationFrame` tween rather than CSS, because Kip has to follow the vine's curve at whatever width the screen is. Parkdex is the one taller zone: opening it adds the park as a second screen, in normal flow, so it can be scrolled to as well as ridden to. The slide uses a second Kip, loose in the section so neither screen clips it, and carries the page along until any input lets go. The vine carries on into the park at the same point in its curve. Arriving at the park by scrolling plays the end of the same trip, so Kip always makes the jump.
 

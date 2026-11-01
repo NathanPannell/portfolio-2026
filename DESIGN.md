@@ -28,5 +28,6 @@ Each world follows its product's real brand. Check the product before changing i
 - Leave room for touch: toys take sideways drags, and a swipe up or down still scrolls the page, even from on top of one.
 - Reduced motion is a designed layout, not motion turned off.
 - Keep words few. The site is something to scroll through and poke at, and links out do the explaining.
+- Each press has a sound of its own, and nothing else on the page makes one.
 - A click moment is a physical object from that world, and the only thing that opens the scene. A closed screen stays simple: the name and the one thing to press. See "Click moments" in `ARCHITECTURE.md`.
 - Motion plays on a clock once a frame arrives. Nothing is tied to the scroll position, and the only scroll help is a gentle settle after a pause.

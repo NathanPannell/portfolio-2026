@@ -447,7 +447,7 @@ const noWebAudio = "Playwright's WebKit build has no Web Audio.";
 // Counts what the page asks Web Audio for, without needing to hear it.
 const listenForThocc = (page: Page) =>
   page.addInitScript(() => {
-    const heard = { contexts: 0, tones: 0 };
+    const heard = { contexts: 0, tones: 0, noises: 0 };
     Object.assign(window, { heard });
     const Real = window.AudioContext;
     window.AudioContext = class extends Real {
@@ -460,11 +460,19 @@ const listenForThocc = (page: Page) =>
         heard.tones += 1;
         return super.createOscillator();
       }
+
+      override createBufferSource() {
+        heard.noises += 1;
+        return super.createBufferSource();
+      }
     };
   });
 
 const heard = (page: Page) =>
-  page.evaluate(() => (window as unknown as { heard: { contexts: number; tones: number } }).heard);
+  page.evaluate(
+    () =>
+      (window as unknown as { heard: { contexts: number; tones: number; noises: number } }).heard,
+  );
 
 test('the Enter key thoccs when pressed, and is silent until then', async ({
   page,
@@ -477,7 +485,7 @@ test('the Enter key thoccs when pressed, and is silent until then', async ({
   await page.goto('/');
   await jumpTo(page, '.abn-cover');
   await page.waitForTimeout(300);
-  expect(await heard(page)).toEqual({ contexts: 0, tones: 0 });
+  expect(await heard(page)).toEqual({ contexts: 0, tones: 0, noises: 0 });
   // A tap on a phone, which is the path iOS needs: only the lift counts as a gesture for audio.
   if (isMobile) await page.locator('.abn-key').tap();
   else await page.locator('.abn-key').click();
@@ -519,6 +527,46 @@ test('a mouse press dragged off the key leaves the keyboard its thocc', async ({
   await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(4);
 });
 
+test('each scene sounds when it is opened, and only then', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  test.setTimeout(30000);
+  await listenForThocc(page);
+  const errors = collectErrors(page);
+  await page.goto('/');
+  await page.evaluate(() => window.scrollTo({ top: 99999, behavior: 'instant' }));
+  await page.waitForTimeout(300);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  expect(await heard(page)).toEqual({ contexts: 0, tones: 0, noises: 0 });
+
+  const louder = async (open: () => Promise<unknown>) => {
+    const before = await heard(page);
+    await open();
+    await expect
+      .poll(() => heard(page).then(({ tones, noises }) => tones + noises))
+      .toBeGreaterThan(before.tones + before.noises);
+  };
+  await louder(() => useControl(page, '#offbooked', '.rope'));
+  await louder(() => useControl(page, '#parkdex', '.pk-plant'));
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
+  await louder(() => page.locator('.pk-slide').click());
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+  await louder(() => useControl(page, '.sb-open', '.sb-box__open'));
+  expect((await heard(page)).contexts).toBe(1);
+  expect(errors).toEqual([]);
+});
+
+test('reaching the park by scrolling makes no sound of its own', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  test.setTimeout(30000);
+  await listenForThocc(page);
+  await page.goto('/');
+  await landKip(page);
+  const before = await heard(page);
+  await page.evaluate(() => window.scrollBy({ top: window.innerHeight, behavior: 'instant' }));
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 6000 });
+  expect(await heard(page)).toEqual(before);
+});
+
 test('a page with no sound still opens', async ({ page }) => {
   await page.addInitScript(() => {
     window.AudioContext = class {
@@ -529,6 +577,9 @@ test('a page with no sound still opens', async ({ page }) => {
   });
   await page.goto('/');
   await useControl(page, '.abn-cover', '.abn-key');
+  await useControl(page, '#offbooked', '.rope');
+  await useControl(page, '#parkdex', '.pk-plant');
+  await useControl(page, '.sb-open', '.sb-box__open');
 });
 
 test('Plant! sends Kip down the vine to the four stops', async ({ page }) => {

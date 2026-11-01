@@ -4,6 +4,8 @@
 // of the vine with the page following, and off the end. Arriving there by scrolling plays the end of
 // that trip, so Kip always makes the jump.
 
+import { jump as jumpSound, plant as plantSound, play, ride as rideSound, slide } from './sound';
+
 const FLAG = '#ff5a1f';
 // As drawn in vine.svg: one full curve is 1200 tall on a tile 460 wide, swinging 84 either way.
 const VINE_PERIOD = 1200 / 460;
@@ -55,7 +57,8 @@ const startSlide = (
     end.style.backgroundPositionY = `${(-shift).toFixed(1)}px`;
   };
 
-  const jump = () => {
+  const jump = (heard: boolean) => {
+    if (heard) play(jumpSound(JUMP / 1000));
     const size = diver.offsetHeight;
     const fromY = sectionY(end) + end.offsetHeight;
     const fromX = place(fromY);
@@ -92,6 +95,8 @@ const startSlide = (
     const to = sectionY(end) + end.offsetHeight;
     const pageFrom = window.scrollY;
     const pageTo = ground.getBoundingClientRect().top + window.scrollY;
+    // Only the trip someone asked for makes a sound. Arriving by scrolling is silent.
+    if (follow) play(slide(SLIDE / 1000));
     const start = performance.now();
     const width = window.innerWidth;
     let following = follow;
@@ -124,7 +129,7 @@ const startSlide = (
         window.removeEventListener(type, letGo);
       });
       window.removeEventListener('resize', onResize);
-      jump();
+      jump(follow);
     };
     window.requestAnimationFrame(step);
   };
@@ -206,6 +211,7 @@ export const startRide = () => {
   const ride = () => {
     const distance = forest.offsetTop;
     const start = performance.now();
+    play(rideSound(RIDE / 1000));
     trip.toggleAttribute('data-riding', true);
     // Kip waves at the sky, then points the way down.
     poses.forEach((pose, index) => pose.toggleAttribute('data-on', index === 1));
@@ -219,6 +225,7 @@ export const startRide = () => {
   };
 
   const plant = () => {
+    play(plantSound);
     const mark = document.createElement('i');
     mark.className = 'pk-mark';
     const depth = riderDepth();
