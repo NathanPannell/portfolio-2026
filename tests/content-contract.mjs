@@ -120,7 +120,7 @@ assert.doesNotMatch(buildNight, /one hour/i, 'A night is not an hour of building
 // are drawn for the row and pinned to its height, so `cover` can't crop them down to a strip.
 const index = readFileSync(join(root, 'src', 'components', 'Index.astro'), 'utf8');
 assert.match(index, /\.wash-list li::before/);
-assert.match(index, /var\(--wash-image\) right center \/ auto 100% no-repeat/);
+assert.match(index, /var\(--wash-image\) right var\(--wash-inset\) center \/ auto 100% no-repeat/);
 assert.match(index, /\.wash-list li\[data-active\]::before/);
 assert(existsSync(join(root, 'src', 'scripts', 'wash.ts')), 'The touch fill script must remain');
 
