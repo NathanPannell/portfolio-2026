@@ -14,25 +14,25 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/layouts/SiteLayout.astro` | Document shell, metadata, JSON-LD, shared fonts, and global styles. |
 | `src/styles/global.css` | Shell only: reset, tokens, skip link, 404. |
 | `src/components/Chrome.astro` | Fixed name link. |
-| `src/components/Hero.astro` | The hero frame, the eight options while they are under review, and the toggle. |
-| `src/components/heroes/` | One component per hero concept, plus `worlds.ts`, the facts they all share. |
-| `src/components/BuildNight.astro` | AI Build Night: cover and key, then the live site and the north star lines on one screen. |
-| `src/components/Offbooked.astro` | Curtains and rope, then the title, waveform, one phone and the ticket. |
-| `src/components/Parkdex.astro` | Sky, Plant!, the ride, the stops, the way on down, and the park at the bottom with its links. |
-| `src/components/Sandbox.astro` | Toy box and rainbow, then one screen with the site and the toys on its floor. |
+| `src/components/Hero.astro` | The hero frame. |
+| `src/components/heroes/` | Doors, the hero, plus `worlds.ts`, the facts about the four projects. |
+| `src/components/Steps.astro` | The numbered steps each section explains itself with, all on screen at once. |
+| `src/components/BuildNight.astro` | AI Build Night: cover and key, then its four steps and links on one screen. |
+| `src/components/Offbooked.astro` | Curtains and rope, then the title, one link and four steps. |
+| `src/components/Parkdex.astro` | Sky, Plant!, the ride, the four stops, the way on down, and the park at the bottom with its links. |
+| `src/components/Sandbox.astro` | Toy box and rainbow, then the name, one link and three steps. |
 | `src/components/Index.astro` | The image-fill index and contact footer. |
 | `src/scripts/frames.ts` | Marks the frame on screen, and frames the nearest screen once a scroll has been left alone. |
 | `src/scripts/moments.ts` | The click-to-open scenes, which only the visitor can open. |
 | `src/scripts/motion.ts` | Reduced-motion check, resting loops, and lazy video. |
-| `src/scripts/heroes.ts` | The hero toggle, and the scripts for the heroes that need one. |
-| `src/scripts/cover.ts` | AI Build Night: the cursor the live site opens from, and the Enter key. |
+| `src/scripts/doors.ts` | The doors swing open before the page moves on. |
+| `src/scripts/cover.ts` | AI Build Night: the cursor the steps open from, and the Enter key. |
 | `src/scripts/sound.ts` | Every sound on the page, made with Web Audio. |
 | `src/scripts/ride.ts` | Parkdex: Kip's timed ride down the vine, forest layers, and the slide to the park and the jump. |
-| `src/scripts/toys.ts` | Throwable toys with a small physics loop that sleeps when everything settles. |
 | `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
 | `tests/content-contract.mjs` | Section order, required links, claims guards, reduced-motion coverage, media budget. |
 | `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonical, share card, JSON-LD, 404. |
-| `e2e/` | Playwright against `astro preview`: rendering, the settle, every hero and click moment, ten viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
+| `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps, fourteen viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
 | `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`). |
 | `public/_headers` | Cloudflare security and caching headers. |
 | `public/_redirects` | Old project and essay URLs. |
@@ -58,7 +58,7 @@ Each of the four projects starts as one full closed screen. A `[data-moment]` sc
 
 Only the visitor opens a scene, by design: no timer, no opening on the way past, and the content contract fails if `moments.ts` grows one. Parts marked `[data-opens]` stay `inert` until then, so the keyboard goes from one closed scene to the next. Using the control sets `data-open`, moves focus into the scene and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
 
-AI Build Night's site opens from the block cursor: `startCover` measures the cursor and clips the panel to it. A mouse sounds the key on the way down, but a finger only counts as a gesture for audio when it lifts, so touch sounds on the click.
+AI Build Night's steps open from the block cursor: `startCover` measures the cursor and clips the panel to it. A mouse sounds the key on the way down, but a finger only counts as a gesture for audio when it lifts, so touch sounds on the click.
 
 Each press has a sound, all in `sound.ts`: the thocc, the curtains, the flag and the vine, and the toy box. They are made with Web Audio, so there are no files to fetch, and only a press starts one: scrolling to the park plays Kip's jump silently. iOS keeps audio suspended until a finger lifts, and anything scheduled before then waits, so a rope pulled by hand sounds when it is let go if nothing on the page has been tapped yet. The phone's silent switch still silences everything.
 
@@ -68,9 +68,11 @@ The rainbow is two CSS animations: the bands cross by `transform` alone, and the
 
 A `[data-loops]` scene has its looping CSS paused while it is off screen (`startRests`), which stops a page's worth of idle animations from recalculating style every frame.
 
-## The hero toggle
+## Steps
 
-All eight heroes are built. The default is rendered in place, and the others sit in `<template>`s, so there is only ever one `<h1>` and search engines and no-JavaScript visitors see one hero. The toggle only appears on staging and local hosts, and `?hero=` is ignored anywhere else, so a promotion can't show it to the public by accident. `OPERATIONS.md` has the steps for settling on one.
+Each section says what it does in three or four numbered steps, all on screen at once, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked and Sandbox, and Parkdex's stops on the vine are the same idea in its own design. The owner offered this or a rotation through the lines. All at once won because the whole explanation is there at a first look: nothing to wait for, no timer to pause, and nothing different under reduced motion or without JavaScript.
+
+A section sets `--steps-room`, the height the steps get, and `--step-*` for its colours and type. Every size then comes from that and the width, so the steps fit the screen they are on: `e2e/pages.spec.ts` checks that at fourteen sizes, including that nothing overlaps. Wide pictures sit two by two on a big screen with `pairs`, in a row otherwise, and beside their words on a phone. App screens crop from the top on a phone, because the top of the screen is what shows the step.
 
 ## Reduced motion and no JavaScript
 

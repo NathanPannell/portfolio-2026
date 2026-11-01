@@ -31,7 +31,8 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 ## What is settled
 
 - One page of full-screen frames: a hero, then four worlds in the owner's order, a link index, and a contact footer. Each world is one simple closed screen until it is pressed, and then one screen of content, or two for Parkdex.
-- The hero is being chosen. Eight options are on staging behind a review toggle, and the toggle comes out once the owner picks.
+- The hero is Doors, by the owner's choice. The other seven options and the review toggle are gone, and remain in git history.
+- Each opened section explains itself in three or four numbered steps, all on screen at once, close to the owner's wording.
 - AI Build Night leads. Offbooked is the one presented as a possible business. Parkdex is the playful one. Play by the Sandbox, shown as a website Nathan designed, closes the set before the index.
 - The site positions Nathan as someone who builds for real people, tests with real users and builds an AI community. Avoid nature-guy framing.
 - Every world has its own fonts, colours, motion, and transition in. Do not unify them into one card template.

@@ -1,58 +1,15 @@
 ---
-import Badge from './heroes/Badge.astro';
-import Board from './heroes/Board.astro';
-import Cards from './heroes/Cards.astro';
-import Channels from './heroes/Channels.astro';
 import Doors from './heroes/Doors.astro';
-import Lift from './heroes/Lift.astro';
-import Neon from './heroes/Neon.astro';
-import Receipt from './heroes/Receipt.astro';
-import { heroes } from './heroes/worlds';
 ---
 
-<section class="hero" data-frame data-heroes>
-  <div class="hero__slot" data-hero-slot data-hero-shown="doors">
-    <Doors />
-  </div>
-
-  <template data-hero-option="badge">
-    <Badge />
-  </template>
-  <template data-hero-option="board">
-    <Board />
-  </template>
-  <template data-hero-option="lift">
-    <Lift />
-  </template>
-  <template data-hero-option="cards">
-    <Cards />
-  </template>
-  <template data-hero-option="neon">
-    <Neon />
-  </template>
-  <template data-hero-option="receipt">
-    <Receipt />
-  </template>
-  <template data-hero-option="channels">
-    <Channels />
-  </template>
+<section class="hero" data-frame>
+  <Doors />
 
   <a class="hero__next" href="#ai-build-night" aria-label="Next: AI Build Night">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 4v15M5 12l7 7 7-7"></path>
     </svg>
   </a>
-
-  <!-- A review tool for choosing a hero. See OPERATIONS.md for how to take it out. -->
-  <nav class="hero-toggle" data-hero-toggle aria-label="Landing page options" hidden>
-    <span class="hero-toggle__label">Hero</span>
-    {heroes.map(({ id, name }, index) => (
-      <button type="button" data-hero-pick={id} aria-label={`Option ${index + 1}: ${name}`}>
-        {index + 1}
-      </button>
-    ))}
-    <span class="hero-toggle__name" data-hero-name aria-live="polite"></span>
-  </nav>
 </section>
 
 <style>
@@ -101,76 +58,6 @@ import { heroes } from './heroes/worlds';
   @keyframes hero-next {
     50% {
       transform: translateY(0.2rem);
-    }
-  }
-
-  .hero-toggle {
-    position: absolute;
-    z-index: 6;
-    bottom: calc(0.85rem + 100lvh - 100svh);
-    left: var(--gutter);
-    display: flex;
-    gap: 0.2rem;
-    align-items: center;
-    padding: 0.25rem 0.75rem 0.25rem 0.8rem;
-    border: 2px solid var(--ink);
-    border-radius: 99rem;
-    background: #fff;
-    color: var(--ink);
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    box-shadow: 0 0.35rem 1.2rem rgb(0 0 0 / 28%);
-  }
-
-  .hero-toggle[hidden] {
-    display: none;
-  }
-
-  .hero-toggle__label {
-    margin-right: 0.3rem;
-    font-weight: 700;
-  }
-
-  .hero-toggle button {
-    width: 2.35rem;
-    height: 2.35rem;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: none;
-    font-weight: 700;
-  }
-
-  .hero-toggle button[aria-pressed='true'] {
-    background: var(--ink);
-    color: #fff;
-  }
-
-  .hero-toggle__name {
-    margin-left: 0.4rem;
-    white-space: nowrap;
-  }
-
-  /* A phone has room for the numbers and the arrow, not the label. */
-  @media (max-width: 620px), (max-height: 480px) {
-    .hero-toggle__label,
-    .hero-toggle__name {
-      display: none;
-    }
-
-    .hero-toggle {
-      gap: 0;
-      padding: 0.1rem 0.3rem;
-    }
-
-    .hero-toggle button {
-      width: min(1.95rem, calc((100vw - var(--gutter) * 2 - 4rem) / 8));
-      height: 2.1rem;
-      font-size: 0.78rem;
-    }
-
-    .hero-toggle button[aria-pressed='true'] {
-      border-radius: 0.6rem;
     }
   }
 </style>

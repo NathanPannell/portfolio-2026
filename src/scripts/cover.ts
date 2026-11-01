@@ -1,4 +1,4 @@
-// AI Build Night's cover. Its cursor is where the live site opens out from, and its Enter key thoccs.
+// AI Build Night's cover. Its cursor is where the steps open out from, and its Enter key thoccs.
 
 import { play, thocc } from './sound';
 
@@ -49,11 +49,4 @@ export const startCover = () => {
   measure();
   void document.fonts.ready.then(measure);
   window.addEventListener('resize', measure);
-
-  // The strip of captures scrolls past the edge of its window, where lazy images wouldn't load.
-  cover.addEventListener('moment:open', () => {
-    cover.querySelectorAll('img').forEach((image) => {
-      image.loading = 'eager';
-    });
-  });
 };

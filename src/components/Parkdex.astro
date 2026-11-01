@@ -2,7 +2,7 @@
 const stops = [
   {
     image: 'arrival',
-    title: 'Go to a park.',
+    title: 'Visit a park.',
     alt: 'Parkdex map of Beacon Hill Park: inside the boundary, with a flag to take',
   },
   {
@@ -11,14 +11,14 @@ const stops = [
     alt: 'Parkdex flag planted screen: plus six points',
   },
   {
-    image: 'founder',
-    title: 'Be the founder.',
-    alt: 'Parkdex park page for Holland Point with a Become the founder button',
+    image: 'leaderboard',
+    title: 'Earn points.',
+    alt: 'Parkdex leaderboard of demo players: a podium, then everyone else ranked by points',
   },
   {
-    image: 'take',
-    title: 'Steal it.',
-    alt: 'Parkdex screen: a flag being knocked over, reading Take it from at salish sky',
+    image: 'explore',
+    title: 'Explore your city!',
+    alt: 'Parkdex map of Victoria, with flags flying over its parks',
   },
 ];
 ---
@@ -57,7 +57,9 @@ const stops = [
         <ol class="pk-stops">
           {stops.map((stop, index) => (
             <li class="pk-stop" data-stop style={`--stop: ${index}`}>
-              <h3>{stop.title}</h3>
+              <h3>
+                <span aria-hidden="true">{index + 1}</span> {stop.title}
+              </h3>
               <figure class="pk-hang">
                 <img
                   src={`/media/parkdex/${stop.image}-360.webp`}
@@ -437,6 +439,10 @@ const stops = [
 
   .pk-stop:nth-child(even) h3 {
     rotate: 2deg;
+  }
+
+  .pk-stop h3 span {
+    color: #c9420f;
   }
 
   .pk-hang {
@@ -862,8 +868,10 @@ const stops = [
       gap: 0.75rem 1.25rem;
     }
 
+    /* Each stop takes its half of the screen, so a title can be wider than its phone. */
     .pk-stop {
       gap: 0.45rem;
+      width: calc((100vw - 2.75rem) / 2);
     }
 
     .pk-stop:nth-child(even) {
@@ -871,7 +879,7 @@ const stops = [
     }
 
     .pk-stop h3 {
-      font-size: 0.95rem;
+      font-size: clamp(0.8rem, 3.9vw, 0.95rem);
     }
 
     .pk-hang img {
@@ -907,7 +915,7 @@ const stops = [
   }
 
   /* Phones on their side: four across, with just enough room for each title. */
-  @media (max-height: 480px) {
+  @media (max-height: 480px) and (orientation: landscape) {
     .pk-forest {
       padding-top: 3.25rem;
     }
@@ -920,12 +928,16 @@ const stops = [
 
     .pk-stop {
       gap: 0.3rem;
+      width: calc((100vw - var(--gutter) * 2 - 3rem) / 4);
     }
 
     .pk-stop h3 {
-      font-size: 0.8rem;
+      padding-inline: 0.4rem;
+      font-size: 0.74rem;
     }
+  }
 
+  @media (max-height: 480px) {
     .pk-sky {
       padding-top: 3rem;
     }
