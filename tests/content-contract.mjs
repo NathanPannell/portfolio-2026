@@ -41,9 +41,13 @@ for (const url of [
   'https://offbooked.com/',
   'https://parkdex.app/',
   'https://play.google.com/store/apps/details?id=app.parkdex',
+  'https://x.com/nathanwpannell',
 ]) {
   assert(markup.includes(url), `Missing outbound link: ${url}`);
 }
+
+// The owner's X handle changed, so the old one must not come back.
+assert.doesNotMatch(markup, /x\.com\/nwpannell/, 'Old X handle');
 
 // The owner took the Parkdex web app off this site.
 assert.doesNotMatch(markup, /web\.parkdex\.app/, 'No link to the Parkdex web app');
