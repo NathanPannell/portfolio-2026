@@ -20,6 +20,12 @@ export const startRests = () => {
 // A blob plays everywhere, and the poster stays up if the fetch fails.
 const onScreen = new WeakSet<HTMLVideoElement>();
 
+/** Plays a loop that can be seen. A rotating window stacks its pictures, so being on screen isn't enough. */
+export const playLoop = async (video: HTMLVideoElement) => {
+  if (video.matches('[data-steps-view] figure:not([data-current]) video')) return;
+  if (video.src && onScreen.has(video)) await video.play().catch(() => undefined);
+};
+
 const loadLoop = async (video: HTMLVideoElement) => {
   if (!video.src && !video.hasAttribute('data-loading')) {
     video.toggleAttribute('data-loading', true);
@@ -27,8 +33,8 @@ const loadLoop = async (video: HTMLVideoElement) => {
     if (!response?.ok) return;
     video.src = URL.createObjectURL(await response.blob());
   }
-  // The fetch can outlast the visit, so check again before playing.
-  if (video.src && onScreen.has(video)) await video.play().catch(() => undefined);
+  // The fetch can outlast the visit, so this checks again before playing.
+  await playLoop(video);
 };
 
 /** Plays each lazy loop only while it is on screen, and never under reduced motion. */

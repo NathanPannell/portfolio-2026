@@ -3,7 +3,7 @@
 // script never runs. The toggle between the two is a review tool: `?offbooked=rotating` links straight
 // to one, and it only exists on staging and local builds. See OPERATIONS.md for how to settle on one.
 
-import { reducedMotion } from './motion';
+import { playLoop, reducedMotion } from './motion';
 
 type Layout = 'side' | 'rotating';
 
@@ -72,10 +72,10 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
       picture.toggleAttribute('data-current', at === index);
       if (at === index) pick.setAttribute('aria-current', 'step');
       else pick.removeAttribute('aria-current');
-      // A loop plays while it can be seen. Under reduced motion it never has a source.
+      // A picture that has left the window takes its loop with it.
       const video = picture.querySelector('video');
-      if (!video?.src) return;
-      if (layout === 'side' || at === index) void video.play().catch(() => undefined);
+      if (!video) return;
+      if (layout === 'side' || at === index) void playLoop(video);
       else video.pause();
     });
   };

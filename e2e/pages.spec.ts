@@ -522,6 +522,28 @@ test('the step showing is marked from its first moment, not only as the count ru
   await expect(pick).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 });
 
+test('a loop only plays while its picture is the one showing', async ({ page }) => {
+  await page.goto('/?sandbox=rotating');
+  await openSet(page, sets[3]);
+  const steps = page.locator('[data-steps="sandbox"]');
+  const video = steps.locator('video');
+  const paused = () => video.evaluate((element) => (element as HTMLVideoElement).paused);
+  await expect
+    .poll(() => video.evaluate((element) => (element as HTMLVideoElement).src))
+    .not.toBe('');
+  await page.waitForTimeout(300);
+  expect(await paused()).toBe(true);
+  await steps.locator('.step__pick').nth(2).click();
+  await expect.poll(paused).toBe(false);
+  await steps.locator('.step__pick').nth(0).click();
+  await expect.poll(paused).toBe(true);
+  // Back on screen after a pick, it still stays put.
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await jumpTo(page, '.sb-open');
+  await page.waitForTimeout(300);
+  expect(await paused()).toBe(true);
+});
+
 test('a closed screen has no toggle on it', async ({ page }) => {
   await page.goto('/?sandbox=rotating');
   await jumpTo(page, '.sb-open');
@@ -1270,7 +1292,7 @@ const pictureEnd = (row: Locator) =>
   });
 
 // Where each row's subject starts across its picture: the key, the phones, Kip, the marquee.
-const subjects = [0.59, 0.485, 0.55, 0.5];
+const subjects = [0.59, 0.485, 0.55, 0.466];
 
 // Where a row's subject starts on screen, and where its name, host and arrow end.
 const rowEdges = (row: Locator, subject: number) =>
