@@ -107,7 +107,8 @@ test('a scroll past a focused control is not pulled back', async ({ page, isMobi
   await page.locator('.abn-key').focus();
   await page.keyboard.press('End');
   await expect(page.locator('.contact__mail')).toBeInViewport({ timeout: 5000 });
-  await page.waitForTimeout(800);
+  // Longer than a scroll has to be left alone before anything could move it.
+  await page.waitForTimeout(2200);
   await expect(page.locator('.contact__mail')).toBeInViewport();
 });
 

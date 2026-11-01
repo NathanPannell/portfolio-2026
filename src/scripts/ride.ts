@@ -31,7 +31,7 @@ const startSlide = (
   const diver = trip.querySelector<HTMLElement>('[data-diver]');
   const spot = trip.querySelector<HTMLElement>('[data-kip-spot]');
   const button = trip.querySelector<HTMLElement>('[data-slide]');
-  if (!ground || !end || !diver || !spot || !button) return;
+  if (!ground || !end || !diver || !spot || !button) return undefined;
   const poses = Array.from(diver.querySelectorAll<HTMLElement>('[data-pose]'));
   let gone = false;
 
@@ -85,21 +85,29 @@ const startSlide = (
   // Down the vine from `from` to its end. With `follow`, the page comes too, until any input.
   const dive = (from: number, follow: boolean) => {
     gone = true;
+    // The button is about to leave, so the next Tab carries on from inside the scene.
+    if (document.activeElement === button) trip.focus({ preventScroll: true });
     trip.toggleAttribute('data-diving', true);
     poses.forEach((pose, index) => pose.toggleAttribute('data-on', index === 1));
     const to = sectionY(end) + end.offsetHeight;
     const pageFrom = window.scrollY;
     const pageTo = ground.getBoundingClientRect().top + window.scrollY;
     const start = performance.now();
+    const width = window.innerWidth;
     let following = follow;
     const letGo = () => {
       following = false;
+    };
+    // A turned phone has a different page, and the old target means nothing on it.
+    const onResize = () => {
+      if (window.innerWidth !== width) letGo();
     };
     const events = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
     if (follow) {
       events.forEach((type) => {
         window.addEventListener(type, letGo, { passive: true, once: true });
       });
+      window.addEventListener('resize', onResize, { passive: true });
     }
     const step = (now: number) => {
       const elapsed = clamp((now - start) / (follow ? SLIDE : SLIDE / 2));
@@ -115,6 +123,7 @@ const startSlide = (
       events.forEach((type) => {
         window.removeEventListener(type, letGo);
       });
+      window.removeEventListener('resize', onResize);
       jump();
     };
     window.requestAnimationFrame(step);
@@ -138,7 +147,9 @@ const startSlide = (
     },
     { threshold: 0.5 },
   );
-  trip.addEventListener('moment:open', () => arrival.observe(ground));
+  // From the landing, not the press: the park appears as the flag goes in, and a visitor part way
+  // down the screen can have it in view for a moment before the page frames itself.
+  return () => arrival.observe(ground);
 };
 
 export const startRide = () => {
@@ -161,6 +172,8 @@ export const startRide = () => {
     const width = vine.offsetWidth;
     return Math.sin((depth / (width * VINE_PERIOD)) * Math.PI * 2) * width * VINE_SWING;
   };
+
+  const watchTheGround = startSlide(trip, vine, forest, swing);
 
   // Where Kip is along the vine, in pixels from the vine's top.
   const riderDepth = () =>
@@ -187,6 +200,7 @@ export const startRide = () => {
     place(forest.offsetTop);
     trip.removeAttribute('data-riding');
     trip.toggleAttribute('data-landed', true);
+    watchTheGround?.();
   };
 
   const ride = () => {
@@ -217,9 +231,8 @@ export const startRide = () => {
 
   place(0);
   trip.addEventListener('moment:open', plant);
-  startSlide(trip, vine, forest, swing);
 
   window.addEventListener('resize', () => {
-    if (landed) place(forest.offsetTop);
+    if (!trip.hasAttribute('data-riding')) place(landed ? forest.offsetTop : 0);
   });
 };

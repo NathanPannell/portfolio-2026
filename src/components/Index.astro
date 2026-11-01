@@ -19,14 +19,14 @@ const worlds = [
     host: 'parkdex.app',
     href: 'https://parkdex.app/',
     image: 'parkdex',
-    field: '#d6ecdf',
+    field: '#1f6448',
   },
   {
     name: 'Play by the Sandbox',
     host: 'playbythesandbox.ca',
     href: 'https://www.playbythesandbox.ca/',
     image: 'sandbox',
-    field: '#b8a4d6',
+    field: '#43336e',
   },
 ];
 ---
@@ -119,7 +119,13 @@ const worlds = [
     z-index: -1;
     inset: 0;
     background:
-      linear-gradient(90deg, rgb(0 0 0 / 62%), rgb(0 0 0 / 4%) 50%, rgb(0 0 0 / 34%)),
+      linear-gradient(
+        90deg,
+        rgb(0 0 0 / 70%),
+        rgb(0 0 0 / 52%) 42%,
+        rgb(0 0 0 / 4%) 62%,
+        rgb(0 0 0 / 34%)
+      ),
       var(--wash-image) right center / auto 100% no-repeat,
       var(--wash-field);
     opacity: 0;
@@ -151,10 +157,14 @@ const worlds = [
   }
 
   .wash-list__host {
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.3rem;
     color: #a8acaa;
     font-family: var(--mono);
     font-size: 0.85rem;
-    transition: color 180ms;
+    transition:
+      color 180ms,
+      background 180ms;
   }
 
   .wash-list svg {
@@ -165,6 +175,7 @@ const worlds = [
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1.8;
+    filter: drop-shadow(0 1px 3px rgb(0 0 0 / 85%));
     transition: transform 220ms var(--ease);
   }
 
@@ -174,6 +185,7 @@ const worlds = [
   }
 
   .wash-list li:has(a:focus-visible) .wash-list__host {
+    background: rgb(0 0 0 / 66%);
     color: #fff;
   }
 
@@ -184,6 +196,7 @@ const worlds = [
     }
 
     .wash-list li:hover .wash-list__host {
+      background: rgb(0 0 0 / 66%);
       color: #fff;
     }
 
@@ -202,6 +215,7 @@ const worlds = [
   }
 
   .wash-list li[data-active] .wash-list__host {
+    background: rgb(0 0 0 / 66%);
     color: #fff;
   }
 

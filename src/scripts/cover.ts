@@ -61,7 +61,18 @@ const startKey = (key: HTMLElement) => {
   // A mouse can sound on the way down. A finger only counts as a gesture for audio when it lifts,
   // which is the click, and so does the keyboard.
   key.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'mouse') strike();
+    if (event.pointerType !== 'mouse') return;
+    strike();
+    // After the click, if there is one. A press dragged off the key has none.
+    window.addEventListener(
+      'pointerup',
+      () => {
+        window.setTimeout(() => {
+          struck = false;
+        });
+      },
+      { once: true },
+    );
   });
   key.addEventListener('click', () => {
     if (!struck) strike();

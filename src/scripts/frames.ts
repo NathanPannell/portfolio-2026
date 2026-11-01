@@ -188,6 +188,17 @@ export const startFrames = () => {
       { passive: true },
     );
   }
+  // A turned phone has a different page, and the old target means nothing on it. The address bar
+  // only changes the height.
+  let width = window.innerWidth;
+  window.addEventListener(
+    'resize',
+    () => {
+      if (window.innerWidth !== width) stop();
+      width = window.innerWidth;
+    },
+    { passive: true },
+  );
   window.addEventListener(
     'scroll',
     () => {

@@ -204,6 +204,7 @@ test.describe('scrolling', () => {
 
 test.describe('on touch', () => {
   test.skip(({ isMobile }) => !isMobile, 'Touch is a phone journey.');
+  test.skip(({ browserName }) => browserName !== 'chromium', 'Real touch input needs Chromium.');
 
   const finger = async (page: Page) => {
     const client = await page.context().newCDPSession(page);

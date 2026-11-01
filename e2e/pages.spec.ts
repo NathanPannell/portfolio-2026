@@ -442,6 +442,8 @@ test('Enter opens onto one screen, with the north star lines in it', async ({ pa
   expect(height).toBeLessThanOrEqual(await page.locator('.hero').evaluate((e) => e.scrollHeight));
 });
 
+const noWebAudio = "Playwright's WebKit build has no Web Audio.";
+
 // Counts what the page asks Web Audio for, without needing to hear it.
 const listenForThocc = (page: Page) =>
   page.addInitScript(() => {
@@ -464,26 +466,57 @@ const listenForThocc = (page: Page) =>
 const heard = (page: Page) =>
   page.evaluate(() => (window as unknown as { heard: { contexts: number; tones: number } }).heard);
 
-test('the Enter key thoccs when pressed, and is silent until then', async ({ page }) => {
+test('the Enter key thoccs when pressed, and is silent until then', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
+  test.skip(browserName === 'webkit', noWebAudio);
   await listenForThocc(page);
   const errors = collectErrors(page);
   await page.goto('/');
   await jumpTo(page, '.abn-cover');
   await page.waitForTimeout(300);
   expect(await heard(page)).toEqual({ contexts: 0, tones: 0 });
-  await page.locator('.abn-key').click();
+  // A tap on a phone, which is the path iOS needs: only the lift counts as a gesture for audio.
+  if (isMobile) await page.locator('.abn-key').tap();
+  else await page.locator('.abn-key').click();
   await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(2);
   expect((await heard(page)).contexts).toBe(1);
   expect(errors).toEqual([]);
 });
 
-test('the Enter key thoccs from the keyboard too', async ({ page, isMobile }) => {
+test('the Enter key thoccs from the keyboard too', async ({ page, isMobile, browserName }) => {
+  test.skip(browserName === 'webkit', noWebAudio);
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await listenForThocc(page);
   await page.goto('/');
   await page.locator('.abn-key').focus();
   await page.keyboard.press('Enter');
   await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(2);
+});
+
+test('a mouse press dragged off the key leaves the keyboard its thocc', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  test.skip(isMobile, 'This is a mouse and keyboard journey.');
+  await listenForThocc(page);
+  await page.goto('/');
+  await jumpTo(page, '.abn-cover');
+  const key = await page.locator('.abn-key').boundingBox();
+  if (!key) throw new Error('No key');
+  await page.mouse.move(key.x + key.width / 2, key.y + key.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(40, 40);
+  await page.mouse.up();
+  await expect(page.locator('.abn-cover')).toHaveAttribute('data-waiting', '');
+  await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(2);
+  await page.locator('.abn-key').focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(() => heard(page).then(({ tones }) => tones)).toBe(4);
 });
 
 test('a page with no sound still opens', async ({ page }) => {
@@ -570,6 +603,18 @@ test('the second button slides Kip down to the parks and off the end of the vine
   await expect(page.locator('.pk-end h3')).toHaveText('1,000+ parks. Which one’s yours?');
 });
 
+test('pressing Plant! part way off the screen still leaves the second button', async ({ page }) => {
+  test.setTimeout(30000);
+  await page.goto('/');
+  const height = await page.evaluate(() => window.innerHeight);
+  await jumpTo(page, '#parkdex');
+  await page.evaluate((by) => window.scrollBy({ top: by, behavior: 'instant' }), height * 0.3);
+  await page.locator('.pk-plant').evaluate((button) => (button as HTMLElement).click());
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
+  await expect(page.locator('.pk-slide')).toBeVisible();
+  await expect(page.locator('#parkdex')).not.toHaveAttribute('data-jumped', '');
+});
+
 test('scrolling down to the parks by hand still gets the jump', async ({ page }) => {
   test.setTimeout(30000);
   await page.goto('/');
@@ -581,22 +626,29 @@ test('scrolling down to the parks by hand still gets the jump', async ({ page })
   await expect(page.locator('.pk-slide')).toBeHidden();
 });
 
-test('taking hold of the page during the slide lets it go', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'The wheel stands in for any input here.');
-  test.setTimeout(30000);
-  await page.goto('/');
-  await landKip(page);
-  const start = await page.evaluate(() => window.scrollY);
-  await page.locator('.pk-slide').click();
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(start + 10);
-  await page.mouse.wheel(0, -40);
-  await page.waitForTimeout(120);
-  const held = await page.evaluate(() => window.scrollY);
-  await page.waitForTimeout(500);
-  expect(await page.evaluate(() => window.scrollY)).toBe(held);
-  // Kip finishes the trip regardless.
-  await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
-});
+for (const input of ['wheel', 'key', 'press'] as const) {
+  test(`a ${input} during the slide lets the page go`, async ({ page, isMobile }) => {
+    test.skip(isMobile, 'These stand in for any input here.');
+    test.setTimeout(30000);
+    await page.goto('/');
+    await landKip(page);
+    const start = await page.evaluate(() => window.scrollY);
+    await page.locator('.pk-slide').click();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(start + 10);
+    if (input === 'wheel') await page.mouse.wheel(0, -40);
+    if (input === 'key') await page.keyboard.press('Shift');
+    if (input === 'press') {
+      await page.mouse.down();
+      await page.mouse.up();
+    }
+    await page.waitForTimeout(120);
+    const held = await page.evaluate(() => window.scrollY);
+    await page.waitForTimeout(500);
+    expect(await page.evaluate(() => window.scrollY)).toBe(held);
+    // Kip finishes the trip regardless.
+    await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
+  });
+}
 
 // Watches, frame by frame from inside the page, how much of the screen the six bands cover at most.
 const watchRainbow = (page: Page) =>
