@@ -120,12 +120,12 @@ const startSet = (set: HTMLElement) => {
       if (event.pointerType === 'mouse' && mouseMoved) hold('hover', true);
     });
     part.addEventListener('pointerleave', () => hold('hover', false));
+    part.addEventListener('focusin', () => hold('focus', true));
+    part.addEventListener('focusout', (event) => {
+      if (!part.contains(event.relatedTarget as Node | null)) hold('focus', false);
+    });
   }
 
-  list.addEventListener('focusin', () => hold('focus', true));
-  list.addEventListener('focusout', (event) => {
-    if (!list.contains(event.relatedTarget as Node | null)) hold('focus', false);
-  });
   list.addEventListener('keydown', (event) => {
     const move = NEXT_KEYS.has(event.key) ? 1 : LAST_KEYS.has(event.key) ? -1 : 0;
     if (move === 0) return;

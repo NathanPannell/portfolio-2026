@@ -174,10 +174,11 @@ test.describe('scrolling', () => {
   test('a link used while the page is settling wins', async ({ page }) => {
     await page.goto('/');
     await page.mouse.move(700, 450);
-    await page.mouse.wheel(0, 620);
-    await expect.poll(() => scrollY(page)).toBe(620);
-    await glideUnderway(page, 620);
-    await page.locator('.hero__next').click();
+    // A settle heading back up, and a link that goes the other way, used while it's moving.
+    await page.mouse.wheel(0, 300);
+    await expect.poll(() => scrollY(page)).toBe(300);
+    await glideUnderway(page, 300);
+    await page.locator('.hero__next').click({ force: true });
     const top = await topOf(page, '#ai-build-night');
     await settlesAt(page, top);
     await page.waitForTimeout(IDLE + 300);

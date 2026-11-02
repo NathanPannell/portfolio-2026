@@ -110,7 +110,7 @@ To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflar
 
 Settled by the owner on 2026-11-01, and the review toggle and links are gone: AI Build Night and Offbooked rotate, Parkdex and Sandbox show every step side by side, and Not Quite My Tempo has no steps, just one window and one link.
 
-To change one, add or remove `rotates` on its `<Steps>`. A section that newly rotates also needs its `--window` and its own dress for the window and list, which `BuildNight.astro` and `Offbooked.astro` show. Parkdex has its own markup, so rotating it would mean writing that again: it's in git history before the round-eight commit.
+To change one, add or remove `rotates` on its `<Steps>`. A section that newly rotates also needs its `--window` and its own dress for the window and list, which `BuildNight.astro` and `Offbooked.astro` show. Sandbox's third step is a video, and the rotation no longer plays or pauses one with its picture, so it would need that back. Parkdex has its own markup, so rotating it would mean writing that again: it's in git history before the round-eight commit.
 
 ## Required UI verification
 

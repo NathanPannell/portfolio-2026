@@ -448,6 +448,10 @@ test.describe('with a mouse and keyboard', () => {
     await expect.poll(() => counting(steps)).toBe('paused');
     await page.locator('.abn-show__cta').focus();
     await expect.poll(() => counting(steps)).toBe('running');
+    await steps.locator('[data-steps-window]').focus();
+    await expect.poll(() => counting(steps)).toBe('paused');
+    await page.locator('.abn-show__cta').focus();
+    await expect.poll(() => counting(steps)).toBe('running');
     await picks.nth(1).focus();
     await page.keyboard.press('Enter');
     await expect.poll(() => showing(steps)).toBe(1);
@@ -1561,6 +1565,17 @@ test('the Tempo loop plays muted, and rests off screen', async ({ page, isMobile
   await expect(video).toHaveJSProperty('paused', true);
 });
 
+test('the Tempo loop stays unloaded behind a closed screen', async ({ page }) => {
+  const asked: string[] = [];
+  page.on('request', (request) => asked.push(request.url()));
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await page.waitForTimeout(800);
+  expect(asked.filter((url) => url.includes('.mp4'))).toEqual([]);
+  await page.locator('.tp-tap').click();
+  await expect.poll(() => asked.filter((url) => url.includes('.mp4')).length).toBe(1);
+});
+
 test('the window says it is a link when the mouse comes onto it', async ({ page, isMobile }) => {
   test.skip(isMobile, 'There is no hover here.');
   await page.goto('/');
@@ -1745,7 +1760,7 @@ for (const [width, height] of everySize) {
       content: '[data-stop], [data-stop] figure { rotate: none !important; }',
     });
     await stepsFit(page, '.pk-forest', `Parkdex at ${width}x${height}`);
-    await still.evaluate((tag) => tag.remove());
+    await still.evaluate((tag) => (tag as HTMLElement).remove());
     await page.waitForTimeout(1200);
     await pushStop(page, !!isMobile, 1);
     expect(await swingTrouble(page, 1000), `${width}x${height}`).toEqual([]);
@@ -1790,13 +1805,6 @@ for (const [width, height] of everySize) {
     for (const part of opened) {
       await expect(page.locator(part), part).toBeInViewport({ ratio: 1 });
     }
-    await expect
-      .poll(() =>
-        Promise.all(
-          ['#tp-title', '.tp__cta', '.tp-window'].map((part) => page.locator(part).boundingBox()),
-        ),
-      )
-      .toBeTruthy();
     const [name, link, frame] = await Promise.all(
       opened.map((part) => page.locator(part).boundingBox()),
     );
@@ -1805,6 +1813,13 @@ for (const [width, height] of everySize) {
     expect(frame.y, `${width}x${height}`).toBeGreaterThanOrEqual(name.y + name.height - 1);
     expect(frame.y, `${width}x${height}`).toBeGreaterThanOrEqual(link.y + link.height - 1);
     expect(frame.height, `${width}x${height}`).toBeGreaterThan(height * 0.4);
+    const tagline = page.locator('.tp__head p');
+    if (await tagline.isVisible()) {
+      const words = await tagline.boundingBox();
+      if (!words) throw new Error('The line has no box');
+      expect(words.y + words.height, `${width}x${height}`).toBeLessThanOrEqual(frame.y + 1);
+      expect(words.x + words.width, `${width}x${height}`).toBeLessThanOrEqual(link.x + 1);
+    }
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 }

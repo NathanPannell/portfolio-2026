@@ -25,6 +25,8 @@ const playLoop = async (video: HTMLVideoElement) => {
 };
 
 const loadLoop = async (video: HTMLVideoElement) => {
+  // Behind a closed screen it can't be seen, and may never be asked for.
+  if (video.closest('[data-waiting]')) return;
   if (!video.src && !video.hasAttribute('data-loading')) {
     video.toggleAttribute('data-loading', true);
     // A loop with a tall cut uses it on an upright screen, the same way the game picks its own.
@@ -58,4 +60,9 @@ export const startLoops = () => {
   document
     .querySelectorAll<HTMLVideoElement>('video[data-src]')
     .forEach((video) => observer.observe(video));
+  document.addEventListener('moment:open', ({ target }) => {
+    (target as HTMLElement)
+      .querySelectorAll<HTMLVideoElement>('video[data-src]')
+      .forEach((video) => void loadLoop(video));
+  });
 };

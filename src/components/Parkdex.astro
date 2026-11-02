@@ -54,7 +54,7 @@ const stops = [
       <div class="pk-canopy" aria-hidden="true"></div>
 
       <div class="pk-forest" data-forest-floor data-opens>
-        <ol class="pk-stops" data-steps-list>
+        <ol class="pk-stops">
           {stops.map((stop, index) => (
             <li class="pk-stop" data-stop data-step style={`--stop: ${index}`}>
               <h3>{stop.title}</h3>
@@ -409,7 +409,7 @@ const stops = [
     gap: 0.9rem;
     justify-items: center;
     width: var(--shot);
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
     transform-origin: 50% calc(var(--pivot, 50lvh) * -1);
   }
 
