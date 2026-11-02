@@ -167,15 +167,26 @@ const startSet = (set: HTMLElement) => {
   }).observe(frame);
 
   // A captured page is clipped by its window, which lazy loading can't see past, so it's fetched as a
-  // whole. Only the capture that's showing: the other has no boxes to measure.
+  // whole once there's a chance of it being seen. Only the capture that's showing: the other has no
+  // boxes to measure.
+  const tiles = view.querySelectorAll<HTMLImageElement>('.site-page img');
+  let near = false;
   const fetchPage = () => {
-    if (!opened) return;
-    for (const image of view.querySelectorAll('img')) {
-      if (image.getClientRects().length > 0) image.loading = 'eager';
+    if (!opened || !near) return;
+    for (const tile of tiles) {
+      if (tile.getClientRects().length > 0) tile.loading = 'eager';
     }
   };
-  fetchPage();
-  window.addEventListener('resize', fetchPage, { passive: true });
+  if (tiles.length > 0) {
+    new IntersectionObserver(
+      ([entry]) => {
+        near = !!entry?.isIntersecting;
+        fetchPage();
+      },
+      { rootMargin: '100% 0px' },
+    ).observe(frame);
+    window.addEventListener('resize', fetchPage, { passive: true });
+  }
 
   scene?.addEventListener(
     'moment:open',

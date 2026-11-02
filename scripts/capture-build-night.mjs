@@ -6,15 +6,19 @@
 // which says where each step stops. Each stop is found from the page itself, so a small change to the
 // site moves it along, but a section that is renamed will fail here rather than stop in the wrong place.
 
-import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import { format, resolveConfig } from 'prettier';
 import sharp from 'sharp';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const media = join(root, 'public', 'media', 'build-night');
 const facts = join(root, 'src', 'components', 'build-night-page.json');
+// Everything is written here first, so a capture that fails leaves the last good one in place.
+const draft = mkdtempSync(join(tmpdir(), 'build-night-'));
 
 const SITE = 'https://aibuildnight.ca/';
 // Photos of people are held back until the owner clears them, so they're blurred past recognition
@@ -70,7 +74,7 @@ const tileOf = async (image, name) => {
   for (let quality = 76; quality >= 30; quality -= 6) {
     const data = await image.webp({ quality, effort: 6 }).toBuffer();
     if (data.length <= BUDGET) {
-      writeFileSync(join(media, name), data);
+      writeFileSync(join(draft, name), data);
       return data.length;
     }
   }
@@ -97,6 +101,15 @@ const capture = async (browser, { name, viewport, isMobile = false, stops, view 
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await page.waitForFunction(() => [...document.images].every((image) => image.complete));
   if (!SHOW_PEOPLE) {
+    // Stops rather than risk a face: a photo the blur doesn't reach could be anyone.
+    const loose = await page.evaluate(
+      (people) =>
+        [...document.images]
+          .filter((image) => !image.matches(people) && !/\.svg(\?|$)/.test(image.currentSrc))
+          .map((image) => image.currentSrc),
+      PEOPLE,
+    );
+    if (loose.length > 0) throw new Error(`Photos the blur doesn't reach: ${loose.join(', ')}`);
     await page.addStyleTag({ content: `${PEOPLE} { filter: blur(14px) !important; }` });
   }
   await page.waitForTimeout(800);
@@ -154,10 +167,13 @@ const capture = async (browser, { name, viewport, isMobile = false, stops, view 
   };
 };
 
-mkdirSync(media, { recursive: true });
-for (const file of readdirSync(media)) rmSync(join(media, file));
 const browser = await chromium.launch();
 const page = {};
 for (const layout of LAYOUTS) page[layout.name] = await capture(browser, layout);
 await browser.close();
-writeFileSync(facts, `${JSON.stringify(page, null, 2)}\n`);
+
+rmSync(media, { recursive: true, force: true });
+cpSync(draft, media, { recursive: true });
+rmSync(draft, { recursive: true, force: true });
+const options = await resolveConfig(facts);
+writeFileSync(facts, await format(JSON.stringify(page), { ...options, parser: 'json' }));

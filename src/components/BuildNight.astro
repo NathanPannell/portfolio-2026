@@ -420,8 +420,6 @@ const steps = titles.map((title, index) => ({
 
   @media (max-width: 760px) {
     .abn-show {
-      --view-ratio: 1.1;
-      --window-share: 0.68;
       --steps-room: calc(100svh - 13rem);
       --step-size: clamp(0.8rem, min(4.5vw, 2.3svh), 1.2rem);
       --bar-height: 1.9rem;
@@ -448,11 +446,13 @@ const steps = titles.map((title, index) => ({
   }
 
   /* Phones on their side keep the words beside the key, and one line above the steps. */
-  /* A short phone needs its room for the list, so the window goes back to a browser's own shape. */
-  @media (max-width: 760px) and (max-height: 660px) {
+  /* A tall window suits a phone's capture, and only that. Past this width the desktop capture shows,
+     and its last stop only fills a window of the usual shape. A short phone needs its room for the
+     list. */
+  @media (max-width: 600px) and (min-height: 661px) {
     .abn-show {
-      --view-ratio: 1.6;
-      --window-share: 0.46;
+      --view-ratio: 1.1;
+      --window-share: 0.68;
     }
   }
 
@@ -520,15 +520,16 @@ const steps = titles.map((title, index) => ({
     }
   }
 
-  /* Without the script to make them buttons, the steps are just a list beside the still page. */
+  /* Until the script makes them buttons, or if it never does, the steps are a list beside the still
+     page. */
+  .abn-show :global([data-layout='rotating'] h3:not(:has(.step__pick))) {
+    display: flex;
+    padding: 0.55em 0.65em;
+  }
+
   @media (scripting: none) {
     .abn-show :global(.steps-set[data-layout='rotating']) {
       height: auto;
-    }
-
-    .abn-show :global([data-layout='rotating'] h3) {
-      display: flex;
-      padding: 0.55em 0.65em;
     }
   }
 </style>

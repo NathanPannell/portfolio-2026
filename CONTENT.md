@@ -30,7 +30,8 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 - **Not Quite My Tempo's surprises:** the owner wants people to find them for themselves, so say "try it yourself" and nothing about what happens. Nothing past the opening goes on this site, in the copy, the pictures, the alt text or the search description. The content contract fails on the obvious words.
 - **Not Quite My Tempo pictures:** the game gets bloody later on, and this site stays out of that. Use nothing with blood in shot unless it is already on the game's own landing page or share card.
 - **AI Build Night links:** only the main site, aibuildnight.ca. Don't link the recap, name a night's number, or name a day of the month.
-- **AI Build Night's window:** it's a capture, and the site can change under it. Recheck the steps against the site whenever it's refreshed.
+- **AI Build Night's words:** in this site's own words, say "one night", never "one hour". A night has about two hours of building.
+- **AI Build Night's window:** it's a capture of the site, and shows what the site says, night numbers and all. The rules above are for this site's own words, and no check can read a picture. Recheck the steps against the site whenever it's refreshed.
 - **Not Quite My Tempo's name:** it's a line from a film. Don't name the film anywhere on this site.
 
 ## Privacy

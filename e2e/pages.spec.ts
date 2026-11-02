@@ -389,6 +389,7 @@ for (const set of sets) {
     await finishStep(steps);
     await expect.poll(() => showing(steps)).toBe(1);
     if (set.name === 'offbooked') await expect.poll(() => showingPicture(steps)).toEqual([1]);
+    else expect(await pageTarget(steps)).toBe((await pageStops(steps))[1]);
     await stepsFit(page, set.scene, set.name);
     await expect(steps.locator('[aria-current="step"]')).toHaveCount(1);
     // All the way round and back to the first.
@@ -591,6 +592,12 @@ test('the capture waits for the section, and only the one on show is fetched who
     .poll(() => asked.filter((url) => url.includes(`/build-night/${shown}-`)).length)
     .toBe(tiles);
   expect(asked.filter((url) => url.includes(`/build-night/${other}-`))).toEqual([]);
+  // A window that changes capture fetches the other one then, because nothing else would.
+  await page.setViewportSize(isMobile ? { width: 1280, height: 800 } : { width: 390, height: 844 });
+  const others = await page.locator(`.site-page__layout--${other} img`).count();
+  await expect
+    .poll(() => asked.filter((url) => url.includes(`/build-night/${other}-`)).length)
+    .toBe(others);
 });
 
 test('every part of the page the window can stop on has loaded by the time it gets there', async ({
@@ -987,6 +994,7 @@ const everySize = [
   [1440, 900],
   [1920, 480],
   [1920, 1080],
+  [700, 1100],
 ] as const;
 
 test('the finished ad keeps its headline and ticket clear at every size', async ({ page }) => {
@@ -1849,6 +1857,24 @@ for (const [width, height] of everySize) {
       await expect(page.locator(part), part).toBeInViewport({ ratio: 1, timeout: 4000 });
     }
     await stepsFit(page, '.abn-cover', `AI Build Night at ${width}x${height}`);
+    // The page always fills the window, even at the very end of it.
+    const steady = await page.addStyleTag({
+      content: '.site-page__strip { transition: none !important; }',
+    });
+    await page.locator('[data-steps="abn"] .step__pick').nth(3).dispatchEvent('click');
+    await expect
+      .poll(() =>
+        page.locator('.site-page').evaluate((view) => {
+          const strip = view.querySelector<HTMLElement>('.site-page__strip:not(:empty)');
+          const shown = [...view.querySelectorAll<HTMLElement>('.site-page__strip')].find(
+            (candidate) => candidate.getClientRects().length > 0,
+          );
+          const end = (shown ?? strip)?.getBoundingClientRect().bottom ?? 0;
+          return end - view.getBoundingClientRect().bottom;
+        }),
+      )
+      .toBeGreaterThanOrEqual(-1);
+    await steady.evaluate((tag) => (tag as HTMLElement).remove());
 
     await landKip(page);
     // Just under 1, because a fractional phone size can leave a millionth of one off screen.
@@ -1992,6 +2018,21 @@ test.describe('reduced motion', () => {
     expect(errors).toEqual([]);
   });
 
+  test('the captured page waits until the window is near', async ({ page }) => {
+    const asked: string[] = [];
+    page.on('request', (request) => asked.push(request.url()));
+    await page.goto('/');
+    await page.waitForTimeout(500);
+    // The browser's own lazy loading may reach a few tiles ahead, and that's all.
+    const early = asked.filter((url) => url.includes('/media/build-night/'));
+    expect(early.length).toBeLessThanOrEqual(4);
+    expect(asked.filter((url) => url.includes('/media/offbooked/'))).toEqual([]);
+    await page.locator('[data-steps="abn"] [data-steps-window]').scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => asked.filter((url) => url.includes('/media/build-night/')).length)
+      .toBeGreaterThan(5);
+  });
+
   test('the page is left exactly where a scroll stops it', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Settling is the same on touch.');
     await page.goto('/');
@@ -2038,6 +2079,9 @@ test('a script that stalls stops holding the scenes closed', async ({ page }) =>
   await expect(page.locator('html')).not.toHaveClass(/stage/, { timeout: 8000 });
   await page.locator('.abn-show__cta').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('.abn-show__cta'))).toBeGreaterThan(0);
+  // The steps stay a tidy list, each number beside its words, with the page still in the window.
+  await expect(page.locator('[data-steps="abn"] h3').first()).toHaveCSS('display', 'flex');
+  await expect(page.locator('[data-steps="abn"] [data-steps-window]')).toBeVisible();
   for (const step of await page.locator('.step').all()) {
     expect(await opacityOf(step)).toBe(1);
   }

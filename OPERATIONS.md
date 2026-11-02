@@ -116,9 +116,9 @@ To change one, add or remove `rotates` on its `<Steps>`. A section that newly ro
 
 The main window in the AI Build Night section is a capture of aibuildnight.ca, not the live site. A real frame is impossible, because Shopify sends `X-Frame-Options: DENY` and `frame-ancestors 'none'`, so it goes stale whenever the site changes. To refresh it:
 
-1. Run `npm run capture:build-night` with a network connection. It rewrites `public/media/build-night/` and `src/components/build-night-page.json` from production, at desktop and phone widths.
-2. If it fails because the page no longer says something, update the text in `LAYOUTS` at the top of `scripts/capture-build-night.mjs`, which is how each step finds its stop. Keep the four steps in `BuildNight.astro` word for word with the site.
-3. Look at all four stops at both sizes before shipping: each should open on a section's real content, not a gap, and no stop should rest on a photo of people.
+1. Run `npm run capture:build-night` with a network connection. It rewrites `public/media/build-night/` and `src/components/build-night-page.json` from production, at desktop and phone widths. A capture that fails changes nothing.
+2. If it stops because the page no longer says something, update the text in `LAYOUTS` at the top of `scripts/capture-build-night.mjs`, which is how each step finds its stop. If it stops over a photo the blur doesn't reach, add that photo's section to `PEOPLE` in the same file. Keep the four steps in `BuildNight.astro` word for word with the site.
+3. Look at all four stops at both sizes before shipping, and at the page between them, which the window scrolls past: each stop should open on a section's real content, not a gap, no stop should rest on a photo of people, and no photo should be unblurred.
 
 Photos of people are blurred at capture, because the owner hasn't yet cleared Night 001 photos for this site. Once attendee permission clears, set `SHOW_PEOPLE` to true in that script and recapture.
 
@@ -141,7 +141,7 @@ The content contract protects:
 - the order of the homepage's sections
 - the outbound links that were checked against the live products
 - no Offbooked store link or price, no Parkdex tester link, and no link to the unconnected notquitemytempo.com
-- that AI Build Night links only to its main site, with no recap link, night number or named day
+- that AI Build Night's own words link only to its main site, with no recap link, night number or named day. The capture in its window is the site itself, and says what the site says.
 - that nothing on the site spoils Not Quite My Tempo, and that its step pictures and on-site model credits stay gone
 - no analytics beacon in the source, and no return of the lines the owner cut
 - the image-fill interaction and its touch equivalent

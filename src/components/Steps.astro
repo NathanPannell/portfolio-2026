@@ -1,7 +1,8 @@
 ---
-// How a section explains itself: numbered steps, each with its own real picture. As written here
-// they are all on screen at once. With `rotates`, `src/scripts/steps.ts` moves the pictures into one
-// main window that rotates through them beside the list. A section sets `--steps-room`, the height
+// How a section explains itself: numbered steps, with a real picture to each, or a captured page that
+// has a stop for each. As written here they are all on screen at once. With `rotates`,
+// `src/scripts/steps.ts` moves the pictures into one main window that rotates through them beside
+// the list. A section sets `--steps-room`, the height
 // these get, `--step-*` for its own colours, `--window` for the main window's width, and dresses the
 // list and the window itself. Parkdex has its own stops on the vine, in the same format.
 interface Step {
@@ -23,8 +24,6 @@ interface Props {
   shape: 'phone' | 'wide';
   // One main window rotating through the pictures, rather than all of them at once.
   rotates?: boolean;
-  // Two by two on a big screen, for four wide pictures that would be small in a row.
-  pairs?: boolean;
   // Gives the main window a browser's address bar, reading this.
   address?: string;
   // Makes the whole main window a link, and says where to in `label`.
@@ -34,17 +33,7 @@ interface Props {
   dwell?: number;
 }
 
-const {
-  name,
-  steps,
-  shape,
-  rotates = false,
-  pairs = false,
-  address,
-  href,
-  label,
-  dwell,
-} = Astro.props;
+const { name, steps, shape, rotates = false, address, href, label, dwell } = Astro.props;
 const widths = shape === 'phone' ? [360, 640] : [480, 900];
 const Window = href ? 'a' : 'div';
 const first = steps[0]?.stop;
@@ -59,7 +48,7 @@ const first = steps[0]?.stop;
   data-opens
   style={`--count: ${steps.length}${first ? `; --at-wide: ${first.wide}; --at-phone: ${first.phone}` : ''}`}
 >
-  <ol class:list={['steps', `steps--${shape}`, { 'steps--pairs': pairs }]} data-steps-list>
+  <ol class:list={['steps', `steps--${shape}`]} data-steps-list>
     {steps.map(({ title, alt, image, video, poster, stop }, index) => (
       <li
         class="step"
@@ -231,31 +220,6 @@ const first = steps[0]?.stop;
     transition:
       opacity 320ms var(--after),
       transform 560ms var(--ease) var(--after);
-  }
-
-  @media (min-width: 761px) and (min-height: 481px) {
-    .steps--pairs {
-      --shot: min(
-        calc((100vw - var(--gutter) * 2 - var(--gap)) / 2 * 0.54),
-        calc((var(--steps-room) - var(--gap)) / 2 * 1.6)
-      );
-      grid-template-rows: none;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--gap);
-    }
-
-    .steps--pairs .step {
-      grid-row: auto;
-      grid-template-rows: none;
-      grid-template-columns: minmax(0, 1fr) var(--shot);
-      gap: clamp(0.75rem, 1.5vw, 1.5rem);
-      align-items: center;
-    }
-
-    .steps--pairs .step__picture {
-      grid-row: 1;
-      grid-column: 2;
-    }
   }
 
   /* Too narrow for pictures side by side at any size, so phones keep the words big and crop. */
