@@ -80,7 +80,7 @@ const steps = [
             offbooked.com <span aria-hidden="true">↗</span>
           </span>
         </a>
-        <Steps name="offbooked" steps={steps} shape="phone" layout="rotating" />
+        <Steps name="offbooked" steps={steps} shape="phone" rotates />
       </div>
     </div>
 
@@ -200,7 +200,6 @@ const steps = [
     --rail-rows: 0.4rem;
     --rail-gap: clamp(1.5rem, 6vw, 6rem);
     --rail-pad: 0.3em 0.5em;
-    --toggle-inset: 0;
     position: absolute;
     z-index: 6;
     top: 0;

@@ -24,6 +24,7 @@ interface Burst {
 }
 
 const noises = new WeakMap<BaseAudioContext, AudioBuffer>();
+const papers = new WeakMap<BaseAudioContext, AudioBuffer>();
 
 const noiseFor = (context: BaseAudioContext) => {
   const known = noises.get(context);
@@ -32,6 +33,22 @@ const noiseFor = (context: BaseAudioContext) => {
   const data = buffer.getChannelData(0);
   for (let index = 0; index < data.length; index += 1) data[index] = Math.random() * 2 - 1;
   noises.set(context, buffer);
+  return buffer;
+};
+
+/** Noise that catches and lets go a few hundred times a second, like wax dragged over paper's tooth. */
+const paperFor = (context: BaseAudioContext) => {
+  const known = papers.get(context);
+  if (known) return known;
+  const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
+  const data = buffer.getChannelData(0);
+  const hold = Math.round(context.sampleRate / 260);
+  let grip = 0;
+  for (let index = 0; index < data.length; index += 1) {
+    if (index % hold === 0) grip = Math.random() ** 2;
+    data[index] = (Math.random() * 2 - 1) * (0.2 + grip * 0.8);
+  }
+  papers.set(context, buffer);
   return buffer;
 };
 
@@ -172,13 +189,13 @@ export const plant: Draw = (context, out) => {
 export const ride =
   (seconds: number): Draw =>
   (context, out) => {
-    whistle(context, out, 1250, 240, 0.26, seconds);
+    whistle(context, out, 1250, 240, 0.116, seconds);
     swell(
       context,
       out,
       'bandpass',
       [1800, 3200, 2400, 1500],
-      0.34,
+      0.152,
       seconds * 0.3,
       seconds * 0.7,
       0.5,
@@ -197,7 +214,7 @@ export const ride =
 export const slide =
   (seconds: number): Draw =>
   (context, out) => {
-    whistle(context, out, 900, 300, 0.28, seconds);
+    whistle(context, out, 900, 300, 0.125, seconds);
   };
 
 /** Up off the end of the vine, over, and down on top of the sign. */
@@ -229,11 +246,49 @@ export const jump =
     });
   };
 
-const CRAYONS = [0.05, 0.09, 0.14, 0.17, 0.23, 0.29, 0.36];
-// C major pentatonic, climbing one note for each band of the rainbow.
-const RAINBOW = [523.25, 587.33, 659.25, 783.99, 880, 1046.5];
+/**
+ * A crayon going back and forth on paper from `at` for `length` seconds: uneven strokes, the hand
+ * lifting a little at each turn, and bearing down hardest in the middle, where the rainbow is fastest.
+ */
+const scribble = (context: BaseAudioContext, out: AudioNode, at: number, length: number) => {
+  const start = context.currentTime + at;
+  const end = start + length;
+  const source = context.createBufferSource();
+  const body = context.createBiquadFilter();
+  const edge = context.createBiquadFilter();
+  const hand = context.createGain();
+  source.buffer = paperFor(context);
+  source.loop = true;
+  body.type = 'bandpass';
+  body.Q.value = 0.6;
+  edge.type = 'highpass';
+  edge.frequency.value = 900;
+  hand.gain.setValueAtTime(0, start);
+  let time = start;
+  let rising = true;
+  while (time < end) {
+    const stroke = Math.min(0.07 + Math.random() * 0.1, end - time);
+    const along = (time - start + stroke / 2) / length;
+    const weight = 0.18 + 0.34 * Math.sin(Math.PI * along) ** 1.5;
+    const pressure = weight * (0.75 + Math.random() * 0.5);
+    // Up the page the crayon bites a little higher than on the way back.
+    body.frequency.setValueAtTime(rising ? 2600 : 3400, time);
+    body.frequency.linearRampToValueAtTime(rising ? 3400 : 2600, time + stroke);
+    hand.gain.setValueAtTime(0.0001, time);
+    hand.gain.linearRampToValueAtTime(pressure, time + stroke * 0.25);
+    hand.gain.linearRampToValueAtTime(pressure * 0.7, time + stroke * 0.8);
+    hand.gain.linearRampToValueAtTime(0.0001, time + stroke);
+    time += stroke + 0.008 + Math.random() * 0.03;
+    rising = !rising;
+  }
+  source.connect(edge).connect(body).connect(hand).connect(out);
+  source.start(start, Math.random());
+  source.stop(end + 0.05);
+};
 
-/** The lid, the crayons jumping out, and a note for each colour as the rainbow crosses. */
+const CRAYONS = [0.05, 0.09, 0.14, 0.17, 0.23, 0.29, 0.36];
+
+/** The lid, the crayons jumping out, and a crayon scribbling as the rainbow crosses. */
 export const toyBox: Draw = (context, out) => {
   tone(context, out, { type: 'triangle', from: 170, to: 90, level: 0.5, at: 0, length: 0.12 });
   burst(context, out, { filter: 'lowpass', frequency: 1100, level: 0.3, at: 0, length: 0.06 });
@@ -241,18 +296,7 @@ export const toyBox: Draw = (context, out) => {
     const frequency = 1700 + (index % 4) * 330;
     burst(context, out, { filter: 'bandpass', frequency, q: 4, level: 0.5, at, length: 0.018 });
   });
-  RAINBOW.forEach((note, index) => {
-    const at = 0.3 + index * 0.11;
-    tone(context, out, { type: 'triangle', from: note, to: note, level: 0.28, at, length: 0.5 });
-    tone(context, out, {
-      type: 'sine',
-      from: note * 2,
-      to: note * 2,
-      level: 0.1,
-      at,
-      length: 0.3,
-    });
-  });
+  scribble(context, out, 0.2, 1.95);
 };
 
 /** A stick on the snare: the crack, the wires, the shell, and the empty room after it. */

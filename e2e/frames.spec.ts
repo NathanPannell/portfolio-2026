@@ -177,10 +177,11 @@ test.describe('scrolling', () => {
     await page.mouse.wheel(0, 620);
     await expect.poll(() => scrollY(page)).toBe(620);
     await glideUnderway(page, 620);
-    await page.locator('.chrome__name').click();
-    await settlesAt(page, 0);
+    await page.locator('.hero__next').click();
+    const top = await topOf(page, '#ai-build-night');
+    await settlesAt(page, top);
     await page.waitForTimeout(IDLE + 300);
-    expect(await scrollY(page)).toBe(0);
+    expect(await scrollY(page)).toBe(top);
   });
 
   test('a key that moved nothing does not settle the next scroll', async ({ page }) => {

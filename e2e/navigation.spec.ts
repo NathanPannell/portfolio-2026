@@ -37,21 +37,17 @@ test('the doors name who each project is for, in the order of the page', async (
     'for casts',
     'for explorers',
     'for creators',
-    'for new drummers',
+    'for fun',
   ]);
 });
 
-test('the header is the name, and nothing else', async ({ page }) => {
+test('nothing is fixed to the screen but the page itself, and the name is in the doors', async ({
+  page,
+}) => {
   await page.goto('/');
-  await expect(page.locator('.chrome')).toHaveText('Nathan Pannell');
+  await expect(page.locator('h1')).toContainText('Nathan Pannell');
+  await expect(page.locator('header.chrome, .chrome__name')).toHaveCount(0);
   await expect(page.locator('[data-for], [data-audience]')).toHaveCount(0);
-});
-
-test('the name returns to the top', async ({ page }) => {
-  await page.goto('/#go');
-  await page.locator('.chrome__name').click();
-  await expect(page).toHaveURL(/#top$/);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(10);
 });
 
 test('the 404 page links back into the site', async ({ page }) => {
@@ -61,7 +57,7 @@ test('the 404 page links back into the site', async ({ page }) => {
   await expect(page.locator('h1')).toBeVisible();
 });
 
-test('the skip link moves keyboard focus past the header', async ({ page, isMobile }) => {
+test('the skip link moves keyboard focus into the page', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
   await page.keyboard.press('Tab');
@@ -69,7 +65,7 @@ test('the skip link moves keyboard focus past the header', async ({ page, isMobi
   await expect(skip).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#main-content$/);
-  // The next Tab lands inside the main content, not on the header link.
+  // The next Tab lands inside the main content.
   await page.keyboard.press('Tab');
   await expect(page.locator('#main-content :focus')).toHaveCount(1);
 });

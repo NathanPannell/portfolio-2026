@@ -35,13 +35,7 @@ const steps = [
           I wanna play <span aria-hidden="true">→</span>
         </a>
       </header>
-      <Steps
-        name="sandbox"
-        steps={steps}
-        shape="wide"
-        layout="side"
-        address="playbythesandbox.ca"
-      />
+      <Steps name="sandbox" steps={steps} shape="wide" />
     </div>
 
     <div class="sb-box">
@@ -149,11 +143,6 @@ const steps = [
     --step-weight: 700;
     --step-tracking: 0;
     --step-wait: 1100ms;
-    --bar-height: 2.4rem;
-    --window: min(58vw, calc((var(--steps-room) - var(--bar-height)) * 1.6));
-    --rail-size: clamp(1.2rem, min(2vw, 3.5svh), 2rem);
-    --rail-rows: 0.75rem;
-    --rail-columns: var(--window) minmax(0, 34rem);
     position: relative;
     display: grid;
     grid-template-rows: auto auto;
@@ -437,79 +426,6 @@ const steps = [
     scale: -1 1;
   }
 
-  /* Rotating: a browser drawn in crayon, and a sticker on whichever step is showing. A crayon runs
-     under it for as long as the step has left, and each new picture is coloured in from the left. */
-  .sb-open__page :global(.steps-set[data-layout='rotating']) {
-    justify-content: center;
-  }
-
-  .sb-open__page :global(.steps-window) {
-    order: -1;
-    overflow: hidden;
-    border: var(--step-frame);
-    border-radius: 0.5rem 0.9rem 0.6rem 1rem;
-    background: var(--step-behind);
-    box-shadow: 0.5rem 0.55rem 0 rgb(46 42 69 / 22%);
-    font-weight: 700;
-    rotate: -0.6deg;
-  }
-
-  .sb-open__page :global(.steps-window__bar) {
-    border-bottom: 3px solid var(--ink);
-    font-size: 1.05rem;
-  }
-
-  .sb-open__page :global(.steps-window__bar i) {
-    border: 2px solid var(--ink);
-    background: #e2231a;
-    opacity: 1;
-  }
-
-  .sb-open__page :global(.steps-window__bar i:nth-child(2)) {
-    background: #f3cf1c;
-  }
-
-  .sb-open__page :global(.steps-window__bar i:nth-child(3)) {
-    background: #2fa84f;
-  }
-
-  .sb-open__page :global(.steps-window__view .step__picture[data-current]) {
-    animation: colour-in 480ms cubic-bezier(0.4, 0, 0.3, 1);
-  }
-
-  @keyframes colour-in {
-    from {
-      clip-path: inset(0 100% 0 0);
-    }
-
-    to {
-      clip-path: inset(0);
-    }
-  }
-
-  .sb-open__page :global([data-layout='rotating'] h3) {
-    border: 3px solid transparent;
-    border-radius: 0.5rem 0.9rem 0.6rem 1rem;
-  }
-
-  .sb-open__page :global([data-layout='rotating'] .step[data-current]) {
-    rotate: -0.5deg;
-  }
-
-  .sb-open__page :global([data-layout='rotating'] .step[data-current] h3) {
-    border-color: var(--ink);
-    background: #f7e29a;
-    box-shadow: 0.25rem 0.3rem 0 var(--ink);
-  }
-
-  .sb-open__page :global(.step__pick) {
-    background: linear-gradient(90deg, #6d3fb0, #1f7fd6) 0 100% / 0 0.3rem no-repeat;
-  }
-
-  .sb-open__page :global([data-current] .step__pick) {
-    background-size: calc(var(--progress) * 100%) 0.3rem;
-  }
-
   .sb__head {
     display: flex;
     flex-wrap: wrap;
@@ -554,9 +470,6 @@ const steps = [
       --title: clamp(2rem, min(9.5vw, 5.4svh), 3.2rem);
       --steps-room: calc(100svh - 10.5rem - var(--title));
       --step-size: clamp(0.85rem, min(4.7vw, 2.6svh), 1.25rem);
-      --bar-height: 2rem;
-      --rail-size: var(--step-size);
-      --rail-rows: 0.3rem;
       gap: 0.75rem;
       padding: 3.25rem var(--gutter) 3.25rem;
     }
@@ -571,28 +484,11 @@ const steps = [
     }
   }
 
-  @media (max-height: 560px) and (orientation: portrait) {
-    .sb-open__page {
-      --bar-height: 1.3rem;
-      --rail-size: 0.8rem;
-      --rail-rows: 0;
-      --rail-pad: 0.05em 0.4em;
-    }
-
-    .sb-open__page :global([data-layout='rotating'] .step[data-current]) {
-      rotate: none;
-    }
-  }
-
   /* Phones on their side keep the name and the link on one line. */
   @media (max-height: 480px) and (orientation: landscape) {
     .sb-open__page {
       --steps-room: calc(100svh - 7.5rem);
       --step-size: 0.95rem;
-      --bar-height: 1.5rem;
-      --window: min(50vw, calc((var(--steps-room) - var(--bar-height)) * 1.6));
-      --rail-rows: 0.2rem;
-      --rail-pad: 0.2em 0.45em;
       gap: 0.4rem;
       padding-top: 2.75rem;
       padding-bottom: 2rem;
@@ -606,11 +502,6 @@ const steps = [
       flex-wrap: nowrap;
     }
 
-    .sb-open__page :global(.steps-window),
-    .sb-open__page :global([data-layout='rotating'] .step[data-current]) {
-      rotate: none;
-    }
-
     .sb__cta {
       font-size: 1rem;
       padding: 0.15rem 0.7rem;
@@ -618,10 +509,6 @@ const steps = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .sb-open__page :global(.steps-window__view .step__picture[data-current]) {
-      animation: none;
-    }
-
     .sb-open {
       height: auto;
     }

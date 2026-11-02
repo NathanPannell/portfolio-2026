@@ -106,19 +106,11 @@ To turn it on, for `portfolio-2026-staging` and then `portfolio-2026`: Cloudflar
 - Do not add `Cache-Control: no-transform` to HTML responses.
 - After enabling, verify exactly one beacon on the custom domain before claiming analytics is active: one `static.cloudflareinsights.com/beacon.min.js` script and one `cdn-cgi/rum` request.
 
-## Choosing each section's steps layout
+## Each section's steps layout
 
-Each section's steps can be side by side or rotating, and the owner is choosing per section. Sections start on: AI Build Night rotating, Offbooked rotating, Parkdex side by side, Sandbox side by side, Not Quite My Tempo rotating. A small pill at the top right of each opened section switches it, and only appears on `staging.nathanpannell.com` and local builds. Every switch updates the address bar, so the link can be sent as it stands. Links name each section by `abn`, `offbooked`, `parkdex`, `sandbox` and `tempo`, each `side` or `rotating`:
+Settled by the owner on 2026-11-01, and the review toggle and links are gone: AI Build Night and Offbooked rotate, Parkdex and Sandbox show every step side by side, and Not Quite My Tempo has no steps, just one window and one link.
 
-`https://staging.nathanpannell.com/?abn=rotating&offbooked=side&parkdex=rotating&sandbox=side&tempo=rotating`
-
-To settle on one for each section:
-
-1. Set the `layout` prop on each `<Steps>` in `BuildNight.astro`, `Offbooked.astro`, `Sandbox.astro` and `Tempo.astro`, and `data-layout-default` in `Parkdex.astro`, to the chosen layout.
-2. Delete `src/components/StepsToggle.astro` and each `<StepsToggle />`, with Parkdex's import of it.
-3. In `src/scripts/steps.ts`, remove `REVIEW_HOSTS`, the `review` and `onChoose` arguments, `writeLink`, the `choices` and `toggle` code and the `asked` lookup.
-4. Remove the toggle's tests from `e2e/pages.spec.ts`, the production test among them, and move the rest off the review links at the top of the steps tests.
-5. If no section ended up rotating, delete `steps.ts` and its call in `index.astro`, the window markup and rotating styles, `--progress` in `global.css`, `data-counting`, and `moment:landed` in `ride.ts`. If none stayed side by side, keep the side-by-side markup and styles anyway: they are what shows without JavaScript.
+To change one, add or remove `rotates` on its `<Steps>`. A section that newly rotates also needs its `--window` and its own dress for the window and list, which `BuildNight.astro` and `Offbooked.astro` show. Parkdex has its own markup, so rotating it would mean writing that again: it's in git history before the round-eight commit.
 
 ## Required UI verification
 
@@ -139,6 +131,8 @@ The content contract protects:
 - the order of the homepage's sections
 - the outbound links that were checked against the live products
 - no Offbooked store link or price, no Parkdex tester link, and no link to the unconnected notquitemytempo.com
+- that AI Build Night links only to its main site, with no recap link, night number or named day
+- that nothing on the site spoils Not Quite My Tempo, and that its step pictures and on-site model credits stay gone
 - no analytics beacon in the source, and no return of the lines the owner cut
 - the image-fill interaction and its touch equivalent
 - a reduced-motion layout in every world

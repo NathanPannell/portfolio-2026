@@ -1,11 +1,9 @@
 ---
-import StepsToggle from './StepsToggle.astro';
-
 // How a section explains itself: numbered steps, each with its own real picture. As written here
-// they are all on screen at once. `src/scripts/steps.ts` can move the pictures into one main window
-// that rotates through them beside the list. A section sets `--steps-room`, the height these get,
-// `--step-*` for its own colours, `--window` for the main window's width, and dresses the list and
-// the window itself. Parkdex has its own stops on the vine, in the same format.
+// they are all on screen at once. With `rotates`, `src/scripts/steps.ts` moves the pictures into one
+// main window that rotates through them beside the list. A section sets `--steps-room`, the height
+// these get, `--step-*` for its own colours, `--window` for the main window's width, and dresses the
+// list and the window itself. Parkdex has its own stops on the vine, in the same format.
 interface Step {
   title: string;
   alt: string;
@@ -16,26 +14,30 @@ interface Step {
 }
 
 interface Props {
-  // What this set goes by in a review link: `?offbooked=rotating`.
+  // What this set goes by, for anything that needs to find it.
   name: string;
   steps: Step[];
   shape: 'phone' | 'wide';
-  // Which layout a visitor starts on.
-  layout: 'side' | 'rotating';
+  // One main window rotating through the pictures, rather than all of them at once.
+  rotates?: boolean;
   // Two by two on a big screen, for four wide pictures that would be small in a row.
   pairs?: boolean;
   // Gives the main window a browser's address bar, reading this.
   address?: string;
+  // Makes the whole main window a link, and says where to in `label`.
+  href?: string;
+  label?: string;
 }
 
-const { name, steps, shape, layout, pairs = false, address } = Astro.props;
+const { name, steps, shape, rotates = false, pairs = false, address, href, label } = Astro.props;
 const widths = shape === 'phone' ? [360, 640] : [480, 900];
+const Window = href ? 'a' : 'div';
 ---
 
 <div
   class="steps-set"
   data-steps={name}
-  data-layout-default={layout}
+  data-rotates={rotates}
   data-opens
   style={`--count: ${steps.length}`}
 >
@@ -81,18 +83,30 @@ const widths = shape === 'phone' ? [360, 640] : [480, 900];
       </li>
     ))}
   </ol>
-  <div class={`steps-window steps-window--${shape}`} data-steps-window hidden>
-    {address && (
-      <div class="steps-window__bar" aria-hidden="true">
-        <i></i>
-        <i></i>
-        <i></i>
-        <span>{address}</span>
-      </div>
-    )}
-    <div class="steps-window__view" data-steps-view></div>
-  </div>
-  <StepsToggle />
+  {rotates && (
+    <Window
+      class={`steps-window steps-window--${shape}`}
+      href={href}
+      aria-label={label}
+      data-steps-window
+      hidden
+    >
+      {address && (
+        <div class="steps-window__bar" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <span>{address}</span>
+        </div>
+      )}
+      <div class="steps-window__view" data-steps-view />
+      {href && (
+        <span class="steps-window__go" aria-hidden="true">
+          Open {address} ↗
+        </span>
+      )}
+    </Window>
+  )}
 </div>
 
 <style>
@@ -360,7 +374,9 @@ const widths = shape === 'phone' ? [360, 640] : [480, 900];
 
   .steps-window {
     position: relative;
+    display: block;
     width: var(--window);
+    text-decoration: none;
   }
 
   .steps-window[hidden] {
@@ -398,6 +414,33 @@ const widths = shape === 'phone' ? [360, 640] : [480, 900];
   .steps-window__view {
     display: grid;
     overflow: hidden;
+  }
+
+  /* A window that is a link says so as the mouse comes onto it. */
+  .steps-window__go {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.45em 0.75em;
+    border-radius: 0.3rem;
+    background: var(--step-number, currentColor);
+    color: var(--step-number-ink, #fff);
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 160ms;
+    pointer-events: none;
+  }
+
+  a.steps-window:focus-visible .steps-window__go {
+    opacity: 1;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a.steps-window:hover .steps-window__go {
+      opacity: 1;
+    }
   }
 
   .steps-window__view .step__picture {
@@ -454,7 +497,8 @@ const widths = shape === 'phone' ? [360, 640] : [480, 900];
     .step,
     .steps-window,
     .steps-window__view .step__picture,
-    .steps-window__view .step__picture[data-current] {
+    .steps-window__view .step__picture[data-current],
+    .steps-window__go {
       transition: none;
     }
   }

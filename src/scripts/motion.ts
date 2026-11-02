@@ -20,16 +20,16 @@ export const startRests = () => {
 // A blob plays everywhere, and the poster stays up if the fetch fails.
 const onScreen = new WeakSet<HTMLVideoElement>();
 
-/** Plays a loop that can be seen. A rotating window stacks its pictures, so being on screen isn't enough. */
-export const playLoop = async (video: HTMLVideoElement) => {
-  if (video.matches('[data-steps-view] figure:not([data-current]) video')) return;
+const playLoop = async (video: HTMLVideoElement) => {
   if (video.src && onScreen.has(video)) await video.play().catch(() => undefined);
 };
 
 const loadLoop = async (video: HTMLVideoElement) => {
   if (!video.src && !video.hasAttribute('data-loading')) {
     video.toggleAttribute('data-loading', true);
-    const response = await fetch(video.dataset['src'] ?? '').catch(() => undefined);
+    // A loop with a tall cut uses it on an upright screen, the same way the game picks its own.
+    const tall = window.innerHeight > window.innerWidth ? video.dataset['srcTall'] : undefined;
+    const response = await fetch(tall ?? video.dataset['src'] ?? '').catch(() => undefined);
     if (!response?.ok) return;
     video.src = URL.createObjectURL(await response.blob());
   }

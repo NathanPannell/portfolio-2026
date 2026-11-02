@@ -50,7 +50,6 @@ for (const id of worlds) {
 // The links that matter. Each of these was checked by hand against the live product.
 for (const url of [
   'https://aibuildnight.ca/',
-  'https://aibuildnight.ca/pages/past-nights',
   'https://www.playbythesandbox.ca/',
   'https://offbooked.com/',
   'https://parkdex.app/',
@@ -96,22 +95,29 @@ for (const path of sources) {
   assert.doesNotMatch(source, /scroll-snap/, `No CSS snapping: ${name}`);
 }
 
-// The game's pictures show CC BY 4.0 models, and the licence requires a credit. It lives on this page,
-// as a native disclosure, so it needs no script and nobody has to go to the game to find it.
+// Not Quite My Tempo is one window and one link, and nothing on the site gives the game away.
 const tempo = readFileSync(join(root, 'src', 'components', 'Tempo.astro'), 'utf8');
-assert.match(tempo, /<details class="tp-credits"[^>]*>\s*<summary>Model credits<\/summary>/);
-assert.match(tempo, /https:\/\/creativecommons\.org\/licenses\/by\/4\.0\//);
-for (const [title, author, id] of [
-  ['Drum Kit', 'Serg.Morgun', '99218427e7a2424ea8afc9b8c668a5c7'],
-  ['Trumpet', 'Tnkii', '3f2d4f5b962340b2933012e1bc634d88'],
-  ['Used Trombone', 'sethgordon', '3709e96c01694bc791b118e2ce534910'],
-  ['Old Double Bass Low Poly Decimated', 'Musicmastermatt', '66ab8bded2d54dcd97ceb60aebc13f04'],
-  ['Grand Piano', 'farhad.Guli', '371090c279ff4e77a59acdebc25b5892'],
+assert.doesNotMatch(tempo, /<Steps\b/, 'The game has no steps');
+assert.match(tempo, /<a class="tp-window" href=\{game\}/, 'The window is the way into the game');
+assert.match(tempo, /muted\s+loop\s+playsinline/, 'The loop is silent, and stays in its window');
+assert.match(tempo, /<picture>/, 'A still stands in for the loop, under reduced motion and no JS');
+for (const name of [
+  join('components', 'Tempo.astro'),
+  join('components', 'Index.astro'),
+  join('components', 'heroes', 'worlds.ts'),
+  join('layouts', 'SiteLayout.astro'),
 ]) {
-  for (const part of [`title: '${title}'`, author, `-${id}'`]) {
-    assert(tempo.includes(part), `The model credits must keep ${part}`);
-  }
+  assert.doesNotMatch(
+    readFileSync(join(root, 'src', name), 'utf8').replace(/\/\/.*$/gm, ''),
+    /\b(duck|chair|endings?|the nod|fifth name|stop question)\b/i,
+    `No spoilers: ${name}`,
+  );
 }
+for (const path of filesUnder(join(root, 'public', 'media'))) {
+  assert.doesNotMatch(path, /[\\/]tempo[\\/](chair|ending|stop|stool)-/, 'No step pictures');
+}
+// The credits are the game's own, under Credits on its title screen.
+assert.doesNotMatch(markup, /tp-credits|sketchfab\.com/, 'The model credits live on the game');
 
 // Every section has its own thing to click, and it stays reachable by keyboard: a real button.
 for (const [component, control] of [
@@ -144,15 +150,27 @@ assert.deepEqual(
   'Doors is the one hero',
 );
 
-// Each section says what it does in numbered steps, all on screen at once.
-for (const component of ['BuildNight', 'Offbooked', 'Sandbox', 'Tempo']) {
+// Each section says what it does in numbered steps, and the layouts are settled.
+for (const component of ['BuildNight', 'Offbooked', 'Sandbox']) {
   const source = readFileSync(join(root, 'src', 'components', `${component}.astro`), 'utf8');
   assert.match(source, /<Steps\b/, `${component} explains itself in steps`);
 }
 
+assert.doesNotMatch(markup, /data-layout-pick|data-steps-toggle/, 'The layout toggle is gone');
+assert(!existsSync(join(root, 'src', 'components', 'Chrome.astro')), 'The fixed name is gone');
+
 // The night's real schedule has about two hours of building, so it can't be called one hour.
 const buildNight = readFileSync(join(root, 'src', 'components', 'BuildNight.astro'), 'utf8');
 assert.doesNotMatch(buildNight, /one hour/i, 'A night is not an hour of building');
+
+// The section points at the site itself, and doesn't promise a date or a night number.
+assert.doesNotMatch(markup, /past-nights|Read the recap/, 'Only the main site is linked');
+assert.doesNotMatch(
+  markup.replace(/^\/\/.*$/gm, ''),
+  /third Thursday|Night 00\d/i,
+  'No night numbers or days',
+);
+assert.match(buildNight, /href="https:\/\/aibuildnight\.ca\/"\n\s+label=/, 'The window is a link');
 
 // The kept interaction: a row fills with a full-colour image, with a touch equivalent. The images
 // are drawn for the row and pinned to its height, so `cover` can't crop them down to a strip.
