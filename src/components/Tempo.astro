@@ -28,6 +28,36 @@ const steps = [
 ];
 
 const beats = ['One', 'Two', 'Three', 'Four'];
+
+// The licence asks for this, and it has to be here: every one of these is in these pictures. The sax,
+// chair and clock in shot are CC0, so they need no credit.
+const models = [
+  {
+    title: 'Drum Kit',
+    by: 'Serg.Morgun',
+    href: 'https://sketchfab.com/3d-models/drum-kit-99218427e7a2424ea8afc9b8c668a5c7',
+  },
+  {
+    title: 'Trumpet',
+    by: 'Charlie Tinley (Tnkii)',
+    href: 'https://sketchfab.com/3d-models/trumpet-3f2d4f5b962340b2933012e1bc634d88',
+  },
+  {
+    title: 'Used Trombone',
+    by: 'sethgordon',
+    href: 'https://sketchfab.com/3d-models/used-trombone-3709e96c01694bc791b118e2ce534910',
+  },
+  {
+    title: 'Old Double Bass Low Poly Decimated',
+    by: 'Musicmastermatt',
+    href: 'https://sketchfab.com/3d-models/old-double-bass-low-poly-decimated-66ab8bded2d54dcd97ceb60aebc13f04',
+  },
+  {
+    title: 'Grand Piano',
+    by: 'farhad.Guli',
+    href: 'https://sketchfab.com/3d-models/grand-piano-371090c279ff4e77a59acdebc25b5892',
+  },
+];
 ---
 
 <section
@@ -50,6 +80,24 @@ const beats = ['One', 'Two', 'Three', 'Four'];
       <a class="tp__cta" href="https://notquitemytempo-sand.vercel.app/" data-opens>
         Take the stool <span aria-hidden="true">→</span>
       </a>
+      <details class="tp-credits" data-opens>
+        <summary>Model credits</summary>
+        <div class="tp-credits__list">
+          <span>Rendered in the game, from:</span>
+          <ul>
+            {models.map(({ title, by, href }) => (
+              <li>
+                <a href={href}>“{title}”</a> by {by},{' '}
+                <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+              </li>
+            ))}
+            <li>
+              <a href="https://github.com/microsoft/Microsoft-Rocketbox">Microsoft Rocketbox</a>{' '}
+              characters, MIT
+            </li>
+          </ul>
+        </div>
+      </details>
     </header>
     <Steps name="tempo" steps={steps} shape="wide" layout="rotating" address="His patience" pairs />
   </div>
@@ -196,7 +244,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
   .tp__cta {
     position: relative;
     z-index: 3;
-    grid-row: 1 / span 2;
+    grid-row: 1;
     grid-column: 2;
     padding: 0.8rem 1.25rem;
     border: 1px solid rgb(239 229 207 / 45%);
@@ -217,6 +265,52 @@ const beats = ['One', 'Two', 'Three', 'Four'];
     .tp__cta:hover {
       background: var(--tp-cream);
     }
+  }
+
+  /* Quiet until asked. It opens over the steps, on this page, and needs no script to. */
+  .tp-credits {
+    position: relative;
+    z-index: 3;
+    grid-row: 2;
+    grid-column: 2;
+    justify-self: end;
+    color: var(--tp-smoke);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-style: normal;
+    line-height: 1.5;
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  .tp-credits__list {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    right: 0;
+    display: grid;
+    gap: 0.35rem;
+    width: min(32rem, calc(100vw - var(--gutter) * 2));
+    max-height: calc(100svh - 7rem);
+    overflow: auto;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid rgb(239 229 207 / 22%);
+    border-radius: 2px;
+    background: var(--tp-ink);
+    color: var(--tp-cream);
+  }
+
+  .tp-credits__list ul {
+    display: grid;
+    gap: 0.2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tp-credits__list a {
+    color: inherit;
   }
 
   /* The heading follows the steps in, once the room is up. */
@@ -572,6 +666,10 @@ const beats = ['One', 'Two', 'Three', 'Four'];
 
   /* A short phone gives the tagline's room to the steps. */
   @media (max-width: 760px) and (max-height: 700px) and (orientation: portrait) {
+    h2 {
+      grid-row: 1 / span 2;
+    }
+
     .tp__head p {
       display: none;
     }
@@ -609,6 +707,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
     }
 
     .tp__head {
+      grid-template-columns: minmax(0, 1fr) auto auto;
       align-items: center;
     }
 
@@ -617,7 +716,12 @@ const beats = ['One', 'Two', 'Three', 'Four'];
     }
 
     .tp__cta {
+      grid-column: 3;
       padding: 0.3rem 0.6rem;
+    }
+
+    .tp-credits {
+      grid-row: 1;
     }
   }
 
