@@ -235,11 +235,15 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
     const parts = [
       document.querySelector<HTMLElement>('.chrome__name'),
       ...root.querySelectorAll<HTMLElement>(
-        '[data-step], [data-steps-window], .steps-toggle, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2, .tp__head h2, .tp__head p, .pk-slide',
+        '[data-step], [data-steps-window], .steps-toggle, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2, .tp__head h2, .tp__head p, .tp-credits summary, .pk-slide',
       ),
     ].filter(
       (part): part is HTMLElement =>
-        !!part && !part.closest('[inert]') && part.getClientRects().length > 0,
+        !!part &&
+        !part.closest('[inert]') &&
+        // What a closed disclosure holds isn't on screen, whatever its boxes say.
+        !part.closest('details:not([open]) > :not(summary)') &&
+        part.getClientRects().length > 0,
     );
     const hits: string[] = [];
     for (const [index, part] of parts.entries()) {
@@ -1397,11 +1401,45 @@ test('the verdict clears, and leaves the room to the steps and one link', async 
   await page.goto('/');
   await useControl(page, '.tp', '.tp-tap');
   await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
-  await expect(page.locator('.tp a')).toHaveCount(1);
+  await expect(page.locator('.tp a:not(.tp-credits a)')).toHaveCount(1);
   await expect(page.locator('.tp__cta')).toHaveAttribute(
     'href',
     'https://notquitemytempo-sand.vercel.app/',
   );
+});
+
+for (const link of [sideBySide, allRotating]) {
+  test(`the model credits open on the page at ${link}`, async ({ page }) => {
+    await page.goto(link);
+    await useControl(page, '.tp', '.tp-tap');
+    await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
+    const credits = page.locator('.tp-credits');
+    await expect(credits.locator('summary')).toBeInViewport({ ratio: 1 });
+    await expect(credits.locator('a[href*="sketchfab.com"]')).toHaveCount(5);
+    await expect(credits.locator('.tp-credits__list')).toBeHidden();
+    await credits.locator('summary').click();
+    const list = credits.locator('.tp-credits__list');
+    await expect(list).toBeInViewport({ ratio: 1 });
+    await expect(list.locator('a[href*="sketchfab.com"]')).toHaveCount(5);
+    await expect(list.locator('a[href*="creativecommons.org"]')).toHaveCount(5);
+    await expect(list).toContainText('“Drum Kit” by Serg.Morgun, CC BY 4.0');
+    await expect(list).toContainText('Microsoft Rocketbox characters, MIT');
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
+    await credits.locator('summary').click();
+    await expect(list).toBeHidden();
+  });
+}
+
+test('the keyboard reaches the model credits only once the section is open', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await expect(page.locator('.tp-credits')).toHaveJSProperty('inert', true);
+  await page.locator('.tp-tap').press('Enter');
+  await expect(page.locator('.tp-credits')).toHaveJSProperty('inert', false);
 });
 
 test('his patience runs out over each step, and is full when nothing is counting', async ({
@@ -1678,6 +1716,7 @@ test.describe('reduced motion', () => {
     await expect(page.locator('[data-stop] h3').first()).toBeVisible();
     await expect(page.locator('.tp-closed')).toBeHidden();
     await expect(page.locator('.tp__cta')).toBeVisible();
+    await expect(page.locator('.tp-credits summary')).toBeVisible();
     await expect(page.locator('.ticket')).toHaveCSS('opacity', '1');
     for (const step of await page.locator('.step').all()) {
       await expect(step).toHaveCSS('opacity', '1');
@@ -1782,6 +1821,8 @@ test.describe('without JavaScript', () => {
     await expect(page.locator('.wipe')).toBeHidden();
     await expect(page.locator('.tp-closed')).toBeHidden();
     await expect(page.locator('.tp__cta')).toBeVisible();
+    await page.locator('.tp-credits summary').click();
+    await expect(page.locator('.tp-credits a[href*="sketchfab.com"]').first()).toBeVisible();
     await expect(page.locator('[data-moment-control]:visible')).toHaveCount(0);
   });
 });

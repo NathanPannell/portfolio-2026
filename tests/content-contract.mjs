@@ -96,6 +96,23 @@ for (const path of sources) {
   assert.doesNotMatch(source, /scroll-snap/, `No CSS snapping: ${name}`);
 }
 
+// The game's pictures show CC BY 4.0 models, and the licence requires a credit. It lives on this page,
+// as a native disclosure, so it needs no script and nobody has to go to the game to find it.
+const tempo = readFileSync(join(root, 'src', 'components', 'Tempo.astro'), 'utf8');
+assert.match(tempo, /<details class="tp-credits"[^>]*>\s*<summary>Model credits<\/summary>/);
+assert.match(tempo, /https:\/\/creativecommons\.org\/licenses\/by\/4\.0\//);
+for (const [title, author, id] of [
+  ['Drum Kit', 'Serg.Morgun', '99218427e7a2424ea8afc9b8c668a5c7'],
+  ['Trumpet', 'Tnkii', '3f2d4f5b962340b2933012e1bc634d88'],
+  ['Used Trombone', 'sethgordon', '3709e96c01694bc791b118e2ce534910'],
+  ['Old Double Bass Low Poly Decimated', 'Musicmastermatt', '66ab8bded2d54dcd97ceb60aebc13f04'],
+  ['Grand Piano', 'farhad.Guli', '371090c279ff4e77a59acdebc25b5892'],
+]) {
+  for (const part of [`title: '${title}'`, author, `-${id}'`]) {
+    assert(tempo.includes(part), `The model credits must keep ${part}`);
+  }
+}
+
 // Every section has its own thing to click, and it stays reachable by keyboard: a real button.
 for (const [component, control] of [
   ['BuildNight', 'abn-key'],
