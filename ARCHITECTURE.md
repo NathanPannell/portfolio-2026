@@ -13,16 +13,14 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/pages/404.astro` | Static recovery page. |
 | `src/layouts/SiteLayout.astro` | Document shell, metadata, JSON-LD, shared fonts, and global styles. |
 | `src/styles/global.css` | Shell only: reset, tokens, skip link, 404. |
-| `src/components/Chrome.astro` | Fixed name link. |
 | `src/components/Hero.astro` | The hero frame. |
 | `src/components/heroes/` | Doors, the hero, plus `worlds.ts`, the facts about the five projects. |
-| `src/components/Steps.astro` | The numbered steps each section explains itself with, and the main window they can rotate in. |
-| `src/components/StepsToggle.astro` | The small review control that switches a section between its two layouts. |
-| `src/components/BuildNight.astro` | AI Build Night: cover and key, then its four steps and links on one screen. |
+| `src/components/Steps.astro` | The numbered steps a section explains itself with, and the main window they rotate in. |
+| `src/components/BuildNight.astro` | AI Build Night: cover and key, then its four steps, one link, and a window that is a link too. |
 | `src/components/Offbooked.astro` | Curtains and rope, then the title, one link and four steps. |
 | `src/components/Parkdex.astro` | Sky, Plant!, the ride, the four stops, the way on down, and the park at the bottom with its links. |
 | `src/components/Sandbox.astro` | Toy box and rainbow, then the name, one link and three steps. |
-| `src/components/Tempo.astro` | The view from the stool and the tap ring, then the name, one link and four steps. |
+| `src/components/Tempo.astro` | The view from the stool and the tap ring, then the name, one line, one link and one big looping window. |
 | `src/components/Index.astro` | The image-fill index and contact footer. |
 | `src/scripts/frames.ts` | Marks the frame on screen, and frames the nearest screen once a scroll has been left alone. |
 | `src/scripts/moments.ts` | The click-to-open scenes, which only the visitor can open. |
@@ -30,13 +28,14 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/scripts/doors.ts` | The doors swing open before the page moves on. |
 | `src/scripts/cover.ts` | AI Build Night: the cursor the steps open from, and the Enter key. |
 | `src/scripts/tempo.ts` | Not Quite My Tempo: judges the press that opens it against the ring's beat. |
-| `src/scripts/steps.ts` | Each section's layout, the rotation and its pausing, and the review toggle and links. |
+| `src/scripts/steps.ts` | The rotation and its pausing, for the sections that rotate. |
 | `src/scripts/sound.ts` | Every sound on the page, made with Web Audio. |
 | `src/scripts/ride.ts` | Parkdex: Kip's timed ride down the vine, forest layers, and the slide to the park and the jump. |
+| `src/scripts/swing.ts` | Parkdex: each stop as a pendulum on its vine, with a sway of its own and a push from a pointer or finger. |
 | `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
 | `tests/content-contract.mjs` | Section order, required links, claims guards, reduced-motion coverage, media budget. |
 | `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonical, share card, JSON-LD, 404. |
-| `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps in both layouts, sixteen viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
+| `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps, sixteen viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
 | `.github/workflows/ci.yml` | The CI gate for PRs to `main` (run locally for PRs to `staging`). |
 | `public/_headers` | Cloudflare security and caching headers. |
 | `public/_redirects` | Old project and essay URLs. |
@@ -66,24 +65,28 @@ AI Build Night's steps open from the block cursor: `startCover` measures the cur
 
 Not Quite My Tempo's ring is a CSS animation at the game's warm-up tempo, 96 beats a minute. It makes no sound, because only a press does, and it rests off screen like any other loop. `startTempo` reads where a press landed from the animation's own clock, at `pointerdown` or `keydown` rather than the click, which waits for the button or the space bar to come back up. Any press opens the scene. The word it gets uses the game's windows: 45 ms for Perfect, 90 ms for Good, and Rushing or Dragging past that.
 
-Each press has a sound, all in `sound.ts`: the thocc, the curtains, the flag and the vine, the toy box, and the snare. They are made with Web Audio, so there are no files to fetch, and only a press starts one: scrolling to the park plays Kip's jump silently. iOS keeps audio suspended until a finger lifts, and anything scheduled before then waits, so a rope pulled by hand sounds when it is let go if nothing on the page has been tapped yet. The phone's silent switch still silences everything.
+Each press has a sound, all in `sound.ts`: the thocc, the curtains, the flag and the vine, the toy box with a crayon scribbling as the rainbow crosses, and the snare. They are made with Web Audio, so there are no files to fetch, and only a press starts one: scrolling to the park plays Kip's jump silently. iOS keeps audio suspended until a finger lifts, and anything scheduled before then waits, so a rope pulled by hand sounds when it is let go if nothing on the page has been tapped yet. The phone's silent switch still silences everything.
 
 Parkdex's ride is a timed `requestAnimationFrame` tween rather than CSS, because Kip has to follow the vine's curve at whatever width the screen is. Parkdex is the one taller zone: opening it adds the park as a second screen, in normal flow, so it can be scrolled to as well as ridden to. The slide uses a second Kip, loose in the section so neither screen clips it, and carries the page along until any input lets go. The vine carries on into the park at the same point in its curve. Arriving at the park by scrolling plays the end of the same trip, so Kip always makes the jump.
 
+Parkdex's stops hang from vines of their own, drawn by `.pk-stop::before` from `strand.svg`, so they are there still under reduced motion or without JavaScript. `swing.ts` makes each one a pendulum, rotating the stop about a pivot above the top of the screen. It runs on elapsed time at a fixed physics step, so a slow phone swings at the same speed in fewer frames. A stop's own sway is added on top of a damped spring that a pointer's speed, a tap or a neighbour can push. Neighbours in a row pass a swing on when they meet, and the edges of the screen stop one, so a stop can't overlap the next or leave the screen, and a swing has a limit as a share of the vine's length so that a title stays readable. The phone hangs from its sign on a short link of its own, and trails the swing. All of it rests off screen, and never starts under reduced motion.
+
 The rainbow is two CSS animations: the bands cross by `transform` alone, and the toy box disappears while they cover the screen. It plays whole whatever the scroll does. Don't go back to drawing it with `stroke-dashoffset`: a dash restarts on every subpath.
+
+A link around a picture is one link: AI Build Night's main window and Not Quite My Tempo's window are real `<a>`s, with the link's name in `aria-label` and a hover cue, and each section's visible link goes to the same place.
 
 A `[data-loops]` scene has its looping CSS paused while it is off screen (`startRests`), which stops a page's worth of idle animations from recalculating style every frame.
 
 ## Steps
 
-Each section says what it does in three or four numbered steps, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked, Sandbox and Not Quite My Tempo, and Parkdex's stops on the vine are the same idea in its own design. There are two layouts, and the owner is comparing them per section:
+Most sections say what they do in three or four numbered steps, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked and Sandbox, and Parkdex's stops on the vine are the same idea in its own design. Not Quite My Tempo has no steps: it isn't detailed enough to need them, and they could only spoil it. There are two layouts, settled per section in `OPERATIONS.md`:
 
-- **Side by side:** every step and picture on screen at once. This is what the markup is, so it is what shows without JavaScript or if the script stalls.
-- **Rotating:** the whole list stays on screen, and one main window shows one picture at a time. `src/scripts/steps.ts` moves the pictures into the window, so nothing is written twice. Each section dresses this its own way, because four matching templates was the owner's complaint: a browser that loads each page for AI Build Night, one phone beside a marked-up page of the script for Offbooked, trail signs and a hanging phone with Kip on the vine for Parkdex, a browser drawn in crayon for Sandbox, and the game's own screen for Not Quite My Tempo, with his patience running out over each step. `data-counting` on the set says a count is running, so that bar can stand full when none is.
+- **Side by side:** every step and picture on screen at once. This is what the markup is, so it is also what shows for AI Build Night and Offbooked without JavaScript or if the script stalls. Sandbox and Parkdex use it for real.
+- **Rotating:** the whole list stays on screen, and one main window shows one picture at a time. `src/scripts/steps.ts` moves the pictures into the window, so nothing is written twice. Each section dresses this its own way, because matching templates were the owner's complaint: a browser that loads each page for AI Build Night, and one phone beside a marked-up page of the script for Offbooked.
 
-The rotation's rules live in `startSet`. It starts only after the opening (`moment:open`, or `moment:landed` for Parkdex), so it never depends on scrolling, and it never runs under reduced motion, where the list is simply there to pick from. Its count is a Web Animation of `--progress` on the set, not a timer, so hovering, focusing or leaving the screen can pause it mid-step and a section can draw how long is left. Hover and focus only count on the list and the window, and hover needs real movement, because the mouse that pressed a section's control is often left resting right where the window appears. Picking a step by hover, tap, click or keys stops the rotation for good.
+The rotation's rules live in `startSet`. It starts only after the opening (`moment:open`), so it never depends on scrolling, and it never runs under reduced motion, where the list is simply there to pick from. Its count is a Web Animation of `--progress` on the set, not a timer, so hovering, focusing or leaving the screen can pause it mid-step and a section can draw how long is left. Hover and focus only count on the list and the window, and hover needs real movement, because the mouse that pressed a section's control is often left resting right where the window appears. Picking a step by hover, tap, click or keys stops the rotation for good, and never follows a window's link.
 
-A section sets `--steps-room`, the height the steps get, `--step-*` for its colours and type, and `--window` for the width of the main window. Every size then comes from those and the screen's width, so the steps fit the screen they are on: `e2e/pages.spec.ts` checks both layouts at sixteen sizes, including that nothing overlaps. Side by side, wide pictures sit two by two on a big screen with `pairs`, in a row otherwise, and beside their words on a phone. App screens crop from the top on a phone, because the top of the screen is what shows the step.
+A section sets `--steps-room`, the height the steps get, `--step-*` for its colours and type, and `--window` for the width of the main window. Every size then comes from those and the screen's width, so the steps fit the screen they are on: `e2e/pages.spec.ts` checks every section at sixteen sizes, including that nothing overlaps. Side by side, wide pictures sit two by two on a big screen with `pairs`, in a row otherwise, and beside their words on a phone. App screens crop from the top on a phone, because the top of the screen is what shows the step.
 
 ## Reduced motion and no JavaScript
 

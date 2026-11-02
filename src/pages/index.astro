@@ -2,7 +2,6 @@
 import '@fontsource-variable/bricolage-grotesque/wght.css';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import BuildNight from '../components/BuildNight.astro';
-import Chrome from '../components/Chrome.astro';
 import Hero from '../components/Hero.astro';
 import Index from '../components/Index.astro';
 import Offbooked from '../components/Offbooked.astro';
@@ -12,9 +11,7 @@ import Tempo from '../components/Tempo.astro';
 ---
 
 <SiteLayout>
-  <Chrome />
   <main id="main-content">
-    <div id="top"></div>
     <Hero />
     <BuildNight />
     <Offbooked />
@@ -34,6 +31,7 @@ import Tempo from '../components/Tempo.astro';
   import { startRide } from '../scripts/ride';
   import { startSounds } from '../scripts/sound';
   import { startSteps } from '../scripts/steps';
+  import { startSwing } from '../scripts/swing';
   import { startTempo } from '../scripts/tempo';
   import { startWash } from '../scripts/wash';
 
@@ -48,6 +46,7 @@ import Tempo from '../components/Tempo.astro';
     startCover,
     startTempo,
     startRide,
+    startSwing,
     startSounds,
     startWash,
     startFrames,

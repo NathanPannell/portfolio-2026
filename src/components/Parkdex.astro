@@ -1,6 +1,4 @@
 ---
-import StepsToggle from './StepsToggle.astro';
-
 const stops = [
   {
     image: 'arrival',
@@ -56,50 +54,28 @@ const stops = [
       <div class="pk-canopy" aria-hidden="true"></div>
 
       <div class="pk-forest" data-forest-floor data-opens>
-        <div
-          class="pk-steps"
-          data-steps="parkdex"
-          data-layout-default="side"
-          data-start-on="moment:landed"
-          style={`--count: ${stops.length}`}
-        >
-          <ol class="pk-stops" data-steps-list>
-            {stops.map((stop, index) => (
-              <li class="pk-stop" data-stop data-step style={`--stop: ${index}`}>
-                <h3>
-                  <span aria-hidden="true">{index + 1}</span> {stop.title}
-                </h3>
-                <figure class="pk-hang">
-                  <img
-                    src={`/media/parkdex/${stop.image}-360.webp`}
-                    srcset={`/media/parkdex/${stop.image}-360.webp 360w, /media/parkdex/${stop.image}-640.webp 640w`}
-                    sizes="(max-width: 760px) 54vw, 24rem"
-                    width="640"
-                    height="1385"
-                    loading="lazy"
-                    decoding="async"
-                    alt={stop.alt}
-                  />
-                </figure>
-              </li>
-            ))}
-          </ol>
-          <div class="pk-window" data-steps-window hidden>
-            <div class="pk-window__view" data-steps-view></div>
-          </div>
-          <img
-            class="pk-guide"
-            src="/media/parkdex/kip-point.webp"
-            width="360"
-            height="360"
-            loading="lazy"
-            alt=""
-          />
-          <button class="pk-slide" type="button" data-slide>
-            Slide down with Kip <span aria-hidden="true">↓</span>
-          </button>
-          <StepsToggle />
-        </div>
+        <ol class="pk-stops">
+          {stops.map((stop, index) => (
+            <li class="pk-stop" data-stop data-step style={`--stop: ${index}`}>
+              <h3>{stop.title}</h3>
+              <figure class="pk-hang">
+                <img
+                  src={`/media/parkdex/${stop.image}-360.webp`}
+                  srcset={`/media/parkdex/${stop.image}-360.webp 360w, /media/parkdex/${stop.image}-640.webp 640w`}
+                  sizes="(max-width: 760px) 54vw, 24rem"
+                  width="640"
+                  height="1385"
+                  loading="lazy"
+                  decoding="async"
+                  alt={stop.alt}
+                />
+              </figure>
+            </li>
+          ))}
+        </ol>
+        <button class="pk-slide" type="button" data-slide>
+          Slide down with Kip <span aria-hidden="true">↓</span>
+        </button>
       </div>
     </div>
 
@@ -201,6 +177,7 @@ const stops = [
     --bar: calc(100lvh - 100svh);
     --vine-x: 50%;
     --vine-width: clamp(14rem, 23vw, 21.5rem);
+    --strand: 3.2rem;
     position: relative;
     color: var(--ink);
     font-family: 'Bricolage Grotesque Variable', var(--sans);
@@ -405,17 +382,13 @@ const stops = [
     display: grid;
     align-content: center;
     min-height: 100svh;
-    padding: 4.5rem var(--gutter) 1.5rem;
+    overflow: clip;
+    padding: 3rem var(--gutter) 1.5rem;
   }
 
   :global(.stage) .pk-trip .pk-forest {
     height: 100lvh;
     padding-bottom: calc(4.5rem + var(--bar));
-  }
-
-  /* The steps side by side need nothing of their own here. See the rotating layout below. */
-  .pk-steps {
-    display: contents;
   }
 
   /* Four phones in a row, each sized from whichever runs out first, the width or the height. */
@@ -427,11 +400,30 @@ const stops = [
     justify-content: center;
   }
 
+  /* `--pivot` is how far above this stop its vine is tied, once swing.ts has measured it. Earlier stops
+     are in front, so that a vine coming down from above passes behind them. */
   .pk-stop {
+    position: relative;
+    z-index: calc(4 - var(--stop));
     display: grid;
     gap: 0.9rem;
     justify-items: center;
     width: var(--shot);
+    touch-action: pan-y pinch-zoom;
+    transform-origin: 50% calc(var(--pivot, 50lvh) * -1);
+  }
+
+  /* Its own vine, from above the top of the screen down through the sign to the phone. */
+  .pk-stop::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    bottom: calc(100% - 3.5rem);
+    left: calc(50% - var(--strand) / 2);
+    width: var(--strand);
+    height: 120lvh;
+    background: url('../art/parkdex/strand.svg') center bottom / 100% auto repeat-y;
+    pointer-events: none;
   }
 
   .pk-stop:nth-child(even) {
@@ -454,6 +446,7 @@ const stops = [
   }
 
   .pk-stop h3 {
+    position: relative;
     padding: 0.25rem 0.7rem 0.35rem;
     border: 3px solid var(--ink);
     border-radius: 0.8rem;
@@ -469,28 +462,9 @@ const stops = [
     rotate: 2deg;
   }
 
-  .pk-stop h3 span {
-    color: #c9420f;
-  }
-
   .pk-hang {
     position: relative;
-    transform-origin: 50% -2rem;
-    animation: swing 3.4s ease-in-out infinite alternate;
-  }
-
-  .pk-stop:nth-child(even) .pk-hang {
-    animation-delay: -1.4s;
-  }
-
-  @keyframes swing {
-    from {
-      transform: rotate(-1.8deg);
-    }
-
-    to {
-      transform: rotate(1.8deg);
-    }
+    transform-origin: 50% 0;
   }
 
   .pk-hang img {
@@ -499,158 +473,6 @@ const stops = [
     border: 0.3rem solid var(--ink);
     border-radius: 1.6rem;
     box-shadow: 0.35rem 0.35rem 0 var(--ink);
-  }
-
-  /* Rotating: trail signs down one side of the vine, and one big phone hanging on the other. Kip
-     climbs down the vine beside whichever sign is showing. */
-  .pk-steps[data-layout='rotating'] {
-    --shot: min(
-      calc((100vw - var(--gutter) * 2 - var(--vine-width)) / 2),
-      calc((100svh - 10.5rem) * 0.46)
-    );
-    --row: 4.5rem;
-    --row-gap: 1.25rem;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--vine-width);
-    align-items: center;
-  }
-
-  .pk-steps[data-layout='rotating'] .pk-stops {
-    grid-row: 1;
-    grid-column: 1;
-    flex-direction: column;
-    gap: var(--row-gap);
-    align-items: end;
-  }
-
-  .pk-steps[data-layout='rotating'] .pk-stop {
-    display: flex;
-    align-items: center;
-    width: auto;
-    height: var(--row);
-    margin: 0;
-    rotate: -2deg;
-  }
-
-  .pk-steps[data-layout='rotating'] .pk-stop:nth-child(even) {
-    rotate: 2deg;
-  }
-
-  .pk-steps[data-layout='rotating'] h3 {
-    padding: 0;
-    font-size: clamp(1.05rem, min(1.9vw, 3.4svh), 1.9rem);
-    white-space: normal;
-    rotate: none;
-    transition: background 200ms;
-  }
-
-  .pk-steps[data-layout='rotating'] [data-current] h3 {
-    background: var(--orange);
-  }
-
-  .pk-steps[data-layout='rotating'] [data-current] h3 span {
-    color: var(--ink);
-  }
-
-  .pk-stop h3 :global(.step__pick) {
-    padding: 0.4rem 0.8rem 0.5rem;
-    border: 0;
-    border-radius: 0.6rem;
-    background: none;
-    color: inherit;
-    font: inherit;
-    letter-spacing: inherit;
-    text-align: start;
-    cursor: pointer;
-  }
-
-  .pk-window {
-    grid-row: 1;
-    grid-column: 2;
-    width: var(--shot);
-    overflow: hidden;
-    border: 0.3rem solid var(--ink);
-    border-radius: 1.6rem;
-    background: var(--ink);
-    box-shadow: 0.35rem 0.35rem 0 var(--ink);
-    transform-origin: 50% -2rem;
-    animation: sway 3.4s ease-in-out infinite alternate;
-  }
-
-  .pk-window[hidden] {
-    display: none;
-  }
-
-  @keyframes sway {
-    from {
-      rotate: -1.2deg;
-    }
-
-    to {
-      rotate: 1.2deg;
-    }
-  }
-
-  .pk-window__view {
-    display: grid;
-  }
-
-  .pk-window .pk-hang {
-    grid-area: 1 / 1;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity 320ms,
-      visibility 0s 320ms;
-    animation: none;
-  }
-
-  .pk-window .pk-hang[data-current] {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 320ms;
-  }
-
-  .pk-window .pk-hang img {
-    width: 100%;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .pk-guide {
-    display: none;
-  }
-
-  [data-layout='rotating'] > .pk-guide {
-    z-index: 2;
-    display: block;
-    grid-row: 1;
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: clamp(6rem, 9vw, 8.5rem);
-    transform: translate3d(
-      -8%,
-      calc((var(--now, 0) - (var(--count) - 1) / 2) * (var(--row) + var(--row-gap))),
-      0
-    );
-    transition: transform 700ms var(--ease);
-    pointer-events: none;
-  }
-
-  /* The window and Kip follow the signs in, once the first Kip has landed. */
-  :global(.stage) .pk:not([data-landed]) .pk-window,
-  :global(.stage) .pk:not([data-landed]) .pk-guide {
-    visibility: hidden;
-    translate: 0 -110lvh;
-  }
-
-  .pk[data-landed] .pk-window,
-  .pk[data-landed] .pk-guide {
-    transition:
-      translate 760ms cubic-bezier(0.2, 1.3, 0.4, 1) 260ms,
-      transform 700ms var(--ease);
   }
 
   /* The bottom of the vine. On a stage, this screen waits until the flag is planted. */
@@ -827,7 +649,7 @@ const stops = [
   /* The way on down, once the phones are in. */
   .pk-slide {
     position: absolute;
-    z-index: 3;
+    z-index: 5;
     bottom: calc(1.25rem + var(--bar));
     left: 50%;
     padding: 0.7rem 1.3rem;
@@ -996,6 +818,7 @@ const stops = [
     .pk {
       --vine-x: 17%;
       --vine-width: 10rem;
+      --strand: 2.4rem;
     }
 
     .pk-sky {
@@ -1035,11 +858,11 @@ const stops = [
     }
 
     .pk-forest {
-      padding: 5.5rem 0.75rem 1rem;
+      padding: 4rem 0.75rem 1rem;
     }
 
     :global(.stage) .pk-trip .pk-forest {
-      padding-bottom: calc(3.75rem + var(--bar));
+      padding-bottom: calc(4.75rem + var(--bar));
     }
 
     .pk-stops {
@@ -1063,34 +886,6 @@ const stops = [
     }
 
     .pk-hang img {
-      border-width: 0.22rem;
-      border-radius: 1.05rem;
-      box-shadow: 0.22rem 0.22rem 0 var(--ink);
-    }
-
-    /* The vine has the left here, so the signs go over it, and Kip leaves the pointing to them. */
-    .pk-steps[data-layout='rotating'] {
-      --shot: min(54vw, calc((100svh - 12.5rem) * 0.46));
-      --row: auto;
-      --row-gap: 0.75rem;
-      grid-template-columns: minmax(0, 1fr) var(--shot);
-      column-gap: 0.5rem;
-    }
-
-    .pk-steps[data-layout='rotating'] .pk-stops {
-      flex-wrap: nowrap;
-      align-items: start;
-    }
-
-    .pk-steps[data-layout='rotating'] h3 {
-      font-size: clamp(0.85rem, 4vw, 1rem);
-    }
-
-    [data-layout='rotating'] > .pk-guide {
-      display: none;
-    }
-
-    .pk-window {
       border-width: 0.22rem;
       border-radius: 1.05rem;
       box-shadow: 0.22rem 0.22rem 0 var(--ink);
@@ -1128,8 +923,12 @@ const stops = [
       padding-top: 3.25rem;
     }
 
+    :global(.stage) .pk-trip .pk-forest {
+      padding-bottom: calc(1rem + var(--bar));
+    }
+
     .pk-stops {
-      --shot: calc((100svh - 8rem) * 0.4624);
+      --shot: calc((100svh - 6.75rem) * 0.4624);
       flex-wrap: nowrap;
       gap: 1rem;
     }
@@ -1139,27 +938,24 @@ const stops = [
       width: calc((100vw - var(--gutter) * 2 - 3rem) / 4);
     }
 
+    .pk-stop:nth-child(even) {
+      margin-top: 0;
+    }
+
+    /* There's no room under the phones here, so the way on down waits above them. */
+    .pk-slide {
+      top: 0.5rem;
+      right: var(--gutter);
+      bottom: auto;
+      left: auto;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.85rem;
+      transform: none;
+    }
+
     .pk-stop h3 {
       padding-inline: 0.4rem;
       font-size: 0.74rem;
-    }
-
-    .pk-steps[data-layout='rotating'] {
-      --shot: calc((100svh - 8rem) * 0.46);
-      --row: 2.25rem;
-      --row-gap: 0.35rem;
-    }
-
-    .pk-steps[data-layout='rotating'] h3 {
-      font-size: 0.82rem;
-    }
-
-    .pk-stop h3 :global(.step__pick) {
-      padding: 0.2rem 0.5rem;
-    }
-
-    [data-layout='rotating'] > .pk-guide {
-      width: 3.5rem;
     }
   }
 
@@ -1213,16 +1009,7 @@ const stops = [
   }
 
   @media (prefers-reduced-motion: reduce), (scripting: none) {
-    .pk-steps[data-layout='rotating'] h3,
-    .pk-window .pk-hang,
-    .pk-window .pk-hang[data-current],
-    [data-layout='rotating'] > .pk-guide {
-      transition: none;
-    }
-
     .pk-cloud,
-    .pk-hang,
-    .pk-window,
     .pk-end__kip {
       animation: none;
     }

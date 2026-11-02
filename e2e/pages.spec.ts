@@ -77,7 +77,6 @@ for (const route of sitemapRoutes()) {
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('main#main-content')).toBeVisible();
-    await expect(page.locator('.chrome__name')).toHaveAttribute('href', '#top');
     // Step through the page so every lazy image and video loads and is checked too.
     await walkThePage(page);
     const pending = page.locator('img');
@@ -106,7 +105,6 @@ test('every world has its heading and its links', async ({ page }) => {
     .evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''));
   for (const url of [
     'https://aibuildnight.ca/',
-    'https://aibuildnight.ca/pages/past-nights',
     'https://www.playbythesandbox.ca/',
     'https://offbooked.com/',
     'https://parkdex.app/',
@@ -116,6 +114,7 @@ test('every world has its heading and its links', async ({ page }) => {
     expect(hrefs).toContain(url);
   }
   expect(hrefs).not.toContain('https://web.parkdex.app/');
+  expect(hrefs.filter((href) => href.includes('/pages/past-nights'))).toEqual([]);
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(1);
 });
 
@@ -143,6 +142,8 @@ const moments = [
   { name: 'Not Quite My Tempo', scene: '.tp', control: '.tp-tap', inside: '.tp__cta' },
 ] as const;
 
+const TEMPO = 'https://notquitemytempo-sand.vercel.app/';
+
 const useControl = async (page: Page, scene: string, control: string) => {
   await jumpTo(page, scene);
   await expect(page.locator(control)).toBeVisible();
@@ -155,18 +156,13 @@ const landKip = async (page: Page) => {
   await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '', { timeout: 12000 });
 };
 
-// Review links: every section side by side, and each section on the layout it doesn't start on.
-const sideBySide = '/?abn=side&offbooked=side&parkdex=side&sandbox=side&tempo=side';
-const turnedAround = '/?abn=side&offbooked=side&parkdex=rotating&sandbox=rotating&tempo=side';
-const allRotating =
-  '/?abn=rotating&offbooked=rotating&parkdex=rotating&sandbox=rotating&tempo=rotating';
-
 // What each opened section says, in the owner's order, with one real picture to each line.
 const explained = [
   {
     name: 'AI Build Night',
     scene: '.abn-cover',
     control: '.abn-key',
+    rotates: true,
     steps: [
       'A free night, once a month.',
       'Build something with AI in one night.',
@@ -178,6 +174,7 @@ const explained = [
     name: 'Offbooked',
     scene: '#offbooked',
     control: '.rope',
+    rotates: true,
     steps: [
       'Upload your script.',
       'Invite your cast.',
@@ -189,21 +186,11 @@ const explained = [
     name: 'Play by the Sandbox',
     scene: '.sb-open',
     control: '.sb-box__open',
+    rotates: false,
     steps: [
       'Sandbox is hosting an event for creatives.',
       'They needed an eye-catching website in a child-like crayon style.',
       'I created a 3D landing page with interactive elements and fun visuals.',
-    ],
-  },
-  {
-    name: 'Not Quite My Tempo',
-    scene: '.tp',
-    control: '.tp-tap',
-    steps: [
-      'It’s 5:58 a.m., and you’re the new drummer.',
-      'Keep his tempo. When he stops, call it: rushing, dragging or in time.',
-      'Duck when the chair comes.',
-      'Find all three endings.',
     ],
   },
 ] as const;
@@ -233,18 +220,10 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
   if ((await opened.count()) > 0) await expect(opened, label).toBeInViewport({ ratio: 0.98 });
   const collisions = await page.locator(scene).evaluate((root) => {
     const parts = [
-      document.querySelector<HTMLElement>('.chrome__name'),
       ...root.querySelectorAll<HTMLElement>(
-        '[data-step], [data-steps-window], .steps-toggle, a[href], .abn-show__lead, .ob-copy h2, .sb__head h2, .tp__head h2, .tp__head p, .tp-credits summary, .pk-slide',
+        '[data-step], [data-steps-window], a[href], .abn-show__lead, .ob-copy h2, .sb__head h2, .pk-slide',
       ),
-    ].filter(
-      (part): part is HTMLElement =>
-        !!part &&
-        !part.closest('[inert]') &&
-        // What a closed disclosure holds isn't on screen, whatever its boxes say.
-        !part.closest('details:not([open]) > :not(summary)') &&
-        part.getClientRects().length > 0,
-    );
+    ].filter((part) => !part.closest('[inert]') && part.getClientRects().length > 0);
     const hits: string[] = [];
     for (const [index, part] of parts.entries()) {
       const box = part.getBoundingClientRect();
@@ -277,7 +256,7 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
   expect(collisions, label).toEqual([]);
 };
 
-for (const { name, scene, control, steps } of explained) {
+for (const { name, scene, control, rotates, steps } of explained) {
   test(`${name} keeps its steps back until it opens`, async ({ page }) => {
     await page.goto('/');
     await jumpTo(page, scene);
@@ -288,8 +267,8 @@ for (const { name, scene, control, steps } of explained) {
     });
   });
 
-  test(`${name} says what it does in numbered steps, all at once`, async ({ page }) => {
-    await page.goto(sideBySide);
+  test(`${name} says what it does in numbered steps`, async ({ page }) => {
+    await page.goto('/');
     await useControl(page, scene, control);
     const shown = page.locator(`${scene} .step`);
     await expect(shown).toHaveCount(steps.length);
@@ -297,7 +276,7 @@ for (const { name, scene, control, steps } of explained) {
     const pictures = new Set<string>();
     for (const [index, title] of steps.entries()) {
       await expect(shown.nth(index).locator('h3')).toHaveText(`${index + 1}${title}`);
-      const picture = shown.nth(index).locator('img, video');
+      const picture = page.locator(`${scene} figure`).nth(index).locator('img, video');
       await expect(picture).toHaveCount(1);
       pictures.add(
         await picture.evaluate((element) =>
@@ -308,6 +287,7 @@ for (const { name, scene, control, steps } of explained) {
       );
     }
     expect(pictures.size).toBe(steps.length);
+    if (rotates) return;
     // Nothing is waiting for a timer or a scroll: what is on screen now is all there is.
     const first = await page.locator(`${scene} .steps`).innerHTML();
     await page.waitForTimeout(1500);
@@ -316,18 +296,12 @@ for (const { name, scene, control, steps } of explained) {
 }
 
 const sets = [
-  { name: 'abn', scene: '.abn-cover', control: '.abn-key', starts: 'rotating' },
-  { name: 'offbooked', scene: '#offbooked', control: '.rope', starts: 'rotating' },
-  { name: 'parkdex', scene: '#parkdex', control: '.pk-plant', starts: 'side' },
-  { name: 'sandbox', scene: '.sb-open', control: '.sb-box__open', starts: 'side' },
-  { name: 'tempo', scene: '.tp', control: '.tp-tap', starts: 'rotating' },
+  { name: 'abn', scene: '.abn-cover', control: '.abn-key' },
+  { name: 'offbooked', scene: '#offbooked', control: '.rope' },
 ] as const;
 
 const openSet = async (page: Page, { name, scene, control }: (typeof sets)[number]) => {
   await useControl(page, scene, control);
-  if (name === 'parkdex') {
-    await expect(page.locator(scene)).toHaveAttribute('data-landed', '', { timeout: 12000 });
-  }
   await expect(page.locator(`[data-steps="${name}"] [data-step]`).last()).toBeInViewport({
     timeout: 6000,
   });
@@ -353,17 +327,22 @@ const showingPicture = (set: Locator) =>
       ),
     );
 
-test('three sections start rotating and two side by side', async ({ page }) => {
-  await page.goto('/');
-  for (const { name, starts } of sets) {
-    await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', starts);
+test('two sections rotate, and the layouts are settled for good', async ({ page }) => {
+  // An old review link does nothing now, and the page leaves the address alone.
+  await page.goto('/?abn=side&offbooked=side&parkdex=rotating&sandbox=rotating&tempo=side');
+  for (const { name } of sets) {
+    await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', 'rotating');
   }
-  await expect(page.locator('[data-steps]')).toHaveCount(5);
+  await expect(page.locator('[data-steps-window]')).toHaveCount(2);
+  await expect(page.locator('[data-steps]')).toHaveCount(3);
+  await expect(page.locator('[data-steps="sandbox"] [data-step] figure')).toHaveCount(3);
+  await expect(page.locator('[data-layout-pick], [data-steps-toggle]')).toHaveCount(0);
+  await expect(page.locator('.tp [data-step]')).toHaveCount(0);
 });
 
 for (const set of sets) {
   test(`${set.name} rotates only once it is open, however long the wait`, async ({ page }) => {
-    await page.goto(allRotating);
+    await page.goto('/');
     const steps = page.locator(`[data-steps="${set.name}"]`);
     await jumpTo(page, set.scene);
     await page.waitForTimeout(500);
@@ -387,7 +366,7 @@ for (const set of sets) {
   });
 
   test(`${set.name} shows every step in its list while it rotates`, async ({ page }) => {
-    await page.goto(allRotating);
+    await page.goto('/');
     await openSet(page, set);
     const steps = page.locator(`[data-steps="${set.name}"]`);
     const rows = steps.locator('[data-step]');
@@ -396,7 +375,7 @@ for (const set of sets) {
   });
 
   test(`${set.name} stops rotating once a step is picked`, async ({ page }) => {
-    await page.goto(allRotating);
+    await page.goto('/');
     await openSet(page, set);
     const steps = page.locator(`[data-steps="${set.name}"]`);
     await expect.poll(() => counting(steps)).toBe('running');
@@ -406,39 +385,14 @@ for (const set of sets) {
     await expect(steps.locator('.step__pick').nth(2)).toHaveAttribute('aria-current', 'step');
     expect(await counting(steps)).toBe('none');
   });
-
-  test(`${set.name} has both layouts on a toggle of its own, in a link`, async ({ page }) => {
-    await page.goto('/');
-    await openSet(page, set);
-    const steps = page.locator(`[data-steps="${set.name}"]`);
-    const other = set.starts === 'side' ? 'rotating' : 'side';
-    const toggle = steps.locator('[data-steps-toggle]');
-    await expect(toggle).toBeInViewport({ ratio: 1 });
-    await expect.poll(() => uncoveredPoints(toggle)).toBe(9);
-    await expect(toggle.locator(`[data-layout-pick="${set.starts}"]`)).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    await toggle.locator(`[data-layout-pick="${other}"]`).click();
-    await expect(steps).toHaveAttribute('data-layout', other);
-    await stepsFit(page, set.name === 'parkdex' ? '.pk-forest' : set.scene, set.name);
-    expect(new URL(page.url()).searchParams.get(set.name)).toBe(other);
-    // The other three stay as they were.
-    for (const { name, starts } of sets) {
-      if (name === set.name) continue;
-      await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', starts);
-    }
-    await page.reload();
-    await expect(steps).toHaveAttribute('data-layout', other);
-  });
 }
 
 test.describe('with a mouse and keyboard', () => {
   test.skip(({ isMobile }) => isMobile, 'There is no pointer to rest or keys to press.');
 
   test('it keeps counting under a mouse left where the control was', async ({ page }) => {
-    await page.goto(allRotating);
-    for (const set of sets.filter(({ name }) => name !== 'parkdex')) {
+    await page.goto('/');
+    for (const set of sets) {
       await jumpTo(page, set.scene);
       await page.locator(set.control).click();
       const steps = page.locator(`[data-steps="${set.name}"]`);
@@ -494,6 +448,10 @@ test.describe('with a mouse and keyboard', () => {
     await expect.poll(() => counting(steps)).toBe('paused');
     await page.locator('.abn-show__cta').focus();
     await expect.poll(() => counting(steps)).toBe('running');
+    await steps.locator('[data-steps-window]').focus();
+    await expect.poll(() => counting(steps)).toBe('paused');
+    await page.locator('.abn-show__cta').focus();
+    await expect.poll(() => counting(steps)).toBe('running');
     await picks.nth(1).focus();
     await page.keyboard.press('Enter');
     await expect.poll(() => showing(steps)).toBe(1);
@@ -506,9 +464,7 @@ test.describe('with a mouse and keyboard', () => {
     expect(await counting(steps)).toBe('none');
   });
 
-  test('the keyboard reaches a step and the toggle only once the section is open', async ({
-    page,
-  }) => {
+  test('the keyboard reaches a step only once the section is open', async ({ page }) => {
     await page.goto('/');
     await jumpTo(page, '#offbooked');
     const steps = page.locator('[data-steps="offbooked"]');
@@ -541,36 +497,6 @@ test('the step showing is marked from its first moment, not only as the count ru
   await expect(pick).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 });
 
-test('a loop only plays while its picture is the one showing', async ({ page }) => {
-  await page.goto('/?sandbox=rotating');
-  await openSet(page, sets[3]);
-  const steps = page.locator('[data-steps="sandbox"]');
-  const video = steps.locator('video');
-  const paused = () => video.evaluate((element) => (element as HTMLVideoElement).paused);
-  await expect
-    .poll(() => video.evaluate((element) => (element as HTMLVideoElement).src))
-    .not.toBe('');
-  await page.waitForTimeout(300);
-  expect(await paused()).toBe(true);
-  await steps.locator('.step__pick').nth(2).click();
-  await expect.poll(paused).toBe(false);
-  await steps.locator('.step__pick').nth(0).click();
-  await expect.poll(paused).toBe(true);
-  // Back on screen after a pick, it still stays put.
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await jumpTo(page, '.sb-open');
-  await page.waitForTimeout(300);
-  expect(await paused()).toBe(true);
-});
-
-test('a closed screen has no toggle on it', async ({ page }) => {
-  await page.goto('/?sandbox=rotating');
-  await jumpTo(page, '.sb-open');
-  const toggle = page.locator('[data-steps="sandbox"] [data-steps-toggle]');
-  await expect(toggle).toBeInViewport();
-  expect(await uncoveredPoints(toggle)).toBe(0);
-});
-
 test('off screen, the count waits', async ({ page }) => {
   await page.goto('/');
   await openSet(page, sets[0]);
@@ -580,28 +506,51 @@ test('off screen, the count waits', async ({ page }) => {
   await expect.poll(() => counting(steps)).toBe('paused');
 });
 
-test('going back to side by side puts every picture back with its step', async ({ page }) => {
+// Everything but the window's own picture, so a click lands on a page that says where it went.
+const catchSite = (page: Page, url: string) =>
+  page.route(`${url}**`, (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<title>Arrived</title>' }),
+  );
+
+test('any click on the AI Build Night window opens the site, and nothing else there does', async ({
+  page,
+}) => {
+  await catchSite(page, 'https://aibuildnight.ca/');
   await page.goto('/');
-  await openSet(page, sets[1]);
-  const steps = page.locator('[data-steps="offbooked"]');
-  await steps.locator('[data-layout-pick="side"]').click();
-  await expect(steps.locator('[data-steps-window]')).toBeHidden();
-  await expect(steps.locator('[data-step] figure')).toHaveCount(4);
-  await expect(steps.locator('.step__pick')).toHaveCount(0);
-  expect(await counting(steps)).toBe('none');
-  await expect(steps.locator('[data-step] h3').first()).toHaveText('1Upload your script.');
+  await openSet(page, sets[0]);
+  const steps = page.locator('[data-steps="abn"]');
+  const frame = steps.locator('[data-steps-window]');
+  await expect(frame).toHaveAttribute('href', 'https://aibuildnight.ca/');
+  await expect(frame).toHaveAccessibleName('Open the AI Build Night site, aibuildnight.ca');
+  await expect(page.locator('.abn-cover a')).toHaveCount(2);
+  await expect(page.locator('.abn-cover')).not.toContainText(/Read the recap|Night 00\d/);
+  await expect(page.locator('.abn-show__lead')).toContainText(
+    'A free night in Victoria to build something real with AI.',
+  );
+  // Picking a step moves the window on, and stays here.
+  await steps.locator('.step__pick').nth(2).click();
+  await expect.poll(() => showing(steps)).toBe(2);
+  expect(new URL(page.url()).hostname).not.toBe('aibuildnight.ca');
+  // Its address bar and its picture are the same link.
+  await frame.locator('.steps-window__bar').click();
+  await expect(page).toHaveURL('https://aibuildnight.ca/');
+  await page.goBack();
+  await page.locator('.abn-cover').waitFor();
 });
 
-test('production has no toggle, and ignores a review link', async ({ page }) => {
-  await page.route('https://www.nathanpannell.com/**', async (route) => {
-    const { pathname, search } = new URL(route.request().url());
-    await route.fulfill({ response: await page.request.get(`${pathname}${search}`) });
-  });
-  await page.goto(`https://www.nathanpannell.com${turnedAround}`);
-  await expect(page.locator('[data-steps-toggle]:visible')).toHaveCount(0);
-  for (const { name, starts } of sets) {
-    await expect(page.locator(`[data-steps="${name}"]`)).toHaveAttribute('data-layout', starts);
-  }
+test('the AI Build Night window says it is a link when the mouse comes onto it', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'There is no hover here.');
+  await page.goto('/');
+  await openSet(page, sets[0]);
+  const cue = page.locator('.steps-window__go');
+  await page.mouse.move(2, 2);
+  await expect(cue).toHaveCSS('opacity', '0');
+  await expect(cue).toHaveText('Open aibuildnight.ca ↗');
+  await page.locator('[data-steps="abn"] [data-steps-window]').hover();
+  await expect(cue).toHaveCSS('opacity', '1');
 });
 
 test('the Parkdex stops are the four steps, with the demo leaderboard third', async ({ page }) => {
@@ -609,13 +558,148 @@ test('the Parkdex stops are the four steps, with the demo leaderboard third', as
   await landKip(page);
   const stops = page.locator('[data-stop]');
   await expect(stops.locator('h3')).toHaveText([
-    '1 Visit a park.',
-    '2 Plant your flag.',
-    '3 Earn points.',
-    '4 Explore your city!',
+    'Visit a park.',
+    'Plant your flag.',
+    'Earn points.',
+    'Explore your city!',
   ]);
   await expect(stops.nth(2).locator('img')).toHaveAttribute('src', /leaderboard/);
   await expect(stops.nth(2).locator('img')).toHaveAttribute('alt', /demo players/);
+});
+
+// How far each stop swings either way, from inside the page, over this many milliseconds.
+const swings = (page: Page, milliseconds: number) =>
+  page.evaluate(async (length) => {
+    const stops = [...document.querySelectorAll<HTMLElement>('[data-stop]')];
+    const widest = stops.map(() => 0);
+    const start = performance.now();
+    while (performance.now() - start < length) {
+      await new Promise((frame) => window.requestAnimationFrame(frame));
+      stops.forEach((stop, index) => {
+        const angle = Math.abs(Number.parseFloat(stop.style.rotate) || 0);
+        widest[index] = Math.max(widest[index] ?? 0, angle);
+      });
+    }
+    return widest;
+  }, milliseconds);
+
+// Whether, as they swing, any phone leaves the screen or meets the next along its row. Each is
+// measured along its own middle, because a tilted phone's box is wider than the phone.
+const swingTrouble = (page: Page, milliseconds: number) =>
+  page.evaluate(async (length) => {
+    const phones = [...document.querySelectorAll<HTMLElement>('[data-stop] figure')];
+    const hits = new Set<string>();
+    const start = performance.now();
+    while (performance.now() - start < length) {
+      await new Promise((frame) => window.requestAnimationFrame(frame));
+      const spots = phones.map((phone) => {
+        const { left, right, top, bottom } = phone.getBoundingClientRect();
+        return { x: (left + right) / 2, y: (top + bottom) / 2, half: phone.offsetWidth / 2 };
+      });
+      spots.forEach(({ x, y, half }, index) => {
+        if (x - half < -2 || x + half > window.innerWidth + 2) hits.add(`Off screen: ${index}`);
+        const next = spots[index + 1];
+        if (!next || Math.abs(next.y - y) > half) return;
+        if (x + half > next.x - next.half + 2) hits.add(`Phones meet: ${index}`);
+      });
+    }
+    return [...hits];
+  }, milliseconds);
+
+const pushStop = async (page: Page, isMobile: boolean, index: number) => {
+  const box = await page.locator('[data-stop]').nth(index).boundingBox();
+  if (!box) throw new Error('No stop');
+  if (isMobile) {
+    await page.touchscreen.tap(box.x + 8, box.y + box.height / 2);
+    return;
+  }
+  await page.mouse.move(box.x - 20, box.y + box.height / 2);
+  await page.mouse.move(box.x + box.width + 20, box.y + box.height / 2, { steps: 5 });
+};
+
+test('each stop hangs from a vine, sways by itself, and swings when pushed', async ({
+  page,
+  isMobile,
+}) => {
+  test.setTimeout(30000);
+  await page.goto('/');
+  await landKip(page);
+  const first = page.locator('[data-stop]').first();
+  await expect
+    .poll(() => first.evaluate((stop) => getComputedStyle(stop, '::before').backgroundImage))
+    .toMatch(/^url\(/);
+  // Long enough for the landing to die away, leaving the sway.
+  await page.waitForTimeout(6500);
+  const idle = await swings(page, 3200);
+  for (const angle of idle) {
+    expect(angle).toBeGreaterThan(0.02);
+    expect(angle).toBeLessThan(2);
+  }
+  await pushStop(page, isMobile, 1);
+  const pushed = await swings(page, 1200);
+  expect(pushed[1]).toBeGreaterThan((idle[1] ?? 0) * 1.5);
+  expect(pushed[1]).toBeGreaterThan(0.5);
+  for (const angle of pushed) expect(angle).toBeLessThan(6.5);
+  expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
+  // It dies away again.
+  await page.waitForTimeout(6000);
+  const after = await swings(page, 1500);
+  expect(after[1]).toBeLessThan(pushed[1] ?? 0);
+});
+
+// Where the first stop has swung to, a fixed time after landing, on a clock that only moves when told
+// to, with a new frame every `frame` milliseconds. Nothing else can differ between two of these.
+const swungAfter = async (page: Page, frame: number) => {
+  await page.clock.install({ time: 0 });
+  await page.clock.pauseAt(1000);
+  await page.goto('/');
+  await jumpTo(page, '#parkdex');
+  await page.locator('.pk-plant').click();
+  await page.clock.runFor(4000);
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '');
+  await page.waitForTimeout(300);
+  // Only from here: Kip's ride lands on a frame too, so slowing it would move the landing.
+  await page.evaluate((length) => {
+    window.requestAnimationFrame = (draw) =>
+      window.setTimeout(() => {
+        draw(performance.now());
+      }, length);
+  }, frame);
+  await page.clock.runFor(3000);
+  return page
+    .locator('[data-stop]')
+    .first()
+    .evaluate((stop: HTMLElement) => Number.parseFloat(stop.style.rotate));
+};
+
+test('a stop swings the same however few frames it gets', async ({
+  browser,
+  baseURL,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The clock is the same on a phone.');
+  test.setTimeout(40000);
+  const [smooth, rough] = await Promise.all(
+    [16, 120].map(async (frame) =>
+      swungAfter(await browser.newPage({ baseURL: baseURL ?? '' }), frame),
+    ),
+  );
+  expect(smooth).not.toBe(0);
+  expect(Math.abs((smooth ?? 0) - (rough ?? 0))).toBeLessThan(0.1);
+});
+
+test('swinging stays clear of the screen and of its neighbours at every push', async ({
+  page,
+  isMobile,
+}) => {
+  test.setTimeout(30000);
+  await page.goto('/');
+  await landKip(page);
+  // Once they have all dropped in.
+  await page.waitForTimeout(2000);
+  for (const index of [0, 3, 1, 2]) await pushStop(page, isMobile, index);
+  expect(await swingTrouble(page, 2500)).toEqual([]);
+  expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
 });
 
 for (const { name, scene, control, inside } of moments) {
@@ -965,6 +1049,16 @@ test('each scene sounds when it is opened, and only then', async ({ page, browse
   await louder(() => useControl(page, '.tp', '.tp-tap'));
   expect((await heard(page)).contexts).toBe(1);
   expect(errors).toEqual([]);
+});
+
+test('the rainbow scratches across on paper, with no note in it', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', noWebAudio);
+  await listenForThocc(page);
+  await page.goto('/');
+  await useControl(page, '.sb-open', '.sb-box__open');
+  await expect.poll(() => heard(page).then(({ noises }) => noises)).toBeGreaterThan(7);
+  // The lid's one low thud is the only oscillator in the whole press.
+  expect((await heard(page)).tones).toBe(1);
 });
 
 test('pulling the rope sounds the curtains as well as clicking it', async ({
@@ -1379,6 +1473,9 @@ test('a second tap on the ring stays on the ring while the screen clears', async
 
 test('a real press gets a word', async ({ page }) => {
   await page.goto('/');
+  await jumpTo(page, '.tp');
+  // The ring starts once the scene is on screen, and a press before that has nothing to be judged by.
+  await expect(page.locator('.tp')).not.toHaveAttribute('data-resting', '');
   await useControl(page, '.tp', '.tp-tap');
   await expect(page.locator('[data-verdict]')).toHaveText(/^(Perfect|Good|Rushing|Dragging)$/);
 });
@@ -1397,72 +1494,99 @@ test('the closed Tempo screen is silent, and its beat only runs on screen', asyn
   expect(await heard(page)).toEqual({ contexts: 0, tones: 0, noises: 0 });
 });
 
-test('the verdict clears, and leaves the room to the steps and one link', async ({ page }) => {
+test('the verdict clears, and leaves one window on the room, one line and one link', async ({
+  page,
+}) => {
+  await catchSite(page, TEMPO);
   await page.goto('/');
   await useControl(page, '.tp', '.tp-tap');
   await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
-  await expect(page.locator('.tp a:not(.tp-credits a)')).toHaveCount(1);
-  await expect(page.locator('.tp__cta')).toHaveAttribute(
-    'href',
-    'https://notquitemytempo-sand.vercel.app/',
+  await expect(page.locator('.tp [data-step], .tp details, .tp .steps-window')).toHaveCount(0);
+  await expect(page.locator('.tp a')).toHaveCount(2);
+  await expect(page.locator('.tp__cta')).toHaveAttribute('href', TEMPO);
+  await expect(page.locator('.tp__cta')).toHaveText('Play it →');
+  await expect(page.locator('.tp__head p')).toHaveText(
+    'A four-minute rhythm horror game. Try it yourself.',
   );
+  const frame = page.locator('.tp-window');
+  await expect(frame).toHaveAttribute('href', TEMPO);
+  await expect(frame).toHaveAccessibleName('Play Not Quite My Tempo');
+  await frame.click();
+  await expect(page).toHaveURL(TEMPO);
 });
 
-for (const link of [sideBySide, allRotating]) {
-  test(`the model credits open on the page at ${link}`, async ({ page }) => {
-    await page.goto(link);
-    await useControl(page, '.tp', '.tp-tap');
-    await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
-    const credits = page.locator('.tp-credits');
-    await expect(credits.locator('summary')).toBeInViewport({ ratio: 1 });
-    await expect(credits.locator('a[href*="sketchfab.com"]')).toHaveCount(5);
-    await expect(credits.locator('.tp-credits__list')).toBeHidden();
-    await credits.locator('summary').click();
-    const list = credits.locator('.tp-credits__list');
-    await expect(list).toBeInViewport({ ratio: 1 });
-    await expect(list.locator('a[href*="sketchfab.com"]')).toHaveCount(5);
-    await expect(list.locator('a[href*="creativecommons.org"]')).toHaveCount(5);
-    await expect(list).toContainText('“Drum Kit” by Serg.Morgun, CC BY 4.0');
-    await expect(list).toContainText('Microsoft Rocketbox characters, MIT');
-    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
-    await credits.locator('summary').click();
-    await expect(list).toBeHidden();
-  });
-}
+test('the game keeps its surprises', async ({ page }) => {
+  await page.goto('/');
+  await useControl(page, '.tp', '.tp-tap');
+  await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
+  const words = await page
+    .locator('.tp')
+    .evaluate((scene) =>
+      [
+        scene.textContent,
+        ...[...scene.querySelectorAll('[alt], [aria-label]')].flatMap((element) => [
+          element.getAttribute('alt'),
+          element.getAttribute('aria-label'),
+        ]),
+        document.querySelector('meta[name="description"]')?.getAttribute('content'),
+      ].join(' '),
+    );
+  expect(words).not.toMatch(/\b(duck|chair|endings?|the nod|fifth name)\b/i);
+  await expect(page.locator('[data-wash]', { hasText: 'Not Quite' })).toHaveAttribute(
+    'style',
+    /tempo-900/,
+  );
+  await expect(page.locator('.tp img[src*="chair"], .tp img[src*="ending"]')).toHaveCount(0);
+});
 
-test('the keyboard reaches the model credits only once the section is open', async ({
-  page,
-  isMobile,
-}) => {
+test('the keyboard reaches the game only once the section is open', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
   await jumpTo(page, '.tp');
-  await expect(page.locator('.tp-credits')).toHaveJSProperty('inert', true);
+  await expect(page.locator('.tp-window')).toHaveJSProperty('inert', true);
   await page.locator('.tp-tap').press('Enter');
-  await expect(page.locator('.tp-credits')).toHaveJSProperty('inert', false);
+  await expect(page.locator('.tp-window')).toHaveJSProperty('inert', false);
 });
 
-test('his patience runs out over each step, and is full when nothing is counting', async ({
-  page,
-}) => {
+test('the Tempo loop plays muted, and rests off screen', async ({ page, isMobile }) => {
   await page.goto('/');
-  await openSet(page, sets[4]);
-  const steps = page.locator('[data-steps="tempo"]');
-  await expect(steps).toHaveAttribute('data-counting', '');
-  const bar = () =>
-    steps
-      .locator('.steps-window__bar')
-      .evaluate((part) => getComputedStyle(part, '::after').transform);
-  // Half way through a step's six seconds, after the opening's beat.
-  await steps.evaluate((set) => {
-    const count = set.getAnimations()[0];
-    count?.pause();
-    if (count) count.currentTime = 4600;
-  });
-  await expect.poll(bar).toBe('matrix(0.5, 0, 0, 1, 0, 0)');
-  await steps.locator('.step__pick').nth(2).click();
-  await expect(steps).not.toHaveAttribute('data-counting', '');
-  await expect.poll(bar).toBe('none');
+  await useControl(page, '.tp', '.tp-tap');
+  const video = page.locator('.tp-window video');
+  await expect(video).toHaveJSProperty('muted', true);
+  await expect(video).toHaveJSProperty('loop', true);
+  await expect(video).toHaveAttribute('playsinline', '');
+  await expect(video).toHaveJSProperty('paused', false, { timeout: 8000 });
+  const size = () =>
+    video.evaluate((element) => {
+      const { videoWidth, videoHeight } = element as HTMLVideoElement;
+      return videoWidth > videoHeight;
+    });
+  expect(await size()).toBe(!isMobile);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(video).toHaveJSProperty('paused', true);
+});
+
+test('the Tempo loop stays unloaded behind a closed screen', async ({ page }) => {
+  const asked: string[] = [];
+  page.on('request', (request) => asked.push(request.url()));
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await page.waitForTimeout(800);
+  expect(asked.filter((url) => url.includes('.mp4'))).toEqual([]);
+  await page.locator('.tp-tap').click();
+  await expect.poll(() => asked.filter((url) => url.includes('.mp4')).length).toBe(1);
+});
+
+test('the window says it is a link when the mouse comes onto it', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'There is no hover here.');
+  await page.goto('/');
+  await useControl(page, '.tp', '.tp-tap');
+  await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
+  const cue = page.locator('.tp-window__go');
+  await page.mouse.move(2, 2);
+  await expect(cue).toHaveCSS('opacity', '0');
+  await page.locator('.tp-window').hover();
+  await expect(cue).toHaveCSS('opacity', '1');
 });
 
 test('hovering or focusing an index row fills it with its image', async ({ page, isMobile }) => {
@@ -1603,7 +1727,7 @@ for (const width of [320, 390, 768, 1024, 1440, 1920]) {
 
 // Whatever a frame has to show must fit inside it, or it can only be seen by leaving the frame.
 for (const [width, height] of everySize) {
-  test(`every frame fits at ${width}x${height}`, async ({ page }) => {
+  test(`every frame fits at ${width}x${height}`, async ({ page, isMobile }) => {
     test.setTimeout(60000);
     await page.setViewportSize({ width, height });
     await page.goto('/');
@@ -1620,7 +1744,7 @@ for (const [width, height] of everySize) {
     expect(key?.y ?? 0).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0) - 12);
 
     await useControl(page, '.abn-cover', '.abn-key');
-    for (const part of ['.abn-show__lead', '.abn-show__cta', '.abn-show__recap']) {
+    for (const part of ['.abn-show__lead', '.abn-show__cta']) {
       await expect(page.locator(part), part).toBeInViewport({ ratio: 1, timeout: 4000 });
     }
     await stepsFit(page, '.abn-cover', `AI Build Night at ${width}x${height}`);
@@ -1632,6 +1756,16 @@ for (const [width, height] of everySize) {
     }
     await expect(page.locator('.pk-slide')).toBeInViewport({ ratio: 1 });
     await expect.poll(() => uncoveredPoints(page.locator('.pk-slide'))).toBe(9);
+    // Measured at rest: a tilted box is wider than what's in it. Swinging is measured after.
+    const still = await page.addStyleTag({
+      content: '[data-stop], [data-stop] figure { rotate: none !important; }',
+    });
+    await stepsFit(page, '.pk-forest', `Parkdex at ${width}x${height}`);
+    await still.evaluate((tag) => (tag as HTMLElement).remove());
+    await page.waitForTimeout(1200);
+    await pushStop(page, !!isMobile, 1);
+    expect(await swingTrouble(page, 1000), `${width}x${height}`).toEqual([]);
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
 
     await page.locator('.pk-slide').click();
     await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
@@ -1668,31 +1802,25 @@ for (const [width, height] of everySize) {
     }
     await useControl(page, '.tp', '.tp-tap');
     await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
-    await expect(page.locator('#tp-title')).toBeInViewport({ ratio: 1 });
-    await expect(page.locator('.tp__cta')).toBeInViewport({ ratio: 1 });
-    await stepsFit(page, '.tp', `Not Quite My Tempo at ${width}x${height}`);
-    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
-  });
-
-  test(`every section's other layout fits at ${width}x${height}`, async ({ page }) => {
-    test.setTimeout(60000);
-    await page.setViewportSize({ width, height });
-    await page.goto(turnedAround);
-    await useControl(page, '.abn-cover', '.abn-key');
-    await stepsFit(page, '.abn-cover', `AI Build Night at ${width}x${height}`);
-    await useControl(page, '#offbooked', '.rope');
-    await expect(page.locator('.ticket')).toHaveCSS('opacity', '1', { timeout: 12000 });
-    await stepsFit(page, '#offbooked', `Offbooked at ${width}x${height}`);
-    await landKip(page);
-    await stepsFit(page, '.pk-forest', `Parkdex at ${width}x${height}`);
-    await page.locator('.pk-slide').click();
-    await expect(page.locator('#parkdex')).toHaveAttribute('data-jumped', '', { timeout: 8000 });
-    await useControl(page, '.sb-open', '.sb-box__open');
-    await expect(page.locator('.sb-box')).toBeHidden({ timeout: 3000 });
-    await stepsFit(page, '.sb-open', `Sandbox at ${width}x${height}`);
-    await useControl(page, '.tp', '.tp-tap');
-    await expect(page.locator('.tp-closed')).toBeHidden({ timeout: 3000 });
-    await stepsFit(page, '.tp', `Not Quite My Tempo at ${width}x${height}`);
+    const opened = ['#tp-title', '.tp__cta', '.tp-window'];
+    for (const part of opened) {
+      await expect(page.locator(part), part).toBeInViewport({ ratio: 1 });
+    }
+    const [name, link, frame] = await Promise.all(
+      opened.map((part) => page.locator(part).boundingBox()),
+    );
+    if (!name || !link || !frame) throw new Error('An opened part has no box');
+    expect(link.x, `${width}x${height}`).toBeGreaterThanOrEqual(name.x + name.width - 1);
+    expect(frame.y, `${width}x${height}`).toBeGreaterThanOrEqual(name.y + name.height - 1);
+    expect(frame.y, `${width}x${height}`).toBeGreaterThanOrEqual(link.y + link.height - 1);
+    expect(frame.height, `${width}x${height}`).toBeGreaterThan(height * 0.4);
+    const tagline = page.locator('.tp__head p');
+    if (await tagline.isVisible()) {
+      const words = await tagline.boundingBox();
+      if (!words) throw new Error('The line has no box');
+      expect(words.y + words.height, `${width}x${height}`).toBeLessThanOrEqual(frame.y + 1);
+      expect(words.x + words.width, `${width}x${height}`).toBeLessThanOrEqual(link.x + 1);
+    }
     expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 }
@@ -1716,7 +1844,19 @@ test.describe('reduced motion', () => {
     await expect(page.locator('[data-stop] h3').first()).toBeVisible();
     await expect(page.locator('.tp-closed')).toBeHidden();
     await expect(page.locator('.tp__cta')).toBeVisible();
-    await expect(page.locator('.tp-credits summary')).toBeVisible();
+    // The still, and still the way in. Nothing plays.
+    const frame = page.locator('.tp-window');
+    await expect(frame).toHaveAttribute('href', TEMPO);
+    await frame.scrollIntoViewIfNeeded();
+    await expect(frame.locator('img')).toBeVisible();
+    await expect
+      .poll(() =>
+        frame.locator('img').evaluate((image) => (image as HTMLImageElement).naturalWidth),
+      )
+      .toBeGreaterThan(0);
+    await expect(frame.locator('video')).not.toHaveAttribute('src', /./);
+    // The stops hang from their vines, and stay put.
+    await expect(page.locator('[data-stop]').first()).toHaveCSS('rotate', 'none');
     await expect(page.locator('.ticket')).toHaveCSS('opacity', '1');
     for (const step of await page.locator('.step').all()) {
       await expect(step).toHaveCSS('opacity', '1');
@@ -1775,10 +1915,8 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
     expect(await opacityOf(step)).toBe(1);
   }
   // Every step keeps its own picture, in the order they were written.
-  await expect(page.locator('[data-step] figure')).toHaveCount(19);
-  await expect(
-    page.locator('[data-steps-window]:visible, [data-steps-toggle]:visible'),
-  ).toHaveCount(0);
+  await expect(page.locator('[data-step] figure')).toHaveCount(15);
+  await expect(page.locator('[data-steps-window]:visible')).toHaveCount(0);
   // Visible isn't enough: the cover's headline stays clear of the site that follows it.
   await page.locator('#abn-title').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('#abn-title'))).toBeGreaterThan(0);
@@ -1821,8 +1959,10 @@ test.describe('without JavaScript', () => {
     await expect(page.locator('.wipe')).toBeHidden();
     await expect(page.locator('.tp-closed')).toBeHidden();
     await expect(page.locator('.tp__cta')).toBeVisible();
-    await page.locator('.tp-credits summary').click();
-    await expect(page.locator('.tp-credits a[href*="sketchfab.com"]').first()).toBeVisible();
+    await expect(page.locator('.tp-window')).toHaveAttribute('href', TEMPO);
+    await page.locator('.tp-window').scrollIntoViewIfNeeded();
+    await expect(page.locator('.tp-window img')).toBeVisible();
+    await expect(page.locator('.tp-window video')).not.toHaveAttribute('src', /./);
     await expect(page.locator('[data-moment-control]:visible')).toHaveCount(0);
   });
 });

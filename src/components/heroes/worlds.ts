@@ -28,6 +28,6 @@ export const worlds = [
     name: 'Not Quite My Tempo',
     href: '#not-quite-my-tempo',
     colour: '#2b1b11',
-    who: 'for new drummers',
+    who: 'for fun',
   },
 ];

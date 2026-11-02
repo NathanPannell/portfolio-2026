@@ -60,26 +60,23 @@ const steps = [
     <div class="abn-show" data-opens>
       <div class="abn-show__top">
         <p class="abn-show__lead">
-          Night 001 filled up. Night 002 is next. <span>I co-run it and built the site.</span>
+          A free night in Victoria to build something real with AI.
+          <span>I co-run it and built the site.</span>
         </p>
-        <div class="abn-show__links">
-          <a class="abn-show__cta" href="https://aibuildnight.ca/">
-            <span>aibuildnight.ca</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-          <a class="abn-show__recap" href="https://aibuildnight.ca/pages/past-nights">
-            <span>Read the recap</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
+        <a class="abn-show__cta" href="https://aibuildnight.ca/">
+          <span>aibuildnight.ca</span>
+          <span aria-hidden="true">↗</span>
+        </a>
       </div>
       <Steps
         name="abn"
         steps={steps}
         shape="wide"
-        layout="rotating"
-        address="aibuildnight.ca"
+        rotates
         pairs
+        address="aibuildnight.ca"
+        href="https://aibuildnight.ca/"
+        label="Open the AI Build Night site, aibuildnight.ca"
       />
     </div>
   </div>
@@ -396,20 +393,6 @@ const steps = [
     letter-spacing: -0.01em;
   }
 
-  .abn-show__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 1.25rem;
-    align-items: center;
-  }
-
-  .abn-show__recap {
-    display: inline-flex;
-    gap: 0.5rem;
-    font-weight: 700;
-    text-underline-offset: 0.2em;
-  }
-
   .abn-show__cta {
     display: inline-flex;
     gap: 1.2rem;
@@ -450,7 +433,7 @@ const steps = [
       --rail-pad: 0.45em 0.55em;
       grid-template-rows: auto minmax(0, 1fr) auto;
       gap: 0.75rem;
-      padding-top: 3.25rem;
+      padding-top: 1.5rem;
       padding-bottom: calc(1rem + var(--bar));
     }
 
@@ -458,21 +441,13 @@ const steps = [
       display: contents;
     }
 
-    .abn-show__links {
-      flex-wrap: nowrap;
-      gap: 0.8rem;
-      order: 1;
-      white-space: nowrap;
-    }
-
     .abn-show__cta {
+      order: 1;
       gap: 0.5rem;
+      justify-self: start;
       padding: 0.55rem 0.65rem;
       font-size: 0.95rem;
-    }
-
-    .abn-show__recap {
-      font-size: 0.9rem;
+      white-space: nowrap;
     }
   }
 
@@ -527,17 +502,10 @@ const steps = [
       display: inline;
     }
 
-    .abn-show__links {
+    .abn-show__cta {
       flex: none;
       order: 0;
-    }
-
-    .abn-show__cta {
       padding: 0.3rem 0.6rem;
-      font-size: 0.85rem;
-    }
-
-    .abn-show__recap {
       font-size: 0.85rem;
     }
   }

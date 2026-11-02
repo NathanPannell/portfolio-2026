@@ -1,13 +1,8 @@
-// How a section lays out its steps: side by side, or one main window rotating through them while the
-// whole list stays on screen. The markup is the side-by-side layout, so that is what shows if this
-// script never runs. The toggle between the two is a review tool: `?offbooked=rotating` links straight
-// to one, and it only exists on staging and local builds. See OPERATIONS.md for how to settle on one.
+// One main window rotating through a section's pictures while the whole list stays on screen. The
+// markup has every step side by side, so that is what shows if this script never runs. Which sections
+// rotate is set by `rotates` on `<Steps>`. See OPERATIONS.md.
 
-import { playLoop, reducedMotion } from './motion';
-
-type Layout = 'side' | 'rotating';
-
-const REVIEW_HOSTS = ['staging.nathanpannell.com', 'localhost', '127.0.0.1'];
+import { reducedMotion } from './motion';
 
 // How long each step stays up, in milliseconds: enough to read the longest line and take in its
 // picture.
@@ -37,18 +32,13 @@ const watchTheMouse = () => {
   }
 };
 
-const asLayout = (value: string | null | undefined): Layout | undefined =>
-  value === 'side' || value === 'rotating' ? value : undefined;
-
-const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
+const startSet = (set: HTMLElement) => {
   const rows = Array.from(set.querySelectorAll<HTMLElement>('[data-step]'));
   const list = set.querySelector<HTMLElement>('[data-steps-list]');
   const frame = set.querySelector<HTMLElement>('[data-steps-window]');
   const view = set.querySelector<HTMLElement>('[data-steps-view]');
   if (!list || !frame || !view) return;
   const scene = set.closest<HTMLElement>('[data-moment]');
-  const toggle = set.querySelector<HTMLElement>('[data-steps-toggle]');
-  const choices = Array.from(set.querySelectorAll<HTMLButtonElement>('[data-layout-pick]'));
 
   const steps = rows.map((row) => ({
     row,
@@ -59,7 +49,6 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
 
   const held = new Set<string>();
   let count: Animation | undefined;
-  let layout: Layout = 'side';
   let now = 0;
   let opened = !scene?.hasAttribute('data-waiting');
   let picked = false;
@@ -72,11 +61,6 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
       picture.toggleAttribute('data-current', at === index);
       if (at === index) pick.setAttribute('aria-current', 'step');
       else pick.removeAttribute('aria-current');
-      // A picture that has left the window takes its loop with it.
-      const video = picture.querySelector('video');
-      if (!video) return;
-      if (layout === 'side' || at === index) void playLoop(video);
-      else video.pause();
     });
   };
 
@@ -84,9 +68,7 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
   const countDown = (delay = 0) => {
     count?.cancel();
     count = undefined;
-    set.removeAttribute('data-counting');
-    if (layout !== 'rotating' || !opened || picked || reducedMotion()) return;
-    set.toggleAttribute('data-counting', true);
+    if (!opened || picked || reducedMotion()) return;
     count = set.animate({ '--progress': [0, 1] }, { duration: DWELL, delay, fill: 'backwards' });
     count.onfinish = () => {
       show((now + 1) % steps.length);
@@ -109,28 +91,16 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
     show(index);
   };
 
-  const setLayout = (next: Layout) => {
-    layout = next;
-    set.dataset['layout'] = next;
-    frame.hidden = next !== 'rotating';
-    for (const { row, title, picture, pick } of steps) {
-      if (next === 'rotating') {
-        view.append(picture);
-        pick.append(...title.childNodes);
-        title.append(pick);
-      } else if (title.contains(pick)) {
-        row.append(picture);
-        title.replaceChildren(...pick.childNodes);
-      }
-    }
-    for (const choice of choices) {
-      choice.setAttribute('aria-pressed', String(choice.dataset['layoutPick'] === next));
-    }
-    picked = false;
-    view.setAttribute('aria-live', 'off');
-    show(0);
-    countDown();
-  };
+  set.dataset['layout'] = 'rotating';
+  frame.hidden = false;
+  for (const { title, picture, pick } of steps) {
+    view.append(picture);
+    pick.append(...title.childNodes);
+    title.append(pick);
+  }
+  view.setAttribute('aria-live', 'off');
+  show(0);
+  countDown();
 
   steps.forEach(({ row, pick }, index) => {
     pick.type = 'button';
@@ -138,7 +108,7 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
     pick.addEventListener('click', () => pickStep(index));
     let timer = 0;
     row.addEventListener('pointermove', (event) => {
-      if (event.pointerType !== 'mouse' || !mouseMoved || layout !== 'rotating') return;
+      if (event.pointerType !== 'mouse' || !mouseMoved) return;
       window.clearTimeout(timer);
       timer = window.setTimeout(() => pickStep(index), HOVER);
     });
@@ -150,15 +120,15 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
       if (event.pointerType === 'mouse' && mouseMoved) hold('hover', true);
     });
     part.addEventListener('pointerleave', () => hold('hover', false));
+    part.addEventListener('focusin', () => hold('focus', true));
+    part.addEventListener('focusout', (event) => {
+      if (!part.contains(event.relatedTarget as Node | null)) hold('focus', false);
+    });
   }
 
-  list.addEventListener('focusin', () => hold('focus', true));
-  list.addEventListener('focusout', (event) => {
-    if (!list.contains(event.relatedTarget as Node | null)) hold('focus', false);
-  });
   list.addEventListener('keydown', (event) => {
     const move = NEXT_KEYS.has(event.key) ? 1 : LAST_KEYS.has(event.key) ? -1 : 0;
-    if (move === 0 || layout !== 'rotating') return;
+    if (move === 0) return;
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     event.preventDefault();
     const index = (now + move + steps.length) % steps.length;
@@ -171,48 +141,17 @@ const startSet = (set: HTMLElement, review: boolean, onChoose: () => void) => {
     threshold: 0.25,
   }).observe(frame);
 
-  const startOn = set.dataset['startOn'] ?? 'moment:open';
   scene?.addEventListener(
-    startOn,
+    'moment:open',
     () => {
       opened = true;
       countDown(SETTLE);
     },
     { once: true },
   );
-
-  if (review && toggle) {
-    toggle.hidden = false;
-    for (const choice of choices) {
-      choice.addEventListener('click', () => {
-        const next = asLayout(choice.dataset['layoutPick']);
-        if (!next || next === layout) return;
-        setLayout(next);
-        onChoose();
-      });
-    }
-  }
-
-  const name = set.dataset['steps'] ?? '';
-  const asked = review
-    ? asLayout(new URLSearchParams(window.location.search).get(name))
-    : undefined;
-  setLayout(asked ?? asLayout(set.dataset['layoutDefault']) ?? 'side');
 };
 
 export const startSteps = () => {
-  const review = REVIEW_HOSTS.includes(window.location.hostname);
-  const sets = Array.from(document.querySelectorAll<HTMLElement>('[data-steps]'));
   watchTheMouse();
-
-  // Every choice goes in the address bar, so whatever is on screen is a link to send.
-  const writeLink = () => {
-    const url = new URL(window.location.href);
-    for (const set of sets) {
-      url.searchParams.set(set.dataset['steps'] ?? '', set.dataset['layout'] ?? '');
-    }
-    window.history.replaceState(window.history.state, '', url);
-  };
-
-  sets.forEach((set) => startSet(set, review, writeLink));
+  document.querySelectorAll<HTMLElement>('[data-rotates="true"]').forEach(startSet);
 };
