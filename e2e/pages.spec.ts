@@ -2026,7 +2026,11 @@ test.describe('reduced motion', () => {
     // The browser's own lazy loading may reach a few tiles ahead, and that's all.
     const early = asked.filter((url) => url.includes('/media/build-night/'));
     expect(early.length).toBeLessThanOrEqual(4);
-    expect(asked.filter((url) => url.includes('/media/offbooked/'))).toEqual([]);
+    // Offbooked's pictures share the rotation, and stay with the browser's own lazy loading.
+    const pictures = await page
+      .locator('#offbooked img')
+      .evaluateAll((images) => images.map((image) => (image as HTMLImageElement).loading));
+    expect(new Set(pictures)).toEqual(new Set(['lazy']));
     await page.locator('[data-steps="abn"] [data-steps-window]').scrollIntoViewIfNeeded();
     await expect
       .poll(() => asked.filter((url) => url.includes('/media/build-night/')).length)
