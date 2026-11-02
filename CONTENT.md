@@ -27,7 +27,7 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 - **Offbooked price:** nothing can be bought yet. Show no price until payments ship.
 - **Parkdex link:** use the public Play listing, not the tester group link.
 - **Not Quite My Tempo link:** use notquitemytempo-sand.vercel.app. notquitemytempo.com isn't connected.
-- **Not Quite My Tempo pictures:** the game gets bloody later on, and this site stays out of that. Use nothing from 2:14 a.m. onwards, and nothing with blood in shot unless it is already on the game's own landing page or share card.
+- **Not Quite My Tempo pictures:** the game gets bloody later on, and this site stays out of that. Use no scene from 2:14 a.m. onwards, and nothing with blood in shot unless it is already on the game's own landing page or share card. The result screen comes after those scenes, but it's text on black, so it's fine.
 - **Not Quite My Tempo's name:** it's a line from a film. Don't name the film anywhere on this site.
 
 ## Privacy

@@ -110,7 +110,6 @@ const beats = ['One', 'Two', 'Three', 'Four'];
     --tp-display: 'Big Shoulders Display Variable', 'Arial Narrow', Impact, sans-serif;
     --tp-serif: 'Cormorant Garamond', Georgia, serif;
     --beat: 625ms;
-    --bar: calc(100lvh - 100svh);
     position: relative;
     height: 100lvh;
     overflow: clip;
@@ -236,7 +235,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
   .tp-closed {
     --ring: clamp(6.5rem, min(44vw, 30svh), 15rem);
     --ring-left: 50%;
-    --ring-top: 70%;
+    --ring-top: 70svh;
     position: absolute;
     z-index: 4;
     inset: 0;
@@ -252,7 +251,6 @@ const beats = ['One', 'Two', 'Three', 'Four'];
   /* The verdict hangs in the air, then the room comes up behind it. */
   .tp[data-open] .tp-closed {
     display: block;
-    pointer-events: none;
     animation: tp-up 1300ms linear forwards;
   }
 
@@ -361,7 +359,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
 
   .tp-count,
   .tp-verdict {
-    bottom: calc(100% - var(--ring-top) + var(--ring) * 0.72);
+    top: calc(var(--ring-top) - var(--ring) * 0.72);
     left: var(--ring-left);
     display: grid;
     justify-items: center;
@@ -371,7 +369,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
     font-weight: 900;
     line-height: 0.9;
     text-transform: uppercase;
-    transform: translateX(-50%);
+    transform: translate(-50%, -100%);
   }
 
   .tp-count span {
@@ -471,7 +469,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
   @keyframes tp-slam {
     from {
       opacity: 0;
-      transform: translateX(-50%) scale(1.5);
+      transform: translate(-50%, -100%) scale(1.5);
     }
   }
 
@@ -626,7 +624,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
   @media (min-aspect-ratio: 1/1) {
     .tp-closed {
       --ring-left: 43%;
-      --ring-top: 76%;
+      --ring-top: 76svh;
     }
 
     .tp-closed__room img {
@@ -641,7 +639,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
   /* Phones on their side: the name takes one line, over the ring. */
   @media (max-height: 480px) and (orientation: landscape) {
     .tp-closed {
-      --ring-top: 72%;
+      --ring-top: 72svh;
     }
 
     .tp-closed__name {

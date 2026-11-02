@@ -660,18 +660,18 @@ test('nothing but the visitor opens a scene', async ({ page }) => {
     await expect(page.locator(scene)).toHaveAttribute('data-waiting', '');
   }
   await page.reload();
-  await expect(page.locator('[data-waiting]')).toHaveCount(4);
+  await expect(page.locator('[data-waiting]')).toHaveCount(5);
 });
 
 test('the keyboard goes from one closed scene to the next', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop journey.');
   await page.goto('/');
   await page.locator('.abn-key').focus();
-  for (const control of ['.rope', '.pk-plant', '.sb-box__open']) {
+  for (const control of ['.rope', '.pk-plant', '.sb-box__open', '.tp-tap']) {
     await page.keyboard.press('Tab');
     await expect(page.locator(control)).toBeFocused();
   }
-  await expect(page.locator('[data-waiting]')).toHaveCount(4);
+  await expect(page.locator('[data-waiting]')).toHaveCount(5);
 });
 
 test('clicking a closed scene away from its control leaves it closed', async ({ page }) => {
@@ -1311,6 +1311,37 @@ test('a press with no pointer or key behind it is judged on the click', async ({
   await expect(page.locator('[data-verdict]')).toHaveText('Dragging');
 });
 
+test('a mouse press dragged off the ring is forgotten', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'This is a mouse journey.');
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await pressAt(page, 5, 'pointerdown');
+  await page.evaluate(() =>
+    document.body.dispatchEvent(new PointerEvent('pointerup', { bubbles: true })),
+  );
+  await pressAt(page, 200, 'click');
+  await expect(page.locator('[data-verdict]')).toHaveText('Dragging');
+});
+
+test('a press while the ring is resting gets no word it did not earn', async ({ page }) => {
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await page.locator('[data-beat]').evaluate((ring) => ring.getAnimations()[0]?.pause());
+  await letGo(page);
+  await expect(page.locator('.tp')).toHaveAttribute('data-open', '');
+  await expect(page.locator('[data-verdict]')).toHaveText('');
+});
+
+test('a second tap on the ring stays on the ring while the screen clears', async ({ page }) => {
+  await page.goto('/');
+  await useControl(page, '.tp', '.tp-tap');
+  await page.locator('.tp').evaluate((scene) => {
+    const box = scene.querySelector('.tp-tap')?.getBoundingClientRect();
+    const here = document.elementFromPoint((box?.left ?? 0) + 40, (box?.top ?? 0) + 40);
+    if (!here?.closest('.tp-closed')) throw new Error('The press went through to the page');
+  });
+});
+
 test('a real press gets a word', async ({ page }) => {
   await page.goto('/');
   await useControl(page, '.tp', '.tp-tap');
@@ -1349,15 +1380,20 @@ test('his patience runs out over each step, and is full when nothing is counting
   await openSet(page, sets[4]);
   const steps = page.locator('[data-steps="tempo"]');
   await expect(steps).toHaveAttribute('data-counting', '');
+  const bar = () =>
+    steps
+      .locator('.steps-window__bar')
+      .evaluate((part) => getComputedStyle(part, '::after').transform);
+  // Half way through a step's six seconds, after the opening's beat.
+  await steps.evaluate((set) => {
+    const count = set.getAnimations()[0];
+    count?.pause();
+    if (count) count.currentTime = 4600;
+  });
+  await expect.poll(bar).toBe('matrix(0.5, 0, 0, 1, 0, 0)');
   await steps.locator('.step__pick').nth(2).click();
   await expect(steps).not.toHaveAttribute('data-counting', '');
-  await expect
-    .poll(() =>
-      steps
-        .locator('.steps-window__bar')
-        .evaluate((bar) => getComputedStyle(bar, '::after').transform),
-    )
-    .toBe('none');
+  await expect.poll(bar).toBe('none');
 });
 
 test('hovering or focusing an index row fills it with its image', async ({ page, isMobile }) => {

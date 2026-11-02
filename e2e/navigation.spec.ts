@@ -37,6 +37,7 @@ test('the doors name who each project is for, in the order of the page', async (
     'for casts',
     'for explorers',
     'for creators',
+    'for new drummers',
   ]);
 });
 

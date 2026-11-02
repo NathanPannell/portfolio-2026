@@ -122,7 +122,7 @@ test.describe('scrolling', () => {
     }
     await expect.poll(() => scrollY(page)).toBeGreaterThan(bottom - 4);
     await expect(page.locator('.contact__mail')).toBeInViewport();
-    await expect(page.locator('[data-waiting]')).toHaveCount(4);
+    await expect(page.locator('[data-waiting]')).toHaveCount(5);
   });
 
   test('the keyboard can pass through every screen', async ({ page }) => {
@@ -309,7 +309,9 @@ test.describe('the doors, standing still', () => {
   test('they say who and what, and fit every size', async ({ page }) => {
     test.setTimeout(60000);
     for (const [width, height] of [
+      [320, 480],
       [320, 640],
+      [568, 320],
       [390, 844],
       [844, 390],
       [768, 1024],
@@ -358,6 +360,26 @@ test.describe('the doors, standing still', () => {
           .map((element) => element.textContent?.trim().slice(0, 30)),
       );
       expect(clipped, size).toEqual([]);
+      // And every word stays on its own door.
+      const spilled = await page.locator('.door a').evaluateAll((links) =>
+        links
+          .filter((link) => {
+            const door = link.getBoundingClientRect();
+            return [...link.querySelectorAll('span')].some((part) => {
+              const words = document.createRange();
+              words.selectNodeContents(part);
+              const { left, right, top, bottom } = words.getBoundingClientRect();
+              return (
+                left < door.left - 1 ||
+                right > door.right + 1 ||
+                top < door.top - 1 ||
+                bottom > door.bottom + 1
+              );
+            });
+          })
+          .map((link) => link.textContent?.trim()),
+      );
+      expect(spilled, size).toEqual([]);
     }
   });
 });

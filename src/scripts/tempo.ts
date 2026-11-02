@@ -11,7 +11,8 @@ const GOOD = 90;
 
 const offBeat = (closing: HTMLElement, event: Event) => {
   const start = closing.getAnimations()[0]?.startTime;
-  if (typeof start !== 'number') return 0;
+  // A ring at rest, off screen, has no beat to be on or off.
+  if (typeof start !== 'number') return undefined;
   // A beat lands as the ring closes, at the end of each run. The two clocks are the same clock.
   const through = (event.timeStamp - start) % BEAT;
   return through > BEAT / 2 ? through - BEAT : through;
@@ -39,7 +40,17 @@ export const startTempo = () => {
   const note = (event: Event) => {
     pressed = offBeat(closing, event);
   };
-  control.addEventListener('pointerdown', note);
+  const forget = () => {
+    pressed = undefined;
+  };
+  control.addEventListener('pointerdown', (event) => {
+    if (event.button === 0) note(event);
+  });
+  // A press that ends anywhere else was never a press of the ring.
+  control.addEventListener('pointercancel', forget);
+  window.addEventListener('pointerup', ({ target }) => {
+    if (!control.contains(target as Node | null)) forget();
+  });
   control.addEventListener('keydown', (event) => {
     if (!event.repeat && (event.key === 'Enter' || event.key === ' ')) note(event);
   });
@@ -56,7 +67,8 @@ export const startTempo = () => {
   scene.addEventListener(
     'moment:open',
     () => {
-      const off = Math.round(pressed ?? 0);
+      if (pressed === undefined) return;
+      const off = Math.round(pressed);
       word.textContent = wordFor(off);
       word.dataset['word'] = word.textContent.toLowerCase();
       by.textContent = `${off > 0 ? '+' : ''}${off} ms`;
