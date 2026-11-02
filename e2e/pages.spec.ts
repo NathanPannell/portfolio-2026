@@ -1473,6 +1473,9 @@ test('a second tap on the ring stays on the ring while the screen clears', async
 
 test('a real press gets a word', async ({ page }) => {
   await page.goto('/');
+  await jumpTo(page, '.tp');
+  // The ring starts once the scene is on screen, and a press before that has nothing to be judged by.
+  await expect(page.locator('.tp')).not.toHaveAttribute('data-resting', '');
   await useControl(page, '.tp', '.tp-tap');
   await expect(page.locator('[data-verdict]')).toHaveText(/^(Perfect|Good|Rushing|Dragging)$/);
 });
