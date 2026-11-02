@@ -6,11 +6,14 @@
 // list and the window itself. Parkdex has its own stops on the vine, in the same format.
 interface Step {
   title: string;
-  alt: string;
+  alt?: string;
   // Exported at `{image}-{width}.webp`, the widths in `sizes`.
   image?: string;
   video?: string;
   poster?: string;
+  // How far down the window's page this step sits, for a window that scrolls rather than changes
+  // picture. See `SitePage.astro`, which goes in the `view` slot.
+  stop?: { wide: number; phone: number };
 }
 
 interface Props {
@@ -27,59 +30,82 @@ interface Props {
   // Makes the whole main window a link, and says where to in `label`.
   href?: string;
   label?: string;
+  // How long each step stays up, in milliseconds, if not the usual.
+  dwell?: number;
 }
 
-const { name, steps, shape, rotates = false, pairs = false, address, href, label } = Astro.props;
+const {
+  name,
+  steps,
+  shape,
+  rotates = false,
+  pairs = false,
+  address,
+  href,
+  label,
+  dwell,
+} = Astro.props;
 const widths = shape === 'phone' ? [360, 640] : [480, 900];
 const Window = href ? 'a' : 'div';
+const first = steps[0]?.stop;
 ---
 
 <div
   class="steps-set"
   data-steps={name}
   data-rotates={rotates}
+  data-layout={first && 'rotating'}
+  data-dwell={dwell}
   data-opens
-  style={`--count: ${steps.length}`}
+  style={`--count: ${steps.length}${first ? `; --at-wide: ${first.wide}; --at-phone: ${first.phone}` : ''}`}
 >
   <ol class:list={['steps', `steps--${shape}`, { 'steps--pairs': pairs }]} data-steps-list>
-    {steps.map(({ title, alt, image, video, poster }, index) => (
-      <li class="step" data-step style={`--step: ${index}`}>
+    {steps.map(({ title, alt, image, video, poster, stop }, index) => (
+      <li
+        class="step"
+        data-step
+        data-at-wide={stop?.wide}
+        data-at-phone={stop?.phone}
+        style={`--step: ${index}`}
+      >
         <h3>
           <span class="step__number" aria-hidden="true">
             {index + 1}
           </span>
           <span>{title}</span>
         </h3>
-        <figure class="step__picture">
-          {video ? (
-            <video
-              data-src={video}
-              poster={poster}
-              width="1120"
-              height="700"
-              muted
-              loop
-              playsinline
-              preload="none"
-              aria-label={alt}
-            />
-          ) : (
-            <img
-              src={`${image}-${widths[0]}.webp`}
-              srcset={widths.map((width) => `${image}-${width}.webp ${width}w`).join(', ')}
-              sizes={
-                shape === 'phone'
-                  ? '(max-width: 760px) 60vw, 24vw'
-                  : '(max-width: 760px) 92vw, 60vw'
-              }
-              width={shape === 'phone' ? 640 : 900}
-              height={shape === 'phone' ? 1385 : 563}
-              loading="lazy"
-              decoding="async"
-              alt={alt}
-            />
-          )}
-        </figure>
+        {(image || video) && (
+          <figure class="step__picture">
+            {video ? (
+              <video
+                data-src={video}
+                poster={poster}
+                width="1120"
+                height="700"
+                muted
+                loop
+                playsinline
+                preload="none"
+                aria-label={alt}
+              />
+            ) : (
+              <img
+                src={`${image}-${widths[0]}.webp`}
+                srcset={widths.map((width) => `${image}-${width}.webp ${width}w`).join(', ')}
+                sizes={
+                  shape === 'phone'
+                    ? '(max-width: 760px) 60vw, 24vw'
+                    : '(max-width: 760px) 92vw, 60vw'
+                }
+                width={shape === 'phone' ? 640 : 900}
+                height={shape === 'phone' ? 1385 : 563}
+                loading="lazy"
+                decoding="async"
+                alt={alt}
+              />
+            )}
+          </figure>
+        )}
       </li>
     ))}
   </ol>
@@ -89,7 +115,7 @@ const Window = href ? 'a' : 'div';
       href={href}
       aria-label={label}
       data-steps-window
-      hidden
+      hidden={!first}
     >
       {address && (
         <div class="steps-window__bar" aria-hidden="true">
@@ -99,7 +125,9 @@ const Window = href ? 'a' : 'div';
           <span>{address}</span>
         </div>
       )}
-      <div class="steps-window__view" data-steps-view />
+      <div class="steps-window__view" data-steps-view>
+        <slot name="view" />
+      </div>
       {href && (
         <span class="steps-window__go" aria-hidden="true">
           Open {address} ↗
@@ -477,7 +505,13 @@ const Window = href ? 'a' : 'div';
   /* On an upright phone, wide pictures go above the list, at most about half the height. */
   @media (max-width: 760px) and (orientation: portrait) {
     .steps-set[data-layout='rotating']:has(.steps-window--wide) {
-      --window: min(100%, calc((var(--steps-room) * 0.46 - var(--bar-height, 2.5rem)) * 1.6));
+      --window: min(
+        100%,
+        calc(
+          (var(--steps-room) * var(--window-share, 0.46) - var(--bar-height, 2.5rem)) *
+            var(--view-ratio, 1.6)
+        )
+      );
       grid-template-columns: minmax(0, 1fr);
       gap: clamp(0.6rem, 2.5svh, 1.5rem);
       align-content: center;

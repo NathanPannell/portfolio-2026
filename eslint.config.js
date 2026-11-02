@@ -21,6 +21,9 @@ export default defineConfig(
     files: ['*.{js,ts,mjs}', 'src/*.ts', 'src/lib/**', 'tests/**'],
     languageOptions: { globals: globals.node },
   },
-  // Playwright specs run in Node and pass callbacks into the page.
-  { files: ['e2e/**'], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
+  // Playwright specs and scripts run in Node and pass callbacks into the page.
+  {
+    files: ['e2e/**', 'scripts/**'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
 );

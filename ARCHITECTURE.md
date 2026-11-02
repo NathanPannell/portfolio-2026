@@ -16,7 +16,8 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/components/Hero.astro` | The hero frame. |
 | `src/components/heroes/` | Doors, the hero, plus `worlds.ts`, the facts about the five projects. |
 | `src/components/Steps.astro` | The numbered steps a section explains itself with, and the main window they rotate in. |
-| `src/components/BuildNight.astro` | AI Build Night: cover and key, then its four steps, one link, and a window that is a link too. |
+| `src/components/BuildNight.astro` | AI Build Night: cover and key, then its four steps, one link, and a window onto the site that is a link too. |
+| `src/components/SitePage.astro` | A captured page in tiles, for a main window to scroll through. `build-night-page.json` is its facts. |
 | `src/components/Offbooked.astro` | Curtains and rope, then the title, one link and four steps. |
 | `src/components/Parkdex.astro` | Sky, Plant!, the ride, the four stops, the way on down, and the park at the bottom with its links. |
 | `src/components/Sandbox.astro` | Toy box and rainbow, then the name, one link and three steps. |
@@ -33,6 +34,7 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/scripts/ride.ts` | Parkdex: Kip's timed ride down the vine, forest layers, and the slide to the park and the jump. |
 | `src/scripts/swing.ts` | Parkdex: each stop as a pendulum on its vine, with a sway of its own and a push from a pointer or finger. |
 | `src/scripts/wash.ts` | Touch equivalent for the index image fill. |
+| `scripts/capture-build-night.mjs` | Recaptures aibuildnight.ca for the window. See `OPERATIONS.md`. |
 | `tests/content-contract.mjs` | Section order, required links, claims guards, reduced-motion coverage, media budget. |
 | `tests/seo-contract.mjs` | Generated-output SEO checks: host exclusion, canonical, share card, JSON-LD, 404. |
 | `e2e/` | Playwright against `astro preview`: rendering, the settle, the doors, every click moment and its steps, sixteen viewport sizes, reduced motion, no JavaScript, and a crawl for broken internal URLs. |
@@ -82,7 +84,9 @@ A `[data-loops]` scene has its looping CSS paused while it is off screen (`start
 Most sections say what they do in three or four numbered steps, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked and Sandbox, and Parkdex's stops on the vine are the same idea in its own design. Not Quite My Tempo has no steps: it isn't detailed enough to need them, and they could only spoil it. There are two layouts, settled per section in `OPERATIONS.md`:
 
 - **Side by side:** every step and picture on screen at once. This is what the markup is, so it is also what shows for AI Build Night and Offbooked without JavaScript or if the script stalls. Sandbox and Parkdex use it for real.
-- **Rotating:** the whole list stays on screen, and one main window shows one picture at a time. `src/scripts/steps.ts` moves the pictures into the window, so nothing is written twice. Each section dresses this its own way, because matching templates were the owner's complaint: a browser that loads each page for AI Build Night, and one phone beside a marked-up page of the script for Offbooked.
+- **Rotating:** the whole list stays on screen, and one main window shows one picture at a time. `src/scripts/steps.ts` moves the pictures into the window, so nothing is written twice. Each section dresses this its own way, because matching templates were the owner's complaint: a browser that scrolls through the real page for AI Build Night, and one phone beside a marked-up page of the script for Offbooked.
+
+AI Build Night's window has no pictures to move. Its steps carry a `stop`, how far down a captured page each one sits, as a share of the page, and `steps.ts` sets that as `--at-wide` and `--at-phone`. `SitePage.astro` moves the strip with a CSS transition on `transform`, so a pick part way through a scroll carries on smoothly from wherever it has got to, and reduced motion only has to drop the transition. The strip moves by a percentage of its own height, so a stop holds at any window size, and a container query picks the phone capture for a narrow window, because a desktop page that small can't be read. Both are lazy until the section opens, when the one on show is fetched whole: the window clips the rest, and lazy loading can't see past that. Without JavaScript the window simply stays on its first stop, so this set is written as rotating in the markup, unlike the others.
 
 The rotation's rules live in `startSet`. It starts only after the opening (`moment:open`), so it never depends on scrolling, and it never runs under reduced motion, where the list is simply there to pick from. Its count is a Web Animation of `--progress` on the set, not a timer, so hovering, focusing or leaving the screen can pause it mid-step and a section can draw how long is left. Hover and focus only count on the list and the window, and hover needs real movement, because the mouse that pressed a section's control is often left resting right where the window appears. Picking a step by hover, tap, click or keys stops the rotation for good, and never follows a window's link.
 

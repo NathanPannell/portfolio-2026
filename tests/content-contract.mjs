@@ -172,6 +172,30 @@ assert.doesNotMatch(
 );
 assert.match(buildNight, /href="https:\/\/aibuildnight\.ca\/"\n\s+label=/, 'The window is a link');
 
+// The four steps are the live site's own, word for word, and each has a stop in both captures.
+for (const line of [
+  'Meet the people building here.',
+  'Try the thing you keep reading about.',
+  'Show the room what you made.',
+  'Keep building after you leave.',
+]) {
+  assert(buildNight.includes(`'${line}'`), `Missing AI Build Night step: ${line}`);
+}
+const capture = JSON.parse(
+  readFileSync(join(root, 'src', 'components', 'build-night-page.json'), 'utf8'),
+);
+for (const { stops, view, tiles } of [capture.wide, capture.phone]) {
+  assert.equal(stops.length, 4, 'A stop for each step');
+  for (const stop of stops)
+    assert(stop >= 0 && stop + view <= 100.01, `Stop off the page: ${stop}`);
+  for (const { src } of tiles)
+    assert(existsSync(join(root, 'public', src)), `Missing tile: ${src}`);
+}
+assert(
+  existsSync(join(root, 'scripts', 'capture-build-night.mjs')),
+  'The capture can be refreshed',
+);
+
 // The kept interaction: a row fills with a full-colour image, with a touch equivalent. The images
 // are drawn for the row and pinned to its height, so `cover` can't crop them down to a strip.
 const index = readFileSync(join(root, 'src', 'components', 'Index.astro'), 'utf8');

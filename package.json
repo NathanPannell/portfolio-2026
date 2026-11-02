@@ -11,6 +11,7 @@
     "build": "npm run test:content && astro check && astro build && npm run test:seo",
     "preview": "astro preview",
     "check": "astro check",
+    "capture:build-night": "node scripts/capture-build-night.mjs",
     "test:content": "node tests/content-contract.mjs",
     "test:seo": "node tests/seo-contract.mjs",
     "format": "prettier --write .",

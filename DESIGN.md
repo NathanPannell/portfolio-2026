@@ -11,7 +11,7 @@ Inspiration: cut-out collage and sticker posters on Dribbble, for the Offbooked 
 | World | Type | Colour | Signature motion | The thing to click |
 | --- | --- | --- | --- | --- |
 | Hero | Archivo, JetBrains Mono | Ink, bone, signal, one colour per door | A door swings open before the page moves on | Five doors |
-| AI Build Night | Archivo, JetBrains Mono | Signal orange, bone, sea glass, harbour | Four steps open out of the block cursor, on one screen | A big mechanical Enter key that thoccs |
+| AI Build Night | Archivo, JetBrains Mono | Signal orange, bone, sea glass, harbour | Four steps open out of the block cursor, on one screen, beside a browser that scrolls through the real site | A big mechanical Enter key that thoccs |
 | Offbooked | Newsreader, JetBrains Mono | Oxblood, paper, highlighter | Curtains bunch open, then follow spots, the title, one link and four phones land. Nothing follows the pointer | A rope with a tassel, to click or pull down |
 | Parkdex | Bricolage Grotesque | Sky, greens, orange, ink outlines | Kip rides the vine from the sky through the canopy to a clearing, where the phones drop in on vines of their own and swing, and swing harder when pushed. Then Kip slides on down to the park and jumps off the end of the vine | Plant!, then Slide down with Kip |
 | Play by the Sandbox | Chewy, Gaegu | Cream, crayon rainbow, pastels | Crayons spring out, the rainbow crosses the screen, then three steps on paper | A toy box |
