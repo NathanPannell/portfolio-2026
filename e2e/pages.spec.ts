@@ -647,47 +647,45 @@ test('each stop hangs from a vine, sways by itself, and swings when pushed', asy
   expect(after[1]).toBeLessThan(pushed[1] ?? 0);
 });
 
-// How long a pushed stop takes to get from one side to the other, in milliseconds.
-const halfSwing = async (page: Page) => {
-  const box = await page.locator('[data-stop]').nth(3).boundingBox();
-  if (!box) throw new Error('No stop');
-  await page.mouse.move(box.x + box.width + 10, box.y + 200);
-  await page.mouse.move(box.x - 20, box.y + 200, { steps: 4 });
-  return page.evaluate(async () => {
-    const stop = document.querySelectorAll<HTMLElement>('[data-stop]')[3];
-    const angle = () => Number.parseFloat(stop?.style.rotate ?? '0');
-    const crossings: number[] = [];
-    let last = angle();
-    const start = performance.now();
-    while (performance.now() - start < 7000 && crossings.length < 3) {
-      await new Promise((frame) => window.requestAnimationFrame(frame));
-      const now = angle();
-      if (Math.sign(now) !== Math.sign(last)) crossings.push(performance.now());
-      last = now;
-    }
-    return (crossings[2] ?? 0) - (crossings[1] ?? 0);
-  });
-};
-
-test('a stop swings at the same speed however few frames it gets', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'The clock is the same on a phone.');
-  test.setTimeout(50000);
+// Where the first stop has swung to, a fixed time after landing, on a clock that only moves when told
+// to, with a new frame every `frame` milliseconds. Nothing else can differ between two of these.
+const swungAfter = async (page: Page, frame: number) => {
+  await page.clock.install({ time: 0 });
+  await page.clock.pauseAt(1000);
   await page.goto('/');
-  await landKip(page);
-  await page.waitForTimeout(7000);
-  const smooth = await halfSwing(page);
-  await page.waitForTimeout(9000);
-  // Ten frames a second, as a very busy phone might manage.
-  await page.evaluate(() => {
+  await jumpTo(page, '#parkdex');
+  await page.locator('.pk-plant').click();
+  await page.clock.runFor(4000);
+  await expect(page.locator('#parkdex')).toHaveAttribute('data-landed', '');
+  await page.waitForTimeout(300);
+  // Only from here: Kip's ride lands on a frame too, so slowing it would move the landing.
+  await page.evaluate((length) => {
     window.requestAnimationFrame = (draw) =>
       window.setTimeout(() => {
         draw(performance.now());
-      }, 80);
-  });
-  const rough = await halfSwing(page);
-  expect(smooth).toBeGreaterThan(400);
-  expect(rough / smooth).toBeGreaterThan(0.65);
-  expect(rough / smooth).toBeLessThan(1.35);
+      }, length);
+  }, frame);
+  await page.clock.runFor(3000);
+  return page
+    .locator('[data-stop]')
+    .first()
+    .evaluate((stop: HTMLElement) => Number.parseFloat(stop.style.rotate));
+};
+
+test('a stop swings the same however few frames it gets', async ({
+  browser,
+  baseURL,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The clock is the same on a phone.');
+  test.setTimeout(40000);
+  const [smooth, rough] = await Promise.all(
+    [16, 120].map(async (frame) =>
+      swungAfter(await browser.newPage({ baseURL: baseURL ?? '' }), frame),
+    ),
+  );
+  expect(smooth).not.toBe(0);
+  expect(Math.abs((smooth ?? 0) - (rough ?? 0))).toBeLessThan(0.1);
 });
 
 test('swinging stays clear of the screen and of its neighbours at every push', async ({
