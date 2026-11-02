@@ -28,6 +28,13 @@ const worlds = [
     image: 'sandbox',
     field: '#43336e',
   },
+  {
+    name: 'Not Quite My Tempo',
+    host: 'notquitemytempo-sand.vercel.app',
+    href: 'https://notquitemytempo-sand.vercel.app/',
+    image: 'tempo',
+    field: '#15100c',
+  },
 ];
 ---
 
@@ -317,7 +324,7 @@ const worlds = [
 
   /* Two lines still fit the row's height here, or its picture would grow back over them. */
   @media (max-width: 640px) {
-    .wash-list li:last-child {
+    .wash-list li:nth-child(n + 4) {
       --wash-inset: calc(clamp(1rem, 27rem - 100vw, 3.75rem) * -1 - 1.5rem);
     }
 

@@ -30,10 +30,10 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 
 ## What is settled
 
-- One page of full-screen frames: a hero, then four worlds in the owner's order, a link index, and a contact footer. Each world is one simple closed screen until it is pressed, and then one screen of content, or two for Parkdex.
+- One page of full-screen frames: a hero, then five worlds in the owner's order, a link index, and a contact footer. Each world is one simple closed screen until it is pressed, and then one screen of content, or two for Parkdex.
 - The hero is Doors, by the owner's choice. The other seven options and the review toggle are gone, and remain in git history.
 - Each opened section explains itself in three or four numbered steps, close to the owner's wording. The owner found four side-by-side layouts too formulaic, so each section can also rotate through its steps in a main window of its own, and the owner is choosing per section with a review toggle. See `OPERATIONS.md`.
-- AI Build Night leads. Offbooked is the one presented as a possible business. Parkdex is the playful one. Play by the Sandbox, shown as a website Nathan designed, closes the set before the index.
+- AI Build Night leads. Offbooked is the one presented as a possible business. Parkdex is the playful one. Play by the Sandbox is shown as a website Nathan designed. Not Quite My Tempo, the game, closes the set before the index, as a featured project with the same standing as the others.
 - The site positions Nathan as someone who builds for real people, tests with real users and builds an AI community. Avoid nature-guy framing.
 - Every world has its own fonts, colours, motion, and transition in. Do not unify them into one card template.
 - The index keeps one interaction from the old homepage: a row's whole background fills with a full-colour image. Keep hover, keyboard focus, and the touch equivalent together.

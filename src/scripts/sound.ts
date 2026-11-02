@@ -255,6 +255,14 @@ export const toyBox: Draw = (context, out) => {
   });
 };
 
+/** A stick on the snare: the crack, the wires, the shell, and the empty room after it. */
+export const snare: Draw = (context, out) => {
+  burst(context, out, { filter: 'highpass', frequency: 1400, level: 0.8, at: 0, length: 0.19 });
+  burst(context, out, { filter: 'bandpass', frequency: 4200, level: 0.55, at: 0, length: 0.05 });
+  tone(context, out, { type: 'triangle', from: 250, to: 165, level: 0.65, at: 0, length: 0.09 });
+  burst(context, out, { filter: 'bandpass', frequency: 800, level: 0.1, at: 0.05, length: 0.5 });
+};
+
 let context: AudioContext | undefined;
 
 const resume = () => {
@@ -285,6 +293,36 @@ export const play = (draw: Draw, level = 0.72) => {
   } catch (error) {
     console.error(error);
   }
+};
+
+/** Sounds a control the moment it is struck, for the two that are struck rather than pulled. */
+export const soundOnPress = (control: HTMLElement, draw: Draw) => {
+  let struck = false;
+
+  const strike = () => {
+    struck = true;
+    play(draw);
+  };
+
+  // A mouse can sound on the way down. A finger only counts as a gesture for audio when it lifts,
+  // which is the click, and so does the keyboard.
+  control.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    strike();
+    // After the click, if there is one. A press dragged off the control has none.
+    window.addEventListener(
+      'pointerup',
+      () => {
+        window.setTimeout(() => {
+          struck = false;
+        });
+      },
+      { once: true },
+    );
+  });
+  control.addEventListener('click', () => {
+    if (!struck) strike();
+  });
 };
 
 export const startSounds = () => {

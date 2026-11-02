@@ -1,4 +1,4 @@
-// The four things the doors open onto. Everything here is true of the live products.
+// The five things the doors open onto. Everything here is true of the live products.
 export const worlds = [
   {
     name: 'AI Build Night',
@@ -23,5 +23,11 @@ export const worlds = [
     href: '#play-by-the-sandbox',
     colour: '#f7c948',
     who: 'for creators',
+  },
+  {
+    name: 'Not Quite My Tempo',
+    href: '#not-quite-my-tempo',
+    colour: '#2b1b11',
+    who: 'for new drummers',
   },
 ];

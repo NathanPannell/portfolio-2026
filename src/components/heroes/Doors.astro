@@ -1,7 +1,7 @@
 ---
 import { worlds } from './worlds';
 
-const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
+const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox', 'tempo'];
 ---
 
 <div class="doors">
@@ -78,7 +78,7 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
     content: '';
     position: absolute;
     inset: 0.65rem 0.65rem 0;
-    border: 2px solid rgb(14 17 19 / 38%);
+    border: 2px solid var(--door-line, rgb(14 17 19 / 38%));
     border-bottom: 0;
     pointer-events: none;
   }
@@ -117,6 +117,20 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
     letter-spacing: 0;
   }
 
+  /* The one dark door, with the rehearsal room's light in its type. */
+  .door--tempo a {
+    --door-line: rgb(227 166 70 / 45%);
+    --door-focus: #efe5cf;
+    color: #efe5cf;
+  }
+
+  .door--tempo .door__name {
+    color: #e3a646;
+    font-family: 'Big Shoulders Display Variable', var(--sans);
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
   .door__knob {
     position: absolute;
     top: 48%;
@@ -135,7 +149,7 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
 
   .door a:focus-visible {
     outline-offset: -0.5rem;
-    outline-color: #0e1113;
+    outline-color: var(--door-focus, #0e1113);
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -171,7 +185,7 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
     }
   }
 
-  /* Phones get four long doors, one above the other. */
+  /* Phones get five long doors, one above the other. */
   @media (max-aspect-ratio: 1/1) {
     .doors {
       padding-bottom: 4.25rem;
@@ -197,7 +211,7 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
 
     .door a::before {
       inset: 0.4rem;
-      border-bottom: 2px solid rgb(14 17 19 / 38%);
+      border-bottom: 2px solid var(--door-line, rgb(14 17 19 / 38%));
     }
 
     .door__name {
@@ -217,12 +231,42 @@ const faces = ['build-night', 'offbooked', 'parkdex', 'sandbox'];
       font-size: 7svh;
     }
 
+    .door__name {
+      font-size: 1.3rem;
+    }
+  }
+
+  @media (max-height: 480px) and (min-aspect-ratio: 1/1) {
     .door a {
-      padding-bottom: 4rem;
+      padding: 1rem 0.6rem 4rem;
+    }
+
+    .door a::before {
+      inset: 0.3rem 0.3rem 0;
     }
 
     .door__name {
-      font-size: 1.3rem;
+      font-size: clamp(0.95rem, 3.1vw, 1.3rem);
+    }
+  }
+
+  /* The smallest phones have five thin doors to fit. */
+  @media (max-height: 480px) and (max-aspect-ratio: 1/1) {
+    .door a {
+      gap: 0;
+      padding-block: 0.15rem;
+    }
+
+    .door a::before {
+      inset: 0.2rem;
+    }
+
+    .door__who {
+      font-size: 0.65rem;
+    }
+
+    .door__name {
+      font-size: 1.1rem;
     }
   }
 </style>

@@ -15,19 +15,21 @@ This is a fully static Astro site with one homepage and a 404 page. There is no 
 | `src/styles/global.css` | Shell only: reset, tokens, skip link, 404. |
 | `src/components/Chrome.astro` | Fixed name link. |
 | `src/components/Hero.astro` | The hero frame. |
-| `src/components/heroes/` | Doors, the hero, plus `worlds.ts`, the facts about the four projects. |
+| `src/components/heroes/` | Doors, the hero, plus `worlds.ts`, the facts about the five projects. |
 | `src/components/Steps.astro` | The numbered steps each section explains itself with, and the main window they can rotate in. |
 | `src/components/StepsToggle.astro` | The small review control that switches a section between its two layouts. |
 | `src/components/BuildNight.astro` | AI Build Night: cover and key, then its four steps and links on one screen. |
 | `src/components/Offbooked.astro` | Curtains and rope, then the title, one link and four steps. |
 | `src/components/Parkdex.astro` | Sky, Plant!, the ride, the four stops, the way on down, and the park at the bottom with its links. |
 | `src/components/Sandbox.astro` | Toy box and rainbow, then the name, one link and three steps. |
+| `src/components/Tempo.astro` | The view from the stool and the tap ring, then the name, one link and four steps. |
 | `src/components/Index.astro` | The image-fill index and contact footer. |
 | `src/scripts/frames.ts` | Marks the frame on screen, and frames the nearest screen once a scroll has been left alone. |
 | `src/scripts/moments.ts` | The click-to-open scenes, which only the visitor can open. |
 | `src/scripts/motion.ts` | Reduced-motion check, resting loops, and lazy video. |
 | `src/scripts/doors.ts` | The doors swing open before the page moves on. |
 | `src/scripts/cover.ts` | AI Build Night: the cursor the steps open from, and the Enter key. |
+| `src/scripts/tempo.ts` | Not Quite My Tempo: judges the press that opens it against the ring's beat. |
 | `src/scripts/steps.ts` | Each section's layout, the rotation and its pausing, and the review toggle and links. |
 | `src/scripts/sound.ts` | Every sound on the page, made with Web Audio. |
 | `src/scripts/ride.ts` | Parkdex: Kip's timed ride down the vine, forest layers, and the slide to the park and the jump. |
@@ -56,13 +58,15 @@ Tab into a frame, or press a control part way up the screen, and that frame ease
 
 ## Click moments
 
-Each of the four projects starts as one full closed screen. A `[data-moment]` scene has one `[data-moment-control]`, always a real `<button>`: the key, the rope, Plant!, the toy box. The scene's closed look and layout hang off `.stage` on `<html>`, set by the inline script in `SiteLayout` before the first paint. It has to be that early: without a stage these scenes stack in plain flow, and if the page's height changed when the bundle arrived, a reload would land in the wrong place and slide back. If the bundle hasn't run by the `load` event, or after six seconds, `.stage` comes off again, so a script that fails or stalls hides nothing for long, and `startMoments` puts it back if the script turns up late. `.stage` isn't added under reduced motion at load, so there every scene is simply open.
+Each of the five projects starts as one full closed screen. A `[data-moment]` scene has one `[data-moment-control]`, always a real `<button>`: the key, the rope, Plant!, the toy box, the tap ring. The scene's closed look and layout hang off `.stage` on `<html>`, set by the inline script in `SiteLayout` before the first paint. It has to be that early: without a stage these scenes stack in plain flow, and if the page's height changed when the bundle arrived, a reload would land in the wrong place and slide back. If the bundle hasn't run by the `load` event, or after six seconds, `.stage` comes off again, so a script that fails or stalls hides nothing for long, and `startMoments` puts it back if the script turns up late. `.stage` isn't added under reduced motion at load, so there every scene is simply open.
 
-Only the visitor opens a scene, by design: no timer, no opening on the way past, and the content contract fails if `moments.ts` grows one. Parts marked `[data-opens]` stay `inert` until then, so the keyboard goes from one closed scene to the next. Using the control sets `data-open`, moves focus into the scene and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
+Only the visitor opens a scene, by design: no timer, no opening on the way past, and the content contract fails if `moments.ts` or `tempo.ts` grows one. Parts marked `[data-opens]` stay `inert` until then, so the keyboard goes from one closed scene to the next. Using the control sets `data-open`, moves focus into the scene and fires `moment:open`. CSS transitions from the closed state, so each piece's delay is its place in the sequence. Offbooked sets these per piece with `--at`.
 
-AI Build Night's steps open from the block cursor: `startCover` measures the cursor and clips the panel to it. A mouse sounds the key on the way down, but a finger only counts as a gesture for audio when it lifts, so touch sounds on the click.
+AI Build Night's steps open from the block cursor: `startCover` measures the cursor and clips the panel to it. A mouse sounds the key on the way down, but a finger only counts as a gesture for audio when it lifts, so touch sounds on the click. The snare in Not Quite My Tempo works the same way, through the same `soundOnPress`.
 
-Each press has a sound, all in `sound.ts`: the thocc, the curtains, the flag and the vine, and the toy box. They are made with Web Audio, so there are no files to fetch, and only a press starts one: scrolling to the park plays Kip's jump silently. iOS keeps audio suspended until a finger lifts, and anything scheduled before then waits, so a rope pulled by hand sounds when it is let go if nothing on the page has been tapped yet. The phone's silent switch still silences everything.
+Not Quite My Tempo's ring is a CSS animation at the game's warm-up tempo, 96 beats a minute. It makes no sound, because only a press does, and it rests off screen like any other loop. `startTempo` reads where a press landed from the animation's own clock, at `pointerdown` or `keydown` rather than the click, which waits for the button or the space bar to come back up. Any press opens the scene. The word it gets uses the game's windows: 45 ms for Perfect, 90 ms for Good, and Rushing or Dragging past that.
+
+Each press has a sound, all in `sound.ts`: the thocc, the curtains, the flag and the vine, the toy box, and the snare. They are made with Web Audio, so there are no files to fetch, and only a press starts one: scrolling to the park plays Kip's jump silently. iOS keeps audio suspended until a finger lifts, and anything scheduled before then waits, so a rope pulled by hand sounds when it is let go if nothing on the page has been tapped yet. The phone's silent switch still silences everything.
 
 Parkdex's ride is a timed `requestAnimationFrame` tween rather than CSS, because Kip has to follow the vine's curve at whatever width the screen is. Parkdex is the one taller zone: opening it adds the park as a second screen, in normal flow, so it can be scrolled to as well as ridden to. The slide uses a second Kip, loose in the section so neither screen clips it, and carries the page along until any input lets go. The vine carries on into the park at the same point in its curve. Arriving at the park by scrolling plays the end of the same trip, so Kip always makes the jump.
 
@@ -72,10 +76,10 @@ A `[data-loops]` scene has its looping CSS paused while it is off screen (`start
 
 ## Steps
 
-Each section says what it does in three or four numbered steps, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked and Sandbox, and Parkdex's stops on the vine are the same idea in its own design. There are two layouts, and the owner is comparing them per section:
+Each section says what it does in three or four numbered steps, each with its own real picture. `Steps.astro` is that format for AI Build Night, Offbooked, Sandbox and Not Quite My Tempo, and Parkdex's stops on the vine are the same idea in its own design. There are two layouts, and the owner is comparing them per section:
 
 - **Side by side:** every step and picture on screen at once. This is what the markup is, so it is what shows without JavaScript or if the script stalls.
-- **Rotating:** the whole list stays on screen, and one main window shows one picture at a time. `src/scripts/steps.ts` moves the pictures into the window, so nothing is written twice. Each section dresses this its own way, because four matching templates was the owner's complaint: a browser that loads each page for AI Build Night, one phone beside a marked-up page of the script for Offbooked, trail signs and a hanging phone with Kip on the vine for Parkdex, and a browser drawn in crayon for Sandbox.
+- **Rotating:** the whole list stays on screen, and one main window shows one picture at a time. `src/scripts/steps.ts` moves the pictures into the window, so nothing is written twice. Each section dresses this its own way, because four matching templates was the owner's complaint: a browser that loads each page for AI Build Night, one phone beside a marked-up page of the script for Offbooked, trail signs and a hanging phone with Kip on the vine for Parkdex, a browser drawn in crayon for Sandbox, and the game's own screen for Not Quite My Tempo, with his patience running out over each step. `data-counting` on the set says a count is running, so that bar can stand full when none is.
 
 The rotation's rules live in `startSet`. It starts only after the opening (`moment:open`, or `moment:landed` for Parkdex), so it never depends on scrolling, and it never runs under reduced motion, where the list is simply there to pick from. Its count is a Web Animation of `--progress` on the set, not a timer, so hovering, focusing or leaving the screen can pause it mid-step and a section can draw how long is left. Hover and focus only count on the list and the window, and hover needs real movement, because the mouse that pressed a section's control is often left resting right where the window appears. Picking a step by hover, tap, click or keys stops the rotation for good.
 

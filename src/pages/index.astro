@@ -8,6 +8,7 @@ import Index from '../components/Index.astro';
 import Offbooked from '../components/Offbooked.astro';
 import Parkdex from '../components/Parkdex.astro';
 import Sandbox from '../components/Sandbox.astro';
+import Tempo from '../components/Tempo.astro';
 ---
 
 <SiteLayout>
@@ -19,6 +20,7 @@ import Sandbox from '../components/Sandbox.astro';
     <Offbooked />
     <Parkdex />
     <Sandbox />
+    <Tempo />
     <Index />
   </main>
 </SiteLayout>
@@ -32,6 +34,7 @@ import Sandbox from '../components/Sandbox.astro';
   import { startRide } from '../scripts/ride';
   import { startSounds } from '../scripts/sound';
   import { startSteps } from '../scripts/steps';
+  import { startTempo } from '../scripts/tempo';
   import { startWash } from '../scripts/wash';
 
   // Scenes close first, so everything after finds them in the state they will open from. One of
@@ -43,6 +46,7 @@ import Sandbox from '../components/Sandbox.astro';
     startLoops,
     startRests,
     startCover,
+    startTempo,
     startRide,
     startSounds,
     startWash,
