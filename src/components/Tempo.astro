@@ -417,6 +417,7 @@ const beats = ['One', 'Two', 'Three', 'Four'];
   /* Pressed: the ring is gone and the word lands, in the game's colours. */
   .tp[data-open] .tp-tap {
     border-color: var(--tp-amber);
+    pointer-events: none;
     transform: translate(-50%, -50%) scale(1.5);
     opacity: 0;
     transition:

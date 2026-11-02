@@ -1323,10 +1323,39 @@ test('a mouse press dragged off the ring is forgotten', async ({ page, isMobile 
   await expect(page.locator('[data-verdict]')).toHaveText('Dragging');
 });
 
+test('a finger that scrolls away from the ring is forgotten', async ({ page }) => {
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await pressAt(page, 5, 'pointerdown');
+  await page
+    .locator('.tp-tap')
+    .evaluate((control) => control.dispatchEvent(new PointerEvent('pointercancel')));
+  await pressAt(page, 200, 'click');
+  await expect(page.locator('[data-verdict]')).toHaveText('Dragging');
+});
+
+test('a right-click on the ring is not a press', async ({ page }) => {
+  await page.goto('/');
+  await jumpTo(page, '.tp');
+  await page.locator('[data-beat]').evaluate((ring) => {
+    const beat = ring.getAnimations()[0];
+    if (beat) beat.startTime = performance.now() - 625 * 3 - 5;
+    ring
+      .closest('button')
+      ?.dispatchEvent(new PointerEvent('pointerdown', { button: 2, bubbles: true }));
+  });
+  await pressAt(page, 200, 'click');
+  await expect(page.locator('[data-verdict]')).toHaveText('Dragging');
+});
+
 test('a press while the ring is resting gets no word it did not earn', async ({ page }) => {
   await page.goto('/');
   await jumpTo(page, '.tp');
-  await page.locator('[data-beat]').evaluate((ring) => ring.getAnimations()[0]?.pause());
+  await page.locator('[data-beat]').evaluate(async (ring) => {
+    const beat = ring.getAnimations()[0];
+    beat?.pause();
+    await beat?.ready;
+  });
   await letGo(page);
   await expect(page.locator('.tp')).toHaveAttribute('data-open', '');
   await expect(page.locator('[data-verdict]')).toHaveText('');
@@ -1334,11 +1363,13 @@ test('a press while the ring is resting gets no word it did not earn', async ({ 
 
 test('a second tap on the ring stays on the ring while the screen clears', async ({ page }) => {
   await page.goto('/');
-  await useControl(page, '.tp', '.tp-tap');
-  await page.locator('.tp').evaluate((scene) => {
-    const box = scene.querySelector('.tp-tap')?.getBoundingClientRect();
-    const here = document.elementFromPoint((box?.left ?? 0) + 40, (box?.top ?? 0) + 40);
+  await jumpTo(page, '.tp');
+  await page.locator('.tp-tap').evaluate((control: HTMLElement) => {
+    const { left, top, width, height } = control.getBoundingClientRect();
+    control.click();
+    const here = document.elementFromPoint(left + width / 2, top + height / 2);
     if (!here?.closest('.tp-closed')) throw new Error('The press went through to the page');
+    if (here.closest('.tp-tap')) throw new Error('The ring is gone but still takes presses');
   });
 });
 
