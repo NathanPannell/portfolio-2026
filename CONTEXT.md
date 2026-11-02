@@ -54,7 +54,8 @@ The workspace may contain an untracked `.codex-remote-attachments/` directory ow
 ## Open items
 
 - Confirm Cloudflare Web Analytics configuration before claiming analytics is active. See `OPERATIONS.md`.
-- AI Build Night's window will become a scrolling capture of the new site, with its steps taken from that site, once it is live. Its pictures and steps stay as they are until then.
+- AI Build Night's window is a capture of the site, and goes stale when the site changes. Recapture it when that happens. See `OPERATIONS.md`.
+- Photos of people in that capture are blurred until the owner clears them. Set `SHOW_PEOPLE` in `scripts/capture-build-night.mjs` when they do.
 - Night 001 photos can come onto the site once attendee permission is cleared.
 - Offbooked has no store listing. Link one only once it is live, and show prices only when they can be paid.
 

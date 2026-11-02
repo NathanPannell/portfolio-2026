@@ -1,0 +1,40 @@
+{
+  "wide": {
+    "width": 2560,
+    "height": 10576,
+    "header": { "src": "/media/build-night/wide-header.webp", "height": 130 },
+    "tiles": [
+      { "src": "/media/build-night/wide-1.webp", "top": 1630, "height": 1004 },
+      { "src": "/media/build-night/wide-2.webp", "top": 2630, "height": 1004 },
+      { "src": "/media/build-night/wide-3.webp", "top": 3630, "height": 1004 },
+      { "src": "/media/build-night/wide-4.webp", "top": 4630, "height": 1004 },
+      { "src": "/media/build-night/wide-5.webp", "top": 5630, "height": 1004 },
+      { "src": "/media/build-night/wide-6.webp", "top": 6630, "height": 1004 },
+      { "src": "/media/build-night/wide-7.webp", "top": 7630, "height": 1004 },
+      { "src": "/media/build-night/wide-8.webp", "top": 8630, "height": 1004 },
+      { "src": "/media/build-night/wide-9.webp", "top": 9630, "height": 946 }
+    ],
+    "stops": [15.412, 31.902, 37.821, 84.871],
+    "view": 15.129
+  },
+  "phone": {
+    "width": 860,
+    "height": 12202,
+    "header": { "src": "/media/build-night/phone-header.webp", "height": 130 },
+    "tiles": [
+      { "src": "/media/build-night/phone-1.webp", "top": 1640, "height": 1004 },
+      { "src": "/media/build-night/phone-2.webp", "top": 2640, "height": 1004 },
+      { "src": "/media/build-night/phone-3.webp", "top": 3640, "height": 1004 },
+      { "src": "/media/build-night/phone-4.webp", "top": 4640, "height": 1004 },
+      { "src": "/media/build-night/phone-5.webp", "top": 5640, "height": 1004 },
+      { "src": "/media/build-night/phone-6.webp", "top": 6640, "height": 1004 },
+      { "src": "/media/build-night/phone-7.webp", "top": 7640, "height": 1004 },
+      { "src": "/media/build-night/phone-8.webp", "top": 8640, "height": 1004 },
+      { "src": "/media/build-night/phone-9.webp", "top": 9640, "height": 1004 },
+      { "src": "/media/build-night/phone-10.webp", "top": 10640, "height": 1004 },
+      { "src": "/media/build-night/phone-11.webp", "top": 11640, "height": 562 }
+    ],
+    "stops": [13.44, 36.715, 43.026, 90.477],
+    "view": 7.048
+  }
+}

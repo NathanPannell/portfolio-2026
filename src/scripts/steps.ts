@@ -1,5 +1,6 @@
-// One main window rotating through a section's pictures while the whole list stays on screen. The
-// markup has every step side by side, so that is what shows if this script never runs. Which sections
+// One main window rotating through a section's steps while the whole list stays on screen, by changing
+// picture or by scrolling a captured page. Picture steps are written side by side, so that is what
+// shows if this script never runs, and a captured page just stays on its first stop. Which sections
 // rotate is set by `rotates` on `<Steps>`. See OPERATIONS.md.
 
 import { reducedMotion } from './motion';
@@ -7,6 +8,11 @@ import { reducedMotion } from './motion';
 // How long each step stays up, in milliseconds: enough to read the longest line and take in its
 // picture.
 const DWELL = 6000;
+// How long a captured page takes to scroll to a stop, by how far it has to go as a share of the page.
+const SCROLL_FROM = 700;
+const SCROLL_PER_SHARE = 25;
+const SCROLL_MOST = 2400;
+const SCROLL_LEAST = 900;
 // The beat an opening gets before the first step starts counting.
 const SETTLE = 1600;
 // How long the mouse has to stay on a step to pick it, so that passing over one doesn't.
@@ -40,10 +46,12 @@ const startSet = (set: HTMLElement) => {
   if (!list || !frame || !view) return;
   const scene = set.closest<HTMLElement>('[data-moment]');
 
+  const dwell = Number(set.dataset['dwell'] ?? DWELL);
+
   const steps = rows.map((row) => ({
     row,
     title: row.querySelector('h3') as HTMLElement,
-    picture: row.querySelector('figure') as HTMLElement,
+    picture: row.querySelector('figure'),
     pick: document.createElement('button'),
   }));
 
@@ -53,15 +61,32 @@ const startSet = (set: HTMLElement) => {
   let opened = !scene?.hasAttribute('data-waiting');
   let picked = false;
 
+  let place = Number(rows[0]?.dataset['atWide'] ?? 0);
+
+  // The window's page moves by CSS, which takes over smoothly from wherever a scroll has got to.
+  const scrollTo = (row?: HTMLElement) => {
+    const { atWide, atPhone } = row?.dataset ?? {};
+    if (!atWide || !atPhone) return;
+    const time = SCROLL_FROM + Math.abs(Number(atWide) - place) * SCROLL_PER_SHARE;
+    place = Number(atWide);
+    frame.style.setProperty(
+      '--scroll-time',
+      `${Math.round(Math.min(SCROLL_MOST, Math.max(SCROLL_LEAST, time)))}ms`,
+    );
+    set.style.setProperty('--at-wide', atWide);
+    set.style.setProperty('--at-phone', atPhone);
+  };
+
   const show = (index: number) => {
     now = index;
     set.style.setProperty('--now', String(index));
     steps.forEach(({ row, picture, pick }, at) => {
       row.toggleAttribute('data-current', at === index);
-      picture.toggleAttribute('data-current', at === index);
+      picture?.toggleAttribute('data-current', at === index);
       if (at === index) pick.setAttribute('aria-current', 'step');
       else pick.removeAttribute('aria-current');
     });
+    scrollTo(rows[index]);
   };
 
   // The count is an animation, not a timer, so that it can pause mid-step and sections can draw it.
@@ -69,7 +94,7 @@ const startSet = (set: HTMLElement) => {
     count?.cancel();
     count = undefined;
     if (!opened || picked || reducedMotion()) return;
-    count = set.animate({ '--progress': [0, 1] }, { duration: DWELL, delay, fill: 'backwards' });
+    count = set.animate({ '--progress': [0, 1] }, { duration: dwell, delay, fill: 'backwards' });
     count.onfinish = () => {
       show((now + 1) % steps.length);
       countDown();
@@ -94,7 +119,7 @@ const startSet = (set: HTMLElement) => {
   set.dataset['layout'] = 'rotating';
   frame.hidden = false;
   for (const { title, picture, pick } of steps) {
-    view.append(picture);
+    if (picture) view.append(picture);
     pick.append(...title.childNodes);
     title.append(pick);
   }
@@ -141,10 +166,33 @@ const startSet = (set: HTMLElement) => {
     threshold: 0.25,
   }).observe(frame);
 
+  // A captured page is clipped by its window, which lazy loading can't see past, so it's fetched as a
+  // whole once there's a chance of it being seen. Only the capture that's showing: the other has no
+  // boxes to measure.
+  const tiles = view.querySelectorAll<HTMLImageElement>('.site-page img');
+  let near = false;
+  const fetchPage = () => {
+    if (!opened || !near) return;
+    for (const tile of tiles) {
+      if (tile.getClientRects().length > 0) tile.loading = 'eager';
+    }
+  };
+  if (tiles.length > 0) {
+    new IntersectionObserver(
+      ([entry]) => {
+        near = !!entry?.isIntersecting;
+        fetchPage();
+      },
+      { rootMargin: '100% 0px' },
+    ).observe(frame);
+    window.addEventListener('resize', fetchPage, { passive: true });
+  }
+
   scene?.addEventListener(
     'moment:open',
     () => {
       opened = true;
+      fetchPage();
       countDown(SETTLE);
     },
     { once: true },

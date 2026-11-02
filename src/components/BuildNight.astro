@@ -1,30 +1,22 @@
 ---
+import SitePage from './SitePage.astro';
 import Steps from './Steps.astro';
+import page from './build-night-page.json';
 
-// The Night 001 photos stay off this site until attendee permission clears, so every picture here
-// is the live site's own words.
-const steps = [
-  {
-    title: 'A free night, once a month.',
-    image: '/media/build-night/night',
-    alt: 'The AI Build Night site: Victoria, BC. See you at the next one.',
-  },
-  {
-    title: 'Build something with AI in one night.',
-    image: '/media/build-night/challenge',
-    alt: 'The AI Build Night challenge page, Closing the gap to YC, with its Simulithic track',
-  },
-  {
-    title: 'Share and learn with other builders.',
-    image: '/media/build-night/share',
-    alt: 'The AI Build Night site: We share what we learn.',
-  },
-  {
-    title: 'Grow and support a community in Victoria that can create the next big thing.',
-    image: '/media/build-night/unicorn',
-    alt: 'The AI Build Night site: The next unicorn can come from Vancouver Island.',
-  },
+// The site's own four steps, word for word. Each one stops on the part of the page that fits it. The
+// window is a capture of the page, not the live site: Shopify doesn't let it be framed. See
+// `scripts/capture-build-night.mjs`. The Night 001 photos and the organisers' portraits are blurred
+// there until attendee permission clears, and no stop rests on them.
+const titles = [
+  'Meet the people building here.',
+  'Try the thing you keep reading about.',
+  'Show the room what you made.',
+  'Keep building after you leave.',
 ];
+const steps = titles.map((title, index) => ({
+  title,
+  stop: { wide: page.wide.stops[index] ?? 0, phone: page.phone.stops[index] ?? 0 },
+}));
 ---
 
 <section id="ai-build-night" class="abn" aria-labelledby="abn-title">
@@ -73,11 +65,13 @@ const steps = [
         steps={steps}
         shape="wide"
         rotates
-        pairs
         address="aibuildnight.ca"
         href="https://aibuildnight.ca/"
         label="Open the AI Build Night site, aibuildnight.ca"
-      />
+        dwell={7500}
+      >
+        <SitePage slot="view" wide={page.wide} phone={page.phone} />
+      </Steps>
     </div>
   </div>
 </section>
@@ -330,7 +324,7 @@ const steps = [
     transition: clip-path 1000ms cubic-bezier(0.7, 0, 0.15, 1) 120ms;
   }
 
-  /* Rotating: the site in a browser, loading each page in turn, beside a list of every step. */
+  /* Rotating: the site in a browser, scrolling to each step in turn, beside a list of every step. */
   .abn-show :global(.steps-window) {
     overflow: hidden;
     border: 2px solid var(--ink);
@@ -452,6 +446,16 @@ const steps = [
   }
 
   /* Phones on their side keep the words beside the key, and one line above the steps. */
+  /* A tall window suits a phone's capture, and only that. Past this width the desktop capture shows,
+     and its last stop only fills a window of the usual shape. A short phone needs its room for the
+     list. */
+  @media (max-width: 600px) and (min-height: 661px) {
+    .abn-show {
+      --view-ratio: 1.1;
+      --window-share: 0.68;
+    }
+  }
+
   @media (max-height: 560px) {
     .abn-cover__type {
       padding-block: 2.75rem 1rem;
@@ -513,6 +517,19 @@ const steps = [
   @media (prefers-reduced-motion: reduce), (scripting: none) {
     h2 i {
       animation: none;
+    }
+  }
+
+  /* Until the script makes them buttons, or if it never does, the steps are a list beside the still
+     page. */
+  .abn-show :global([data-layout='rotating'] h3:not(:has(.step__pick))) {
+    display: flex;
+    padding: 0.55em 0.65em;
+  }
+
+  @media (scripting: none) {
+    .abn-show :global(.steps-set[data-layout='rotating']) {
+      height: auto;
     }
   }
 </style>

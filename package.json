@@ -11,6 +11,7 @@
     "build": "npm run test:content && astro check && astro build && npm run test:seo",
     "preview": "astro preview",
     "check": "astro check",
+    "capture:build-night": "node scripts/capture-build-night.mjs",
     "test:content": "node tests/content-contract.mjs",
     "test:seo": "node tests/seo-contract.mjs",
     "format": "prettier --write .",
@@ -39,6 +40,7 @@
     "globals": "^17.13.0",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
+    "sharp": "0.35.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.72.0"
   }

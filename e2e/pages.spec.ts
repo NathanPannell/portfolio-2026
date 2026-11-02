@@ -163,11 +163,12 @@ const explained = [
     scene: '.abn-cover',
     control: '.abn-key',
     rotates: true,
+    pictures: false,
     steps: [
-      'A free night, once a month.',
-      'Build something with AI in one night.',
-      'Share and learn with other builders.',
-      'Grow and support a community in Victoria that can create the next big thing.',
+      'Meet the people building here.',
+      'Try the thing you keep reading about.',
+      'Show the room what you made.',
+      'Keep building after you leave.',
     ],
   },
   {
@@ -175,6 +176,7 @@ const explained = [
     scene: '#offbooked',
     control: '.rope',
     rotates: true,
+    pictures: true,
     steps: [
       'Upload your script.',
       'Invite your cast.',
@@ -187,6 +189,7 @@ const explained = [
     scene: '.sb-open',
     control: '.sb-box__open',
     rotates: false,
+    pictures: true,
     steps: [
       'Sandbox is hosting an event for creatives.',
       'They needed an eye-catching website in a child-like crayon style.',
@@ -256,7 +259,7 @@ const stepsFit = async (page: Page, scene: string, label: string) => {
   expect(collisions, label).toEqual([]);
 };
 
-for (const { name, scene, control, rotates, steps } of explained) {
+for (const { name, scene, control, rotates, pictures: pictured, steps } of explained) {
   test(`${name} keeps its steps back until it opens`, async ({ page }) => {
     await page.goto('/');
     await jumpTo(page, scene);
@@ -276,6 +279,7 @@ for (const { name, scene, control, rotates, steps } of explained) {
     const pictures = new Set<string>();
     for (const [index, title] of steps.entries()) {
       await expect(shown.nth(index).locator('h3')).toHaveText(`${index + 1}${title}`);
+      if (!pictured) continue;
       const picture = page.locator(`${scene} figure`).nth(index).locator('img, video');
       await expect(picture).toHaveCount(1);
       pictures.add(
@@ -286,7 +290,7 @@ for (const { name, scene, control, rotates, steps } of explained) {
         ),
       );
     }
-    expect(pictures.size).toBe(steps.length);
+    if (pictured) expect(pictures.size).toBe(steps.length);
     if (rotates) return;
     // Nothing is waiting for a timer or a scroll: what is on screen now is all there is.
     const first = await page.locator(`${scene} .steps`).innerHTML();
@@ -327,6 +331,38 @@ const showingPicture = (set: Locator) =>
       ),
     );
 
+// Which of the two captures a window is showing.
+const shownCapture = (set: Locator) =>
+  set
+    .locator('.site-page__layout--wide')
+    .evaluate((layout) => (getComputedStyle(layout).display === 'none' ? 'Phone' : 'Wide'));
+
+// Where each step stops on the page, and where the window has been told to go, as shares of the page.
+const pageStops = async (set: Locator) => {
+  const capture = await shownCapture(set);
+  return set
+    .locator('[data-step]')
+    .evaluateAll(
+      (rows, name) => rows.map((row) => Number((row as HTMLElement).dataset[`at${name}`])),
+      capture,
+    );
+};
+
+const pageTarget = async (set: Locator) => {
+  const capture = await shownCapture(set);
+  return set.evaluate(
+    (element, name) => Number(getComputedStyle(element).getPropertyValue(`--at-${name}`).trim()),
+    capture.toLowerCase(),
+  );
+};
+
+const pagePlace = (set: Locator) =>
+  set.locator('.site-page__strip:visible').evaluate((strip) => {
+    const { top: from } = strip.getBoundingClientRect();
+    const { top: to } = strip.closest('.site-page')?.getBoundingClientRect() ?? { top: 0 };
+    return ((to - from) * 100) / strip.getBoundingClientRect().height;
+  });
+
 test('two sections rotate, and the layouts are settled for good', async ({ page }) => {
   // An old review link does nothing now, and the page leaves the address alone.
   await page.goto('/?abn=side&offbooked=side&parkdex=rotating&sandbox=rotating&tempo=side');
@@ -352,7 +388,8 @@ for (const set of sets) {
     await expect.poll(() => counting(steps)).toBe('running');
     await finishStep(steps);
     await expect.poll(() => showing(steps)).toBe(1);
-    await expect.poll(() => showingPicture(steps)).toEqual([1]);
+    if (set.name === 'offbooked') await expect.poll(() => showingPicture(steps)).toEqual([1]);
+    else expect(await pageTarget(steps)).toBe((await pageStops(steps))[1]);
     await stepsFit(page, set.scene, set.name);
     await expect(steps.locator('[aria-current="step"]')).toHaveCount(1);
     // All the way round and back to the first.
@@ -371,7 +408,9 @@ for (const set of sets) {
     const steps = page.locator(`[data-steps="${set.name}"]`);
     const rows = steps.locator('[data-step]');
     for (const row of await rows.all()) await expect(row.locator('button')).toBeVisible();
-    await expect(steps.locator('[data-steps-view] figure')).toHaveCount(await rows.count());
+    if (set.name === 'offbooked') {
+      await expect(steps.locator('[data-steps-view] figure')).toHaveCount(await rows.count());
+    }
   });
 
   test(`${set.name} stops rotating once a step is picked`, async ({ page }) => {
@@ -381,7 +420,7 @@ for (const set of sets) {
     await expect.poll(() => counting(steps)).toBe('running');
     await steps.locator('.step__pick').nth(2).click();
     await expect.poll(() => showing(steps)).toBe(2);
-    await expect.poll(() => showingPicture(steps)).toEqual([2]);
+    if (set.name === 'offbooked') await expect.poll(() => showingPicture(steps)).toEqual([2]);
     await expect(steps.locator('.step__pick').nth(2)).toHaveAttribute('aria-current', 'step');
     expect(await counting(steps)).toBe('none');
   });
@@ -504,6 +543,75 @@ test('off screen, the count waits', async ({ page }) => {
   await expect.poll(() => counting(steps)).toBe('running');
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await expect.poll(() => counting(steps)).toBe('paused');
+});
+
+test('the window scrolls the page to each step, and the page around it stays put', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await openSet(page, sets[0]);
+  const steps = page.locator('[data-steps="abn"]');
+  const stops = await pageStops(steps);
+  expect(stops).toHaveLength(4);
+  expect(new Set(stops).size).toBe(4);
+  const scrollY = await page.evaluate(() => window.scrollY);
+  // On its first stop to begin with, and a real scroll to get to the far one: it passes through.
+  await expect.poll(() => pageTarget(steps)).toBe(stops[0]);
+  await steps.locator('.step__pick').nth(3).dispatchEvent('click');
+  await expect.poll(() => pageTarget(steps)).toBe(stops[3]);
+  const seen = new Set<number>();
+  const start = Date.now();
+  while (Date.now() - start < 1200) seen.add(Math.round(await pagePlace(steps)));
+  expect(seen.size).toBeGreaterThan(2);
+  await expect
+    .poll(() => pagePlace(steps).then(Math.round), { timeout: 4000 })
+    .toBe(Math.round(stops[3] ?? 0));
+  // Back up the page again, from wherever it has got to.
+  await steps.locator('.step__pick').nth(0).dispatchEvent('click');
+  await expect
+    .poll(() => pagePlace(steps).then(Math.round), { timeout: 4000 })
+    .toBe(Math.round(stops[0] ?? 0));
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
+  expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
+});
+
+test('the capture waits for the section, and only the one on show is fetched whole', async ({
+  page,
+  isMobile,
+}) => {
+  const asked: string[] = [];
+  page.on('request', (request) => asked.push(request.url()));
+  await page.goto('/');
+  await page.waitForTimeout(500);
+  // The section is next down the page, so the top of the capture may be there ready, and no more.
+  expect(asked.filter((url) => url.includes('/media/build-night/')).length).toBeLessThanOrEqual(2);
+  await useControl(page, '.abn-cover', '.abn-key');
+  const [shown, other] = isMobile ? ['phone', 'wide'] : ['wide', 'phone'];
+  const tiles = await page.locator(`.site-page__layout--${shown} img`).count();
+  await expect
+    .poll(() => asked.filter((url) => url.includes(`/build-night/${shown}-`)).length)
+    .toBe(tiles);
+  expect(asked.filter((url) => url.includes(`/build-night/${other}-`))).toEqual([]);
+  // A window that changes capture fetches the other one then, because nothing else would.
+  await page.setViewportSize(isMobile ? { width: 1280, height: 800 } : { width: 390, height: 844 });
+  const others = await page.locator(`.site-page__layout--${other} img`).count();
+  await expect
+    .poll(() => asked.filter((url) => url.includes(`/build-night/${other}-`)).length)
+    .toBe(others);
+});
+
+test('every part of the page the window can stop on has loaded by the time it gets there', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await openSet(page, sets[0]);
+  await expect
+    .poll(() =>
+      page
+        .locator('.site-page__strip:visible img')
+        .evaluateAll((images) => images.every((image) => (image as HTMLImageElement).complete)),
+    )
+    .toBe(true);
 });
 
 // Everything but the window's own picture, so a click lands on a page that says where it went.
@@ -886,6 +994,7 @@ const everySize = [
   [1440, 900],
   [1920, 480],
   [1920, 1080],
+  [700, 1100],
 ] as const;
 
 test('the finished ad keeps its headline and ticket clear at every size', async ({ page }) => {
@@ -1748,6 +1857,24 @@ for (const [width, height] of everySize) {
       await expect(page.locator(part), part).toBeInViewport({ ratio: 1, timeout: 4000 });
     }
     await stepsFit(page, '.abn-cover', `AI Build Night at ${width}x${height}`);
+    // The page always fills the window, even at the very end of it.
+    const steady = await page.addStyleTag({
+      content: '.site-page__strip { transition: none !important; }',
+    });
+    await page.locator('[data-steps="abn"] .step__pick').nth(3).dispatchEvent('click');
+    await expect
+      .poll(() =>
+        page.locator('.site-page').evaluate((view) => {
+          const strip = view.querySelector<HTMLElement>('.site-page__strip:not(:empty)');
+          const shown = [...view.querySelectorAll<HTMLElement>('.site-page__strip')].find(
+            (candidate) => candidate.getClientRects().length > 0,
+          );
+          const end = (shown ?? strip)?.getBoundingClientRect().bottom ?? 0;
+          return end - view.getBoundingClientRect().bottom;
+        }),
+      )
+      .toBeGreaterThanOrEqual(-1);
+    await steady.evaluate((tag) => (tag as HTMLElement).remove());
 
     await landKip(page);
     // Just under 1, because a fractional phone size can leave a millionth of one off screen.
@@ -1866,8 +1993,12 @@ test.describe('reduced motion', () => {
     await expect(steps).toHaveAttribute('data-layout', 'rotating');
     await expect(steps.locator('[data-step]')).toHaveCount(4);
     expect(await counting(steps)).toBe('none');
+    await expect(steps.locator('[data-steps-window]')).toBeVisible();
+    // Stays on one stop, and a pick jumps straight to the next.
     await steps.locator('.step__pick').nth(1).click();
     await expect.poll(() => showing(steps)).toBe(1);
+    expect(Math.round(await pagePlace(steps))).toBe(Math.round(await pageTarget(steps)));
+    await expect(steps.locator('.site-page__strip:visible')).toHaveCSS('transition-duration', '0s');
     const animations = await page.evaluate(() =>
       document
         .getAnimations()
@@ -1885,6 +2016,25 @@ test.describe('reduced motion', () => {
       expect(await clippedText(page), `${width}px`).toEqual([]);
     }
     expect(errors).toEqual([]);
+  });
+
+  test('the captured page waits until the window is near', async ({ page }) => {
+    const asked: string[] = [];
+    page.on('request', (request) => asked.push(request.url()));
+    await page.goto('/');
+    await page.waitForTimeout(500);
+    // The browser's own lazy loading may reach a few tiles ahead, and that's all.
+    const early = asked.filter((url) => url.includes('/media/build-night/'));
+    expect(early.length).toBeLessThanOrEqual(4);
+    // Offbooked's pictures share the rotation, and stay with the browser's own lazy loading.
+    const pictures = await page
+      .locator('#offbooked img')
+      .evaluateAll((images) => images.map((image) => (image as HTMLImageElement).loading));
+    expect(new Set(pictures)).toEqual(new Set(['lazy']));
+    await page.locator('[data-steps="abn"] [data-steps-window]').scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => asked.filter((url) => url.includes('/media/build-night/')).length)
+      .toBeGreaterThan(5);
   });
 
   test('the page is left exactly where a scroll stops it', async ({ page, isMobile }) => {
@@ -1915,8 +2065,10 @@ test('without the page script, nothing is hidden or waiting', async ({ page }) =
     expect(await opacityOf(step)).toBe(1);
   }
   // Every step keeps its own picture, in the order they were written.
-  await expect(page.locator('[data-step] figure')).toHaveCount(15);
-  await expect(page.locator('[data-steps-window]:visible')).toHaveCount(0);
+  await expect(page.locator('[data-step] figure')).toHaveCount(11);
+  // AI Build Night keeps its page still in the window, on its first stop, beside the list.
+  await expect(page.locator('[data-steps-window]:visible')).toHaveCount(1);
+  await expect(page.locator('[data-steps="abn"] [data-step]')).toHaveCount(4);
   // Visible isn't enough: the cover's headline stays clear of the site that follows it.
   await page.locator('#abn-title').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('#abn-title'))).toBeGreaterThan(0);
@@ -1931,6 +2083,9 @@ test('a script that stalls stops holding the scenes closed', async ({ page }) =>
   await expect(page.locator('html')).not.toHaveClass(/stage/, { timeout: 8000 });
   await page.locator('.abn-show__cta').scrollIntoViewIfNeeded();
   await expect.poll(() => uncoveredPoints(page.locator('.abn-show__cta'))).toBeGreaterThan(0);
+  // The steps stay a tidy list, each number beside its words, with the page still in the window.
+  await expect(page.locator('[data-steps="abn"] h3').first()).toHaveCSS('display', 'flex');
+  await expect(page.locator('[data-steps="abn"] [data-steps-window]')).toBeVisible();
   for (const step of await page.locator('.step').all()) {
     expect(await opacityOf(step)).toBe(1);
   }
@@ -1963,6 +2118,22 @@ test.describe('without JavaScript', () => {
     await page.locator('.tp-window').scrollIntoViewIfNeeded();
     await expect(page.locator('.tp-window img')).toBeVisible();
     await expect(page.locator('.tp-window video')).not.toHaveAttribute('src', /./);
+    const frame = page.locator('[data-steps="abn"] [data-steps-window]');
+    await frame.scrollIntoViewIfNeeded();
+    await expect(frame).toBeVisible();
+    await expect(frame).toHaveAttribute('href', 'https://aibuildnight.ca/');
+    await expect(page.locator('[data-steps="abn"] [data-step] h3').first()).toHaveText(
+      /Meet the people building here\./,
+    );
+    await expect
+      .poll(() =>
+        frame
+          .locator('.site-page__strip:visible img')
+          .first()
+          .evaluate((image) => (image as HTMLImageElement).naturalWidth),
+      )
+      .toBeGreaterThan(0);
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
     await expect(page.locator('[data-moment-control]:visible')).toHaveCount(0);
   });
 });

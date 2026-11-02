@@ -1,0 +1,140 @@
+---
+// A capture of a whole page, in tiles, that a main window scrolls through. There's a desktop capture
+// and a phone one, and the window's own width picks between them, so that the words stay readable.
+// `--at-wide` and `--at-phone` say how far down the page it is, as a share of the page, and
+// `--scroll-time` how long it takes to get there. See `scripts/capture-build-night.mjs`.
+interface Tile {
+  src: string;
+  top: number;
+  height: number;
+}
+
+interface Layout {
+  width: number;
+  height: number;
+  header: { src: string; height: number };
+  tiles: Tile[];
+  view: number;
+}
+
+interface Props {
+  wide: Layout;
+  phone: Layout;
+}
+
+const { wide, phone } = Astro.props;
+---
+
+<div class="site-page">
+  {[
+    { name: 'wide', layout: wide },
+    { name: 'phone', layout: phone },
+  ].map(({ name, layout: { width, height, header, tiles, view } }) => (
+    <div class={`site-page__layout site-page__layout--${name}`}>
+      <div class="site-page__strip" style={`aspect-ratio: ${width} / ${height}`}>
+        {tiles.map((tile) => (
+          <img
+            src={tile.src}
+            width={width}
+            height={tile.height}
+            loading="lazy"
+            decoding="async"
+            alt=""
+            style={`top: ${(tile.top * 100) / height}%`}
+          />
+        ))}
+      </div>
+      <img
+        class="site-page__header"
+        src={header.src}
+        width={width}
+        height={header.height}
+        loading="lazy"
+        decoding="async"
+        alt=""
+      />
+      <i class="site-page__thumb" style={`height: ${view}%`}></i>
+    </div>
+  ))}
+</div>
+
+<style>
+  .site-page {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--view-ratio, 1.6);
+    container-type: inline-size;
+    background: #fff;
+  }
+
+  .site-page__layout {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .site-page__layout--wide {
+    --at: var(--at-wide);
+  }
+
+  .site-page__layout--phone {
+    --at: var(--at-phone);
+    display: none;
+  }
+
+  @container (max-width: 560px) {
+    .site-page__layout--wide {
+      display: none;
+    }
+
+    .site-page__layout--phone {
+      display: block;
+    }
+  }
+
+  /* Moved as a share of its own height, so a stop holds at any size of window. */
+  .site-page__strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transform: translate3d(0, calc(var(--at) * -1%), 0);
+    transition: transform var(--scroll-time, 1400ms) cubic-bezier(0.65, 0, 0.25, 1);
+    will-change: transform;
+  }
+
+  .site-page__strip img {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: auto;
+  }
+
+  /* The site's own header stays at the top, as it does in a browser. */
+  .site-page__header {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+  }
+
+  .site-page__thumb {
+    position: absolute;
+    z-index: 2;
+    top: calc(var(--at) * 1%);
+    right: 2px;
+    width: 4px;
+    border-radius: 2px;
+    background: rgb(14 17 19 / 45%);
+    transition: top var(--scroll-time, 1400ms) cubic-bezier(0.65, 0, 0.25, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce), (scripting: none) {
+    .site-page__strip,
+    .site-page__thumb {
+      transition: none;
+    }
+  }
+</style>

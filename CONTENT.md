@@ -13,7 +13,7 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 | Claim | Source |
 | --- | --- |
 | AI Build Night: "Stop reading about AI. Start building with it.", and "A free night in Victoria to build something real with AI.": the site calls it "a free, hands-on evening" and its tickets free. | aibuildnight.ca home and About pages, checked 2026-11-01 |
-| AI Build Night steps: once a month, building in one night, sharing, and the community line. Say "one night", never "one hour": doors are at 6, show-and-tell starts after 8, so a night has about two hours of building. | The site's theme and home page, checked 2026-11-01 |
+| AI Build Night steps: the site's own four, word for word, from its hero. | aibuildnight.ca home page, checked 2026-11-02 |
 | The two tenets | Public on aibuildnight.ca. `ai-build-night-site-workspace/ops/goals.md` is the source. |
 | Play by the Sandbox: Mello's event at the Vancouver Art Gallery, for creatives. A 3D landing page in a crayon style, which is a three.js scene on the live site. | playbythesandbox.ca and its repo, checked 2026-11-01 |
 | Offbooked: public beta, free in the beta, cast never pay, no account for the cast, works on any phone, tablet or laptop, used by casts in British Columbia and Nova Scotia. | offbooked.com home page and FAQ, checked 2026-11-01 |
@@ -30,6 +30,8 @@ Only true, documented claims. No invented user counts, testimonials, metrics, or
 - **Not Quite My Tempo's surprises:** the owner wants people to find them for themselves, so say "try it yourself" and nothing about what happens. Nothing past the opening goes on this site, in the copy, the pictures, the alt text or the search description. The content contract fails on the obvious words.
 - **Not Quite My Tempo pictures:** the game gets bloody later on, and this site stays out of that. Use nothing with blood in shot unless it is already on the game's own landing page or share card.
 - **AI Build Night links:** only the main site, aibuildnight.ca. Don't link the recap, name a night's number, or name a day of the month.
+- **AI Build Night's words:** in this site's own words, say "one night", never "one hour". A night has about two hours of building.
+- **AI Build Night's window:** it's a capture of the site, and shows what the site says, night numbers and all. The rules above are for this site's own words, and no check can read a picture. Recheck the steps against the site whenever it's refreshed.
 - **Not Quite My Tempo's name:** it's a line from a film. Don't name the film anywhere on this site.
 
 ## Privacy
